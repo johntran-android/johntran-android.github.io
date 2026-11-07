@@ -1,0 +1,118 @@
+{
+ "name": "Anh Tran",
+ "github": "johntran-android",
+ "updated": "2026-11",
+ "headline": "Self-taught engineer rebuilding the math under AI from first principles and building the learning tools he uses daily.",
+ "method": [
+  "read a small piece",
+  "pause",
+  "explain in own words",
+  "AI checks the explanation",
+  "teach on video",
+  "review later"
+ ],
+ "stats": {
+  "studyboard_notes": "24000+",
+  "notebooks": 29,
+  "public_notes": "~12500",
+  "courses": 19,
+  "formula_cards": 797,
+  "videos": "40+",
+  "sentence_master_downloads": "1M+"
+ },
+ "learning": {
+  "covered": [
+   "MIT 18.01",
+   "MIT 18.02",
+   "MIT 18.06 (Strang)",
+   "MIT 18.S096",
+   "Harvard STAT 110",
+   "Casella & Berger ch.1-9",
+   "Boyd convex optimization / EE364A",
+   "Stanford EE263",
+   "Andrew Ng ML + DL Specializations",
+   "Stanford CS231n",
+   "Stanford CS224n",
+   "NLP Specialization"
+  ],
+  "current": [
+   "Nocedal & Wright, Numerical Optimization",
+   "Bishop, Pattern Recognition and Machine Learning"
+  ],
+  "next": [
+   "Elements of Statistical Learning",
+   "Stanford CS229",
+   "Goodfellow et al., Deep Learning"
+  ]
+ },
+ "projects": [
+  {
+   "name": "StudyBoard",
+   "platform": "web",
+   "since": "2025-12",
+   "stack": [
+    "React 19",
+    "TypeScript",
+    "Firebase",
+    "Gemini"
+   ],
+   "url": "https://studyboard.app"
+  },
+  {
+   "name": "StudyBoard mobile",
+   "platform": "Android",
+   "since": "2026-08",
+   "stack": [
+    "Expo",
+    "React Native"
+   ]
+  },
+  {
+   "name": "YouTube autopilot",
+   "platform": "server",
+   "since": "2026",
+   "stack": [
+    "Cloud Functions",
+    "YouTube Data API"
+   ],
+   "url": "https://www.youtube.com/@huongdantuhoctrituenhantao"
+  },
+  {
+   "name": "FormulaBase",
+   "platform": "Android + web",
+   "since": "2026-08",
+   "stack": [
+    "Expo",
+    "KaTeX"
+   ],
+   "url": "https://formulabase.web.app"
+  },
+  {
+   "name": "Deep-Math-For-AI",
+   "platform": "GitHub",
+   "since": "2026-02",
+   "url": "https://github.com/johntran-android/Deep-Math-For-AI"
+  },
+  {
+   "name": "Math Lab",
+   "platform": "web",
+   "since": "2026-09",
+   "url": "https://studyboard-math-lab.limeanorange.chatgpt.site"
+  },
+  {
+   "name": "Sentence Master",
+   "platform": "Android",
+   "since": "2018",
+   "stack": [
+    "Java",
+    "Play Asset Delivery",
+    "fastlane"
+   ],
+   "url": "https://play.google.com/store/apps/details?id=com.hungdaovuong.sentencemaster.en"
+  }
+ ],
+ "links": {
+  "github": "https://github.com/johntran-android",
+  "youtube": "https://www.youtube.com/@huongdantuhoctrituenhantao"
+ }
+}

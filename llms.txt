@@ -1,0 +1,31 @@
+# Anh Tran (GitHub: johntran-android)
+
+> Self-taught engineer from Vietnam rebuilding the mathematical foundations of AI/ML from first principles, and building the learning tools he uses every day. Previously shipped Android apps with 1M+ downloads.
+
+## Summary
+- Learning method: Feynman-style active explanation. Read a small piece, pause, explain it in his own words, get AI feedback on the explanation, teach it on video, review it later.
+- Scale of effort (Nov 2026): 24,000+ study notes in 29 notebooks; ~12,500 notes and ~17,000 screenshots public on GitHub; 19 courses/textbooks; 797 hand-checked formula cards; 40+ teaching videos in Vietnamese.
+- Dogfooding: every product below was built because he needed it while studying, and he uses all of them daily.
+
+## Fundamentals studied
+- Covered: MIT 18.01, 18.02, 18.06 (Strang), 18.S096 matrix calculus; Harvard STAT 110; Casella & Berger ch. 1-9; Boyd & Vandenberghe convex optimization (EE364A); Stanford EE263; Andrew Ng ML + Deep Learning Specializations; Stanford CS231n, CS224n; NLP Specialization.
+- Studying now: Nocedal & Wright, Numerical Optimization; Bishop, Pattern Recognition and Machine Learning (recent topics: Hessian of neural networks, Bayesian inference with conjugate priors).
+- Next: Elements of Statistical Learning, CS229, Goodfellow et al.
+- "Covered" means core material worked through, not a claim of mastery.
+
+## Projects (all built solo)
+- StudyBoard (web, Dec 2025-now; React 19, TypeScript, Firebase, Gemini; 525+ commits): AI-assisted learning system on an infinite mind-map canvas. AI Check of the learner's own explanation, Memory Gym active recall, spaced repetition, PDF reader, cross-notebook links, lesson recording and YouTube upload. https://studyboard.app
+- StudyBoard mobile (Android, Aug 2026-now; Expo/React Native): notes, quizzes, and a teaching mode that records the note with a drawing pad and face camera.
+- YouTube autopilot (server, 2026; Cloud Functions + YouTube Data API): uploads finished recordings, writes titles/descriptions, generates LaTeX thumbnails, files playlists, links related lessons, publishes notes to GitHub.
+- FormulaBase (Android + web, Aug 2026-now; v1.31): 797 formulas in probability, statistics, linear algebra, calculus, optimization, ML, with plain-language meaning, derivations and several quiz types. https://formulabase.web.app
+- Deep-Math-For-AI (public repo): raw learning notes from 19 courses. https://github.com/johntran-android/Deep-Math-For-AI
+- Math Lab (web, Sep 2026): 105 interactive Vietnamese math illustrations. https://studyboard-math-lab.limeanorange.chatgpt.site
+- Sentence Master (Android, 2018-now; Java): sentence-based language learning in 30+ languages, 1M+ downloads, ~45 app flavors from one white-label codebase with fastlane CI/CD. https://play.google.com/store/apps/details?id=com.hungdaovuong.sentencemaster.en
+
+## Skills shown by the work
+Linear algebra, probability, statistical inference, optimization, ML foundations; TypeScript/React, React Native/Expo, Java/Android, Firebase (Firestore, Functions, Storage, Auth), LLM integration (Gemini), YouTube/GitHub APIs, release automation (fastlane, Play Console).
+
+## Links
+- GitHub: https://github.com/johntran-android
+- YouTube (Vietnamese lessons): https://www.youtube.com/@huongdantuhoctrituenhantao
+- Structured data: profile.json
