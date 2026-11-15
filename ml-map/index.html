@@ -8,6 +8,7 @@
 <meta property="og:description" content="Bản đồ 233 chủ đề nền móng Machine Learning, theo mục lục Bishop, Casella &amp; Berger, Nocedal &amp; Wright: lộ trình học 7 chặng, kèm video và ghi chú cho từng chủ đề.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://johntran-android.github.io/ml-map/">
+<script>window.NM_EMBED=1</script>
 <title>Nền móng Machine Learning</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -129,8 +130,42 @@ details summary{cursor:pointer;font-size:12.5px;font-weight:600}
 .rlist .m{font-size:11px;width:14px;text-align:center}
 .mats{display:flex;flex-wrap:wrap;gap:4px 12px}
 .vids+details{margin-top:-4px}
+#labels i.pl{position:absolute;left:0;top:0;display:none;will-change:transform}
+#labels i.pl svg{display:block;width:100%;height:100%}
+.vdot{display:inline-grid;place-items:center;width:13px;height:13px;border-radius:50%;background:var(--muted);margin-right:5px;vertical-align:-2px}
+.vdot svg{width:8px;height:8px}
+.vids a.vrow{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:center;padding:4px;line-height:1.35}
+.vids a.vrow.cur{border-color:var(--ink);background:var(--ground)}
+.vrow .th{position:relative;width:92px;height:52px;border-radius:5px;overflow:hidden;background:#10161d;display:grid;place-items:center}
+.vrow .th img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.vrow .th svg{position:relative;width:22px;height:22px;padding:5px;border-radius:50%;background:rgba(0,0,0,.55)}
+.vrow.plain .th{width:24px;height:24px;border-radius:50%;background:var(--muted)}
+.vrow.plain .th svg{background:none;padding:0;width:11px;height:11px}
+#player{position:relative;height:0;padding-top:56.25%;border-radius:10px;overflow:hidden;background:#000}
+#player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+#card.playing{width:min(470px,calc(100% - 20px))}
+.me{display:flex;flex-wrap:wrap;align-items:center;gap:5px 10px}
+#dn[aria-pressed="true"]{background:var(--taught);border-color:var(--taught);color:var(--panel)}
+.lnk{font:inherit;font-size:12px;background:none;border:0;padding:0;color:var(--muted);text-decoration:underline;text-underline-offset:2px;cursor:pointer;justify-self:start}
+.lnk:hover{color:var(--ink)}
+.per{display:flex;flex-wrap:wrap;gap:2px 12px;font-size:12.5px;color:var(--muted);margin-top:-4px}
+.per b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.pills button.ok::before,.path button.ok span:last-child::before{content:"✓ ";color:var(--taught);font-weight:700}
+.rlist .n.ok{color:var(--taught);font-weight:700}
+.rlist small{display:block;color:var(--muted);font-size:11.5px}
+.lab{display:flex;gap:8px}
+.lab .pg{margin-left:auto;margin-right:22px;color:var(--ink);font-variant-numeric:tabular-nums}
+.prog{height:4px;border-radius:2px;background:var(--ground);overflow:hidden;flex:none}
+.prog i{display:block;height:100%;background:var(--taught);border-radius:2px}
+.chk{display:flex;align-items:center;gap:6px;font-size:12.5px;cursor:pointer}
+.chk input{margin:0;accent-color:var(--ink)}
+.stg .ct{text-align:right;line-height:1.3}
+.stg .ct small{display:block}
+.stg .lnk{margin:0 0 4px 34px}
+@media (max-width:1340px){.sub{display:none}}
 @media (max-width:760px){
   .sub,.hint,.spacer,.seg .k{display:none}
+  #card.playing{width:auto;max-height:74%}
   header{gap:6px}
   #themeBtn{order:1;margin-left:auto}
   #q{order:2;flex:1 1 120px;min-width:120px;width:auto}
@@ -152,7 +187,7 @@ details summary{cursor:pointer;font-size:12.5px;font-weight:600}
   <datalist id="names"></datalist>
   <div class="seg" id="sM" role="group" aria-label="Chế độ xem"><button id="m3" class="on" type="button">3D</button><button id="m2" type="button">2D</button></div>
   <div class="seg" id="sL" role="group" aria-label="Bố cục"><button id="lC" class="on" type="button" title="Mỗi môn tụ thành một cụm">Theo môn</button><button id="lT" type="button" title="Thứ cần học trước nằm dưới, thứ học sau nằm trên">Từ nền lên</button></div>
-  <div class="seg" id="sC" role="group" aria-label="Tô màu theo"><span class="k">Màu</span><button id="cD" class="on" type="button" title="Mỗi môn một màu">Môn</button><button id="cS" type="button" title="Chủ đề nào đã có video, ghi chú">Tài liệu</button></div>
+  <div class="seg" id="sC" role="group" aria-label="Tô màu theo"><span class="k">Màu</span><button id="cD" type="button" title="Mỗi môn một màu">Môn</button><button id="cS" type="button" title="Chủ đề nào đã có video, ghi chú">Tài liệu</button><button id="cM" type="button" title="Chủ đề nào bạn đã hiểu, chủ đề nào học được ngay">Tiến độ</button></div>
   <button class="btn" id="rankBtn" type="button">Lộ trình</button>
   <button class="btn sq" id="themeBtn" type="button"></button>
 </header>
@@ -210,13 +245,28 @@ const counts = { taught: 0, read: 0, ahead: 0 }; N.forEach(n => counts[n.st]++);
 const domStat = {}; N.forEach(n => { const s = domStat[n.d] = domStat[n.d] || { n: 0, t: 0 }; s.n++; if (n.st === 'taught') s.t++; });
 const nVid = Object.keys(D.vids).length;
 $('names').innerHTML = N.map(n => `<option value="${esc(n.t)}"></option>`).join('');
+const EMBED = !!window.NM_EMBED;      // the standalone site plays videos in the page; inside a sandboxed frame they open on YouTube
+const PLAY = '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M3 1.6 8.6 5 3 8.4z" fill="#fff" stroke="rgba(0,0,0,.6)" stroke-width=".9" stroke-linejoin="round"/></svg>';
+const withVid = N.filter(n => n.v.length).length;
+
+// ---- the visitor's own progress: which topics they already understand (kept in this browser only)
+const done = new Set((() => { try { return JSON.parse(store.get('nm-done', '[]')).filter(x => byId[x]); } catch (e) { return []; } })());
+const canLearn = n => !done.has(n.id) && n.pre.every(p => done.has(p));     // everything it needs is understood
+let autoProg = false;
+function setDone(ids, on) {
+  ids.forEach(x => on ? done.add(x) : done.delete(x)); store.set('nm-done', JSON.stringify([...done]));
+  if (on && !autoProg && colorBy !== 'progress') { autoProg = true; setColor('progress'); } else { drawLegend(); refresh(); }   // the first mark switches the map to "your progress" so it visibly lights up
+  drawRank(); if (sel) drawMe(sel);
+}
 
 // ---- state
-let mode = '3d', layout = 'cum', colorBy = 'domain', tool = 'rotate', spin = !calm;
+let mode = '3d', layout = 'cum', colorBy = done.size ? 'progress' : 'domain', tool = 'rotate', spin = !calm;
 let sel = null, lit = null, litDown = null, near = null, G = null, running = false, dirty = true, needFit = true, built = false, first3 = true, lastSig = '';
 const K = {};
-function readColors() { ['paper', 'ink', 'dim', 'edge', 'C', 'L', 'P', 'S', 'O', 'M', 'taught', 'read', 'ahead'].forEach(k => K[k] = css('--' + k)); }
-const colorOf = n => lit && !lit.has(n.id) ? K.dim : colorBy === 'domain' ? K[n.d] : K[n.st];
+const mix = (a, b, t) => '#' + [1, 3, 5].map(i => Math.round(parseInt(a.slice(i, i + 2), 16) * t + parseInt(b.slice(i, i + 2), 16) * (1 - t)).toString(16).padStart(2, '0')).join('');
+function readColors() { ['paper', 'ink', 'dim', 'edge', 'C', 'L', 'P', 'S', 'O', 'M', 'taught', 'read', 'ahead'].forEach(k => K[k] = css('--' + k));
+  Object.keys(DOM).forEach(d => K['p' + d] = mix(K[d], K.paper, .55)); }     // pale subject colour: "you can learn this now"
+const colorOf = n => lit && !lit.has(n.id) ? K.dim : colorBy === 'domain' ? K[n.d] : colorBy === 'status' ? K[n.st] : done.has(n.id) ? K[n.d] : canLearn(n) ? K['p' + n.d] : K.ahead;
 const lid = e => e.id ?? e;
 const linkOn = l => lit && litDown && (sel === lid(l.source) || litDown.has(lid(l.source))) && litDown.has(lid(l.target));
 const linkUp = l => lit && !linkOn(l) && lit.has(lid(l.source)) && lit.has(lid(l.target)) && !litDown.has(lid(l.target));
@@ -252,7 +302,7 @@ function build() {
   const el = $('graph'), W = el.clientWidth, H = el.clientHeight;
   const common = g => g.width(W).height(H).backgroundColor(K.paper)
     .nodeId('id').nodeVal(n => n.val).nodeColor(colorOf)
-    .nodeLabel(n => `${esc(n.t)}<small>${esc(n.src)} · ${MK[n.st]} ${ST[n.st]}</small>`)
+    .nodeLabel(n => `${esc(n.t)}<small>${esc(n.src)} · ${MK[n.st]} ${n.v.length ? n.v.length + ' video' : ST[n.st]}${done.has(n.id) ? ' · ✓ đã hiểu' : ''}</small>`)
     .linkColor(l => linkOn(l) ? K[byId[sel].d] : linkUp(l) ? K.ink : lit ? K.dim : K.edge)
     .linkWidth(l => linkOn(l) || linkUp(l) ? (direct(l) ? 2.4 : .8) : 0.5)
     .linkDirectionalArrowLength(l => linkOn(l) || linkUp(l) ? (direct(l) ? 5.5 : 3) : 0).linkDirectionalArrowRelPos(1)
@@ -308,6 +358,8 @@ const LBL = {}, REG = {}, shown = new Set();
 const meas = document.createElement('canvas').getContext('2d');
 function measure() { meas.font = '600 12px "Be Vietnam Pro", system-ui, sans-serif'; N.forEach(n => n.tw = meas.measureText(n.t).width);
   meas.font = '700 13px "Unbounded", system-ui, sans-serif'; Object.keys(DOM).forEach(d => REG[d].tw = meas.measureText(DOM[d].toUpperCase()).width + DOM[d].length * 1.82); }
+const PL = {};        // a play triangle drawn over every topic that has a video
+N.forEach(n => { if (!n.v.length) return; const i = document.createElement('i'); i.className = 'pl'; i.innerHTML = PLAY; $('labels').appendChild(i); PL[n.id] = i; });
 Object.keys(DOM).forEach(d => { const s = document.createElement('span'); s.className = 'reg'; s.textContent = DOM[d]; s.style.color = `var(--${d})`; $('labels').appendChild(s); REG[d] = { el: s, tw: 120 }; });
 N.forEach(n => { const s = document.createElement('span'); s.textContent = n.t; if (n.big) s.className = 'big'; $('labels').appendChild(s); LBL[n.id] = s; });
 measure(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { measure(); dirty = true; });
@@ -336,9 +388,12 @@ function drawLabels(V) {
     R.el.style.transform = `translate(${b.x0.toFixed(1)}px,${b.y0.toFixed(1)}px) scale(${sc.toFixed(3)})`; R.el.style.opacity = lit ? .3 : .95; });
   const cand = [], ringId = tour ? tour.ids[tour.i] : sel;
   N.forEach(n => {
+    const pl = PL[n.id]; if (pl) pl.style.display = 'none';
     if (lit && !lit.has(n.id)) return;
     const p = V.at(n.x, n.y, n.z || 0, mode === '3d' ? n.r3 : n.r2);
     if (!p || p.x < -60 || p.x > V.W + 60 || p.y < -20 || p.y > V.H + 10) return;
+    if (pl) { const s = clamp(p.r * 1.25, 8, 28); pl.style.display = 'block'; pl.style.width = pl.style.height = s.toFixed(1) + 'px'; pl.style.opacity = p.o.toFixed(2);
+      pl.style.transform = `translate(${(p.x - s * .49).toFixed(1)}px,${(p.y - s / 2).toFixed(1)}px)`; }
     p.n = n; p.pr = n.id === sel || n.id === ringId ? 1e9 : (near && near.has(n.id) ? 1e5 : 0) + p.r * (n.big ? 1.25 : 1) * (shown.has(n.id) ? 1.3 : 1); cand.push(p);
   });
   cand.sort((a, b) => b.pr - a.pr);
@@ -415,7 +470,7 @@ function endTour() { if (!tour) return; clearTimeout(tour.timer); tour = null; $
 // ---- selection
 function select(id) {
   endTour(); sel = id;
-  if (!id) { lit = litDown = near = null; $('card').hidden = true; refresh(); drawRank(); return; }
+  if (!id) { lit = litDown = near = null; $('card').hidden = true; $('card').innerHTML = ''; refresh(); drawRank(); return; }
   stopSpin();
   litDown = down(id); const ups = up(id); lit = new Set([id, ...litDown, ...ups]); near = new Set([...(kids[id] || []), ...byId[id].pre]);
   openStg.add(stageOf[id]);
@@ -435,27 +490,57 @@ function order(set) {
 }
 function showCard(id, ups) {
   const n = byId[id], next = (kids[id] || []).map(k => byId[k]).sort((a, b) => a.i - b.i), dn = litDown;
-  const doms = new Set([...dn].map(x => byId[x].d)), path = order(ups), sg = STAGES[stageOf[id]];
+  const path = order(ups), after = order(dn), sg = STAGES[stageOf[id]];
+  const per = Object.keys(DOM).map(d => [d, after.filter(x => x.d === d).length]).filter(x => x[1]);
   const fold = (items, word) => `<ul class="vids">${items.slice(0, 3).join('')}</ul>${items.length > 3 ? `<details><summary>Xem thêm ${items.length - 3} ${word}</summary><ul class="vids" style="margin-top:4px">${items.slice(3).join('')}</ul></details>` : ''}`;
-  const vid = n.v.map(i => D.vids[i]).map(v => `<li><a href="https://youtu.be/${v.id}" target="_blank" rel="noopener">${esc(v.t)}</a></li>`);
+  const vid = n.v.map(i => D.vids[i]).map(v => `<li><a class="vrow${EMBED ? '' : ' plain'}" href="https://youtu.be/${esc(v.id)}" data-v="${esc(v.id)}" target="_blank" rel="noopener"><span class="th">${EMBED ? `<img src="https://i.ytimg.com/vi/${esc(v.id)}/mqdefault.jpg" alt="" loading="lazy">` : ''}${PLAY}</span><span>${esc(v.t)}</span></a></li>`);
   const nts = n.nt.map(([t, p]) => `<li><a href="${REPO}${encodeURI(p)}" target="_blank" rel="noopener">${esc(t)}</a></li>`);
   const row = p => `<button data-id="${p.id}">${esc(p.t)}</button>`;
-  $('card').innerHTML = `<button class="x" id="cx" aria-label="Đóng">×</button><div class="scroll">
+  const steps = ps => `<ol class="path">${ps.map((p, i) => `<li><button data-id="${p.id}"><span class="n">${i + 1}</span><span>${esc(p.t)}</span></button></li>`).join('')}</ol>`;
+  const C = $('card'); C.classList.remove('playing');
+  C.innerHTML = `<button class="x" id="cx" aria-label="Đóng">×</button><div class="scroll">
     <span class="stat"><span class="dot" style="background:var(--${n.d})"></span>Chặng ${sg.k} · ${esc(sg.name)}</span>
     <h2>${esc(n.t)}</h2><div class="src">${esc(n.src)}</div>
     <div class="mats">${vid.length ? `<span class="stat"><span class="mk taught">${MK.taught}</span>${vid.length} video</span>` : ''}${nts.length ? `<span class="stat"><span class="mk read">${MK.read}</span>${nts.length} ghi chú</span>` : ''}${!vid.length && !nts.length ? `<span class="stat"><span class="mk ahead">${MK.ahead}</span>Chưa có video hay ghi chú, mới có trong sách</span>` : ''}</div>
-    ${dn.size ? `<div class="gate"><b>${dn.size}</b><span>chủ đề khác cần chủ đề này làm nền${doms.size > 1 ? `, trải trên ${doms.size} môn` : ''}.</span></div>`
+    ${vid.length ? `<div class="lab">Video bài giảng (${vid.length})</div><div id="player" hidden></div><a class="src" id="ytl" target="_blank" rel="noopener" hidden>Mở trên YouTube ↗</a>${fold(vid, 'video')}` : ''}
+    <div class="me" id="me"></div>
+    ${dn.size ? `<div class="gate"><b>${dn.size}</b><span>chủ đề phía sau cần chủ đề này làm nền. Hiểu nó là mở đường cho:</span></div>
+      <div class="per">${per.map(([d, c]) => `<span><span class="dot" style="background:var(--${d})"></span>${DOM[d]} <b>${c}</b></span>`).join('')}</div>`
       : `<div class="gate"><span>Đây là một đích đến: không chủ đề nào trên bản đồ cần nó làm nền.</span></div>`}
     ${n.pre.length ? `<div class="lab">Cần học ngay trước</div><div class="pills">${n.pre.map(p => row(byId[p])).join('')}</div>` : `<div class="src">Điểm xuất phát: không cần học gì trước.</div>`}
-    ${path.length > n.pre.length ? `<details><summary>Tính từ đầu: ${path.length} chủ đề cần học trước</summary><ol class="path">${path.map((p, i) => `<li><button data-id="${p.id}"><span class="n">${i + 1}</span><span>${esc(p.t)}</span></button></li>`).join('')}</ol></details>` : ''}
+    ${path.length > n.pre.length ? `<details><summary id="upSum"></summary>${steps(path)}</details>` : ''}
     ${path.length ? `<button class="btn go" id="go" type="button">Xem đường đi trên bản đồ</button>` : ''}
     ${next.length ? `<div class="lab">Học xong thì học tiếp được</div><div class="pills">${next.map(row).join('')}</div>` : ''}
-    ${vid.length ? `<div class="lab">Video bài giảng (${vid.length})</div>${fold(vid, 'video')}` : ''}
+    ${after.length > next.length ? `<details><summary>Xem cả ${after.length} chủ đề phía sau, theo thứ tự học</summary>${steps(after)}</details>` : ''}
     ${nts.length ? `<div class="lab">Ghi chú (${nts.length})</div>${fold(nts, 'ghi chú')}` : ''}</div>`;
-  $('card').hidden = false;
+  C.hidden = false;
   $('cx').onclick = () => select(null);
   if ($('go')) $('go').onclick = () => startTour([...path.map(p => p.id), id]);
-  $('card').querySelectorAll('button[data-id]').forEach(b => b.onclick = () => select(b.dataset.id));
+  C.querySelectorAll('button[data-id]').forEach(b => b.onclick = () => select(b.dataset.id));
+  C.querySelectorAll('a.vrow').forEach(a => {
+    const im = a.querySelector('img'); if (im) im.onerror = () => im.remove();
+    a.onclick = e => {                     // watch without leaving the map
+      if (!EMBED || e.metaKey || e.ctrlKey || e.shiftKey) return;
+      e.preventDefault();
+      $('player').hidden = false;
+      $('player').innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(a.dataset.v)}?autoplay=1&rel=0&playsinline=1" title="${esc(a.textContent)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+      $('ytl').hidden = false; $('ytl').href = a.href;
+      C.querySelectorAll('a.vrow').forEach(x => x.classList.toggle('cur', x === a));
+      C.classList.add('playing'); C.querySelector('.scroll').scrollTop = 0;
+    };
+  });
+  drawMe(id);
+}
+// the "I understand this" line of the card; redrawn alone so a playing video is not interrupted
+function drawMe(id) {
+  const on = done.has(id), ups = up(id), miss = [...ups].filter(x => !done.has(x));
+  $('me').innerHTML = `<button class="btn" id="dn" type="button" aria-pressed="${on}">${on ? '✓ Đã hiểu' : 'Đánh dấu đã hiểu'}</button><span class="src">${
+    on ? (miss.length ? `Còn ${miss.length} chủ đề nền chưa đánh dấu. <button class="lnk" id="dnAll" type="button">Đánh dấu luôn</button>` : 'Đã tính vào tiến độ của bạn.')
+      : !done.size ? 'Bấm khi bạn đã nắm chủ đề này.' : miss.length ? `Còn ${miss.length} chủ đề nền bạn chưa đánh dấu.` : 'Đủ nền rồi: bạn học được ngay.'}</span>`;
+  $('dn').onclick = () => setDone([id], !on);
+  if ($('dnAll')) $('dnAll').onclick = () => setDone(miss, true);
+  $('card').querySelectorAll('button[data-id]').forEach(b => b.classList.toggle('ok', done.has(b.dataset.id)));
+  if ($('upSum')) $('upSum').textContent = `Tính từ đầu: ${ups.size} chủ đề cần học trước` + (done.size ? `, bạn đã hiểu ${ups.size - miss.length}` : '');
 }
 
 // ---- roadmap panel: the whole map as one learnable order, cut into stages where the subject changes
@@ -478,41 +563,70 @@ for (let i = STAGES.length - 1; i > 0; i--) if (STAGES[i].ns.length < 3) { STAGE
     s.from = books(s.ns) || (s.d === 'C' ? ['MIT 18.01, 18.02', 'MIT 18.02'][j] : 'MIT 18.06'); s.ns.forEach(n => { n.no = ++no; stageOf[n.id] = k; }); }); }
 const openStg = new Set();
 $('sub').textContent = `${N.length} chủ đề · ${STAGES.length} chặng`;
-let rankTab = 'path';
+let rankTab = 'path', onlyNoVid = false, askReset = false;
 const TOP = N.filter(n => n.reach > 0).sort((a, b) => b.reach - a.reach || a.i - b.i);
-const item = (n, num, extra = '') => `<li><button data-id="${n.id}" class="${n.id === sel ? 'cur' : ''}"><span class="n">${num}</span><span style="min-width:0">${esc(n.t)}${extra}</span><span class="m mk ${n.st}" title="${ST[n.st]}">${n.st === 'ahead' ? '' : MK[n.st]}</span></button></li>`;
+const item = (n, num, extra = '') => `<li><button data-id="${n.id}" class="${n.id === sel ? 'cur' : ''}"><span class="n${done.has(n.id) ? ' ok' : ''}">${done.has(n.id) ? '✓' : num}</span><span style="min-width:0">${esc(n.t)}${extra}</span><span class="m mk ${n.st}" title="${ST[n.st]}">${n.st === 'ahead' ? '' : MK[n.st]}</span></button></li>`;
 function drawRank(follow) {
   const R = $('rank'), top = R.querySelector('.scroll')?.scrollTop || 0;
-  const body = rankTab === 'path'
-    ? STAGES.map((s, k) => `<details class="stg" data-k="${k}"${openStg.has(k) ? ' open' : ''}><summary><span class="no" style="border-color:var(--${s.d})">${s.k}</span><span class="nm">${esc(s.name)}<small>${esc(s.from)}</small></span><span class="ct">${s.ns.length} chủ đề</span></summary>
-        <ol class="rlist">${s.ns.map(n => item(n, n.no)).join('')}</ol></details>`).join('')
-    : `<ol class="rlist">${TOP.map((n, i) => `<li><button data-id="${n.id}" class="${n.id === sel ? 'cur' : ''}"><span class="n">${i + 1}</span><span style="min-width:0">${esc(n.t)}<div class="bar" style="width:${n.reach / TOP[0].reach * 100}%;background:var(--${n.d})"></div></span><span class="n">${n.reach}</span></button></li>`).join('')}</ol>`;
+  let body, intro;
+  if (rankTab === 'path') {
+    body = STAGES.map((s, k) => { const dn = s.ns.filter(n => done.has(n.id)).length, nv = s.ns.filter(n => n.v.length).length;
+      return `<details class="stg" data-k="${k}"${openStg.has(k) ? ' open' : ''}><summary><span class="no" style="border-color:var(--${s.d})">${s.k}</span><span class="nm">${esc(s.name)}<small>${esc(s.from)}</small></span><span class="ct">${dn ? `${dn}/${s.ns.length} đã hiểu` : `${s.ns.length} chủ đề`}<small>${nv ? `<span class="mk taught">${MK.taught}</span> ${nv} có video` : ''}</small></span></summary>
+        <button class="lnk" type="button" data-all="${k}">${dn === s.ns.length ? 'Bỏ đánh dấu cả chặng' : 'Tôi biết cả chặng này rồi'}</button>
+        <ol class="rlist">${s.ns.map(n => item(n, n.no)).join('')}</ol></details>`; }).join('');
+    intro = `<b>Học lần lượt ${STAGES.length} chặng, từ trên xuống.</b> Bấm một chặng để mở danh sách chủ đề. <span class="mk taught">${MK.taught}</span> có video · <span class="mk read">${MK.read}</span> có ghi chú · <span class="mk taught">✓</span> bạn đã hiểu.`;
+  } else if (rankTab === 'next') {
+    const nx = N.filter(canLearn).sort((a, b) => b.reach - a.reach || a.i - b.i);
+    body = (nx.length ? `<ol class="rlist">${nx.map((n, i) => item(n, i + 1, `<small>Chặng ${stageOf[n.id] + 1} · ${n.reach ? `mở đường cho ${n.reach} chủ đề` : 'một đích đến'}</small>`)).join('')}</ol>` : '')
+      + (!done.size ? '' : askReset ? `<div class="me"><span class="src">Xoá cả ${done.size} chủ đề đã đánh dấu?</span><button class="btn" id="rsY" type="button">Xoá</button><button class="btn" id="rsN" type="button">Giữ lại</button></div>`
+        : `<button class="lnk" id="rs" type="button">Xoá tiến độ của tôi</button>`);
+    intro = !done.size ? `<b>Bắt đầu từ đây:</b> ${nx.length} chủ đề này không cần học gì trước. Hiểu chủ đề nào thì mở nó ra, bấm “Đánh dấu đã hiểu”. Danh sách sẽ đổi sang những thứ bạn học được tiếp, và bản đồ sáng dần lên. Tiến độ chỉ lưu trên trình duyệt này.`
+      : nx.length ? `<b>${nx.length} chủ đề bạn học được ngay:</b> mọi thứ cần học trước, bạn đã đánh dấu là hiểu. Chủ đề mở đường cho nhiều thứ nhất đứng trên cùng.`
+      : `<b>Bạn đã đánh dấu hiểu hết ${N.length} chủ đề trên bản đồ.</b>`;
+  } else {
+    const list = TOP.filter(n => !onlyNoVid || !n.v.length);
+    body = `<label class="chk"><input type="checkbox" id="nv"${onlyNoVid ? ' checked' : ''}>Chỉ hiện chủ đề chưa có video (${TOP.filter(n => !n.v.length).length})</label>
+      <ol class="rlist">${list.map((n, i) => `<li><button data-id="${n.id}" class="${n.id === sel ? 'cur' : ''}"><span class="n${done.has(n.id) ? ' ok' : ''}">${done.has(n.id) ? '✓' : i + 1}</span><span style="min-width:0">${esc(n.t)}${n.v.length ? ` <span class="mk taught">${MK.taught}</span>` : ''}<div class="bar" style="width:${n.reach / TOP[0].reach * 100}%;background:var(--${n.d})"></div></span><span class="n">${n.reach}</span></button></li>`).join('')}</ol>`;
+    intro = `<b>Chủ đề nào làm nền cho nhiều thứ nhất.</b> Con số bên phải: bao nhiêu chủ đề khác cần nó. Số càng lớn, càng nên học cho chắc; trên bản đồ đó là những chấm to. <span class="mk taught">${MK.taught}</span> đã có video.`;
+  }
+  const tab = (k, name) => `<button data-t="${k}" class="${rankTab === k ? 'on' : ''}">${name}</button>`;
   R.innerHTML = `<button class="x" id="rx" aria-label="Đóng">×</button>
-    <div class="lab">Lộ trình học</div>
-    <div class="tabs"><button data-t="path" class="${rankTab === 'path' ? 'on' : ''}">Thứ tự học</button><button data-t="top" class="${rankTab === 'top' ? 'on' : ''}">Quan trọng nhất</button></div>
-    <div class="scroll"><p class="intro"><b>${N.length} chủ đề</b> từ mục lục ba cuốn sách kinh điển: Bishop, Casella &amp; Berger, Nocedal &amp; Wright, cộng giải tích và đại số tuyến tính làm nền. Mũi tên A → B: học A trước B.</p>
-    <p class="intro">${rankTab === 'path' ? `<b>Học lần lượt ${STAGES.length} chặng, từ trên xuống.</b> Bấm một chặng để mở danh sách chủ đề. <span class="mk taught">${MK.taught}</span> có video · <span class="mk read">${MK.read}</span> có ghi chú.`
-      : '<b>Chủ đề nào làm nền cho nhiều thứ nhất.</b> Con số bên phải: bao nhiêu chủ đề khác cần nó. Số càng lớn, càng nên học cho chắc; trên bản đồ đó là những chấm to.'}</p>
+    <div class="lab">Lộ trình học${done.size ? `<span class="pg">Đã hiểu ${done.size}/${N.length}</span>` : ''}</div>
+    ${done.size ? `<div class="prog"><i style="width:${done.size / N.length * 100}%"></i></div>` : ''}
+    <div class="tabs">${tab('path', 'Thứ tự học')}${tab('next', 'Nên học tiếp')}${tab('top', 'Quan trọng nhất')}</div>
+    <div class="scroll">${rankTab === 'path' ? `<p class="intro"><b>${N.length} chủ đề</b> từ mục lục ba cuốn sách kinh điển: Bishop, Casella &amp; Berger, Nocedal &amp; Wright, cộng giải tích và đại số tuyến tính làm nền. Mũi tên A → B: học A trước B.</p>` : ''}
+    <p class="intro">${intro}</p>
     <div>${body}</div></div>`;
   const sc = R.querySelector('.scroll'); sc.scrollTop = top;
   if (follow) { const cur = sc.querySelector('.cur'); if (cur) { const a = cur.getBoundingClientRect(), b = sc.getBoundingClientRect(); if (a.top < b.top || a.bottom > b.bottom) sc.scrollTop += a.top - b.top - b.height / 3; } }
   $('rx').onclick = () => { R.hidden = true; };
-  R.querySelectorAll('.tabs button').forEach(b => b.onclick = () => { rankTab = b.dataset.t; R.querySelector('.scroll').scrollTop = 0; drawRank(true); });
+  R.querySelectorAll('.tabs button').forEach(b => b.onclick = () => { rankTab = b.dataset.t; askReset = false; R.querySelector('.scroll').scrollTop = 0; drawRank(true); });
   R.querySelectorAll('.stg>summary').forEach(m => m.onclick = () => { const d = m.parentNode; if (!d.open) { d.dataset.me = 1; if (!sel) focusDomain(STAGES[+d.dataset.k].d); } });
   R.querySelectorAll('.stg').forEach(d => d.ontoggle = () => { d.open ? openStg.add(+d.dataset.k) : openStg.delete(+d.dataset.k);
     if (d.open && d.dataset.me) { const sc = R.querySelector('.scroll'); sc.scrollTop += d.getBoundingClientRect().top - sc.getBoundingClientRect().top; } delete d.dataset.me; });
   R.querySelectorAll('.rlist button').forEach(b => b.onclick = () => select(b.dataset.id));
+  R.querySelectorAll('[data-all]').forEach(b => b.onclick = () => { const ids = STAGES[+b.dataset.all].ns.map(n => n.id); setDone(ids, !ids.every(x => done.has(x))); });
+  if ($('nv')) $('nv').onchange = e => { onlyNoVid = e.target.checked; drawRank(); };
+  if ($('rs')) $('rs').onclick = () => { askReset = true; drawRank(); };
+  if ($('rsN')) $('rsN').onclick = () => { askReset = false; drawRank(); };
+  if ($('rsY')) $('rsY').onclick = () => { askReset = false; setDone([...done], false); };
 }
 drawRank();
 if (innerWidth <= 760) $('rank').hidden = true;
 
 function drawLegend() {
-  $('legend').innerHTML = colorBy === 'domain'
+  const it = (bg, text, c) => `<span class="it"><span class="dot" style="background:${bg}"></span>${text} <b>${c}</b></span>`, nL = N.filter(canLearn).length;
+  $('legend').innerHTML = (colorBy === 'domain'
     ? Object.entries(DOM).map(([k, v]) => `<button data-d="${k}" title="Bay tới ${v}: ${domStat[k].n} chủ đề"><span class="dot" style="background:var(--${k})"></span>${v} <b>${domStat[k].n}</b></button>`).join('')
-    : Object.entries(ST).map(([k, v]) => `<span class="it"><span class="dot" style="background:var(--${k})"></span>${v} <b>${counts[k]}</b></span>`).join('');
+    : colorBy === 'status' ? Object.entries(ST).map(([k, v]) => it(`var(--${k})`, v, counts[k])).join('')
+    : it('var(--L)', 'Màu đậm: đã hiểu', done.size) + it('color-mix(in srgb,var(--L) 55%,var(--paper))', 'Màu nhạt: học được ngay', nL) + it('var(--ahead)', 'Xám: chưa tới', N.length - done.size - nL))
+    + `<span class="it"><span class="vdot">${PLAY}</span>có video <b>${withVid}</b></span>`;
   $('legend').querySelectorAll('button').forEach(b => b.onclick = () => focusDomain(b.dataset.d));
 }
-drawLegend();
+const CB = { cD: 'domain', cS: 'status', cM: 'progress' };
+function setColor(c) { colorBy = c; Object.entries(CB).forEach(([b, k]) => $(b).classList.toggle('on', k === c)); drawLegend(); refresh(); }
+Object.entries(CB).forEach(([b, k]) => $(b).onclick = () => setColor(k));
+setColor(colorBy);
 
 // ---- controls
 const seg = (a, b, on) => { $(a).classList.toggle('on', on); $(b).classList.toggle('on', !on); };
@@ -520,14 +634,12 @@ $('m3').onclick = () => { if (mode === '3d') return; mode = '3d'; seg('m3', 'm2'
 $('m2').onclick = () => { if (mode === '2d') return; mode = '2d'; seg('m3', 'm2', false); build(); };
 $('lC').onclick = () => { if (layout === 'cum') return; layout = 'cum'; seg('lC', 'lT', true); relayout(); };
 $('lT').onclick = () => { if (layout === 'tang') return; layout = 'tang'; seg('lC', 'lT', false); relayout(); };
-$('cD').onclick = () => { colorBy = 'domain'; seg('cD', 'cS', true); drawLegend(); refresh(); };
-$('cS').onclick = () => { colorBy = 'status'; seg('cD', 'cS', false); drawLegend(); refresh(); };
 $('tR').onclick = () => { tool = 'rotate'; applyTool(); };
 $('tP').onclick = () => { tool = 'pan'; stopSpin(); applyTool(); };
 $('spinBtn').onclick = () => { spin = !spin; applySpin(); };
 $('zIn').onclick = () => { stopSpin(); zoomBy(1.5); };
 $('zOut').onclick = () => { stopSpin(); zoomBy(1 / 1.5); };
-$('rankBtn').onclick = () => { $('rank').hidden = !$('rank').hidden; if (!$('rank').hidden && innerWidth <= 760) $('card').hidden = true; };
+$('rankBtn').onclick = () => { $('rank').hidden = !$('rank').hidden; if (!$('rank').hidden && innerWidth <= 760) { $('card').hidden = true; if ($('player')) { $('player').innerHTML = ''; $('player').hidden = true; $('card').classList.remove('playing'); } } };
 $('fitBtn').onclick = () => { select(null); fit(); };
 ['pointerdown', 'wheel', 'touchstart'].forEach(ev => $('graph').addEventListener(ev, () => { stopSpin(); endTour(); }, { passive: true }));
 $('q').addEventListener('change', e => { const v = e.target.value.trim().toLowerCase(); if (!v) return; const n = N.find(x => x.t.toLowerCase() === v) || N.find(x => x.t.toLowerCase().includes(v)); if (n && n.id !== sel) select(n.id); });
