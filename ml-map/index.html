@@ -167,7 +167,14 @@ details summary{cursor:pointer;font-size:12.5px;font-weight:600}
 #list{position:absolute;inset:0;z-index:5;background:var(--paper);overflow-y:auto;-webkit-overflow-scrolling:touch}
 .lw{position:relative;max-width:840px;margin:0 auto;padding:18px 16px 60px 120px}
 .arcs{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
-.arcs>path{fill:none;stroke-width:2;stroke-linejoin:round}
+.arcs .bus{fill:none;stroke-width:1.4;opacity:.62}
+.arcs .tip{stroke:none;opacity:.62}
+.arcs.has .bus,.arcs.has .tip{opacity:.13}
+.arcs .hl{fill:none;stroke-width:3;opacity:1;stroke-linejoin:round}
+.arcs .tip.hl{stroke:none;opacity:1}
+.ll .mp{width:30px;height:30px;border-radius:8px;border:1px solid var(--rule);background:var(--panel);color:var(--muted);cursor:pointer;display:grid;place-items:center;padding:0}
+.ll .mp:hover{color:var(--ink);border-color:var(--ink)}
+.ll .mp svg{width:16px;height:16px}
 @media (max-width:760px){.lw{padding-left:58px;padding-right:12px}}
 .lw>h2{font-family:var(--display);font-weight:500;font-size:24px;line-height:1.2;margin:0 0 6px;text-wrap:balance}
 .lw>.intro{font-size:15px;max-width:62ch;margin-bottom:10px}
@@ -178,7 +185,7 @@ details summary{cursor:pointer;font-size:12.5px;font-weight:600}
 .ls h3 small{display:block;font-weight:400;color:var(--muted);font-size:13.5px}
 .ls h3 .no{width:28px;height:28px;border-radius:50%;border:2.5px solid;font-size:13px;font-weight:700;display:grid;place-items:center;flex:none;font-variant-numeric:tabular-nums}
 .ll{list-style:none;margin:0;padding:0}
-.ll>li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;padding:10px 0;border-bottom:1px solid var(--dim)}
+.ll>li{display:grid;grid-template-columns:28px minmax(0,1fr) 30px;gap:10px;padding:10px 0;border-bottom:1px solid var(--dim)}
 .ll>li.on{background:color-mix(in srgb,var(--ground) 70%,transparent);box-shadow:-8px 0 0 color-mix(in srgb,var(--ground) 70%,transparent),8px 0 0 color-mix(in srgb,var(--ground) 70%,transparent)}
 .ll>li.pre .ck{background:var(--ink);border-color:var(--ink);color:var(--panel)}
 .ll>li.nxt .ck{background:var(--sel);border-color:var(--sel);color:#fff}
@@ -666,14 +673,14 @@ function drawList() {
   const pill = x => `<button type="button" data-go="${x}">${esc(byId[x].t)}</button>`;
   const rel = n => n.id !== lsel ? '' : `<div class="rel">${n.pre.length ? `<div class="lab">Cần học trước</div><div class="pills">${n.pre.map(pill).join('')}</div>` : '<div class="src">Điểm xuất phát: không cần học gì trước.</div>'}
       ${(kids[n.id] || []).length ? `<div class="lab">Học xong mở ra</div><div class="pills">${kids[n.id].map(pill).join('')}</div>` : ''}
-      <button class="lnk" type="button" data-map="${n.id}">Xem trên bản đồ →</button></div>`;
+</div>`;
   const row = n => { const ok = done.has(n.id), vs = n.v.map(i => D.vids[i]);
     return `<li style="--sel:var(--${S ? S.d : n.d})" id="li-${n.id}" class="${ok ? 'ok' : ''}${n.id === lsel ? ' on' : ''}${pre.has(n.id) ? ' pre' : ''}${nxt.has(n.id) ? ' nxt' : ''}"><button class="ck" type="button" data-done="${n.id}" aria-pressed="${ok}" aria-label="${ok ? 'Bỏ đánh dấu' : 'Đánh dấu đã hiểu'}: ${esc(n.t)}">${ok ? '✓' : n.no}</button>
       <div><button class="tt" type="button" data-id="${n.id}" aria-expanded="${n.id === lsel}" title="Xem chủ đề này nối với những gì">${esc(n.t)}</button>
       <div class="sm">${esc(n.src)}${n.nt.length ? ` · <a href="${REPO}${encodeURI(n.nt[0][1])}" target="_blank" rel="noopener">✎ ${n.nt.length} ghi chú</a>` : ''}</div>
-      ${vs.length ? `<ul class="lv">${vs.map(v => `<li><a href="https://youtu.be/${esc(v.id)}" target="_blank" rel="noopener"><span class="vdot">${PLAY}</span><span>${esc(v.t)}</span></a></li>`).join('')}</ul>` : ''}${rel(n)}</div></li>`; };
-  L.innerHTML = `<div class="lw"><h2>Học theo thứ tự, từ trên xuống</h2>
-    <p class="intro"><b>${total} ${UNIT}, chia ${STAGES.length} chặng.</b> Mỗi ${UNIT} chỉ cần những ${UNIT} đứng trước nó trong danh sách. Bấm vào tên một chủ đề để thấy nó nối với những gì: đường đậm đi lên những chủ đề cần học trước, đường màu đi xuống những chủ đề nó mở ra. Bấm vòng tròn khi bạn đã hiểu. <span class="vdot" style="background:var(--taught)">${PLAY}</span>có video · ✎ có ghi chú. Tiến độ chỉ lưu trên trình duyệt này.</p>
+      ${vs.length ? `<ul class="lv">${vs.map(v => `<li><a href="https://youtu.be/${esc(v.id)}" target="_blank" rel="noopener"><span class="vdot">${PLAY}</span><span>${esc(v.t)}</span></a></li>`).join('')}</ul>` : ''}${rel(n)}</div><button class="mp" type="button" data-map="${n.id}" title="Mở trên bản đồ" aria-label="Mở ${esc(n.t)} trên bản đồ"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M1.5 3.5 5.5 2l5 1.8 4-1.5v10.2l-4 1.5-5-1.8-4 1.5z"/><path d="M5.5 2v10.2M10.5 3.8V14"/></svg></button></li>`; };
+  L.innerHTML = `<div class="lw" style="padding-left:${gutter()}px"><h2>Học theo thứ tự, từ trên xuống</h2>
+    <p class="intro"><b>${total} ${UNIT}, chia ${STAGES.length} chặng.</b> Mỗi ${UNIT} chỉ cần những ${UNIT} đứng trước nó trong danh sách. Mỗi đường dọc bên trái đi ra từ một chủ đề, mũi tên chỉ vào những chủ đề cần nó. Bấm tên để làm sáng đường của chủ đề đó; bấm vòng tròn khi đã hiểu; bấm biểu tượng bản đồ để xem trên bản đồ. <span class="vdot" style="background:var(--taught)">${PLAY}</span>có video · ✎ có ghi chú. Tiến độ chỉ lưu trên trình duyệt này.</p>
     ${done.size ? `<div class="prog"><i style="width:${done.size / total * 100}%"></i></div><div class="pgt">Đã hiểu ${done.size}/${total}</div>` : ''}
     ${STAGES.map((s, k) => { const dn = s.ns.filter(n => done.has(n.id)).length;
       return `<section class="ls"><h3><span class="no" style="border-color:var(--${s.d})">${s.k}</span><span>${esc(s.name)}<small>${esc(s.from)} · ${s.ns.length} ${UNIT}${dn ? ` · đã hiểu ${dn}` : ''}</small></span></h3>
@@ -685,26 +692,45 @@ function drawList() {
   L.querySelectorAll('[data-map]').forEach(b => b.onclick = () => { showList(false); select(b.dataset.map); });
   drawArcs();
 }
-// the chosen topic's links only, each in its own lane in the left margin: out from the topic, along the lane, in to the other topic
+// Links in the list. Every topic that others build on owns one lane in the left margin, running from it down to the last
+// topic that needs it; a short arrow leaves the lane into each of those topics. Links implied by a longer chain (A→B→C makes
+// A→C) are left out, so the lanes stay few and parallel. Tapping a topic lights its lane and the lanes that lead into it.
+let BUS = null, NL = 0;
+function buses() {
+  if (BUS) return;
+  const P = {}; STAGES.flatMap(s => s.ns).forEach((n, i) => P[n.id] = i);
+  const anc = (x, skip) => { const s = new Set(), st = byId[x].pre.filter(p => p !== skip); while (st.length) { const y = st.pop(); if (!s.has(y)) { s.add(y); st.push(...byId[y].pre); } } return s; };
+  const RK = {}; N.forEach(n => n.pre.forEach(p => { if (!anc(n.id, p).has(p)) (RK[p] = RK[p] || []).push(n.id); }));
+  BUS = Object.keys(RK).map(s => ({ s, k: RK[s], a: P[s], b: Math.max(...RK[s].map(k => P[k])) })).sort((x, y) => x.a - y.a || y.b - x.b);
+  const ends = []; BUS.forEach(u => { let i = ends.findIndex(e => e < u.a); if (i < 0) { i = ends.length; ends.push(u.b); } else ends[i] = u.b; u.lane = i; });
+  NL = ends.length; BUS.byS = Object.fromEntries(BUS.map(u => [u.s, u]));
+}
+const gutter = () => { buses(); return innerWidth > 760 ? Math.min(250, NL * 6 + 30) : 76; };
 function drawArcs() {
+  buses();
   const W = L0(); W.querySelector('.arcs')?.remove();
-  if (!lsel) return;
-  const box = W.getBoundingClientRect(), at = id => { const b = W.querySelector(`[data-done="${CSS.escape(id)}"]`); if (!b) return null; const r = b.getBoundingClientRect(); return [r.left - box.left, r.top - box.top + r.height / 2]; };
-  const S = at(lsel); if (!S) return;
-  const es = [...byId[lsel].pre.map(p => ({ id: p, up: 1 })), ...(kids[lsel] || []).map(k => ({ id: k, up: 0 }))]
-    .map(e => (e.p = at(e.id), e)).filter(e => e.p).sort((a, b) => Math.abs(a.p[1] - S[1]) - Math.abs(b.p[1] - S[1]));   // short links nearest the list
-  const x0 = S[0] - 4, room = x0 - 6, gap = Math.max(3, Math.min(9, room / Math.max(1, es.length)));
-  const col = `var(--${byId[lsel].d})`;
-  const paths = es.map((e, i) => { const x = x0 - 6 - i * gap, y1 = S[1] + (i - (es.length - 1) / 2) * Math.min(2, 16 / es.length), y2 = e.p[1], r = Math.min(5, Math.abs(y2 - y1) / 2), sg = y2 > y1 ? 1 : -1;
-    const d = `M${x0},${y1.toFixed(1)}H${(x + r).toFixed(1)}Q${x.toFixed(1)},${y1.toFixed(1)} ${x.toFixed(1)},${(y1 + sg * r).toFixed(1)}V${(y2 - sg * r).toFixed(1)}Q${x.toFixed(1)},${y2.toFixed(1)} ${(x + r).toFixed(1)},${y2.toFixed(1)}H${(x0 - 1).toFixed(1)}`;
-    return `<path d="${d}" style="stroke:${e.up ? 'var(--ink)' : col}" marker-end="url(#ah${e.up ? 'u' : 'd'})"><title>${esc(byId[e.id].t)}</title></path>`; }).join('');
-  W.insertAdjacentHTML('afterbegin', `<svg class="arcs" width="${x0 + 2}" height="${W.scrollHeight}" aria-hidden="true"><defs>
-    <marker id="ahu" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L8,4L0,8z" style="fill:var(--ink)"/></marker>
-    <marker id="ahd" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L8,4L0,8z" style="fill:${col}"/></marker></defs>${paths}</svg>`);
+  const box = W.getBoundingClientRect(), pos = {};
+  W.querySelectorAll('.ck').forEach(b => { const r = b.getBoundingClientRect(); pos[b.dataset.done] = [r.left - box.left, r.top - box.top + r.height / 2]; });
+  const any = Object.values(pos)[0]; if (!any) return;
+  const x0 = any[0] - 3, sp = Math.max(1.8, (x0 - 14) / Math.max(1, NL)), X = lane => +(x0 - 9 - lane * sp).toFixed(1);
+  const f = v => v.toFixed(1);
+  const lanePath = (x, ys, kidsY) => `M${f(x0)},${f(ys)}H${x}V${f(Math.max(...kidsY))}` + kidsY.map(y => `M${x},${f(y)}H${f(x0 - 1)}`).join('');
+  let base = '', hi = '';
+  BUS.forEach(u => { const ys = pos[u.s]?.[1], ky = u.k.map(k => pos[k]?.[1]).filter(y => y != null); if (ys == null || !ky.length) return;
+    const x = X(u.lane), d = byId[u.s].d;
+    base += `<path class="bus" d="${lanePath(x, ys, ky)}" style="stroke:var(--${d})"/>` + ky.map(y => `<path class="tip" d="M${f(x0 - 6)},${f(y - 3)}L${f(x0 - 1)},${f(y)}L${f(x0 - 6)},${f(y + 3)}" style="fill:var(--${d})"/>`).join('');
+  });
+  if (lsel && pos[lsel]) {
+    const n = byId[lsel], u = BUS.byS[lsel], x = u ? X(u.lane) : X(NL), ky = (kids[lsel] || []).map(k => pos[k]?.[1]).filter(y => y != null);
+    if (ky.length) hi += `<path class="hl" d="${lanePath(x, pos[lsel][1], ky)}" style="stroke:var(--${n.d})"/>` + ky.map(y => `<path class="tip hl" d="M${f(x0 - 8)},${f(y - 4.5)}L${f(x0)},${f(y)}L${f(x0 - 8)},${f(y + 4.5)}" style="fill:var(--${n.d})"/>`).join('');
+    n.pre.forEach(p => { if (!pos[p]) return; const q = BUS.byS[p], xp = q ? X(q.lane) : X(NL + 1), y = pos[lsel][1];
+      hi += `<path class="hl" d="${lanePath(xp, pos[p][1], [y])}" style="stroke:var(--ink)"/><path class="tip hl" d="M${f(x0 - 8)},${f(y - 4.5)}L${f(x0)},${f(y)}L${f(x0 - 8)},${f(y + 4.5)}" style="fill:var(--ink)"/>`; });
+  }
+  W.insertAdjacentHTML('afterbegin', `<svg class="arcs${lsel ? ' has' : ''}" width="${f(x0 + 2)}" height="${W.scrollHeight}" aria-hidden="true">${base}${hi}</svg>`);
 }
 const L0 = () => $('list').querySelector('.lw');
 let lsel = null;
-addEventListener('resize', () => { if (!$('list').hidden) drawArcs(); });
+addEventListener('resize', () => { if (!$('list').hidden) drawList(); });
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (!$('list').hidden) drawArcs(); });
 function setHash(h) { try { history.replaceState(null, '', h || location.pathname + location.search); } catch (e) {} }
 function showList(on) {
