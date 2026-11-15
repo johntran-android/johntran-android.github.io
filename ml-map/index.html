@@ -213,6 +213,7 @@ details summary{cursor:pointer;font-size:12.5px;font-weight:600}
   header{gap:6px}
   h1{display:none}
   #sV{order:0}
+  #sB{order:0}
   #themeBtn{order:1;margin-left:auto}
   #q{order:2;flex:1 1 120px;min-width:120px;width:auto}
   #sM{order:3} #rankBtn{order:4} #sL{order:5} #sC{order:6}
@@ -228,6 +229,7 @@ details summary{cursor:pointer;font-size:12.5px;font-weight:600}
 <header>
   <h1>Nền móng Machine Learning</h1>
   <div class="seg" id="sV" role="group" aria-label="Phiên bản"><button id="vF" type="button" title="Cả 233 chủ đề">Đầy đủ</button><button id="vS" type="button" title="Mỗi chấm là một chương sách">Rút gọn</button><button id="vL" type="button" title="Mọi chủ đề xếp thành một danh sách, học từ trên xuống">Danh sách</button></div>
+  <div class="seg" id="sB" role="group" aria-label="Lọc theo sách"></div>
   <span class="sub" id="sub"></span>
   <span class="spacer"></span>
   <input type="search" id="q" list="names" placeholder="Tìm chủ đề…" aria-label="Tìm chủ đề">
@@ -323,7 +325,7 @@ function readColors() { ['paper', 'ink', 'dim', 'edge', 'C', 'L', 'P', 'S', 'O',
 const colorOf = n => lit && !lit.has(n.id) ? K.dim : colorBy === 'domain' ? K[n.d] : colorBy === 'status' ? K[n.st] : done.has(n.id) ? K[n.d] : canLearn(n) ? K['p' + n.d] : K.ahead;
 const lid = e => e.id ?? e;
 const linkOn = l => lit && litDown && (sel === lid(l.source) || litDown.has(lid(l.source))) && litDown.has(lid(l.target));
-const linkUp = l => lit && !linkOn(l) && lit.has(lid(l.source)) && lit.has(lid(l.target)) && !litDown.has(lid(l.target));
+const linkUp = l => lit && !linkOn(l) && lit.has(lid(l.source)) && lit.has(lid(l.target)) && !(litDown && litDown.has(lid(l.target)));
 const direct = l => lid(l.source) === sel || lid(l.target) === sel;
 
 // ---- where each topic wants to sit.
@@ -524,7 +526,7 @@ function endTour() { if (!tour) return; clearTimeout(tour.timer); tour = null; $
 // ---- selection
 function select(id) {
   endTour(); sel = id;
-  if (!id) { lit = litDown = near = null; $('card').hidden = true; $('card').innerHTML = ''; refresh(); drawRank(); return; }
+  if (!id) { lit = bookSet; litDown = near = null; $('card').hidden = true; $('card').innerHTML = ''; refresh(); drawRank(); return; }
   stopSpin();
   litDown = down(id); const ups = up(id); lit = new Set([id, ...litDown, ...ups]); near = new Set([...(kids[id] || []), ...byId[id].pre]);
   openStg.add(stageOf[id]);
@@ -668,7 +670,7 @@ drawRank();
 if (innerWidth <= 760) $('rank').hidden = true;
 
 function drawList() {
-  const L = $('list'), top = L.scrollTop, total = N.length;
+  const L = $('list'), top = L.scrollTop, vis = n => !bookSet || bookSet.has(n.id), total = N.filter(vis).length, dc = N.filter(n => vis(n) && done.has(n.id)).length;
   const S = lsel && byId[lsel], pre = new Set(S ? S.pre : []), nxt = new Set(S ? kids[lsel] || [] : []);
   const pill = x => `<button type="button" data-go="${x}">${esc(byId[x].t)}</button>`;
   const rel = n => n.id !== lsel ? '' : `<div class="rel">${n.pre.length ? `<div class="lab">Cần học trước</div><div class="pills">${n.pre.map(pill).join('')}</div>` : '<div class="src">Điểm xuất phát: không cần học gì trước.</div>'}
@@ -679,10 +681,10 @@ function drawList() {
       <div><button class="tt" type="button" data-id="${n.id}" aria-expanded="${n.id === lsel}" title="Xem chủ đề này nối với những gì">${esc(n.t)}</button>
       <div class="sm">${esc(n.src)}${n.nt.length ? ` · <a href="${REPO}${encodeURI(n.nt[0][1])}" target="_blank" rel="noopener">✎ ${n.nt.length} ghi chú</a>` : ''}</div>
       ${vs.length ? `<ul class="lv">${vs.map(v => `<li><a href="https://youtu.be/${esc(v.id)}" target="_blank" rel="noopener"><span class="vdot">${PLAY}</span><span>${esc(v.t)}</span></a></li>`).join('')}</ul>` : ''}${rel(n)}</div><button class="mp" type="button" data-map="${n.id}" title="Mở trên bản đồ" aria-label="Mở ${esc(n.t)} trên bản đồ"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M1.5 3.5 5.5 2l5 1.8 4-1.5v10.2l-4 1.5-5-1.8-4 1.5z"/><path d="M5.5 2v10.2M10.5 3.8V14"/></svg></button></li>`; };
-  L.innerHTML = `<div class="lw" style="padding-left:${gutter()}px"><h2>Học theo thứ tự, từ trên xuống</h2>
-    <p class="intro"><b>${total} ${UNIT}, chia ${STAGES.length} chặng.</b> Mỗi ${UNIT} chỉ cần những ${UNIT} đứng trước nó trong danh sách. Mỗi đường dọc bên trái đi ra từ một chủ đề, mũi tên chỉ vào những chủ đề cần nó. Bấm tên để làm sáng đường của chủ đề đó; bấm vòng tròn khi đã hiểu; bấm biểu tượng bản đồ để xem trên bản đồ. <span class="vdot" style="background:var(--taught)">${PLAY}</span>có video · ✎ có ghi chú. Tiến độ chỉ lưu trên trình duyệt này.</p>
-    ${done.size ? `<div class="prog"><i style="width:${done.size / total * 100}%"></i></div><div class="pgt">Đã hiểu ${done.size}/${total}</div>` : ''}
-    ${STAGES.map((s, k) => { const dn = s.ns.filter(n => done.has(n.id)).length;
+  L.innerHTML = `<div class="lw" style="padding-left:${gutter()}px"><h2>${BK ? `${esc(BOOKN[BK])}: ` : ''}Học theo thứ tự, từ trên xuống</h2>
+    <p class="intro"><b>${total} ${UNIT}${BK ? ` lấy từ ${esc(BOOKN[BK])}` : `, chia ${STAGES.length} chặng`}.</b> Mỗi ${UNIT} chỉ cần những ${UNIT} đứng trước nó trong danh sách. Mỗi đường dọc bên trái đi ra từ một chủ đề, mũi tên chỉ vào những chủ đề cần nó. Bấm tên để làm sáng đường của chủ đề đó; bấm vòng tròn khi đã hiểu; bấm biểu tượng bản đồ để xem trên bản đồ. <span class="vdot" style="background:var(--taught)">${PLAY}</span>có video · ✎ có ghi chú. Tiến độ chỉ lưu trên trình duyệt này.</p>
+    ${dc ? `<div class="prog"><i style="width:${dc / total * 100}%"></i></div><div class="pgt">Đã hiểu ${dc}/${total}</div>` : ''}
+    ${STAGES.map(s0 => ({ ...s0, ns: s0.ns.filter(vis) })).filter(s => s.ns.length).map((s, k) => { const dn = s.ns.filter(n => done.has(n.id)).length;
       return `<section class="ls"><h3><span class="no" style="border-color:var(--${s.d})">${s.k}</span><span>${esc(s.name)}<small>${esc(s.from)} · ${s.ns.length} ${UNIT}${dn ? ` · đã hiểu ${dn}` : ''}</small></span></h3>
         <ol class="ll">${s.ns.map(row).join('')}</ol></section>`; }).join('')}</div>`;
   L.scrollTop = top;
@@ -696,11 +698,13 @@ function drawList() {
 // topic that needs it; a short arrow leaves the lane into each of those topics. Links implied by a longer chain (A→B→C makes
 // A→C) are left out, so the lanes stay few and parallel. Tapping a topic lights its lane and the lanes that lead into it.
 let BUS = null, NL = 0;
+let busKey = null;
 function buses() {
-  if (BUS) return;
-  const P = {}; STAGES.flatMap(s => s.ns).forEach((n, i) => P[n.id] = i);
-  const anc = (x, skip) => { const s = new Set(), st = byId[x].pre.filter(p => p !== skip); while (st.length) { const y = st.pop(); if (!s.has(y)) { s.add(y); st.push(...byId[y].pre); } } return s; };
-  const RK = {}; N.forEach(n => n.pre.forEach(p => { if (!anc(n.id, p).has(p)) (RK[p] = RK[p] || []).push(n.id); }));
+  if (BUS && busKey === BK) return; busKey = BK;
+  const vis = x => !bookSet || bookSet.has(x), pre = x => byId[x].pre.filter(vis);
+  const P = {}; STAGES.flatMap(s => s.ns).filter(n => vis(n.id)).forEach((n, i) => P[n.id] = i);
+  const anc = (x, skip) => { const s = new Set(), st = pre(x).filter(p => p !== skip); while (st.length) { const y = st.pop(); if (!s.has(y)) { s.add(y); st.push(...pre(y)); } } return s; };
+  const RK = {}; N.filter(n => vis(n.id)).forEach(n => pre(n.id).forEach(p => { if (!anc(n.id, p).has(p)) (RK[p] = RK[p] || []).push(n.id); }));
   BUS = Object.keys(RK).map(s => ({ s, k: RK[s], a: P[s], b: Math.max(...RK[s].map(k => P[k])) })).sort((x, y) => x.a - y.a || y.b - x.b);
   const ends = []; BUS.forEach(u => { let i = ends.findIndex(e => e < u.a); if (i < 0) { i = ends.length; ends.push(u.b); } else ends[i] = u.b; u.lane = i; });
   NL = ends.length; BUS.byS = Object.fromEntries(BUS.map(u => [u.s, u]));
@@ -728,6 +732,22 @@ function drawArcs() {
   }
   W.insertAdjacentHTML('afterbegin', `<svg class="arcs${lsel ? ' has' : ''}" width="${f(x0 + 2)}" height="${W.scrollHeight}" aria-hidden="true">${base}${hi}</svg>`);
 }
+// ---- filter by book: light only the topics taken from one book, on the map and in the list
+const BOOKN = { CB: 'Casella & Berger', PR: 'Bishop PRML', NW: 'Nocedal & Wright', MIT: 'MIT 18.01 · 18.02 · 18.06' };
+const BOOKS = [['', 'Tất cả', 'Mọi chủ đề'], ['CB', 'Casella', BOOKN.CB], ['PR', 'Bishop', BOOKN.PR], ['NW', 'Nocedal', BOOKN.NW], ['MIT', 'MIT', 'Giải tích và đại số tuyến tính, theo các khoá MIT']];
+const bookOf = n => (/^(CB|PR|NW)/.exec(n.id) || [0, 'MIT'])[1];
+let BK = '', bookSet = null;
+$('sB').innerHTML = '<span class="k">Sách</span>' + BOOKS.map(([k, t, full]) => `<button type="button" data-b="${k}" title="${esc(full)}${k ? ` · ${N.filter(n => bookOf(n) === k).length} ${UNIT}` : ''}">${t}</button>`).join('');
+function setBook(b) {
+  BK = b; bookSet = b ? new Set(N.filter(n => bookOf(n) === b).map(n => n.id)) : null;
+  $('sB').querySelectorAll('button').forEach(x => x.classList.toggle('on', x.dataset.b === b));
+  $('sub').textContent = b ? `${bookSet.size} ${UNIT} từ ${BOOKN[b]}` : `${N.length} ${UNIT} · ${STAGES.length} chặng`;
+  endTour(); sel = null; lit = bookSet; litDown = near = null; $('card').hidden = true; $('card').innerHTML = ''; refresh(); drawRank();
+  if (!$('list').hidden) { $('list').scrollTop = 0; lsel = null; drawList(); }
+  else if (G) { stopSpin(); if (bookSet) G.zoomToFit(calm ? 0 : 900, 50, n => bookSet.has(n.id)); else fit(); }
+}
+$('sB').querySelectorAll('button').forEach(x => x.onclick = () => setBook(x.dataset.b));
+$('sB').querySelector('button[data-b=""]').classList.add('on');
 const L0 = () => $('list').querySelector('.lw');
 let lsel = null;
 addEventListener('resize', () => { if (!$('list').hidden) drawList(); });
