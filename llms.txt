@@ -19,6 +19,7 @@
 - YouTube autopilot (server, 2026; Cloud Functions + YouTube Data API): uploads finished recordings, writes titles/descriptions, generates LaTeX thumbnails, files playlists, links related lessons, publishes notes to GitHub.
 - FormulaBase (Android + web, Aug 2026-now; v1.31): 797 formulas in probability, statistics, linear algebra, calculus, optimization, ML, with plain-language meaning, derivations and several quiz types. https://formulabase.web.app
 - Deep-Math-For-AI (public repo): raw learning notes from 19 courses. https://github.com/johntran-android/Deep-Math-For-AI
+- ML Foundations Map (web, Nov 2026; in Vietnamese): interactive 3D/2D map of 233 topics from the tables of contents of Bishop PRML, Casella & Berger and Nocedal & Wright plus calculus and linear algebra, joined by 405 prerequisite links; a seven-stage learning order; each topic links to his video lessons and public notes. https://johntran-android.github.io/ml-map/
 - Math Lab (web, Sep 2026): 105 interactive Vietnamese math illustrations. https://studyboard-math-lab.limeanorange.chatgpt.site
 - Sentence Master (Android, 2018-now; Java): sentence-based language learning in 30+ languages, 1M+ downloads, ~45 app flavors from one white-label codebase with fastlane CI/CD. https://play.google.com/store/apps/details?id=com.hungdaovuong.sentencemaster.en
 

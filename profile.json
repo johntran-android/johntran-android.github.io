@@ -94,6 +94,12 @@
    "url": "https://github.com/johntran-android/Deep-Math-For-AI"
   },
   {
+   "name": "ML Foundations Map",
+   "platform": "web",
+   "since": "2026-11",
+   "url": "https://johntran-android.github.io/ml-map/"
+  },
+  {
    "name": "Math Lab",
    "platform": "web",
    "since": "2026-09",
