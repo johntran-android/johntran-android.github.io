@@ -165,29 +165,40 @@ details summary{cursor:pointer;font-size:12.5px;font-weight:600}
 @media (max-width:1340px){.sub{display:none}}
 /* the linear list: the same order as the roadmap, as one long page over the map */
 #list{position:absolute;inset:0;z-index:5;background:var(--paper);overflow-y:auto;-webkit-overflow-scrolling:touch}
-.lw{max-width:760px;margin:0 auto;padding:18px 16px 60px}
-.lw>h2{font-family:var(--display);font-weight:500;font-size:22px;line-height:1.2;margin:0 0 6px;text-wrap:balance}
-.lw>.intro{font-size:13.5px;max-width:62ch;margin-bottom:10px}
+.lw{position:relative;max-width:820px;margin:0 auto;padding:18px 16px 60px 96px}
+.arcs{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+.arcs path{fill:none;stroke:var(--edge);stroke-width:1;opacity:.55}
+.arcs.has path{opacity:.1}
+.arcs path.up{stroke:var(--ink);stroke-width:2.2;opacity:1}
+.arcs path.dn{stroke-width:2.2;opacity:1}
+@media (max-width:760px){.lw{padding-left:44px;padding-right:12px}}
+.lw>h2{font-family:var(--display);font-weight:500;font-size:24px;line-height:1.2;margin:0 0 6px;text-wrap:balance}
+.lw>.intro{font-size:15px;max-width:62ch;margin-bottom:10px}
 .lw>.prog{margin:4px 0 6px;height:6px;border-radius:3px}
 .lw .pgt{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
 .ls{margin-top:22px}
-.ls h3{display:flex;align-items:center;gap:10px;margin:0 0 4px;font-size:16px;line-height:1.3;position:sticky;top:0;z-index:1;background:var(--paper);padding:8px 0 6px;border-bottom:1px solid var(--rule)}
-.ls h3 small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.ls h3{display:flex;align-items:center;gap:10px;margin:0 0 4px;font-size:18px;line-height:1.3;position:sticky;top:0;z-index:2;background:var(--paper);padding:8px 0 6px;border-bottom:1px solid var(--rule)}
+.ls h3 small{display:block;font-weight:400;color:var(--muted);font-size:13.5px}
 .ls h3 .no{width:28px;height:28px;border-radius:50%;border:2.5px solid;font-size:13px;font-weight:700;display:grid;place-items:center;flex:none;font-variant-numeric:tabular-nums}
-.ls>.lnk{margin:4px 0 2px 38px}
 .ll{list-style:none;margin:0;padding:0}
-.ll>li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;padding:9px 0;border-bottom:1px solid var(--dim)}
-.ll .ck{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--rule);background:var(--panel);color:var(--muted);font:inherit;font-size:11.5px;font-weight:600;cursor:pointer;font-variant-numeric:tabular-nums;padding:0}
+.ll>li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;padding:10px 0;border-bottom:1px solid var(--dim)}
+.ll>li.on{background:color-mix(in srgb,var(--ground) 70%,transparent);box-shadow:-8px 0 0 color-mix(in srgb,var(--ground) 70%,transparent),8px 0 0 color-mix(in srgb,var(--ground) 70%,transparent)}
+.ll>li.pre .ck{border-color:var(--ink);border-width:2.5px;color:var(--ink)}
+.ll>li.nxt .ck{border-width:2.5px;color:var(--ink)}
+.rel{display:grid;gap:6px;margin-top:8px;font-size:13.5px}
+.rel .pills button{font-size:13px;padding:3px 10px}
+.rel .lab{font-size:11px}
+.ll .ck{position:relative;z-index:1;width:28px;height:28px;border-radius:50%;border:1.5px solid var(--rule);background:var(--panel);color:var(--muted);font:inherit;font-size:11.5px;font-weight:600;cursor:pointer;font-variant-numeric:tabular-nums;padding:0}
 .ll .ck:hover{border-color:var(--ink);color:var(--ink)}
 .ll li.ok .ck{background:var(--taught);border-color:var(--taught);color:var(--panel);font-size:14px}
-.ll .tt{font:inherit;font-size:14.5px;font-weight:600;background:none;border:0;padding:0;color:var(--ink);cursor:pointer;text-align:left;line-height:1.35}
+.ll .tt{font:inherit;font-size:16.5px;font-weight:600;background:none;border:0;padding:0;color:var(--ink);cursor:pointer;text-align:left;line-height:1.35}
 .ll .tt:hover{text-decoration:underline;text-underline-offset:3px}
 .ll li.ok .tt{color:var(--muted)}
-.ll .sm{font-size:12px;color:var(--muted);margin-top:1px}
+.ll .sm{font-size:13.5px;color:var(--muted);margin-top:1px}
 .ll .sm a{color:var(--read);font-weight:600;text-decoration:none}
 .ll .sm a:hover{text-decoration:underline}
 .lv{list-style:none;margin:5px 0 0;padding:0;display:grid;gap:3px}
-.lv a{display:inline-flex;gap:6px;align-items:baseline;color:var(--ink);text-decoration:none;font-size:13px;line-height:1.35}
+.lv a{display:inline-flex;gap:6px;align-items:baseline;color:var(--ink);text-decoration:none;font-size:14.5px;line-height:1.35}
 .lv a:hover{text-decoration:underline;text-underline-offset:2px}
 .lv .vdot{flex:none;background:var(--taught);vertical-align:0}
 .listing #sM,.listing #sL,.listing #sC,.listing #rankBtn{display:none}
@@ -610,7 +621,6 @@ function drawRank(follow) {
   if (rankTab === 'path') {
     body = STAGES.map((s, k) => { const dn = s.ns.filter(n => done.has(n.id)).length, nv = s.ns.filter(n => n.v.length).length;
       return `<details class="stg" data-k="${k}"${openStg.has(k) ? ' open' : ''}><summary><span class="no" style="border-color:var(--${s.d})">${s.k}</span><span class="nm">${esc(s.name)}<small>${esc(s.from)}</small></span><span class="ct">${dn ? `${dn}/${s.ns.length} đã hiểu` : `${s.ns.length} ${UNIT}`}<small>${nv ? `<span class="mk taught">${MK.taught}</span> ${nv} có video` : ''}</small></span></summary>
-        <button class="lnk" type="button" data-all="${k}">${dn === s.ns.length ? 'Bỏ đánh dấu cả chặng' : 'Tôi biết cả chặng này rồi'}</button>
         <ol class="rlist">${s.ns.map(n => item(n, n.no)).join('')}</ol></details>`; }).join('');
     intro = `<b>Học lần lượt ${STAGES.length} chặng, từ trên xuống.</b> Bấm một chặng để mở danh sách chủ đề. <span class="mk taught">${MK.taught}</span> có video · <span class="mk read">${MK.read}</span> có ghi chú · <span class="mk taught">✓</span> bạn đã hiểu.`;
   } else if (rankTab === 'next') {
@@ -654,23 +664,48 @@ if (innerWidth <= 760) $('rank').hidden = true;
 
 function drawList() {
   const L = $('list'), top = L.scrollTop, total = N.length;
+  const S = lsel && byId[lsel], pre = new Set(S ? S.pre : []), nxt = new Set(S ? kids[lsel] || [] : []);
+  const pill = x => `<button type="button" data-go="${x}">${esc(byId[x].t)}</button>`;
+  const rel = n => n.id !== lsel ? '' : `<div class="rel">${n.pre.length ? `<div class="lab">Cần học trước</div><div class="pills">${n.pre.map(pill).join('')}</div>` : '<div class="src">Điểm xuất phát: không cần học gì trước.</div>'}
+      ${(kids[n.id] || []).length ? `<div class="lab">Học xong mở ra</div><div class="pills">${kids[n.id].map(pill).join('')}</div>` : ''}
+      <button class="lnk" type="button" data-map="${n.id}">Xem trên bản đồ →</button></div>`;
   const row = n => { const ok = done.has(n.id), vs = n.v.map(i => D.vids[i]);
-    return `<li class="${ok ? 'ok' : ''}"><button class="ck" type="button" data-done="${n.id}" aria-pressed="${ok}" aria-label="${ok ? 'Bỏ đánh dấu' : 'Đánh dấu đã hiểu'}: ${esc(n.t)}">${ok ? '✓' : n.no}</button>
-      <div><button class="tt" type="button" data-id="${n.id}" title="Xem trên bản đồ">${esc(n.t)}</button>
+    return `<li id="li-${n.id}" class="${ok ? 'ok' : ''}${n.id === lsel ? ' on' : ''}${pre.has(n.id) ? ' pre' : ''}${nxt.has(n.id) ? ' nxt' : ''}"><button class="ck" type="button" data-done="${n.id}" aria-pressed="${ok}" aria-label="${ok ? 'Bỏ đánh dấu' : 'Đánh dấu đã hiểu'}: ${esc(n.t)}">${ok ? '✓' : n.no}</button>
+      <div><button class="tt" type="button" data-id="${n.id}" aria-expanded="${n.id === lsel}" title="Xem chủ đề này nối với những gì">${esc(n.t)}</button>
       <div class="sm">${esc(n.src)}${n.nt.length ? ` · <a href="${REPO}${encodeURI(n.nt[0][1])}" target="_blank" rel="noopener">✎ ${n.nt.length} ghi chú</a>` : ''}</div>
-      ${vs.length ? `<ul class="lv">${vs.map(v => `<li><a href="https://youtu.be/${esc(v.id)}" target="_blank" rel="noopener"><span class="vdot">${PLAY}</span><span>${esc(v.t)}</span></a></li>`).join('')}</ul>` : ''}</div></li>`; };
+      ${vs.length ? `<ul class="lv">${vs.map(v => `<li><a href="https://youtu.be/${esc(v.id)}" target="_blank" rel="noopener"><span class="vdot">${PLAY}</span><span>${esc(v.t)}</span></a></li>`).join('')}</ul>` : ''}${rel(n)}</div></li>`; };
   L.innerHTML = `<div class="lw"><h2>Học theo thứ tự, từ trên xuống</h2>
-    <p class="intro"><b>${total} ${UNIT}, chia ${STAGES.length} chặng.</b> Mỗi ${UNIT} chỉ cần những ${UNIT} đứng trước nó trong danh sách. Bấm vào vòng tròn khi bạn đã hiểu; bấm vào tên để xem nó trên bản đồ. <span class="vdot" style="background:var(--taught)">${PLAY}</span>có video · ✎ có ghi chú. Tiến độ chỉ lưu trên trình duyệt này.</p>
+    <p class="intro"><b>${total} ${UNIT}, chia ${STAGES.length} chặng.</b> Mỗi ${UNIT} chỉ cần những ${UNIT} đứng trước nó trong danh sách. Đường cong bên trái nối hai chủ đề: chủ đề trên cần học trước chủ đề dưới. Bấm vào tên để thấy nó nối với những gì; bấm vòng tròn khi bạn đã hiểu. <span class="vdot" style="background:var(--taught)">${PLAY}</span>có video · ✎ có ghi chú. Tiến độ chỉ lưu trên trình duyệt này.</p>
     ${done.size ? `<div class="prog"><i style="width:${done.size / total * 100}%"></i></div><div class="pgt">Đã hiểu ${done.size}/${total}</div>` : ''}
     ${STAGES.map((s, k) => { const dn = s.ns.filter(n => done.has(n.id)).length;
       return `<section class="ls"><h3><span class="no" style="border-color:var(--${s.d})">${s.k}</span><span>${esc(s.name)}<small>${esc(s.from)} · ${s.ns.length} ${UNIT}${dn ? ` · đã hiểu ${dn}` : ''}</small></span></h3>
-        <button class="lnk" type="button" data-all="${k}">${dn === s.ns.length ? 'Bỏ đánh dấu cả chặng' : 'Tôi biết cả chặng này rồi'}</button>
         <ol class="ll">${s.ns.map(row).join('')}</ol></section>`; }).join('')}</div>`;
   L.scrollTop = top;
   L.querySelectorAll('[data-done]').forEach(b => b.onclick = () => setDone([b.dataset.done], !done.has(b.dataset.done)));
-  L.querySelectorAll('[data-all]').forEach(b => b.onclick = () => { const ids = STAGES[+b.dataset.all].ns.map(n => n.id); setDone(ids, !ids.every(x => done.has(x))); });
-  L.querySelectorAll('.tt').forEach(b => b.onclick = () => { showList(false); select(b.dataset.id); });
+  L.querySelectorAll('.tt').forEach(b => b.onclick = () => { lsel = lsel === b.dataset.id ? null : b.dataset.id; drawList(); });
+  L.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { lsel = b.dataset.go; drawList(); const r = $('li-' + lsel); if (r) L.scrollTop += r.getBoundingClientRect().top - L.getBoundingClientRect().top - L.clientHeight / 3; });
+  L.querySelectorAll('[data-map]').forEach(b => b.onclick = () => { showList(false); select(b.dataset.map); });
+  drawArcs();
 }
+// every prerequisite as a curve in the left margin, from the topic it needs down to the topic itself
+function drawArcs() {
+  const W = L0(), box = W.getBoundingClientRect(), pos = {};
+  W.querySelectorAll('.ck').forEach(b => { const r = b.getBoundingClientRect(); pos[b.dataset.done] = [r.left - box.left, r.top - box.top + r.height / 2]; });
+  const G = parseFloat(getComputedStyle(W).paddingLeft) - 6, x0 = Object.values(pos)[0]?.[0] ?? G;
+  let up = '', dn = '', rest = '';
+  N.forEach(n => n.pre.forEach(p => { const a = pos[p], b = pos[n.id]; if (!a || !b) return;
+    const bend = Math.min(x0 - 3, 8 + (b[1] - a[1]) * .035), x = x0 + 1;
+    const d = `M${x},${a[1].toFixed(1)}C${(x - bend * 1.33).toFixed(1)},${a[1].toFixed(1)} ${(x - bend * 1.33).toFixed(1)},${b[1].toFixed(1)} ${x},${b[1].toFixed(1)}`;
+    if (lsel && n.id === lsel) up += `<path class="up" d="${d}"/>`;
+    else if (lsel && p === lsel) dn += `<path class="dn" style="stroke:var(--${byId[lsel].d})" d="${d}"/>`;
+    else rest += `<path d="${d}"/>`; }));
+  W.querySelector('.arcs')?.remove();
+  W.insertAdjacentHTML('afterbegin', `<svg class="arcs${lsel ? ' has' : ''}" width="${x0 + 2}" height="${W.scrollHeight}" aria-hidden="true">${rest}${dn}${up}</svg>`);
+}
+const L0 = () => $('list').querySelector('.lw');
+let lsel = null;
+addEventListener('resize', () => { if (!$('list').hidden) drawArcs(); });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (!$('list').hidden) drawArcs(); });
 function setHash(h) { try { history.replaceState(null, '', h || location.pathname + location.search); } catch (e) {} }
 function showList(on) {
   $('list').hidden = !on; document.body.classList.toggle('listing', on);
