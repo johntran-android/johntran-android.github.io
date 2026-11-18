@@ -96,6 +96,8 @@ input[type=search]{font:inherit;font-size:13px;background:var(--panel);color:var
 .rlist .sn{font-size:11px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
 .rlist .bkh{list-style:none;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--muted);padding:8px 6px 2px 36px}
 .rlist .bkh:first-child{padding-top:2px}
+#rank .lab .pg{margin-left:8px}
+#rank>.lnk{justify-self:start;align-self:flex-start}
 .rlist .n{font-variant-numeric:tabular-nums;color:var(--muted);font-size:11.5px}
 .rlist .bar{height:4px;border-radius:2px;margin-top:3px}
 .path{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:1px;max-height:210px;overflow-y:auto}
@@ -439,6 +441,10 @@ N.forEach((n, i) => {
   lvl(n); n.val = SIMPLE ? 2.5 + n.reach / 2 : DETAIL ? 1 + n.reach / 22 : 1 + n.reach / 10; n.r3 = Math.cbrt(n.val) * 4.6; n.r2 = Math.sqrt(n.val) * 3.6; n.big = n.reach >= (SIMPLE ? 10 : DETAIL ? 70 : 25);
 });
 const MAXL = Math.max(...N.map(n => n.lvl));
+{ const sk = {}; D.nodes.forEach(n => n.pre.forEach(p => (sk[p] = sk[p] || []).push(n.id)));
+  const sr = id => { const s = new Set(), st = [...(sk[id] || [])]; while (st.length) { const x = st.pop(); if (!s.has(x)) { s.add(x); st.push(...(sk[x] || [])); } } return s.size; };
+  const memo = {}; N.forEach(n => { n.imp = DETAIL ? (memo[n.sec] ??= sr(n.sec)) : n.reach; }); }
+const IMPU = DETAIL ? 'chủ đề' : UNIT;      // on level 3 the count is in level-2 topics
 const links = N.flatMap(n => n.pre.map(p => ({ source: p, target: n.id })));
 const counts = { taught: 0, read: 0, ahead: 0 }; N.forEach(n => counts[n.st]++);
 const domStat = {}; N.forEach(n => { const s = domStat[n.d] = domStat[n.d] || { n: 0, t: 0 }; s.n++; if (n.st === 'taught') s.t++; });
@@ -779,7 +785,7 @@ for (let i = STAGES.length - 1; i > 0; i--) if (STAGES[i].ns.length < 3) { STAGE
 const openStg = new Set();
 $('sub').textContent = `${N.length} ${UNIT} · ${STAGES.length} chặng`;
 let rankTab = 'path', onlyNoVid = false, askReset = false;
-const TOP = N.filter(n => n.reach > 0).sort((a, b) => b.reach - a.reach || a.i - b.i);
+const TOP = N.filter(n => n.imp > 0).sort((a, b) => b.imp - a.imp || (a.no ?? a.i) - (b.no ?? b.i));
 // where a topic sits in its book: "1.4", "5.1.3" (the x.y.0 opening part shows as its section), "chương 7" on the chapter map
 const BKS = { CB: 'Casella', PR: 'Bishop', NW: 'Nocedal' }, BKL = { CB: 'Casella & Berger', PR: 'Bishop PRML', NW: 'Nocedal & Wright', MIT: 'Giải tích · Đại số tuyến tính (MIT)' };
 const bkOf = n => (/^(CB|PR|NW)/.exec(n.id) || [0, 'MIT'])[1];
@@ -789,8 +795,42 @@ const item = (n, num, extra = '', withBook = true) => `<li><button data-id="${n.
 // a stage that mixes books gets a small book heading each time the book changes
 const byBook = ns => { const many = new Set(ns.map(bkOf)).size > 1; let last = null;
   return ns.map(n => { const b = bkOf(n), h = many && b !== last ? `<li class="bkh">${BKL[b]}</li>` : ''; last = b; return h + item(n, n.no, '', false); }).join(''); };
+// ---- one book picked in the filter: the panel turns into that cloud as a straight list, sortable
+let BK = '', bookSet = null, bookSort = 'book', bookNoVid = false;
+const secKey = n => { const m = /^(?:CB|PR|NW)(\d+(?:\.\d+)*)$/.exec(n.id); return m ? m[1].split('.').map(Number) : null; };
+const byBookOrder = (a, b) => { const x = secKey(a), y = secKey(b); if (!x || !y) return a.i - b.i;
+  for (let k = 0; k < Math.max(x.length, y.length); k++) { const d = (x[k] ?? -1) - (y[k] ?? -1); if (d) return d; } return 0; };
+const CHN = Object.fromEntries((D.simple || []).map(c => [c.id, c.t]));
+function drawBookList(R, top, follow) {
+  let ns = N.filter(n => bookSet.has(n.id)); const total = ns.length, nv = ns.filter(n => !n.v.length).length;
+  if (bookNoVid) ns = ns.filter(n => !n.v.length);
+  ns.sort(bookSort === 'book' ? byBookOrder : bookSort === 'path' ? (a, b) => a.no - b.no : (a, b) => b.imp - a.imp || a.no - b.no);
+  let lastCh = null;
+  const rows = ns.map((n, i) => {
+    let h = '';
+    if (bookSort === 'book') { const k = secKey(n), ch = k ? BK + k[0] : (D.simple || []).find(c => (c.m || []).includes(n.sec || n.id))?.id;
+      if (ch && ch !== lastCh && !SIMPLE) { h = `<li class="bkh">${k ? `Chương ${k[0]} · ` : ''}${esc(CHN[ch] || '')}</li>`; lastCh = ch; } }
+    const extra = bookSort === 'top' ? `<small>${n.imp ? `${DETAIL ? `mục ${n.sec.slice(2)} ` : ''}là nền cho ${n.imp} ${IMPU} phía sau` : 'một đích đến'}</small>` : bookSort === 'path' ? `<small>bài ${n.no} trong lộ trình chung</small>` : '';
+    return h + item(n, i + 1, extra, false);
+  }).join('');
+  const sb = (k, t, tip) => `<button data-s="${k}" class="${bookSort === k ? 'on' : ''}" title="${tip}">${t}</button>`;
+  R.innerHTML = `<button class="x" id="rx" aria-label="Đóng">×</button>
+    <div class="lab">${esc(BOOKN[BK])}<span class="pg">${total} ${UNIT}</span></div>
+    <div class="tabs">${sb('book', 'Theo sách', 'Đúng thứ tự mục lục của sách')}${sb('path', 'Thứ tự học', 'Theo lộ trình chung: bài nền trước, kể cả bài nền ở sách khác')}${sb('top', 'Quan trọng nhất', 'Bài nào làm nền cho nhiều bài phía sau nhất')}</div>
+    <label class="chk"><input type="checkbox" id="bnv"${bookNoVid ? ' checked' : ''}>Chỉ ${UNIT} chưa có video (${nv})</label>
+    <div class="scroll"><ol class="rlist">${rows || `<li class="src">Không còn ${UNIT} nào.</li>`}</ol></div>
+    <button class="lnk" id="bkAll" type="button">← Bỏ lọc, xem lộ trình cả bản đồ</button>`;
+  const sc = R.querySelector('.scroll'); sc.scrollTop = top;
+  if (follow) { const cur = sc.querySelector('.cur'); if (cur) { const a = cur.getBoundingClientRect(), b = sc.getBoundingClientRect(); if (a.top < b.top || a.bottom > b.bottom) sc.scrollTop += a.top - b.top - b.height / 3; } }
+  $('rx').onclick = () => { R.hidden = true; };
+  R.querySelectorAll('.tabs button').forEach(b => b.onclick = () => { bookSort = b.dataset.s; R.querySelector('.scroll').scrollTop = 0; drawRank(); });
+  $('bnv').onchange = e => { bookNoVid = e.target.checked; R.querySelector('.scroll').scrollTop = 0; drawRank(); };
+  $('bkAll').onclick = () => setBook('');
+  R.querySelectorAll('.rlist button').forEach(b => b.onclick = () => select(b.dataset.id));
+}
 function drawRank(follow) {
   const R = $('rank'), top = R.querySelector('.scroll')?.scrollTop || 0;
+  if (BK) return drawBookList(R, top, follow);
   let body, intro;
   if (rankTab === 'path') {
     body = STAGES.map((s, k) => { const dn = s.ns.filter(n => done.has(n.id)).length, nv = s.ns.filter(n => n.v.length).length;
@@ -798,8 +838,8 @@ function drawRank(follow) {
         <ol class="rlist">${byBook(s.ns)}</ol></details>`; }).join('');
     intro = `<b>Học lần lượt ${STAGES.length} chặng, từ trên xuống.</b> Bấm một chặng để mở danh sách chủ đề. <span class="mk taught">${MK.taught}</span> có video · <span class="mk read">${MK.read}</span> có ghi chú · <span class="mk taught">✓</span> bạn đã hiểu.`;
   } else if (rankTab === 'next') {
-    const nx = N.filter(canLearn).sort((a, b) => b.reach - a.reach || a.i - b.i);
-    body = (nx.length ? `<ol class="rlist">${nx.map((n, i) => item(n, i + 1, `<small>Chặng ${stageOf[n.id] + 1} · ${n.reach ? `mở đường cho ${n.reach} chủ đề` : 'một đích đến'}</small>`)).join('')}</ol>` : '')
+    const nx = N.filter(canLearn).sort((a, b) => b.imp - a.imp || a.i - b.i);
+    body = (nx.length ? `<ol class="rlist">${nx.map((n, i) => item(n, i + 1, `<small>Chặng ${stageOf[n.id] + 1} · ${n.imp ? `mở đường cho ${n.imp} ${IMPU}` : 'một đích đến'}</small>`)).join('')}</ol>` : '')
       + (!done.size ? '' : askReset ? `<div class="me"><span class="src">Xoá cả ${done.size} chủ đề đã đánh dấu?</span><button class="btn" id="rsY" type="button">Xoá</button><button class="btn" id="rsN" type="button">Giữ lại</button></div>`
         : `<button class="lnk" id="rs" type="button">Xoá tiến độ của tôi</button>`);
     intro = !done.size ? `<b>Bắt đầu từ đây:</b> ${nx.length} chủ đề này không cần học gì trước. Hiểu chủ đề nào thì mở nó ra, bấm “Đánh dấu đã hiểu”. Danh sách sẽ đổi sang những thứ bạn học được tiếp, và bản đồ sáng dần lên. Tiến độ chỉ lưu trên trình duyệt này.`
@@ -808,7 +848,7 @@ function drawRank(follow) {
   } else {
     const list = TOP.filter(n => !onlyNoVid || !n.v.length);
     body = `<label class="chk"><input type="checkbox" id="nv"${onlyNoVid ? ' checked' : ''}>Chỉ hiện chủ đề chưa có video (${TOP.filter(n => !n.v.length).length})</label>
-      <ol class="rlist">${list.map((n, i) => `<li><button data-id="${n.id}" class="${n.id === sel ? 'cur' : ''}"><span class="n${done.has(n.id) ? ' ok' : ''}">${done.has(n.id) ? '✓' : i + 1}</span><span style="min-width:0">${esc(n.t)}${n.v.length ? ` <span class="mk taught">${MK.taught}</span>` : ''}<div class="bar" style="width:${n.reach / TOP[0].reach * 100}%;background:var(--${n.d})"></div></span><span class="n">${n.reach}</span></button></li>`).join('')}</ol>`;
+      <ol class="rlist">${list.map((n, i) => `<li><button data-id="${n.id}" class="${n.id === sel ? 'cur' : ''}"><span class="n${done.has(n.id) ? ' ok' : ''}">${done.has(n.id) ? '✓' : i + 1}</span><span style="min-width:0">${esc(n.t)}${n.v.length ? ` <span class="mk taught">${MK.taught}</span>` : ''}<div class="bar" style="width:${n.imp / TOP[0].imp * 100}%;background:var(--${n.d})"></div></span><span class="n">${n.imp}</span></button></li>`).join('')}</ol>`;
     intro = `<b>Chủ đề nào làm nền cho nhiều thứ nhất.</b> Con số bên phải: bao nhiêu chủ đề khác cần nó. Số càng lớn, càng nên học cho chắc; trên bản đồ đó là những chấm to. <span class="mk taught">${MK.taught}</span> đã có video.`;
   }
   const tab = (k, name) => `<button data-t="${k}" class="${rankTab === k ? 'on' : ''}">${name}</button>`;
@@ -907,14 +947,14 @@ function drawArcs() {
 const BOOKN = { CB: 'Casella & Berger', PR: 'Bishop PRML', NW: 'Nocedal & Wright', MIT: 'MIT 18.01 · 18.02 · 18.06' };
 const BOOKS = [['', 'Tất cả', 'Mọi chủ đề'], ['CB', 'Casella', BOOKN.CB], ['PR', 'Bishop', BOOKN.PR], ['NW', 'Nocedal', BOOKN.NW], ['MIT', 'MIT', 'Giải tích và đại số tuyến tính, theo các khoá MIT']];
 const bookOf = n => (/^(CB|PR|NW)/.exec(n.id) || [0, 'MIT'])[1];
-let BK = '', bookSet = null;
 $('sB').innerHTML = '<span class="k">Sách</span>' + BOOKS.map(([k, t, full]) => `<button type="button" data-b="${k}" title="${esc(full)}${k ? ` · ${N.filter(n => bookOf(n) === k).length} ${UNIT}` : ''}">${t}</button>`).join('');
 function setBook(b) {
   BK = b; bookSet = b ? new Set(N.filter(n => bookOf(n) === b).map(n => n.id)) : null;
   $('sB').querySelectorAll('button').forEach(x => x.classList.toggle('on', x.dataset.b === b));
   $('sub').textContent = b ? `${bookSet.size} ${UNIT} từ ${BOOKN[b]}` : `${N.length} ${UNIT} · ${STAGES.length} chặng`;
   $('bkPill').hidden = !b; $('bkPill').textContent = b ? `${BOOKN[b]} · ${bookSet.size} ${UNIT}  ×` : ''; $('optBtn').setAttribute('aria-pressed', !!b);
-  endTour(); sel = null; lit = bookSet; litDown = near = null; $('card').hidden = true; $('card').innerHTML = ''; refresh(); drawRank();
+  endTour(); sel = null; lit = bookSet; litDown = near = null; $('card').hidden = true; $('card').innerHTML = ''; refresh(); $('rank').querySelector('.scroll') && ($('rank').querySelector('.scroll').scrollTop = 0); drawRank();
+  if (b && innerWidth > 760 && $('list').hidden) $('rank').hidden = false;
   if (!$('list').hidden) { $('list').scrollTop = 0; lsel = null; drawList(); }
   else if (G) { stopSpin(); fit(calm ? 0 : 900, bookSet); }
 }
