@@ -258,7 +258,7 @@ details.mr>.pills{display:contents}
   header>#q{display:none}
   header.srch{flex-wrap:wrap}
   header.srch>#q{display:block;order:9;flex:1 1 100%;font-size:16px;padding:7px 12px}
-  #toolSeg,#zIn,#zOut{display:none!important}
+  #zIn,#zOut{display:none!important}
   .legend{flex-wrap:nowrap;overflow-x:auto;right:10px;scrollbar-width:none}
   .legend::-webkit-scrollbar{display:none}
   .bkpill{display:block;position:absolute;left:8px;top:8px;z-index:3;font:inherit;font-size:13px;font-weight:600;background:var(--ink);color:var(--panel);border:0;border-radius:99px;padding:5px 12px}
@@ -295,7 +295,6 @@ details.mr>.pills{display:contents}
 #labels b.fr{position:absolute;left:0;top:0;display:none;border-radius:50%;border:2.5px solid var(--fr);pointer-events:none;will-change:transform}
 #labels b.fr::after{content:"";position:absolute;inset:-2.5px;border-radius:50%;border:2px solid var(--fr);animation:pulse 1.6s ease-out infinite}
 @media (prefers-reduced-motion: reduce){#labels b.fr::after,.frd{animation:none}}
-#tP svg,#tR svg{width:14px;height:14px;vertical-align:-2px;margin-right:4px}
 .new{display:inline-block;font-size:10px;font-weight:700;line-height:1;padding:2px 5px;border-radius:6px;background:var(--ink);color:var(--paper);vertical-align:1px}
 </style>
 <style>html,body{height:100dvh}</style>
@@ -328,7 +327,6 @@ details.mr>.pills{display:contents}
   <div class="nav">
     <div class="hint" id="hint"></div>
     <div class="row">
-      <div class="seg" id="toolSeg" role="group" aria-label="Kéo chuột để"><button id="tR" class="on" type="button" title="Kéo chuột để xoay"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v2.8h-2.8"/></svg>Xoay</button><button id="tP" type="button" title="Bàn tay: kéo chuột (một tay) để di chuyển bản đồ"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8V3.2a1 1 0 0 1 2 0V7.5M7 7V2.4a1 1 0 0 1 2 0V7M9 7V3a1 1 0 0 1 2 0v4.5M11 6.2a1 1 0 0 1 2 0V9.5c0 2.8-1.9 5-4.6 5-1.9 0-3-.9-4-2.4L2.6 9.6a1 1 0 0 1 1.6-1.2L5 9.4"/></svg>Kéo</button></div>
       <button class="btn" id="spinBtn" type="button" aria-pressed="false" title="Tự xoay chậm" aria-label="Tự xoay"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M13 8a5 5 0 1 1-1.5-3.6"/><path d="M13 2.5v2.8h-2.8"/></svg><span class="tx">Tự xoay</span></button>
       <button class="btn sq" id="zOut" type="button" aria-label="Thu nhỏ">−</button>
       <button class="btn sq" id="zIn" type="button" aria-label="Phóng to">+</button>
@@ -474,7 +472,7 @@ function setDone(ids, on) {
 }
 
 // ---- state
-let mode = '3d', layout = 'cum', colorBy = done.size ? 'progress' : 'domain', tool = store.get('nm-tool', 'rotate') === 'pan' ? 'pan' : 'rotate', spin = !calm && store.get('nm-tool', 'rotate') !== 'pan';
+let mode = '3d', layout = 'cum', colorBy = done.size ? 'progress' : 'domain', spin = !calm;
 let sel = null, lit = null, litDown = null, near = null, G = null, running = false, dirty = true, needFit = true, built = false, first3 = true, lastSig = '';
 const K = {};
 const mix = (a, b, t) => '#' + [1, 3, 5].map(i => Math.round(parseInt(a.slice(i, i + 2), 16) * t + parseInt(b.slice(i, i + 2), 16) * (1 - t)).toString(16).padStart(2, '0')).join('');
@@ -538,8 +536,8 @@ function build() {
     G.d3Force('charge').strength(-110).distanceMax(500); G.d3Force('link').distance(36);
   }
   G.graphData({ nodes: N, links });
-  $('toolSeg').hidden = $('spinBtn').hidden = mode !== '3d';
-  $('hint').textContent = mode !== '3d' ? 'Kéo: di chuyển · Cuộn: phóng to' : tool === 'pan' ? 'Bàn tay: kéo để di chuyển · Cuộn: phóng to · Bấm Xoay để xoay' : 'Kéo: xoay · Bấm Kéo (bàn tay) hoặc Shift + kéo: di chuyển · Cuộn: phóng to';
+  $('spinBtn').hidden = mode !== '3d';
+  $('hint').textContent = mode !== '3d' ? 'Kéo: di chuyển · Cuộn: phóng to' : (matchMedia('(pointer:coarse)').matches ? 'Một ngón: xoay · Hai ngón: phóng to, di chuyển' : 'Chuột trái: kéo bản đồ · Chuột giữa, chuột phải hoặc Shift + kéo: xoay · Cuộn: phóng to');
   dirty = true; needFit = true; built = false;
 }
 // distance haze in 3D: far topics sink into the background, which is what makes the cloud read as deep
@@ -644,7 +642,9 @@ function frame() {
 }
 
 // ---- moving around
-function applyTool() { if (mode !== '3d' || !G) return; const c = G.controls(); c.mouseButtons.LEFT = tool === 'pan' ? 2 : 0; c.touches.ONE = tool === 'pan' ? 1 : 0; $('tR').classList.toggle('on', tool === 'rotate'); $('tP').classList.toggle('on', tool === 'pan'); $('graph').style.cursor = tool === 'pan' ? 'grab' : ''; $('hint').textContent = tool === 'pan' ? 'Bàn tay: kéo để di chuyển · Cuộn: phóng to · Bấm Xoay để xoay' : 'Kéo: xoay · Bấm Kéo (bàn tay) hoặc Shift + kéo: di chuyển · Cuộn: phóng to'; }
+function applyTool() {      // mouse: left button moves the map, middle / right button (or Shift + left) turns it; touch keeps one finger = turn
+  if (mode !== '3d' || !G) return; const c = G.controls();
+  c.mouseButtons.LEFT = 2; c.mouseButtons.MIDDLE = 0; c.mouseButtons.RIGHT = 0; $('graph').style.cursor = 'grab'; }
 function applySpin() { $('spinBtn').setAttribute('aria-pressed', spin); if (mode === '3d' && G) G.controls().autoRotate = spin; }
 function stopSpin() { if (spin) { spin = false; applySpin(); } }
 function panBy(dx, dy) {              // screen pixels
@@ -987,8 +987,6 @@ $('m3').onclick = () => { if (mode === '3d') return; mode = '3d'; seg('m3', 'm2'
 $('m2').onclick = () => { if (mode === '2d') return; mode = '2d'; seg('m3', 'm2', false); build(); };
 $('lC').onclick = () => { if (layout === 'cum') return; layout = 'cum'; seg('lC', 'lT', true); relayout(); };
 $('lT').onclick = () => { if (layout === 'tang') return; layout = 'tang'; seg('lC', 'lT', false); relayout(); };
-$('tR').onclick = () => { tool = 'rotate'; store.set('nm-tool', tool); applyTool(); };
-$('tP').onclick = () => { tool = 'pan'; store.set('nm-tool', tool); stopSpin(); applyTool(); };
 $('spinBtn').onclick = () => { spin = !spin; applySpin(); };
 $('zIn').onclick = () => { stopSpin(); zoomBy(1.5); };
 $('zOut').onclick = () => { stopSpin(); zoomBy(1 / 1.5); };
