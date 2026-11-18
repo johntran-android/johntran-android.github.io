@@ -23,18 +23,18 @@
   /* six subjects: validated to stay apart for colour-blind viewers (all pairs) */
   --L:#1b45cd; --C:#009fb7; --P:#d52004; --S:#b88512; --O:#a91185; --M:#a763f8;
   /* progress: one green, stepped from pale (read) to full (video exists); "not yet" is neutral */
-  --taught:#0c7a4d; --read:#58b08c; --ahead:#BCC3CC;
+  --fr:#e8590c; --taught:#0c7a4d; --read:#58b08c; --ahead:#BCC3CC;
   --display:"Unbounded","Be Vietnam Pro",system-ui,sans-serif;
   --body:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --ground:#080C11; --paper:#0D1218; --panel:#151D27; --ink:#E8EEF4; --muted:#8E9BA9; --rule:#263240; --dim:#1E2731; --edge:#3B4856;
   --L:#1e5fdd; --C:#17a0b7; --P:#bb3205; --S:#ae8d36; --O:#ef4894; --M:#ab69fd;
-  --taught:#62e3ad; --read:#23815f; --ahead:#3A4552; color-scheme:dark}}
+  --fr:#ff922b; --taught:#62e3ad; --read:#23815f; --ahead:#3A4552; color-scheme:dark}}
 :root[data-theme="dark"]{
   --ground:#080C11; --paper:#0D1218; --panel:#151D27; --ink:#E8EEF4; --muted:#8E9BA9; --rule:#263240; --dim:#1E2731; --edge:#3B4856;
   --L:#1e5fdd; --C:#17a0b7; --P:#bb3205; --S:#ae8d36; --O:#ef4894; --M:#ab69fd;
-  --taught:#62e3ad; --read:#23815f; --ahead:#3A4552; color-scheme:dark}
+  --fr:#ff922b; --taught:#62e3ad; --read:#23815f; --ahead:#3A4552; color-scheme:dark}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html,body{height:100%}
@@ -253,6 +253,21 @@ details summary{cursor:pointer;font-size:12.5px;font-weight:600}
 .covt span{font-weight:700;font-variant-numeric:tabular-nums}
 .cov .prog{margin:6px 0 0}
 .covs{margin-top:5px;font-size:11.5px;color:var(--muted)}
+.covs b{color:var(--ink)}
+.fresh{margin:0 0 10px;max-width:62ch;padding:8px 10px;border:1.5px solid var(--fr);border-radius:10px}
+.fresh .fh{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700}
+.fresh .fh b{margin-left:auto;color:var(--fr)}
+.fresh ul{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:2px}
+.fresh .fv{display:flex;gap:8px;align-items:flex-start;width:100%;text-align:left;background:none;border:0;padding:5px 4px;border-radius:7px;color:var(--ink);font:500 12.5px/1.35 var(--body);cursor:pointer}
+.fresh .fv:hover{background:color-mix(in srgb,var(--fr) 12%,transparent)}
+.fresh .fv .vdot{flex:none;margin-top:1px}
+.fresh .ft small{display:block;color:var(--muted);font-size:11px;margin-top:1px}
+.frd{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--fr);box-shadow:0 0 0 0 var(--fr);animation:frp 1.6s ease-out infinite}
+@keyframes frp{to{box-shadow:0 0 0 6px transparent}}
+#labels b.fr{position:absolute;left:0;top:0;display:none;border-radius:50%;border:2.5px solid var(--fr);pointer-events:none;will-change:transform}
+#labels b.fr::after{content:"";position:absolute;inset:-2.5px;border-radius:50%;border:2px solid var(--fr);animation:pulse 1.6s ease-out infinite}
+@media (prefers-reduced-motion: reduce){#labels b.fr::after,.frd{animation:none}}
+#tP svg,#tR svg{width:14px;height:14px;vertical-align:-2px;margin-right:4px}
 .new{display:inline-block;font-size:10px;font-weight:700;line-height:1;padding:2px 5px;border-radius:6px;background:var(--ink);color:var(--paper);vertical-align:1px}
 </style>
 <style>html,body{height:100dvh}</style>
@@ -284,7 +299,7 @@ details summary{cursor:pointer;font-size:12.5px;font-weight:600}
   <div class="nav">
     <div class="hint" id="hint"></div>
     <div class="row">
-      <div class="seg" id="toolSeg" role="group" aria-label="Kéo chuột để"><button id="tR" class="on" type="button" title="Kéo chuột để xoay">Xoay</button><button id="tP" type="button" title="Kéo chuột để di chuyển">Kéo</button></div>
+      <div class="seg" id="toolSeg" role="group" aria-label="Kéo chuột để"><button id="tR" class="on" type="button" title="Kéo chuột để xoay"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v2.8h-2.8"/></svg>Xoay</button><button id="tP" type="button" title="Bàn tay: kéo chuột (một tay) để di chuyển bản đồ"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8V3.2a1 1 0 0 1 2 0V7.5M7 7V2.4a1 1 0 0 1 2 0V7M9 7V3a1 1 0 0 1 2 0v4.5M11 6.2a1 1 0 0 1 2 0V9.5c0 2.8-1.9 5-4.6 5-1.9 0-3-.9-4-2.4L2.6 9.6a1 1 0 0 1 1.6-1.2L5 9.4"/></svg>Kéo</button></div>
       <button class="btn" id="spinBtn" type="button" aria-pressed="false" title="Tự xoay chậm" aria-label="Tự xoay"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M13 8a5 5 0 1 1-1.5-3.6"/><path d="M13 2.5v2.8h-2.8"/></svg><span class="tx">Tự xoay</span></button>
       <button class="btn sq" id="zOut" type="button" aria-label="Thu nhỏ">−</button>
       <button class="btn sq" id="zIn" type="button" aria-label="Phóng to">+</button>
@@ -310,6 +325,7 @@ const MIT_LEC = { 1:'L.vec', 2:'L.elim', 3:'L.matmul', 4:'L.elim', 5:'L.transpos
   14:'L.ortho', 15:'L.proj', 16:'L.lsq', 17:'L.gs', 18:'L.det', 19:'L.det', 20:'L.det', 21:'L.eig', 22:'L.eig', 25:'L.sym', 27:'L.psd', 28:'L.psd', 29:'L.svd', 30:'L.chbasis', 31:'L.chbasis', 33:'L.pinv' };
 const FRESH_MS = 7 * 864e5;
 let liveNew = 0, liveWeek = 0;
+const freshV = [];      // videos uploaded in the last 7 days, newest first
 const fresh = new Set();
 async function loadLive() {
   const topics = new Set(D.nodes.map(n => n.id)), byT = Object.fromEntries(D.nodes.map(n => [n.id, n]));
@@ -343,6 +359,7 @@ async function loadLive() {
       if (byT[t].st !== 'taught') byT[t].st = 'taught';
       for (const c of D.simple || []) if ((c.m || []).includes(t)) { c.v.unshift(key); c.st = 'taught'; }
     }
+    if (recent && t && !freshV.some(f => f.id === v.id)) freshV.push({ id: v.id, title: String(v.title || '').slice(0, 200), t, up: +v.uploadedAt });
     if (recent && t) { fresh.add(t); for (const c of D.simple || []) if ((c.m || []).includes(t)) fresh.add(c.id); }
   }
 }
@@ -385,7 +402,12 @@ const EMBED = !!window.NM_EMBED;      // the standalone site plays videos in the
 const PLAY = '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M3 1.6 8.6 5 3 8.4z" fill="#fff" stroke="rgba(0,0,0,.6)" stroke-width=".9" stroke-linejoin="round"/></svg>';
 const withVid = N.filter(n => n.v.length).length;
 const covPct = Math.round(withVid / N.length * 100);
-const COV = `<div class="cov"><div class="covt"><b>Video đã phủ ${withVid}/${N.length} ${UNIT}</b><span>${covPct}%</span></div><div class="prog"><i style="width:${covPct}%"></i></div>${liveWeek ? `<div class="covs">+${liveWeek} video trong 7 ngày qua${fresh.size ? ` · chủ đề có video mới mang nhãn <span class="new">mới</span>` : ''}</div>` : ''}</div>`;
+const nodeOf = t => byId[t] ? t : (N.find(c => (c.m || []).includes(t)) || {}).id;      // full-map topic -> node of this map
+freshV.sort((a, b) => b.up - a.up);
+const FRESHN = new Set(freshV.map(f => nodeOf(f.t)).filter(Boolean));
+const ddmm = ms => { const d = new Date(ms); return `${d.getDate()}/${d.getMonth() + 1}`; };
+const FRESH = freshV.length ? `<div class="fresh"><div class="fh"><span class="frd"></span>Video mới · 7 ngày qua <b>${freshV.length}</b></div><ul>${freshV.slice(0, 8).map(f => { const id = nodeOf(f.t); return id ? `<li><button type="button" class="fv" data-fv="${id}" title="Bay tới chủ đề này trên bản đồ"><span class="vdot">${PLAY}</span><span class="ft">${esc(f.title)}<small>${ddmm(f.up)} · ${esc(byId[id].t)}</small></span></button></li>` : ''; }).join('')}</ul>${freshV.length > 8 ? `<div class="covs">… và ${freshV.length - 8} video khác</div>` : ''}</div>` : '';
+const COV = `<div class="cov"><div class="covt"><b>Video đã phủ ${withVid}/${N.length} ${UNIT}</b><span>${covPct}%</span></div><div class="prog"><i style="width:${covPct}%"></i></div><div class="covs">Tổng <b>${nVid}</b> video${liveWeek ? ` · <b>+${liveWeek}</b> trong 7 ngày qua` : ''}. Quay thêm video cho chủ đề đã có video thì tổng tăng, % phủ giữ nguyên.</div></div>${FRESH}`;
 
 // ---- the visitor's own progress: which topics they already understand (kept in this browser only)
 const TOPICS = new Set(D.nodes.map(n => n.id)), mem = n => n.m || [n.id];
@@ -402,7 +424,7 @@ function setDone(ids, on) {
 }
 
 // ---- state
-let mode = '3d', layout = 'cum', colorBy = done.size ? 'progress' : 'domain', tool = 'rotate', spin = !calm;
+let mode = '3d', layout = 'cum', colorBy = done.size ? 'progress' : 'domain', tool = store.get('nm-tool', 'rotate') === 'pan' ? 'pan' : 'rotate', spin = !calm && store.get('nm-tool', 'rotate') !== 'pan';
 let sel = null, lit = null, litDown = null, near = null, G = null, running = false, dirty = true, needFit = true, built = false, first3 = true, lastSig = '';
 const K = {};
 const mix = (a, b, t) => '#' + [1, 3, 5].map(i => Math.round(parseInt(a.slice(i, i + 2), 16) * t + parseInt(b.slice(i, i + 2), 16) * (1 - t)).toString(16).padStart(2, '0')).join('');
@@ -467,7 +489,7 @@ function build() {
   }
   G.graphData({ nodes: N, links });
   $('toolSeg').hidden = $('spinBtn').hidden = mode !== '3d';
-  $('hint').textContent = mode === '3d' ? 'Kéo: xoay · Shift + kéo hoặc chuột phải: di chuyển · Cuộn: phóng to' : 'Kéo: di chuyển · Cuộn: phóng to';
+  $('hint').textContent = mode !== '3d' ? 'Kéo: di chuyển · Cuộn: phóng to' : tool === 'pan' ? 'Bàn tay: kéo để di chuyển · Cuộn: phóng to · Bấm Xoay để xoay' : 'Kéo: xoay · Bấm Kéo (bàn tay) hoặc Shift + kéo: di chuyển · Cuộn: phóng to';
   dirty = true; needFit = true; built = false;
 }
 // distance haze in 3D: far topics sink into the background, which is what makes the cloud read as deep
@@ -501,6 +523,8 @@ const LBL = {}, REG = {}, shown = new Set();
 const meas = document.createElement('canvas').getContext('2d');
 function measure() { meas.font = '600 12px "Be Vietnam Pro", system-ui, sans-serif'; N.forEach(n => n.tw = meas.measureText(n.t).width);
   meas.font = '700 13px "Unbounded", system-ui, sans-serif'; Object.keys(DOM).forEach(d => REG[d].tw = meas.measureText(DOM[d].toUpperCase()).width + DOM[d].length * 1.82); }
+const FR = {};        // a pulsing orange ring around topics with a video from the last 7 days
+FRESHN.forEach(id => { const b = document.createElement('b'); b.className = 'fr'; $('labels').appendChild(b); FR[id] = b; });
 const PL = {};        // a play triangle drawn over every topic that has a video
 N.forEach(n => { if (!n.v.length) return; const i = document.createElement('i'); i.className = 'pl'; i.innerHTML = PLAY; $('labels').appendChild(i); PL[n.id] = i; });
 Object.keys(DOM).forEach(d => { const s = document.createElement('span'); s.className = 'reg'; s.textContent = DOM[d]; s.style.color = `var(--${d})`; $('labels').appendChild(s); REG[d] = { el: s, tw: 120 }; });
@@ -532,11 +556,13 @@ function drawLabels(V) {
   const cand = [], ringId = tour ? tour.ids[tour.i] : sel;
   N.forEach(n => {
     const pl = PL[n.id]; if (pl) pl.style.display = 'none';
+    const fr = FR[n.id]; if (fr) fr.style.display = 'none';
     if (lit && !lit.has(n.id)) return;
     const p = V.at(n.x, n.y, n.z || 0, mode === '3d' ? n.r3 : n.r2);
     if (!p || p.x < -60 || p.x > V.W + 60 || p.y < -20 || p.y > V.H + 10) return;
     if (pl) { const s = clamp(p.r * 1.25, 8, 28); pl.style.display = 'block'; pl.style.width = pl.style.height = s.toFixed(1) + 'px'; pl.style.opacity = p.o.toFixed(2);
       pl.style.transform = `translate(${(p.x - s * .49).toFixed(1)}px,${(p.y - s / 2).toFixed(1)}px)`; }
+    if (fr) { const d = 2 * (p.r + 4); fr.style.display = 'block'; fr.style.width = fr.style.height = d.toFixed(1) + 'px'; fr.style.transform = `translate(${(p.x - d / 2).toFixed(1)}px,${(p.y - d / 2).toFixed(1)}px)`; }
     p.n = n; p.pr = n.id === sel || n.id === ringId ? 1e9 : (near && near.has(n.id) ? 1e5 : 0) + p.r * (n.big ? 1.25 : 1) * (shown.has(n.id) ? 1.3 : 1); cand.push(p);
   });
   cand.sort((a, b) => b.pr - a.pr);
@@ -568,7 +594,7 @@ function frame() {
 }
 
 // ---- moving around
-function applyTool() { if (mode !== '3d' || !G) return; const c = G.controls(); c.mouseButtons.LEFT = tool === 'pan' ? 2 : 0; c.touches.ONE = tool === 'pan' ? 1 : 0; $('tR').classList.toggle('on', tool === 'rotate'); $('tP').classList.toggle('on', tool === 'pan'); $('graph').style.cursor = ''; }
+function applyTool() { if (mode !== '3d' || !G) return; const c = G.controls(); c.mouseButtons.LEFT = tool === 'pan' ? 2 : 0; c.touches.ONE = tool === 'pan' ? 1 : 0; $('tR').classList.toggle('on', tool === 'rotate'); $('tP').classList.toggle('on', tool === 'pan'); $('graph').style.cursor = tool === 'pan' ? 'grab' : ''; $('hint').textContent = tool === 'pan' ? 'Bàn tay: kéo để di chuyển · Cuộn: phóng to · Bấm Xoay để xoay' : 'Kéo: xoay · Bấm Kéo (bàn tay) hoặc Shift + kéo: di chuyển · Cuộn: phóng to'; }
 function applySpin() { $('spinBtn').setAttribute('aria-pressed', spin); if (mode === '3d' && G) G.controls().autoRotate = spin; }
 function stopSpin() { if (spin) { spin = false; applySpin(); } }
 function panBy(dx, dy) {              // screen pixels
@@ -747,6 +773,7 @@ function drawRank(follow) {
   R.querySelectorAll('.stg').forEach(d => d.ontoggle = () => { d.open ? openStg.add(+d.dataset.k) : openStg.delete(+d.dataset.k);
     if (d.open && d.dataset.me) { const sc = R.querySelector('.scroll'); sc.scrollTop += d.getBoundingClientRect().top - sc.getBoundingClientRect().top; } delete d.dataset.me; });
   R.querySelectorAll('.rlist button').forEach(b => b.onclick = () => select(b.dataset.id));
+  R.querySelectorAll('.fv').forEach(b => b.onclick = () => select(b.dataset.fv));
   R.querySelectorAll('[data-all]').forEach(b => b.onclick = () => { const ids = STAGES[+b.dataset.all].ns.map(n => n.id); setDone(ids, !ids.every(x => done.has(x))); });
   if ($('nv')) $('nv').onchange = e => { onlyNoVid = e.target.checked; drawRank(); };
   if ($('rs')) $('rs').onclick = () => { askReset = true; drawRank(); };
@@ -779,6 +806,7 @@ function drawList() {
   L.querySelectorAll('.tt').forEach(b => b.onclick = () => { lsel = lsel === b.dataset.id ? null : b.dataset.id; drawList(); });
   L.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { lsel = b.dataset.go; drawList(); const r = $('li-' + lsel); if (r) L.scrollTop += r.getBoundingClientRect().top - L.getBoundingClientRect().top - L.clientHeight / 3; });
   L.querySelectorAll('[data-map]').forEach(b => b.onclick = () => { showList(false); select(b.dataset.map); });
+  L.querySelectorAll('.fv').forEach(b => b.onclick = () => { showList(false); select(b.dataset.fv); });
   drawArcs();
 }
 // Links in the list. Every topic that others build on owns one lane in the left margin, running from it down to the last
@@ -880,7 +908,8 @@ function drawLegend() {
     ? Object.entries(DOM).map(([k, v]) => `<button data-d="${k}" title="Bay tới ${v}: ${domStat[k].n} chủ đề"><span class="dot" style="background:var(--${k})"></span>${v} <b>${domStat[k].n}</b></button>`).join('')
     : colorBy === 'status' ? Object.entries(ST).map(([k, v]) => it(`var(--${k})`, v, counts[k])).join('')
     : it('var(--L)', 'Màu đậm: đã hiểu', done.size) + it('color-mix(in srgb,var(--L) 55%,var(--paper))', 'Màu nhạt: học được ngay', nL) + it('var(--ahead)', 'Xám: chưa tới', N.length - done.size - nL))
-    + `<span class="it"><span class="vdot">${PLAY}</span>có video <b>${withVid}</b></span>`;
+    + `<span class="it"><span class="vdot">${PLAY}</span>chủ đề có video <b>${withVid}</b> · <b>${nVid}</b> video</span>`
+    + (freshV.length ? `<span class="it"><span class="frd"></span>video mới 7 ngày <b>${freshV.length}</b></span>` : '');
   $('legend').querySelectorAll('button').forEach(b => b.onclick = () => focusDomain(b.dataset.d));
 }
 const CB = { cD: 'domain', cS: 'status', cM: 'progress' };
@@ -894,8 +923,8 @@ $('m3').onclick = () => { if (mode === '3d') return; mode = '3d'; seg('m3', 'm2'
 $('m2').onclick = () => { if (mode === '2d') return; mode = '2d'; seg('m3', 'm2', false); build(); };
 $('lC').onclick = () => { if (layout === 'cum') return; layout = 'cum'; seg('lC', 'lT', true); relayout(); };
 $('lT').onclick = () => { if (layout === 'tang') return; layout = 'tang'; seg('lC', 'lT', false); relayout(); };
-$('tR').onclick = () => { tool = 'rotate'; applyTool(); };
-$('tP').onclick = () => { tool = 'pan'; stopSpin(); applyTool(); };
+$('tR').onclick = () => { tool = 'rotate'; store.set('nm-tool', tool); applyTool(); };
+$('tP').onclick = () => { tool = 'pan'; store.set('nm-tool', tool); stopSpin(); applyTool(); };
 $('spinBtn').onclick = () => { spin = !spin; applySpin(); };
 $('zIn').onclick = () => { stopSpin(); zoomBy(1.5); };
 $('zOut').onclick = () => { stopSpin(); zoomBy(1 / 1.5); };
