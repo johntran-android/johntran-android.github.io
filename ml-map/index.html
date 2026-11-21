@@ -74,6 +74,8 @@ input[type=search]{font:inherit;font-size:13px;background:var(--panel);color:var
 .nav{position:absolute;right:10px;bottom:8px;display:grid;justify-items:end;gap:4px}
 .nav .row{display:flex;gap:4px;align-items:center}
 .btn.sq{width:28px;padding:4px 0;text-align:center}
+#sM{display:none!important}
+#dimBtn{width:auto;min-width:34px;padding:4px 7px;font-weight:700;font-size:12px;letter-spacing:.02em}
 .hint{font-size:11.5px;color:var(--muted);background:color-mix(in srgb,var(--panel) 88%,transparent);padding:2px 8px;border-radius:8px;text-align:right}
 .panel{position:absolute;top:10px;max-height:calc(100% - 66px);background:var(--panel);border:1px solid var(--rule);border-radius:14px;
   box-shadow:0 10px 30px rgba(5,10,15,.16);padding:12px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
@@ -311,6 +313,7 @@ details.mr>.pills{display:contents}
   .listing .bkpill{display:none}
   .nav .btn{width:36px;height:34px;padding:0;display:grid;place-items:center}
   .nav .btn .tx{display:none}
+  #themeBtn{width:34px;height:32px;font-size:15px}
   .nav .btn .ic{display:block;width:17px;height:17px}
   .bkpill{max-width:calc(100% - 110px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   #card.playing{width:auto;max-height:74%}
@@ -374,6 +377,7 @@ details.mr>.pills{display:contents}
     <div class="hint" id="hint"></div>
     <div class="row">
       <button class="btn" id="spinBtn" type="button" aria-pressed="false" title="Tự xoay chậm" aria-label="Tự xoay"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M13 8a5 5 0 1 1-1.5-3.6"/><path d="M13 2.5v2.8h-2.8"/></svg><span class="tx">Tự xoay</span></button>
+      <button class="btn sq" id="dimBtn" type="button"></button>
       <button class="btn sq" id="zOut" type="button" aria-label="Thu nhỏ">−</button>
       <button class="btn sq" id="zIn" type="button" aria-label="Phóng to">+</button>
       <button class="btn" id="fitBtn" type="button" aria-label="Toàn cảnh" title="Toàn cảnh"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"/></svg><span class="tx">Toàn cảnh</span></button>
@@ -540,7 +544,7 @@ function setDone(ids, on) {
 }
 
 // ---- state
-let mode = '3d', layout = 'cum', colorBy = done.size ? 'progress' : 'domain', spin = !calm;
+let mode = '3d', layout = 'cum', colorBy = ['domain', 'status', 'progress'].includes(store.get('nm-color', '')) ? store.get('nm-color', '') : 'domain', spin = !calm;
 let sel = null, lit = null, litDown = null, near = null, G = null, running = false, dirty = true, needFit = true, built = false, first3 = true, lastSig = '';
 const K = {};
 const mix = (a, b, t) => '#' + [1, 3, 5].map(i => Math.round(parseInt(a.slice(i, i + 2), 16) * t + parseInt(b.slice(i, i + 2), 16) * (1 - t)).toString(16).padStart(2, '0')).join('');
@@ -1101,7 +1105,7 @@ $('sB').querySelectorAll('button').forEach(x => x.onclick = () => setBook(x.data
 $('sB').querySelector('button[data-b=""]').classList.add('on');
 // ---- phones: one row on top (versions, search, options); everything else lives in a sheet that slides up
 const PHONE = matchMedia('(max-width:760px)');
-const OPT = [['Bài quan trọng nhất', 'topBtn'], ['Tự xoay chậm', 'spinBtn'], ['Tô màu theo', 'sC'], ['Bố cục', 'sL'], ['Kiểu xem', 'sM'], ['Nền sáng / tối', 'themeBtn']];
+const OPT = [['Bài quan trọng nhất', 'topBtn'], ['Tự xoay chậm', 'spinBtn'], ['Tô màu theo', 'sC'], ['Bố cục', 'sL'], ];
 const HOME = OPT.map(([, id]) => { const m = document.createComment(id); $(id).before(m); return m; });
 function place() {         // everything but the level, the view and search lives in one menu; on a phone the roadmap button too
   $('optBody').innerHTML = '';
@@ -1156,13 +1160,15 @@ function drawLegend() {
 }
 const CB = { cD: 'domain', cS: 'status', cM: 'progress' };
 function setColor(c) { colorBy = c; Object.entries(CB).forEach(([b, k]) => $(b).classList.toggle('on', k === c)); drawLegend(); refresh(); }
-Object.entries(CB).forEach(([b, k]) => $(b).onclick = () => setColor(k));
+Object.entries(CB).forEach(([b, k]) => $(b).onclick = () => { store.set('nm-color', k); setColor(k); });
 setColor(colorBy);
 
 // ---- controls
 const seg = (a, b, on) => { $(a).classList.toggle('on', on); $(b).classList.toggle('on', !on); };
 $('m3').onclick = () => { if (mode === '3d') return; mode = '3d'; seg('m3', 'm2', true); build(); };
 $('m2').onclick = () => { if (mode === '2d') return; mode = '2d'; seg('m3', 'm2', false); build(); };
+const drawDim = () => { const to = mode === '3d' ? '2D' : '3D'; $('dimBtn').textContent = to; $('dimBtn').title = $('dimBtn').ariaLabel = `Chuyển sang xem ${to}`; };
+$('dimBtn').onclick = () => { $(mode === '3d' ? 'm2' : 'm3').click(); drawDim(); }; drawDim();
 $('lC').onclick = () => { if (layout === 'cum') return; layout = 'cum'; seg('lC', 'lT', true); relayout(); };
 $('lT').onclick = () => { if (layout === 'tang') return; layout = 'tang'; seg('lC', 'lT', false); relayout(); };
 $('spinBtn').onclick = () => { spin = !spin; applySpin(); };
