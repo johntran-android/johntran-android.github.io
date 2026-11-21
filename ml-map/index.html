@@ -105,6 +105,9 @@ input[type=search]{font:inherit;font-size:13px;background:var(--panel);color:var
 .bks .k{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-right:2px}
 .bks button{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--rule);background:var(--panel);color:var(--muted);border-radius:99px;padding:2px 9px;cursor:pointer}
 .bks button.on{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.bks.co{margin-bottom:2px}
+.rlist small.lc{display:block;font-size:11px;color:var(--muted);font-weight:500;margin-top:1px}
+.rlist button.nx{box-shadow:inset 2px 0 0 var(--ink)}
 .vbox{border:1px solid var(--rule);border-radius:10px;padding:6px 10px;font-size:12.5px}
 .vbox>summary{cursor:pointer;color:var(--muted);font-weight:600}
 .vbox>summary b{color:var(--ink)}
@@ -234,6 +237,11 @@ details.mr>.pills{display:contents}
 .lv a:hover{text-decoration:underline;text-underline-offset:2px}
 .lv .vdot{flex:none;background:var(--taught);vertical-align:0}
 .listing #sM,.listing #sL,.listing #sC{display:none}
+#sB{display:none!important}
+.welcome.hi{position:relative;padding-right:26px}
+.welcome.hi .x{top:4px;right:4px}
+.keys{font-size:11.5px;color:var(--muted)}
+.stg.now>summary .nm{font-weight:700}
 .orow:has(>[hidden]),.listing .orow:has(#sM,#sL,#sC,#spinBtn){display:none}
 .mob,.bkpill,.btn .ic{display:none}
 .btn.opt{display:inline-flex;align-items:center;gap:6px}
@@ -352,6 +360,7 @@ details.mr>.pills{display:contents}
   <div class="seg" id="sL" role="group" aria-label="Bố cục"><button id="lC" class="on" type="button" title="Mỗi môn tụ thành một cụm">Theo môn</button><button id="lT" type="button" title="Thứ cần học trước nằm dưới, thứ học sau nằm trên">Từ nền lên</button></div>
   <div class="seg" id="sC" role="group" aria-label="Tô màu theo"><span class="k">Màu</span><button id="cD" type="button" title="Mỗi môn một màu">Môn học</button><button id="cS" type="button" title="Bài nào đã có video, bài nào mới có ghi chú, bài nào chưa có gì">Video & ghi chú</button><button id="cM" type="button" title="Bài nào bạn đã hiểu, bài nào học được ngay">Tiến độ của tôi</button></div>
   <button class="btn sq" id="themeBtn" type="button"></button>
+  <button class="btn" id="topBtn" type="button">Xem bài nào làm nền cho nhiều bài nhất</button>
   <button class="btn sq mob" id="qBtn" type="button" aria-label="Tìm bài"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3.5 3.5"/></svg></button>
   <button class="btn opt" id="optBtn" type="button" aria-label="Tuỳ chọn hiển thị" aria-expanded="false"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 4h7M12 4h2M2 12h3M8 12h6"/><circle cx="10.5" cy="4" r="1.6"/><circle cx="6.5" cy="12" r="1.6"/></svg><span class="tx">Tuỳ chọn</span></button>
 </header>
@@ -483,6 +492,22 @@ const MAXL = Math.max(...N.map(n => n.lvl));
 N.forEach(n => { const ls = DETAIL && D.leaves[n.sec]; n.imp = ls ? byId[ls[ls.length - 1]].reach : n.reach; });   // level 3: what needs the whole x.y section
 const IMPU = UNIT;
 const links = N.flatMap(n => n.pre.map(p => ({ source: p, target: n.id })));
+const lcnt = {}; links.forEach(l => [l.source, l.target].forEach(x => lcnt[x] = (lcnt[x] || 0) + 1));      // d3's own link strength, counted before the course paths join
+// ---- follow one lecture series: its lectures in order, drawn on the map as one line through the cloud
+const COURSE = {
+  ST: { t: 'Stat 110', full: 'Stat 110 (Harvard, Joe Blitzstein)', lec: Array.from({ length: 34 }, (_, i) => [i + 1, ['ST' + (i + 1)]]),
+    note: 'Bài giảng 15 (ôn thi giữa kỳ) và 34 (nhìn lại cả khoá) không có bài riêng.' },
+  MIT: { t: 'MIT 18.06', full: 'MIT 18.06 Đại số tuyến tính (Gilbert Strang)', note: 'Bài giảng 23 (phương trình vi phân), 24 (ma trận Markov), 26 (ma trận phức, FFT) chưa có bài riêng trên bản đồ; 13, 32, 34 là ôn tập.',
+    lec: [[1, ['L.vec']], [2, ['L.elim']], [3, ['L.matmul', 'L.inverse']], [4, ['L.elim']], [5, ['L.transpose']], [6, ['L.subsp']], [7, ['L.rank']], [8, ['L.rank']], [9, ['L.indep']], [10, ['L.subsp']], [11, ['L.subsp']], [12, ['L.subsp']],
+      [14, ['L.dot', 'L.ortho']], [15, ['L.proj']], [16, ['L.lsq']], [17, ['L.gs']], [18, ['L.det']], [19, ['L.det']], [20, ['L.det']], [21, ['L.eig']], [22, ['L.eig']], [25, ['L.sym']], [27, ['L.psd']], [28, ['L.psd']], [29, ['L.svd']], [30, ['L.chbasis']], [31, ['L.chbasis']], [33, ['L.pinv']]] },
+};
+{ const toMap = id => SIMPLE ? [(D.simple.find(c => (c.m || []).includes(id)) || {}).id] : DETAIL ? D.leaves[id] || [id] : [id];
+  for (const [k, C] of Object.entries(COURSE)) { const at = {}; C.steps = [];
+    C.lec.forEach(([no, ids]) => ids.flatMap(toMap).filter(x => x && byId[x]).forEach(x => { if (!at[x]) C.steps.push(at[x] = { id: x, lec: [] }); if (!at[x].lec.includes(no)) at[x].lec.push(no); }));
+    C.set = new Set(C.steps.map(s => s.id)); C.num = Object.fromEntries(C.steps.map((s, i) => [s.id, i + 1]));
+    C.steps.slice(1).forEach((s, i) => links.push({ source: C.steps[i].id, target: s.id, c: k })); } }
+let CO = COURSE[store.get('nm-course', '')] ? store.get('nm-course', '') : '';
+const baseLit = () => bookSet || (CO ? COURSE[CO].set : null);
 const counts = { taught: 0, read: 0, ahead: 0 }; N.forEach(n => counts[n.st]++);
 const domStat = {}; N.forEach(n => { const s = domStat[n.d] = domStat[n.d] || { n: 0, t: 0 }; s.n++; if (n.st === 'taught') s.t++; });
 const nVid = Object.keys(D.vids).length;
@@ -524,7 +549,7 @@ function readColors() { ['paper', 'ink', 'dim', 'edge', 'C', 'L', 'P', 'S', 'O',
 const colorOf = n => lit && !lit.has(n.id) ? K.dim : colorBy === 'domain' ? K[n.d] : colorBy === 'status' ? K[n.st] : done.has(n.id) ? K[n.d] : canLearn(n) ? K['p' + n.d] : K.ahead;
 const lid = e => e.id ?? e;
 const linkOn = l => lit && litDown && (sel === lid(l.source) || litDown.has(lid(l.source))) && litDown.has(lid(l.target));
-const linkUp = l => lit && !linkOn(l) && lit.has(lid(l.source)) && lit.has(lid(l.target)) && !(litDown && litDown.has(lid(l.target)));
+const linkUp = l => lit && !(CO && !sel) && !linkOn(l) && lit.has(lid(l.source)) && lit.has(lid(l.target)) && !(litDown && litDown.has(lid(l.target)));
 const direct = l => lid(l.source) === sel || lid(l.target) === sel;
 
 // ---- where each topic wants to sit.
@@ -558,14 +583,15 @@ function build() {
   const common = g => g.width(W).height(H).backgroundColor(K.paper)
     .nodeId('id').nodeVal(n => n.val).nodeColor(colorOf)
     .nodeLabel(n => `${esc(n.t)}<small>${esc(n.src)} · ${MK[n.st]} ${n.v.length ? n.v.length + ' video' : ST[n.st]}${done.has(n.id) ? ' · ✓ đã hiểu' : ''}</small>`)
-    .linkColor(l => linkOn(l) ? K[byId[sel].d] : linkUp(l) ? K.ink : lit ? K.dim : K.edge)
-    .linkWidth(l => linkOn(l) || linkUp(l) ? (direct(l) ? 2.4 : .8) : 0.5)
-    .linkDirectionalArrowLength(l => linkOn(l) || linkUp(l) ? (direct(l) ? 5.5 : 3) : 0).linkDirectionalArrowRelPos(1)
-    .linkDirectionalParticles(l => direct(l) && (linkOn(l) || linkUp(l)) ? 2 : 0).linkDirectionalParticleWidth(2.6).linkDirectionalParticleSpeed(.006)
+    .linkVisibility(l => !l.c || l.c === CO)
+    .linkColor(l => l.c ? K.ink : linkOn(l) ? K[byId[sel].d] : linkUp(l) ? K.ink : lit ? K.dim : K.edge)
+    .linkWidth(l => l.c ? 2.2 : linkOn(l) || linkUp(l) ? (direct(l) ? 2.4 : .8) : 0.5)
+    .linkDirectionalArrowLength(l => l.c ? 6 : linkOn(l) || linkUp(l) ? (direct(l) ? 5.5 : 3) : 0).linkDirectionalArrowRelPos(1)
+    .linkDirectionalParticles(l => l.c ? 1 : direct(l) && (linkOn(l) || linkUp(l)) ? 2 : 0).linkDirectionalParticleWidth(2.6).linkDirectionalParticleSpeed(.006)
     .enableNodeDrag(false)
     .onNodeClick(n => select(n.id)).onBackgroundClick(() => select(null))
     .onNodeHover(n => { el.style.cursor = n ? 'pointer' : ''; })
-    .onEngineStop(() => { running = false; dirty = true; if (needFit) { needFit = false; fit(built ? 700 : 0); built = true; } })
+    .onEngineStop(() => { running = false; dirty = true; if (needFit) { needFit = false; fit(built ? 700 : 0, sel ? null : baseLit()); built = true; } })
     .d3Force('home', homeForce())
     .warmupTicks(260).cooldownTicks(0);
   if (mode === '3d') {
@@ -575,9 +601,10 @@ function build() {
     const c = G.controls(); c.autoRotateSpeed = .45; c.zoomSpeed = 1.4; c.panSpeed = 1.2;
     setFog(); applyTool(); applySpin();
   } else {
-    G = common(ForceGraph()(el)).nodeRelSize(3.6).linkCurvature(.12);
+    G = common(ForceGraph()(el)).nodeRelSize(3.6).linkCurvature(l => l.c ? 0 : .12);
     G.d3Force('charge').strength(-110).distanceMax(500); G.d3Force('link').distance(36);
   }
+  G.d3Force('link').strength(l => l.c ? 0 : 1 / Math.min(lcnt[lid(l.source)], lcnt[lid(l.target)]));
   G.graphData({ nodes: N, links });
   $('spinBtn').hidden = mode !== '3d';
   $('hint').textContent = mode !== '3d' ? 'Kéo: di chuyển · Cuộn: phóng to' : (matchMedia('(pointer:coarse)').matches ? 'Một ngón: xoay · Hai ngón: phóng to, di chuyển' : 'Chuột trái: kéo bản đồ · Chuột giữa, chuột phải hoặc Shift + kéo: xoay · Cuộn: phóng to');
@@ -601,7 +628,7 @@ function fit(ms = 600, only = null) {
 }
 function refresh() {
   if (!G) return;
-  G.nodeColor(G.nodeColor()).linkColor(G.linkColor()).linkWidth(G.linkWidth()).linkDirectionalParticles(G.linkDirectionalParticles()).linkDirectionalArrowLength(G.linkDirectionalArrowLength());
+  G.nodeColor(G.nodeColor()).linkVisibility(G.linkVisibility()).linkColor(G.linkColor()).linkWidth(G.linkWidth()).linkDirectionalParticles(G.linkDirectionalParticles()).linkDirectionalArrowLength(G.linkDirectionalArrowLength());
   dirty = true;
 }
 function relayout() {   // animate from one arrangement to the other
@@ -612,7 +639,7 @@ function relayout() {   // animate from one arrangement to the other
 // ---- text layer: every topic can show its name; nearer and more fundamental topics win the space
 const LBL = {}, REG = {}, shown = new Set();
 const meas = document.createElement('canvas').getContext('2d');
-function measure() { meas.font = '600 12px "Be Vietnam Pro", system-ui, sans-serif'; N.forEach(n => n.tw = meas.measureText(n.t).width);
+function measure() { meas.font = '600 12px "Be Vietnam Pro", system-ui, sans-serif'; N.forEach(n => n.tw = meas.measureText(LBL[n.id] ? LBL[n.id].textContent : n.t).width);
   meas.font = '700 13px "Unbounded", system-ui, sans-serif'; Object.keys(DOM).forEach(d => REG[d].tw = meas.measureText(DOM[d].toUpperCase()).width + DOM[d].length * 1.82); }
 const FR = {};        // a pulsing orange ring around topics with a video from the last 7 days
 FRESHN.forEach(id => { const b = document.createElement('b'); b.className = 'fr'; $('labels').appendChild(b); FR[id] = b; });
@@ -620,7 +647,8 @@ const PL = {};        // a play triangle drawn over every topic that has a video
 N.forEach(n => { if (!n.v.length) return; const i = document.createElement('i'); i.className = 'pl'; i.innerHTML = PLAY; $('labels').appendChild(i); PL[n.id] = i; });
 Object.keys(DOM).forEach(d => { const s = document.createElement('span'); s.className = 'reg'; s.textContent = DOM[d]; s.style.color = `var(--${d})`; $('labels').appendChild(s); REG[d] = { el: s, tw: 120 }; });
 N.forEach(n => { const s = document.createElement('span'); s.textContent = n.t; if (n.big) s.className = 'big'; $('labels').appendChild(s); LBL[n.id] = s; });
-measure(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { measure(); dirty = true; });
+function courseLabels() { const num = CO ? COURSE[CO].num : {}; N.forEach(n => LBL[n.id].textContent = num[n.id] ? `${num[n.id]}. ${n.t}` : n.t); measure(); dirty = true; }
+courseLabels(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { measure(); dirty = true; });
 
 function view() {       // a projector for the current camera: world position -> screen position, on-screen radius, depth
   const W = $('graph').clientWidth, H = $('graph').clientHeight;
@@ -732,7 +760,7 @@ function endTour() { if (!tour) return; clearTimeout(tour.timer); tour = null; $
 // ---- selection
 function select(id) {
   endTour(); sel = id;
-  if (!id) { lit = bookSet; litDown = near = null; $('card').hidden = true; $('card').innerHTML = ''; refresh(); drawRank(); return; }
+  if (!id) { lit = baseLit(); litDown = near = null; $('card').hidden = true; $('card').innerHTML = ''; refresh(); drawRank(); return; }
   stopSpin();
   litDown = down(id); const ups = up(id); lit = new Set([id, ...litDown, ...ups]); near = new Set([...(kids[id] || []), ...byId[id].pre]);
   openStg.add(stageOf[id]);
@@ -822,7 +850,7 @@ for (let i = STAGES.length - 1; i > 0; i--) if (STAGES[i].ns.length < 3) { STAGE
     s.from = books(s.ns) || (s.d === 'C' ? ['MIT 18.01, 18.02', 'MIT 18.02'][j] : 'MIT 18.06'); s.ns.forEach(n => { n.no = ++no; stageOf[n.id] = k; }); }); }
 const openStg = new Set();
 $('sub').textContent = `${N.length} ${UNIT} · ${STAGES.length} chặng`;
-let rankTab = 'path', onlyNoVid = false, askReset = false;
+let rankTab = 'path', onlyNoVid = false, askReset = false, autoStg = -1;
 const TOP = N.filter(n => n.imp > 0).sort((a, b) => b.imp - a.imp || (a.no ?? a.i) - (b.no ?? b.i));
 // where a topic sits in its book: "1.4", "5.1.3" (the x.y.0 opening part shows as its section), "chương 7" on the chapter map
 const BKS = { ST: 'Stat 110', CB: 'Casella', PR: 'Bishop', NW: 'Nocedal' }, BKL = { ST: 'Stat 110 (Harvard)', CB: 'Casella & Berger', PR: 'Bishop PRML', NW: 'Nocedal & Wright', MIT: 'Giải tích · Đại số tuyến tính (MIT)' };
@@ -842,7 +870,32 @@ const WELCOME = `<div class="welcome"><b>Lộ trình học nền tảng toán ch
 const VIDBOX = `<details class="vbox"><summary>Video bài giảng: <b>${nVid}</b> video${liveWeek ? ` · <b>+${liveWeek}</b> trong 7 ngày qua` : ''}</summary>${COV}</details>`;
 const CHIPS = [['', 'Tất cả'], ['ST', 'Stat 110'], ['CB', 'Casella'], ['PR', 'Bishop'], ['NW', 'Nocedal'], ['MIT', 'MIT']];
 const BKCHIPS = () => `<div class="bks" role="group" aria-label="Chỉ xem một cuốn sách"><span class="k">Sách</span>${CHIPS.map(([k, t]) => `<button type="button" data-bk="${k}" class="${BK === k ? 'on' : ''}">${t}</button>`).join('')}</div>`;
-const wireChips = R => R.querySelectorAll('.bks button').forEach(b => b.onclick = () => setBook(b.dataset.bk));
+const COCHIPS = () => `<div class="bks co" role="group" aria-label="Chọn lộ trình"><span class="k">Đi theo</span><button type="button" data-co="" class="${CO ? '' : 'on'}">Cả bản đồ</button>${Object.entries(COURSE).map(([k, c]) => `<button type="button" data-co="${k}" class="${CO === k ? 'on' : ''}" title="Đi đúng thứ tự bài giảng của ${esc(c.full)}">${c.t}</button>`).join('')}</div>`;
+const wireChips = R => { R.querySelectorAll('.bks button[data-bk]').forEach(b => b.onclick = () => setBook(b.dataset.bk)); R.querySelectorAll('.bks button[data-co]').forEach(b => b.onclick = () => setCourse(b.dataset.co)); };
+const lecs = a => { const out = []; let s = a[0], e = a[0]; for (const x of [...a.slice(1), null]) { if (x === e + 1) { e = x; continue; } out.push(s === e ? `${s}` : `${s}–${e}`); s = e = x; } return 'Bài giảng ' + out.join(', '); };
+function drawCourse(R, top, follow, FOLD) {
+  const C = COURSE[CO], ss = C.steps, dn = ss.filter(s => done.has(s.id)).length, k = ss.findIndex(s => !done.has(s.id)), nx = k < 0 ? null : byId[ss[k].id];
+  const rows = ss.map((s, i) => { const n = byId[s.id], ok = done.has(n.id), out = n.pre.filter(p => !C.set.has(p) && !done.has(p));
+    return `<li><button data-id="${n.id}" class="${n.id === sel ? 'cur' : ''}${i === k ? ' nx' : ''}"><span class="n${ok ? ' ok' : ''}">${ok ? '✓' : i + 1}</span><span style="min-width:0">${esc(n.t)}${fresh.has(n.id) ? ' <span class="new">mới</span>' : ''}<small class="lc">${lecs(s.lec)}${out.length ? ` · cần biết trước: ${out.map(p => esc(byId[p].t)).join(', ')}` : ''}</small></span><span class="m mk ${n.st}" title="${ST[n.st]}">${n.st === 'ahead' ? '' : MK[n.st]}</span></button></li>`; }).join('');
+  R.innerHTML = `${FOLD}<div class="lab">Lộ trình ${esc(C.t)}<span class="pg">${dn ? `Đã hiểu ${dn}/${ss.length}` : `${ss.length} ${UNIT}`}</span></div>
+    ${dn ? `<div class="prog"><i style="width:${dn / ss.length * 100}%"></i></div>` : ''}
+    ${nx ? `<button class="btn start" id="startBtn" type="button">${dn ? 'Học tiếp' : 'Bắt đầu'}: ${k + 1} · ${esc(nx.t)}</button>` : `<div class="src">Bạn đã hiểu hết ${ss.length} ${UNIT} của ${esc(C.t)}.</div>`}
+    ${COCHIPS()}
+    <div class="scroll"><p class="intro">Đúng thứ tự bài giảng của ${esc(C.full)}. Trên bản đồ, đường đậm nối các chấm theo số thứ tự.</p>
+    <div class="keys"><span class="mk taught">${MK.taught}</span> có video · <span class="mk read">${MK.read}</span> có ghi chú · ✓ đã hiểu</div>
+    <ol class="rlist">${rows}</ol>
+    <button class="lnk" id="coTour" type="button">Bay dọc cả lộ trình trên bản đồ</button>
+    <p class="src">${ss.some(s => byId[s.id].pre.some(p => !C.set.has(p))) ? '<i>Cần biết trước</i>: bài nền nằm ngoài khoá mà bạn chưa đánh dấu hiểu. ' : ''}${esc(C.note)}</p></div>
+    <button class="lnk" id="coAll" type="button">← Về lộ trình cả bản đồ</button>`;
+  const sc = R.querySelector('.scroll'); sc.scrollTop = top;
+  if (follow) { const cur = sc.querySelector('.cur'); if (cur) { const a = cur.getBoundingClientRect(), b = sc.getBoundingClientRect(); if (a.top < b.top || a.bottom > b.bottom) sc.scrollTop += a.top - b.top - b.height / 3; } }
+  $('rx').onclick = () => foldRank(true);
+  if ($('startBtn')) $('startBtn').onclick = () => select(nx.id);
+  $('coAll').onclick = () => setCourse('');
+  $('coTour').onclick = () => { if (innerWidth <= 760) $('rank').hidden = true; select(null); startTour(ss.map(s => s.id)); };
+  R.querySelectorAll('.rlist button').forEach(b => b.onclick = () => select(b.dataset.id));
+  wireChips(R);
+}
 // ---- one book picked in the filter: the panel turns into that cloud as a straight list, sortable
 let BK = '', bookSet = null, bookSort = 'book', bookNoVid = false;
 const secKey = n => { const m = /^(?:CB|PR|NW)(\d+(?:\.\d+)*)$/.exec(n.id); return m ? m[1].split('.').map(Number) : null; };
@@ -864,7 +917,7 @@ function drawBookList(R, top, follow) {
   const sb = (k, t, tip) => `<button data-s="${k}" class="${bookSort === k ? 'on' : ''}" title="${tip}">${t}</button>`;
   R.innerHTML = `<button class="pfold" id="rx" type="button" aria-label="Thu gọn lộ trình" title="Thu gọn"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3.5 5.5 8l4.5 4.5"/></svg></button>
     <div class="lab">Chỉ xem ${esc(BOOKN[BK])}<span class="pg">${total} ${UNIT}</span></div>
-    ${BKCHIPS()}
+    ${COCHIPS()}${BKCHIPS()}
     <div class="tabs">${sb('book', 'Theo sách', 'Đúng thứ tự mục lục của sách')}${sb('path', 'Thứ tự học', 'Theo lộ trình chung: bài nền trước, kể cả bài nền ở sách khác')}${sb('top', 'Quan trọng nhất', 'Bài nào làm nền cho nhiều bài phía sau nhất')}</div>
     <label class="chk"><input type="checkbox" id="bnv"${bookNoVid ? ' checked' : ''}>Chỉ ${UNIT} chưa có video (${nv})</label>
     <div class="scroll"><ol class="rlist">${rows || `<li class="src">Không còn ${UNIT} nào.</li>`}</ol></div>
@@ -881,41 +934,39 @@ function drawBookList(R, top, follow) {
 function drawRank(follow) {
   const R = $('rank'), top = R.querySelector('.scroll')?.scrollTop || 0;
   if (BK) return drawBookList(R, top, follow);
-  let body, intro;
-  if (rankTab === 'path') {
-    body = STAGES.map((s, k) => { const dn = s.ns.filter(n => done.has(n.id)).length, nv = s.ns.filter(n => n.v.length).length;
-      return `<details class="stg" data-k="${k}"${openStg.has(k) ? ' open' : ''}><summary><span class="no" style="border-color:var(--${s.d})">${s.k}</span><span class="nm">${esc(s.name)}<small>${esc(s.from)}</small></span><span class="ct">${dn ? `${dn}/${s.ns.length} đã hiểu` : `${s.ns.length} ${UNIT}`}<small>${nv ? `<span class="mk taught">${MK.taught}</span> ${nv}/${s.ns.length} có video` : ''}</small></span></summary>
-        <ol class="rlist">${byBook(s.ns, s.d)}</ol></details>`; }).join('');
-    intro = `<b>${STAGES.length} chặng, học từ trên xuống.</b> Bấm một chặng để xem các bài trong đó. <span class="mk taught">${MK.taught}</span> có video · <span class="mk read">${MK.read}</span> có ghi chú · <span class="mk taught">✓</span> bạn đã hiểu.`;
-  } else if (rankTab === 'next') {
-    const nx = N.filter(canLearn).sort((a, b) => b.imp - a.imp || a.i - b.i);
-    body = (nx.length ? `<ol class="rlist">${nx.map((n, i) => item(n, i + 1, `<small>Chặng ${stageOf[n.id] + 1} · ${n.imp ? `mở đường cho ${n.imp} ${IMPU}` : 'một đích đến'}</small>`)).join('')}</ol>` : '')
-      + (!done.size ? '' : askReset ? `<div class="me"><span class="src">Xoá cả ${done.size} bài đã đánh dấu?</span><button class="btn" id="rsY" type="button">Xoá</button><button class="btn" id="rsN" type="button">Giữ lại</button></div>`
-        : `<button class="lnk" id="rs" type="button">Xoá tiến độ của tôi</button>`);
-    intro = !done.size ? `<b>Bắt đầu từ đây:</b> ${nx.length} bài này không cần học gì trước. Hiểu bài nào thì mở nó ra, bấm “Đánh dấu đã hiểu”. Danh sách sẽ đổi sang những thứ bạn học được tiếp, và bản đồ sáng dần lên. Tiến độ chỉ lưu trên trình duyệt này.`
-      : nx.length ? `<b>${nx.length} bài bạn học được ngay:</b> mọi thứ cần học trước, bạn đã đánh dấu là hiểu. Bài mở đường cho nhiều thứ nhất đứng trên cùng.`
-      : `<b>Bạn đã đánh dấu hiểu hết ${N.length} bài trên bản đồ.</b>`;
-  } else {
+  const FOLD = `<button class="pfold" id="rx" type="button" aria-label="Thu gọn lộ trình" title="Thu gọn"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3.5 5.5 8l4.5 4.5"/></svg></button>`;
+  if (CO && rankTab !== 'top') return drawCourse(R, top, follow, FOLD);
+  if (rankTab === 'top') {          // opened from Tuỳ chọn: which topics carry the most
     const list = TOP.filter(n => !onlyNoVid || !n.v.length);
-    body = `<label class="chk"><input type="checkbox" id="nv"${onlyNoVid ? ' checked' : ''}>Chỉ hiện bài chưa có video (${TOP.filter(n => !n.v.length).length})</label>
-      <ol class="rlist">${list.map((n, i) => `<li><button data-id="${n.id}" class="${n.id === sel ? 'cur' : ''}"><span class="n${done.has(n.id) ? ' ok' : ''}">${done.has(n.id) ? '✓' : i + 1}</span><span style="min-width:0">${esc(n.t)}${n.v.length ? ` <span class="mk taught">${MK.taught}</span>` : ''}<div class="bar" style="width:${n.imp / TOP[0].imp * 100}%;background:var(--${n.d})"></div></span><span class="n">${n.imp}</span></button></li>`).join('')}</ol>`;
-    intro = `<b>Bài nào làm nền cho nhiều thứ nhất.</b> Con số bên phải: bao nhiêu bài khác cần nó. Số càng lớn, càng nên học cho chắc; trên bản đồ đó là những chấm to. <span class="mk taught">${MK.taught}</span> đã có video.`;
+    R.innerHTML = `${FOLD}<div class="lab">Bài quan trọng nhất</div>
+      <button class="lnk" id="rkBack" type="button">← Về lộ trình</button>
+      <div class="scroll"><p class="intro">Số bên phải: bao nhiêu bài khác cần bài này. Số càng lớn càng nên học chắc; trên bản đồ là những chấm to.</p>
+      <label class="chk"><input type="checkbox" id="nv"${onlyNoVid ? ' checked' : ''}>Chỉ bài chưa có video (${TOP.filter(n => !n.v.length).length})</label>
+      <ol class="rlist">${list.map((n, i) => `<li><button data-id="${n.id}" class="${n.id === sel ? 'cur' : ''}"><span class="n${done.has(n.id) ? ' ok' : ''}">${done.has(n.id) ? '✓' : i + 1}</span><span style="min-width:0">${esc(n.t)}${n.v.length ? ` <span class="mk taught">${MK.taught}</span>` : ''}<div class="bar" style="width:${n.imp / TOP[0].imp * 100}%;background:var(--${n.d})"></div></span><span class="n">${n.imp}</span></button></li>`).join('')}</ol></div>`;
+  } else {
+    // the stage you are in opens by itself (again each time you move on to a new stage)
+    const nx = STAGES.flatMap(s => s.ns).find(n => !done.has(n.id));
+    if (nx && stageOf[nx.id] !== autoStg) { autoStg = stageOf[nx.id]; openStg.add(autoStg); }
+    const body = STAGES.map((s, k) => { const dn = s.ns.filter(n => done.has(n.id)).length, nv = s.ns.filter(n => n.v.length).length;
+      return `<details class="stg${nx && stageOf[nx.id] === k ? ' now' : ''}" data-k="${k}"${openStg.has(k) ? ' open' : ''}><summary><span class="no" style="border-color:var(--${s.d})">${s.k}</span><span class="nm">${esc(s.name)}<small>${esc(s.from)}</small></span><span class="ct">${dn ? `${dn}/${s.ns.length} đã hiểu` : `${s.ns.length} ${UNIT}`}<small>${nv ? `<span class="mk taught">${MK.taught}</span> ${nv}/${s.ns.length} có video` : ''}</small></span></summary>
+        <ol class="rlist">${byBook(s.ns, s.d)}</ol></details>`; }).join('');
+    const hi = !done.size && store.get('nm-hi', '') !== '1'
+      ? `<div class="welcome hi">${N.length} ${UNIT} toán nền cho Machine Learning, chia ${STAGES.length} chặng: học từ trên xuống. Hiểu bài nào thì đánh dấu; tiến độ lưu trên trình duyệt này.<button class="x" id="hiX" type="button" aria-label="Ẩn">×</button></div>` : '';
+    const reset = !done.size ? '' : askReset ? `<div class="me"><span class="src">Xoá cả ${done.size} bài đã đánh dấu?</span><button class="btn" id="rsY" type="button">Xoá</button><button class="btn" id="rsN" type="button">Giữ lại</button></div>`
+      : `<button class="lnk" id="rs" type="button">Xoá tiến độ của tôi</button>`;
+    R.innerHTML = `${FOLD}<div class="lab">Lộ trình học${done.size ? `<span class="pg">Đã hiểu ${done.size}/${N.length}</span>` : ''}</div>
+      ${done.size ? `<div class="prog"><i style="width:${done.size / N.length * 100}%"></i></div>` : ''}
+      ${nx ? `<button class="btn start" id="startBtn" type="button">${done.size ? 'Học tiếp' : 'Bắt đầu'}: bài ${nx.no} · ${esc(nx.t)}</button>` : `<div class="src">Bạn đã đánh dấu hiểu hết ${N.length} ${UNIT}.</div>`}
+      ${COCHIPS()}${BKCHIPS()}
+      <div class="scroll">${hi}<div class="keys"><span class="mk taught">${MK.taught}</span> có video · <span class="mk read">${MK.read}</span> có ghi chú · ✓ đã hiểu</div>
+      <div>${body}</div>${reset}</div>`;
   }
-  const tab = (k, name) => `<button data-t="${k}" class="${rankTab === k ? 'on' : ''}">${name}</button>`;
-  R.innerHTML = `<button class="pfold" id="rx" type="button" aria-label="Thu gọn lộ trình" title="Thu gọn"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3.5 5.5 8l4.5 4.5"/></svg></button>
-    <div class="lab">Lộ trình học${done.size ? `<span class="pg">Đã hiểu ${done.size}/${N.length}</span>` : ''}</div>
-    ${done.size ? `<div class="prog"><i style="width:${done.size / N.length * 100}%"></i></div>` : ''}
-    ${(() => { const nx = STAGES.flatMap(s => s.ns).find(n => !done.has(n.id)); return nx ? `<button class="btn start" id="startBtn" type="button">${done.size ? 'Học tiếp' : 'Bắt đầu'}: bài ${nx.no} · ${esc(nx.t)}</button>` : ''; })()}
-    ${BKCHIPS()}
-    <div class="tabs">${tab('path', 'Thứ tự học')}${tab('next', 'Nên học tiếp')}${tab('top', 'Quan trọng nhất')}</div>
-    <div class="scroll">${rankTab === 'path' && !done.size ? WELCOME : ''}
-    <p class="intro">${intro}</p>
-    <div>${body}</div></div>`;
   const sc = R.querySelector('.scroll'); sc.scrollTop = top;
   if (follow) { const cur = sc.querySelector('.cur'); if (cur) { const a = cur.getBoundingClientRect(), b = sc.getBoundingClientRect(); if (a.top < b.top || a.bottom > b.bottom) sc.scrollTop += a.top - b.top - b.height / 3; } }
   $('rx').onclick = () => foldRank(true);
   if ($('startBtn')) $('startBtn').onclick = () => { const nx = STAGES.flatMap(s => s.ns).find(n => !done.has(n.id)); if (nx) select(nx.id); };
-  R.querySelectorAll('.tabs button').forEach(b => b.onclick = () => { rankTab = b.dataset.t; askReset = false; R.querySelector('.scroll').scrollTop = 0; drawRank(true); });
+  if ($('rkBack')) $('rkBack').onclick = () => { rankTab = 'path'; drawRank(true); };
+  if ($('hiX')) $('hiX').onclick = () => { store.set('nm-hi', '1'); drawRank(); };
   R.querySelectorAll('.stg>summary').forEach(m => m.onclick = () => { const d = m.parentNode; if (!d.open) { d.dataset.me = 1; if (!sel) focusDomain(STAGES[+d.dataset.k].d); } });
   R.querySelectorAll('.stg').forEach(d => d.ontoggle = () => { d.open ? openStg.add(+d.dataset.k) : openStg.delete(+d.dataset.k);
     if (d.open && d.dataset.me) { const sc = R.querySelector('.scroll'); sc.scrollTop += d.getBoundingClientRect().top - sc.getBoundingClientRect().top; } delete d.dataset.me; });
@@ -1026,20 +1077,31 @@ const BOOKS = [['', 'Tất cả', 'Mọi bài'], ['ST', 'Stat 110', 'Stat 110, H
 const bookOf = n => (/^(CB|PR|NW|ST)/.exec(n.id) || [0, 'MIT'])[1];
 $('sB').innerHTML = '<span class="k">Sách</span>' + BOOKS.map(([k, t, full]) => `<button type="button" data-b="${k}" title="${esc(full)}${k ? ` · ${N.filter(n => bookOf(n) === k).length} ${UNIT}` : ''}">${t}</button>`).join('');
 function setBook(b) {
+  if (b && CO) { CO = ''; store.set('nm-course', ''); courseLabels(); }
   BK = b; bookSet = b ? new Set(N.filter(n => bookOf(n) === b).map(n => n.id)) : null;
   $('sB').querySelectorAll('button').forEach(x => x.classList.toggle('on', x.dataset.b === b));
   $('sub').textContent = b ? `${bookSet.size} ${UNIT} từ ${BOOKN[b]}` : `${N.length} ${UNIT} · ${STAGES.length} chặng`;
   $('bkPill').hidden = !b; $('bkPill').textContent = b ? `${BOOKN[b]} · ${bookSet.size} ${UNIT}  ×` : ''; $('optBtn').setAttribute('aria-pressed', !!b);
-  endTour(); sel = null; lit = bookSet; litDown = near = null; $('card').hidden = true; $('card').innerHTML = ''; refresh(); $('rank').querySelector('.scroll') && ($('rank').querySelector('.scroll').scrollTop = 0); drawRank();
+  endTour(); sel = null; lit = baseLit(); litDown = near = null; $('card').hidden = true; $('card').innerHTML = ''; refresh(); $('rank').querySelector('.scroll') && ($('rank').querySelector('.scroll').scrollTop = 0); drawRank();
   if (b && innerWidth > 760 && $('list').hidden) $('rank').hidden = false;
   if (!$('list').hidden) { $('list').scrollTop = 0; lsel = null; drawList(); }
   else if (G) { stopSpin(); fit(calm ? 0 : 900, bookSet); }
 }
+function setCourse(k) {
+  if (k && BK) { BK = ''; bookSet = null; $('sB').querySelectorAll('button').forEach(x => x.classList.toggle('on', x.dataset.b === '')); $('bkPill').hidden = true; $('optBtn').setAttribute('aria-pressed', false); }
+  CO = COURSE[k] ? k : ''; store.set('nm-course', CO); rankTab = 'path';
+  $('sub').textContent = CO ? `Lộ trình ${COURSE[CO].t}: ${COURSE[CO].steps.length} ${UNIT}` : `${N.length} ${UNIT} · ${STAGES.length} chặng`;
+  endTour(); sel = null; lit = baseLit(); litDown = near = null; $('card').hidden = true; $('card').innerHTML = ''; courseLabels(); refresh();
+  const sc = $('rank').querySelector('.scroll'); if (sc) sc.scrollTop = 0; drawRank();
+  if (!$('list').hidden) showList(false);
+  if (G) { stopSpin(); fit(calm ? 0 : 900, lit); }
+}
+if (CO) $('sub').textContent = `Lộ trình ${COURSE[CO].t}: ${COURSE[CO].steps.length} ${UNIT}`; lit = baseLit();
 $('sB').querySelectorAll('button').forEach(x => x.onclick = () => setBook(x.dataset.b));
 $('sB').querySelector('button[data-b=""]').classList.add('on');
 // ---- phones: one row on top (versions, search, options); everything else lives in a sheet that slides up
 const PHONE = matchMedia('(max-width:760px)');
-const OPT = [['Chỉ xem một cuốn sách', 'sB'], ['Tự xoay chậm', 'spinBtn'], ['Tô màu theo', 'sC'], ['Bố cục', 'sL'], ['Kiểu xem', 'sM'], ['Nền sáng / tối', 'themeBtn']];
+const OPT = [['Bài quan trọng nhất', 'topBtn'], ['Tự xoay chậm', 'spinBtn'], ['Tô màu theo', 'sC'], ['Bố cục', 'sL'], ['Kiểu xem', 'sM'], ['Nền sáng / tối', 'themeBtn']];
 const HOME = OPT.map(([, id]) => { const m = document.createComment(id); $(id).before(m); return m; });
 function place() {         // everything but the level, the view and search lives in one menu; on a phone the roadmap button too
   $('optBody').innerHTML = '';
@@ -1053,7 +1115,7 @@ $('optBtn').onclick = () => openOpts($('opts').hidden);
 addEventListener('keydown', e => { if (e.key === 'Escape' && !$('opts').hidden) openOpts(false); });
 $('ox').onclick = () => openOpts(false);
 $('opts').onclick = e => { if (e.target === $('opts')) openOpts(false); };
-$('optBody').addEventListener('click', e => { if (e.target.closest('#sB button')) setTimeout(() => openOpts(false), 120); });
+$('topBtn').onclick = () => { openOpts(false); if (!$('list').hidden) showList(false); if (BK) setBook(''); rankTab = 'top'; foldRank(false); drawRank(); $('rank').querySelector('.scroll').scrollTop = 0; };
 $('qBtn').onclick = () => { const h = document.querySelector('header'), on = !h.classList.contains('srch'); h.classList.toggle('srch', on); if (on) $('q').focus(); else $('q').blur(); };
 $('q').addEventListener('change', () => { if (PHONE.matches && $('q').value) setTimeout(() => { document.querySelector('header').classList.remove('srch'); $('q').value = ''; $('q').blur(); }, 0); });
 $('bkPill').onclick = () => setBook('');
