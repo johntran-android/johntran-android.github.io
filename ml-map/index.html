@@ -233,15 +233,31 @@ details.mr>.pills{display:contents}
 .lv a{display:inline-flex;gap:6px;align-items:baseline;color:var(--ink);text-decoration:none;font-size:14.5px;line-height:1.35}
 .lv a:hover{text-decoration:underline;text-underline-offset:2px}
 .lv .vdot{flex:none;background:var(--taught);vertical-align:0}
-.listing #sM,.listing #sL,.listing #sC,.listing #rankBtn{display:none}
+.listing #sM,.listing #sL,.listing #sC{display:none}
 .orow:has(>[hidden]),.listing .orow:has(#sM,#sL,#sC,#spinBtn){display:none}
 .mob,.bkpill,.btn .ic{display:none}
 .btn.opt{display:inline-flex;align-items:center;gap:6px}
-.fab{display:none}
+.fab[hidden]{display:none}
+.fab{display:inline-flex;align-items:center;gap:7px;position:absolute;top:10px;left:10px;z-index:4;font:inherit;font-size:13.5px;font-weight:700;background:var(--panel);color:var(--ink);border:1px solid var(--rule);border-radius:12px;padding:8px 13px;box-shadow:0 6px 18px rgba(5,10,15,.14);cursor:pointer}
+.fab:hover{border-color:var(--ink)}
+.fab svg{width:16px;height:16px}
+.fab .pg{font-weight:600;color:var(--muted);font-size:12px}
+.fv-fab{left:auto;right:10px;z-index:6}
+#vids{z-index:7}
+.fv-fab b{color:var(--fr)}
+#vids{right:10px;width:340px}
+.listing #rankFab{display:none}
+.pfold{position:absolute;top:6px;right:6px;background:none;border:0;color:var(--muted);cursor:pointer;padding:4px;line-height:0;border-radius:6px}
+.pfold:hover{color:var(--ink);background:var(--ground)}
+.pfold svg{width:18px;height:18px}
 @media (max-width:760px){
-  .fab:not([hidden]){display:inline-flex;align-items:center;gap:6px;position:absolute;left:50%;transform:translateX(-50%);bottom:48px;z-index:4;font:inherit;font-size:14px;font-weight:700;background:var(--ink);color:var(--panel);border:0;border-radius:99px;padding:9px 16px;box-shadow:0 6px 18px rgba(5,10,15,.25)}
-  .fab svg{width:16px;height:16px}
-  .listing .fab{display:none!important}
+  .fab{top:auto;bottom:48px;left:8px;font-size:14px;padding:9px 14px;background:var(--ink);color:var(--panel);border:0;border-radius:99px;box-shadow:0 6px 18px rgba(5,10,15,.25)}
+  .fab .pg{color:inherit;opacity:.75}
+  .fv-fab{left:auto;right:8px}
+  .fv-fab b{color:inherit}
+  #vids{left:8px;right:8px;width:auto;top:auto;bottom:8px;max-height:60%}
+  #rx svg{transform:rotate(-90deg)}
+  #vx svg{transform:rotate(90deg)}
 }
 #sW button{display:inline-flex;align-items:center;gap:5px}
 #sW svg{width:14px;height:14px}
@@ -335,7 +351,6 @@ details.mr>.pills{display:contents}
   <div class="seg" id="sM" role="group" aria-label="Chế độ xem"><button id="m3" class="on" type="button">3D</button><button id="m2" type="button">2D</button></div>
   <div class="seg" id="sL" role="group" aria-label="Bố cục"><button id="lC" class="on" type="button" title="Mỗi môn tụ thành một cụm">Theo môn</button><button id="lT" type="button" title="Thứ cần học trước nằm dưới, thứ học sau nằm trên">Từ nền lên</button></div>
   <div class="seg" id="sC" role="group" aria-label="Tô màu theo"><span class="k">Màu</span><button id="cD" type="button" title="Mỗi môn một màu">Môn học</button><button id="cS" type="button" title="Bài nào đã có video, bài nào mới có ghi chú, bài nào chưa có gì">Video & ghi chú</button><button id="cM" type="button" title="Bài nào bạn đã hiểu, bài nào học được ngay">Tiến độ của tôi</button></div>
-  <button class="btn" id="rankBtn" type="button">Lộ trình</button>
   <button class="btn sq" id="themeBtn" type="button"></button>
   <button class="btn sq mob" id="qBtn" type="button" aria-label="Tìm bài"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3.5 3.5"/></svg></button>
   <button class="btn opt" id="optBtn" type="button" aria-label="Tuỳ chọn hiển thị" aria-expanded="false"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 4h7M12 4h2M2 12h3M8 12h6"/><circle cx="10.5" cy="4" r="1.6"/><circle cx="6.5" cy="12" r="1.6"/></svg><span class="tx">Tuỳ chọn</span></button>
@@ -357,6 +372,8 @@ details.mr>.pills{display:contents}
   </div>
   <aside class="panel" id="rank"></aside>
   <aside class="panel" id="card" hidden></aside>
+  <aside class="panel" id="vids" hidden></aside>
+  <button class="fab fv-fab" id="vidFab" type="button" hidden></button>
   <div id="list" hidden></div>
   <button class="bkpill" id="bkPill" type="button" hidden></button>
   <button class="fab" id="rankFab" type="button" hidden><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M5.5 4h8M5.5 8h8M5.5 12h8"/><circle cx="2.5" cy="4" r=".7"/><circle cx="2.5" cy="8" r=".7"/><circle cx="2.5" cy="12" r=".7"/></svg>Lộ trình học</button>
@@ -494,7 +511,7 @@ let autoProg = false;
 function setDone(ids, on) {
   ids.forEach(x => mem(byId[x]).forEach(t => on ? doneT.add(t) : doneT.delete(t))); store.set('nm-done', JSON.stringify([...doneT])); syncDone();
   if (on && !autoProg && colorBy !== 'progress') { autoProg = true; setColor('progress'); } else { drawLegend(); refresh(); }   // the first mark switches the map to "your progress" so it visibly lights up
-  drawRank(); if (sel) drawMe(sel); if (!$('list').hidden) drawList();
+  drawRank(); drawFab(); if (sel) drawMe(sel); if (!$('list').hidden) drawList();
 }
 
 // ---- state
@@ -845,7 +862,7 @@ function drawBookList(R, top, follow) {
     return h + item(n, i + 1, extra, false);
   }).join('');
   const sb = (k, t, tip) => `<button data-s="${k}" class="${bookSort === k ? 'on' : ''}" title="${tip}">${t}</button>`;
-  R.innerHTML = `<button class="x" id="rx" aria-label="Đóng">×</button>
+  R.innerHTML = `<button class="pfold" id="rx" type="button" aria-label="Thu gọn lộ trình" title="Thu gọn"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3.5 5.5 8l4.5 4.5"/></svg></button>
     <div class="lab">Chỉ xem ${esc(BOOKN[BK])}<span class="pg">${total} ${UNIT}</span></div>
     ${BKCHIPS()}
     <div class="tabs">${sb('book', 'Theo sách', 'Đúng thứ tự mục lục của sách')}${sb('path', 'Thứ tự học', 'Theo lộ trình chung: bài nền trước, kể cả bài nền ở sách khác')}${sb('top', 'Quan trọng nhất', 'Bài nào làm nền cho nhiều bài phía sau nhất')}</div>
@@ -854,7 +871,7 @@ function drawBookList(R, top, follow) {
     <button class="lnk" id="bkAll" type="button">← Bỏ lọc, xem lộ trình cả bản đồ</button>`;
   const sc = R.querySelector('.scroll'); sc.scrollTop = top;
   if (follow) { const cur = sc.querySelector('.cur'); if (cur) { const a = cur.getBoundingClientRect(), b = sc.getBoundingClientRect(); if (a.top < b.top || a.bottom > b.bottom) sc.scrollTop += a.top - b.top - b.height / 3; } }
-  $('rx').onclick = () => { R.hidden = true; };
+  $('rx').onclick = () => foldRank(true);
   R.querySelectorAll('.tabs button').forEach(b => b.onclick = () => { bookSort = b.dataset.s; R.querySelector('.scroll').scrollTop = 0; drawRank(); });
   $('bnv').onchange = e => { bookNoVid = e.target.checked; R.querySelector('.scroll').scrollTop = 0; drawRank(); };
   $('bkAll').onclick = () => setBook('');
@@ -885,7 +902,7 @@ function drawRank(follow) {
     intro = `<b>Bài nào làm nền cho nhiều thứ nhất.</b> Con số bên phải: bao nhiêu bài khác cần nó. Số càng lớn, càng nên học cho chắc; trên bản đồ đó là những chấm to. <span class="mk taught">${MK.taught}</span> đã có video.`;
   }
   const tab = (k, name) => `<button data-t="${k}" class="${rankTab === k ? 'on' : ''}">${name}</button>`;
-  R.innerHTML = `<button class="x" id="rx" aria-label="Đóng">×</button>
+  R.innerHTML = `<button class="pfold" id="rx" type="button" aria-label="Thu gọn lộ trình" title="Thu gọn"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3.5 5.5 8l4.5 4.5"/></svg></button>
     <div class="lab">Lộ trình học${done.size ? `<span class="pg">Đã hiểu ${done.size}/${N.length}</span>` : ''}</div>
     ${done.size ? `<div class="prog"><i style="width:${done.size / N.length * 100}%"></i></div>` : ''}
     ${(() => { const nx = STAGES.flatMap(s => s.ns).find(n => !done.has(n.id)); return nx ? `<button class="btn start" id="startBtn" type="button">${done.size ? 'Học tiếp' : 'Bắt đầu'}: bài ${nx.no} · ${esc(nx.t)}</button>` : ''; })()}
@@ -893,17 +910,16 @@ function drawRank(follow) {
     <div class="tabs">${tab('path', 'Thứ tự học')}${tab('next', 'Nên học tiếp')}${tab('top', 'Quan trọng nhất')}</div>
     <div class="scroll">${rankTab === 'path' && !done.size ? WELCOME : ''}
     <p class="intro">${intro}</p>
-    <div>${body}</div>${rankTab === 'path' ? VIDBOX : ''}</div>`;
+    <div>${body}</div></div>`;
   const sc = R.querySelector('.scroll'); sc.scrollTop = top;
   if (follow) { const cur = sc.querySelector('.cur'); if (cur) { const a = cur.getBoundingClientRect(), b = sc.getBoundingClientRect(); if (a.top < b.top || a.bottom > b.bottom) sc.scrollTop += a.top - b.top - b.height / 3; } }
-  $('rx').onclick = () => { R.hidden = true; };
+  $('rx').onclick = () => foldRank(true);
   if ($('startBtn')) $('startBtn').onclick = () => { const nx = STAGES.flatMap(s => s.ns).find(n => !done.has(n.id)); if (nx) select(nx.id); };
   R.querySelectorAll('.tabs button').forEach(b => b.onclick = () => { rankTab = b.dataset.t; askReset = false; R.querySelector('.scroll').scrollTop = 0; drawRank(true); });
   R.querySelectorAll('.stg>summary').forEach(m => m.onclick = () => { const d = m.parentNode; if (!d.open) { d.dataset.me = 1; if (!sel) focusDomain(STAGES[+d.dataset.k].d); } });
   R.querySelectorAll('.stg').forEach(d => d.ontoggle = () => { d.open ? openStg.add(+d.dataset.k) : openStg.delete(+d.dataset.k);
     if (d.open && d.dataset.me) { const sc = R.querySelector('.scroll'); sc.scrollTop += d.getBoundingClientRect().top - sc.getBoundingClientRect().top; } delete d.dataset.me; });
   R.querySelectorAll('.rlist button').forEach(b => b.onclick = () => select(b.dataset.id));
-  R.querySelectorAll('.fv').forEach(b => b.onclick = () => select(b.dataset.fv));
   wireChips(R);
   R.querySelectorAll('[data-all]').forEach(b => b.onclick = () => { const ids = STAGES[+b.dataset.all].ns.map(n => n.id); setDone(ids, !ids.every(x => done.has(x))); });
   if ($('nv')) $('nv').onchange = e => { onlyNoVid = e.target.checked; drawRank(); };
@@ -916,9 +932,30 @@ drawRank();
 const seen = store.get('nm-seen', '') === '1';
 if (innerWidth <= 760 && (seen || /danh-sach/.test(location.hash))) $('rank').hidden = true;
 store.set('nm-seen', '1');
-new MutationObserver(() => { $('rankFab').hidden = !$('rank').hidden || !$('list').hidden; }).observe($('rank'), { attributes: true, attributeFilter: ['hidden'] });
-$('rankFab').hidden = !$('rank').hidden;
-$('rankFab').onclick = () => { $('rank').hidden = false; $('card').hidden = true; };
+// desktop: the panel folds into a button in the same corner and stays folded across visits
+if (innerWidth > 760 && store.get('nm-rank', '') === 'fold') $('rank').hidden = true;
+function foldRank(on) {
+  $('rank').hidden = on; if (innerWidth > 760) store.set('nm-rank', on ? 'fold' : 'open');
+  if (!on && innerWidth <= 760) { $('card').hidden = true; $('vids').hidden = true; }
+}
+const FAB_ICON = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M5.5 4h8M5.5 8h8M5.5 12h8"/><circle cx="2.5" cy="4" r=".7"/><circle cx="2.5" cy="8" r=".7"/><circle cx="2.5" cy="12" r=".7"/></svg>';
+function drawFab() { $('rankFab').innerHTML = FAB_ICON + 'Lộ trình học' + (done.size ? `<span class="pg">${done.size}/${N.length}</span>` : ''); }
+function syncFabs() {
+  const ph = innerWidth <= 760, up = id => !$(id).hidden;     // phone: one sheet at a time, the buttons sit on the sheets' edge
+  $('rankFab').hidden = up('rank') || up('list') || (ph && (up('vids') || up('card')));
+  $('vidFab').hidden = up('vids') || up('card') || (ph && up('rank'));   // desktop: the card opens in the same corner
+}
+['rank', 'card', 'vids', 'list'].forEach(id => new MutationObserver(syncFabs).observe($(id), { attributes: true, attributeFilter: ['hidden'] }));
+$('rankFab').onclick = () => foldRank(false);
+// ---- the author's lecture videos: their own button and panel (top right), apart from the roadmap
+$('vidFab').innerHTML = freshV.length ? `<span class="frd"></span>Video mới <b>${freshV.length}</b>` : `<span class="vdot">${PLAY}</span>${nVid} video`;
+$('vids').innerHTML = `<button class="pfold" id="vx" type="button" aria-label="Thu gọn" title="Thu gọn"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5 10.5 8 6 12.5"/></svg></button>
+  <div class="lab">Video bài giảng</div><div class="scroll">${FRESH}${COV}</div>`;
+function openVids(on) { $('vids').hidden = !on; if (on) { $('card').hidden = true; if (innerWidth <= 760) $('rank').hidden = true; } }
+$('vidFab').onclick = () => openVids(true);
+$('vx').onclick = () => openVids(false);
+$('vids').querySelectorAll('.fv').forEach(b => b.onclick = () => { openVids(false); if (!$('list').hidden) showList(false); select(b.dataset.fv); });
+drawFab(); syncFabs();
 
 function drawList() {
   const L = $('list'), top = L.scrollTop, vis = n => !bookSet || bookSet.has(n.id), total = N.filter(vis).length, dc = N.filter(n => vis(n) && done.has(n.id)).length;
@@ -933,7 +970,7 @@ function drawList() {
       <div class="sm">${esc(n.src)}${n.nt.length ? ` · <a href="${REPO}${encodeURI(n.nt[0][1])}" target="_blank" rel="noopener">✎ ${n.nt.length} ghi chú</a>` : ''}</div>
       ${vs.length ? `<ul class="lv">${vs.map(v => `<li><a href="https://youtu.be/${esc(v.id)}" target="_blank" rel="noopener"><span class="vdot">${PLAY}</span><span>${esc(v.t)}</span></a></li>`).join('')}</ul>` : ''}${rel(n)}</div><button class="mp" type="button" data-map="${n.id}" title="Mở trên bản đồ" aria-label="Mở ${esc(n.t)} trên bản đồ"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M1.5 3.5 5.5 2l5 1.8 4-1.5v10.2l-4 1.5-5-1.8-4 1.5z"/><path d="M5.5 2v10.2M10.5 3.8V14"/></svg></button></li>`; };
   L.innerHTML = `<div class="lw" style="padding-left:${gutter()}px"><h2>${BK ? `${esc(BOOKN[BK])}: ` : ''}Học theo thứ tự, từ trên xuống</h2>
-    ${BK ? '' : VIDBOX}<p class="intro"><b>${total} ${UNIT}${BK ? ` lấy từ ${esc(BOOKN[BK])}` : `, ${STAGES.length} chặng`}, học từ trên xuống.</b> Đường dọc bên trái cho biết bài nào là nền cho bài nào. Bấm tên bài để xem nó nối với đâu, bấm vòng tròn khi đã hiểu, bấm biểu tượng bản đồ để xem trên bản đồ. <span class="vdot" style="background:var(--taught)">${PLAY}</span>có video · ✎ có ghi chú.</p>
+    <p class="intro"><b>${total} ${UNIT}${BK ? ` lấy từ ${esc(BOOKN[BK])}` : `, ${STAGES.length} chặng`}, học từ trên xuống.</b> Đường dọc bên trái cho biết bài nào là nền cho bài nào. Bấm tên bài để xem nó nối với đâu, bấm vòng tròn khi đã hiểu, bấm biểu tượng bản đồ để xem trên bản đồ. <span class="vdot" style="background:var(--taught)">${PLAY}</span>có video · ✎ có ghi chú.</p>
     ${dc ? `<div class="prog"><i style="width:${dc / total * 100}%"></i></div><div class="pgt">Đã hiểu ${dc}/${total}</div>` : ''}
     ${STAGES.map(s0 => ({ ...s0, ns: s0.ns.filter(vis) })).filter(s => s.ns.length).map((s, k) => { const dn = s.ns.filter(n => done.has(n.id)).length;
       return `<section class="ls"><h3><span class="no" style="border-color:var(--${s.d})">${s.k}</span><span>${esc(s.name)}<small>${esc(s.from)} · ${s.ns.length} ${UNIT}${dn ? ` · đã hiểu ${dn}` : ''}</small></span></h3>
@@ -943,7 +980,6 @@ function drawList() {
   L.querySelectorAll('.tt').forEach(b => b.onclick = () => { lsel = lsel === b.dataset.id ? null : b.dataset.id; drawList(); });
   L.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { lsel = b.dataset.go; drawList(); const r = $('li-' + lsel); if (r) L.scrollTop += r.getBoundingClientRect().top - L.getBoundingClientRect().top - L.clientHeight / 3; });
   L.querySelectorAll('[data-map]').forEach(b => b.onclick = () => { showList(false); select(b.dataset.map); });
-  L.querySelectorAll('.fv').forEach(b => b.onclick = () => { showList(false); select(b.dataset.fv); });
   drawArcs();
 }
 // Links in the list. Every topic that others build on owns one lane in the left margin, running from it down to the last
@@ -1003,12 +1039,11 @@ $('sB').querySelectorAll('button').forEach(x => x.onclick = () => setBook(x.data
 $('sB').querySelector('button[data-b=""]').classList.add('on');
 // ---- phones: one row on top (versions, search, options); everything else lives in a sheet that slides up
 const PHONE = matchMedia('(max-width:760px)');
-const OPT = [['Chỉ xem một cuốn sách', 'sB'], ['Tự xoay chậm', 'spinBtn'], ['Tô màu theo', 'sC'], ['Bố cục', 'sL'], ['Kiểu xem', 'sM'], ['Lộ trình học', 'rankBtn'], ['Nền sáng / tối', 'themeBtn']];
+const OPT = [['Chỉ xem một cuốn sách', 'sB'], ['Tự xoay chậm', 'spinBtn'], ['Tô màu theo', 'sC'], ['Bố cục', 'sL'], ['Kiểu xem', 'sM'], ['Nền sáng / tối', 'themeBtn']];
 const HOME = OPT.map(([, id]) => { const m = document.createComment(id); $(id).before(m); return m; });
 function place() {         // everything but the level, the view and search lives in one menu; on a phone the roadmap button too
   $('optBody').innerHTML = '';
   OPT.forEach(([lab, id], i) => {
-    if (id === 'rankBtn' && !PHONE.matches) { HOME[i].after($(id)); return; }
     const r = document.createElement('div'); r.className = 'orow'; r.innerHTML = `<span class="olab">${lab}</span>`; r.appendChild($(id)); $('optBody').appendChild(r);
   });
   openOpts(false);
@@ -1018,7 +1053,7 @@ $('optBtn').onclick = () => openOpts($('opts').hidden);
 addEventListener('keydown', e => { if (e.key === 'Escape' && !$('opts').hidden) openOpts(false); });
 $('ox').onclick = () => openOpts(false);
 $('opts').onclick = e => { if (e.target === $('opts')) openOpts(false); };
-$('optBody').addEventListener('click', e => { if (e.target.closest('#rankBtn,#sB button')) setTimeout(() => openOpts(false), 120); });
+$('optBody').addEventListener('click', e => { if (e.target.closest('#sB button')) setTimeout(() => openOpts(false), 120); });
 $('qBtn').onclick = () => { const h = document.querySelector('header'), on = !h.classList.contains('srch'); h.classList.toggle('srch', on); if (on) $('q').focus(); else $('q').blur(); };
 $('q').addEventListener('change', () => { if (PHONE.matches && $('q').value) setTimeout(() => { document.querySelector('header').classList.remove('srch'); $('q').value = ''; $('q').blur(); }, 0); });
 $('bkPill').onclick = () => setBook('');
@@ -1029,9 +1064,9 @@ addEventListener('resize', () => { if (!$('list').hidden) drawList(); });
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (!$('list').hidden) drawArcs(); });
 function setHash(h) { try { history.replaceState(null, '', h || location.pathname + location.search); } catch (e) {} }
 function showList(on) {
-  $('list').hidden = !on; if ($('rankFab')) $('rankFab').hidden = on || !$('rank').hidden; document.body.classList.toggle('listing', on);
+  $('list').hidden = !on; document.body.classList.toggle('listing', on);
   if (on) { drawList(); select(null); $('rank').hidden = true; }
-  else if (innerWidth > 760) $('rank').hidden = false;
+  else if (innerWidth > 760) $('rank').hidden = store.get('nm-rank', '') === 'fold';
   try { G && (on ? G.pauseAnimation() : G.resumeAnimation()); } catch (e) {}
   setHash(LVH[LEVEL] + (on ? (LVH[LEVEL] ? '-' : '#') + 'danh-sach' : ''));
   ['vS', 'vF', 'vD'].forEach((b, i) => $(b).classList.toggle('on', LEVEL === i + 1)); $('vM').classList.toggle('on', !on); $('vL').classList.toggle('on', on);
@@ -1054,8 +1089,8 @@ function drawLegend() {
     : colorBy === 'status' ? Object.entries(ST).map(([k, v]) => it(`var(--${k})`, v, counts[k])).join('')
     : it('var(--L)', 'Màu đậm: đã hiểu', done.size) + it('color-mix(in srgb,var(--L) 55%,var(--paper))', 'Màu nhạt: học được ngay', nL) + it('var(--ahead)', 'Xám: chưa tới', N.length - done.size - nL))
     + `<span class="it"><span class="vdot">${PLAY}</span>${UNIT} có video <b>${withVid}</b> · <b>${nVid}</b> video</span>`
-    + (freshV.length ? `<span class="it"><span class="frd"></span>video mới 7 ngày <b>${freshV.length}</b></span>` : '');
-  $('legend').querySelectorAll('button').forEach(b => b.onclick = () => focusDomain(b.dataset.d));
+    + (freshV.length ? `<button data-v="1" title="Xem các video mới"><span class="frd"></span>video mới 7 ngày <b>${freshV.length}</b></button>` : '');
+  $('legend').querySelectorAll('button').forEach(b => b.onclick = () => b.dataset.v ? openVids(true) : focusDomain(b.dataset.d));
 }
 const CB = { cD: 'domain', cS: 'status', cM: 'progress' };
 function setColor(c) { colorBy = c; Object.entries(CB).forEach(([b, k]) => $(b).classList.toggle('on', k === c)); drawLegend(); refresh(); }
@@ -1071,7 +1106,6 @@ $('lT').onclick = () => { if (layout === 'tang') return; layout = 'tang'; seg('l
 $('spinBtn').onclick = () => { spin = !spin; applySpin(); };
 $('zIn').onclick = () => { stopSpin(); zoomBy(1.5); };
 $('zOut').onclick = () => { stopSpin(); zoomBy(1 / 1.5); };
-$('rankBtn').onclick = () => { $('rank').hidden = !$('rank').hidden; if (!$('rank').hidden && innerWidth <= 760) { $('card').hidden = true; if ($('player')) { $('player').innerHTML = ''; $('player').hidden = true; $('card').classList.remove('playing'); } } };
 $('fitBtn').onclick = () => { select(null); fit(); };
 ['pointerdown', 'wheel', 'touchstart'].forEach(ev => $('graph').addEventListener(ev, () => { stopSpin(); endTour(); }, { passive: true }));
 $('q').addEventListener('change', e => { const v = e.target.value.trim().toLowerCase(); if (!v) return; const n = N.find(x => x.t.toLowerCase() === v) || N.find(x => x.t.toLowerCase().includes(v)); if (n && !$('list').hidden) showList(false); if (n && n.id !== sel) select(n.id); });
