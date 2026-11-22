@@ -504,7 +504,13 @@ const COURSE = {
   MIT: { t: 'MIT 18.06', full: 'MIT 18.06 Đại số tuyến tính (Gilbert Strang)', note: 'Bài giảng 23 (phương trình vi phân), 24 (ma trận Markov), 26 (ma trận phức, FFT) chưa có bài riêng trên bản đồ; 13, 32, 34 là ôn tập.',
     lec: [[1, ['L.vec']], [2, ['L.elim']], [3, ['L.matmul', 'L.inverse']], [4, ['L.elim']], [5, ['L.transpose']], [6, ['L.subsp']], [7, ['L.rank']], [8, ['L.rank']], [9, ['L.indep']], [10, ['L.subsp']], [11, ['L.subsp']], [12, ['L.subsp']],
       [14, ['L.dot', 'L.ortho']], [15, ['L.proj']], [16, ['L.lsq']], [17, ['L.gs']], [18, ['L.det']], [19, ['L.det']], [20, ['L.det']], [21, ['L.eig']], [22, ['L.eig']], [25, ['L.sym']], [27, ['L.psd']], [28, ['L.psd']], [29, ['L.svd']], [30, ['L.chbasis']], [31, ['L.chbasis']], [33, ['L.pinv']]] },
+  CB: { t: 'Casella', full: 'Casella & Berger, Statistical Inference', book: 1, note: 'Phần mở đầu chương và bài tập không có bài riêng.' },
+  PR: { t: 'Bishop', full: 'Bishop, Pattern Recognition and Machine Learning', book: 1, note: 'Phần mở đầu chương, bài tập và phụ lục không có bài riêng.' },
+  NW: { t: 'Nocedal', full: 'Nocedal & Wright, Numerical Optimization', book: 1, note: 'Chương 1 (giới thiệu), phần mở đầu chương và bài tập không có bài riêng.' },
 };
+{ const secs = SIMPLE ? D.simple.flatMap(c => c.m || []) : DETAIL ? Object.keys(D.leaves) : N.map(n => n.id);   // a book's sections, in its own table-of-contents order
+  const key = id => id.slice(2).split('.').map(Number), cmp = (a, b) => { const x = key(a), y = key(b); for (let i = 0; i < Math.max(x.length, y.length); i++) { const d = (x[i] ?? -1) - (y[i] ?? -1); if (d) return d; } return 0; };
+  for (const [k, C] of Object.entries(COURSE)) if (C.book) C.lec = [...new Set(secs.filter(id => new RegExp(`^${k}\\d+(\\.\\d+)*$`).test(id)))].sort(cmp).map(id => [id.slice(2), [id]]); }
 { const toMap = id => SIMPLE ? [(D.simple.find(c => (c.m || []).includes(id)) || {}).id] : DETAIL ? D.leaves[id] || [id] : [id];
   for (const [k, C] of Object.entries(COURSE)) { const at = {}; C.steps = [];
     C.lec.forEach(([no, ids]) => ids.flatMap(toMap).filter(x => x && byId[x]).forEach(x => { if (!at[x]) C.steps.push(at[x] = { id: x, lec: [] }); if (!at[x].lec.includes(no)) at[x].lec.push(no); }));
@@ -874,18 +880,19 @@ const WELCOME = `<div class="welcome"><b>Lộ trình học nền tảng toán ch
 const VIDBOX = `<details class="vbox"><summary>Video bài giảng: <b>${nVid}</b> video${liveWeek ? ` · <b>+${liveWeek}</b> trong 7 ngày qua` : ''}</summary>${COV}</details>`;
 const CHIPS = [['', 'Tất cả'], ['ST', 'Stat 110'], ['CB', 'Casella'], ['PR', 'Bishop'], ['NW', 'Nocedal'], ['MIT', 'MIT']];
 const BKCHIPS = () => `<div class="bks" role="group" aria-label="Chỉ xem một cuốn sách"><span class="k">Sách</span>${CHIPS.map(([k, t]) => `<button type="button" data-bk="${k}" class="${BK === k ? 'on' : ''}">${t}</button>`).join('')}</div>`;
-const COCHIPS = () => `<div class="bks co" role="group" aria-label="Chọn lộ trình"><span class="k">Đi theo</span><button type="button" data-co="" class="${CO ? '' : 'on'}">Cả bản đồ</button>${Object.entries(COURSE).map(([k, c]) => `<button type="button" data-co="${k}" class="${CO === k ? 'on' : ''}" title="Đi đúng thứ tự bài giảng của ${esc(c.full)}">${c.t}</button>`).join('')}</div>`;
+const COCHIPS = () => `<div class="bks co" role="group" aria-label="Chọn lộ trình"><span class="k">Đi theo</span><button type="button" data-co="" class="${CO ? '' : 'on'}">Cả bản đồ</button>${Object.entries(COURSE).map(([k, c]) => `<button type="button" data-co="${k}" class="${CO === k ? 'on' : ''}" title="Đi đúng thứ tự ${c.book ? 'mục lục' : 'bài giảng'} của ${esc(c.full)}">${c.t}</button>`).join('')}</div>`;
 const wireChips = R => { R.querySelectorAll('.bks button[data-bk]').forEach(b => b.onclick = () => setBook(b.dataset.bk)); R.querySelectorAll('.bks button[data-co]').forEach(b => b.onclick = () => setCourse(b.dataset.co)); };
-const lecs = a => { const out = []; let s = a[0], e = a[0]; for (const x of [...a.slice(1), null]) { if (x === e + 1) { e = x; continue; } out.push(s === e ? `${s}` : `${s}–${e}`); s = e = x; } return 'Bài giảng ' + out.join(', '); };
+const lecs = a => typeof a[0] === 'string' ? (SIMPLE ? 'Chương ' + [...new Set(a.map(x => x.split('.')[0]))].join(', ') : 'Mục ' + a.join(', ')) : lecs0(a);
+const lecs0 = a => { const out = []; let s = a[0], e = a[0]; for (const x of [...a.slice(1), null]) { if (x === e + 1) { e = x; continue; } out.push(s === e ? `${s}` : `${s}–${e}`); s = e = x; } return 'Bài giảng ' + out.join(', '); };
 function drawCourse(R, top, follow, FOLD) {
   const C = COURSE[CO], ss = C.steps, dn = ss.filter(s => done.has(s.id)).length, k = ss.findIndex(s => !done.has(s.id)), nx = k < 0 ? null : byId[ss[k].id];
   const rows = ss.map((s, i) => { const n = byId[s.id], ok = done.has(n.id), out = n.pre.filter(p => !C.set.has(p) && !done.has(p));
-    return `<li><button data-id="${n.id}" class="${n.id === sel ? 'cur' : ''}${i === k ? ' nx' : ''}"><span class="n${ok ? ' ok' : ''}">${ok ? '✓' : i + 1}</span><span style="min-width:0">${esc(n.t)}${fresh.has(n.id) ? ' <span class="new">mới</span>' : ''}<small class="lc">${lecs(s.lec)}${out.length ? ` · cần biết trước: ${out.map(p => esc(byId[p].t)).join(', ')}` : ''}</small></span><span class="m mk ${n.st}" title="${ST[n.st]}">${n.st === 'ahead' ? '' : MK[n.st]}</span></button></li>`; }).join('');
+    return `<li><button data-id="${n.id}" class="${n.id === sel ? 'cur' : ''}${i === k ? ' nx' : ''}"><span class="n${ok ? ' ok' : ''}">${ok ? '✓' : i + 1}</span><span style="min-width:0">${esc(n.t)}${fresh.has(n.id) ? ' <span class="new">mới</span>' : ''}<small class="lc">${C.book && DETAIL ? 'Mục ' + s.id.slice(2) : lecs(s.lec)}${out.length ? ` · cần biết trước: ${out.map(p => esc(byId[p].t)).join(', ')}` : ''}</small></span><span class="m mk ${n.st}" title="${ST[n.st]}">${n.st === 'ahead' ? '' : MK[n.st]}</span></button></li>`; }).join('');
   R.innerHTML = `${FOLD}<div class="lab">Lộ trình ${esc(C.t)}<span class="pg">${dn ? `Đã hiểu ${dn}/${ss.length}` : `${ss.length} ${UNIT}`}</span></div>
     ${dn ? `<div class="prog"><i style="width:${dn / ss.length * 100}%"></i></div>` : ''}
     ${nx ? `<button class="btn start" id="startBtn" type="button">${dn ? 'Học tiếp' : 'Bắt đầu'}: ${k + 1} · ${esc(nx.t)}</button>` : `<div class="src">Bạn đã hiểu hết ${ss.length} ${UNIT} của ${esc(C.t)}.</div>`}
     ${COCHIPS()}
-    <div class="scroll"><p class="intro">Đúng thứ tự bài giảng của ${esc(C.full)}. Trên bản đồ, đường đậm nối các chấm theo số thứ tự.</p>
+    <div class="scroll"><p class="intro">Đúng thứ tự ${C.book ? 'mục lục sách' : 'bài giảng của'} ${esc(C.full)}. Trên bản đồ, đường đậm nối các chấm theo số thứ tự.</p>
     <div class="keys"><span class="mk taught">${MK.taught}</span> có video · <span class="mk read">${MK.read}</span> có ghi chú · ✓ đã hiểu</div>
     <ol class="rlist">${rows}</ol>
     <button class="lnk" id="coTour" type="button">Bay dọc cả lộ trình trên bản đồ</button>
