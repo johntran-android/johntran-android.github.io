@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nhân ma trận và ma trận nghịch đảo · Nền móng Machine Learning</title>
+<meta name="description" content="MIT 18.06 bài 3: bốn cách nhìn phép nhân ma trận, ma trận hạng 1, khi nào có nghịch đảo và phép khử Gauss–Jordan. Ghi chú, video giảng lại và hình tương tác.">
+<meta property="og:title" content="Nhân ma trận và ma trận nghịch đảo">
+<meta property="og:description" content="MIT 18.06 bài 3: bốn cách nhìn phép nhân ma trận, ma trận hạng 1, khi nào có nghịch đảo và phép khử Gauss–Jordan. Ghi chú, video giảng lại và hình tương tác.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://johntran-android.github.io/ml-map/bai/mit1806-03/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column like a book page; figures may run wider than the text; small margin notes sit in the flow on phones */
+:root {
+  --paper: #fbfbfa; --ink: #1d2126; --muted: #5d6670; --rule: #e3e6ea; --wash: #f1f4f7;
+  --blue: #1a73e8; --teal: #0f8f7e; --red: #c5221f; --amber: #b45309;
+  --note: #eef6f4; --claude: #f3f0fa; --board: #fdf4e7;
+  --serif: 'Literata', Georgia, 'Times New Roman', serif;
+  --sans: 'Be Vietnam Pro', 'Helvetica Neue', Arial, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+}
+/* one light look on purpose: a printed page */
+:root { color-scheme: light; }
+
+body { background: var(--paper); color: var(--ink); font: 400 1.04rem/1.8 var(--sans);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 4rem; }
+.page { max-width: 46rem; margin: 0 auto; }
+.wide { max-width: 58rem; margin-left: 50%; transform: translateX(-50%); width: min(58rem, calc(100vw - 32px)); }
+
+.draft { font: 500 .82rem/1.5 var(--sans); color: var(--muted); border-bottom: 1px solid var(--rule); padding: .9rem 0; display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; align-items: center; }
+.draft b { color: var(--ink); font-weight: 600; }
+.chip { display: inline-flex; align-items: center; gap: .35rem; }
+.sw { width: .8rem; height: .8rem; border-radius: 3px; display: inline-block; border: 1px solid var(--rule); }
+.sw.n { background: var(--note); } .sw.c { background: var(--claude); } .sw.b { background: var(--board); }
+
+header.ch { padding: 3.2rem 0 1.6rem; }
+.crumb { font: 600 .78rem/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--teal); }
+h1 { font: 700 clamp(2.2rem, 6vw, 3.3rem)/1.08 var(--sans); letter-spacing: -.02em; margin: .7rem 0 .9rem; text-wrap: balance; }
+.lede { font-size: 1.2rem; line-height: 1.6; color: var(--muted); margin: 0; max-width: 40rem; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: .8rem 1.6rem; margin-top: 1.6rem; padding-top: 1.2rem; border-top: 1px solid var(--rule); font: 400 .9rem/1.5 var(--sans); }
+.facts dt { font-weight: 600; font-size: .74rem; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+.facts dd { margin: .15rem 0 0; }
+
+h2 { font: 700 1.55rem/1.25 var(--sans); letter-spacing: -.01em; margin: 3rem 0 .4rem; text-wrap: balance; display: flex; gap: .7rem; align-items: baseline; }
+h2 .no { font: 500 .95rem/1 var(--mono); color: var(--teal); }
+p { margin: .9rem 0; }
+em { font-style: italic; }
+strong { font-weight: 600; }
+.m { font-weight: 500; color: #0b3a6e; white-space: nowrap; }
+.eq { background: var(--wash); border-radius: 8px; padding: .3rem 1rem; margin: 1.1rem 0; overflow-x: auto; overflow-y: hidden; }
+mjx-container { color: var(--ink); }
+mjx-container:not([display="true"]) { display: inline-block; max-width: 100%; overflow-x: auto; overflow-y: hidden; vertical-align: middle; }
+.check > span, .side p, p { min-width: 0; }
+.eq mjx-container[display="true"] { margin: .7rem 0 !important; }
+.hint { font: 400 .82rem/1.4 var(--sans); color: var(--muted); margin: -1rem 0 1.2rem; text-align: center; }
+.zoom { cursor: zoom-in; }
+.zoom:focus-visible, .reset:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.live { padding: 0; } .live svg { width: 100%; height: 100%; display: block; touch-action: none; user-select: none; }
+.live .ax { stroke: #c4cad1; stroke-width: 1; } .live .gr { stroke: #eef0f3; stroke-width: 1; }
+.live text { font: 500 11px var(--sans); fill: #5d6670; }
+.live .bt { fill: var(--amber); font-weight: 600; } .live .pt { fill: var(--blue); } .live .et { fill: var(--red); }
+.live .handle { cursor: ns-resize; outline: none; }
+.live .handle:focus-visible circle.ring { stroke: var(--blue); stroke-width: 2.5; }
+.reset { font: 500 .8rem/1 var(--sans); color: var(--blue); background: none; border: 1px solid #c9d7ee; border-radius: 6px; padding: .3rem .55rem; margin-left: .3rem; cursor: pointer; }
+.readout { font: 500 .92rem/1.5 var(--sans); background: var(--claude); border-radius: 8px; padding: .55rem .9rem; margin: .8rem 0 1.6rem; display: flex; flex-wrap: wrap; gap: .3rem 1.4rem; }
+.readout b { font-weight: 700; }
+.lb { position: fixed; inset: 0; z-index: 50; background: rgba(15, 18, 22, .88); display: flex; align-items: center; justify-content: center;
+  padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); cursor: zoom-out; }
+[hidden] { display: none !important; }
+.lb img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; background: #fff; border-radius: 8px; }
+.lb button { position: absolute; top: calc(12px + env(safe-area-inset-top, 0px)); right: calc(12px + env(safe-area-inset-right, 0px)); font: 600 .9rem/1 var(--sans); color: #fff; background: rgba(255,255,255,.14); border: 0; border-radius: 6px; padding: .5rem .8rem; cursor: pointer; }
+.eq .c { color: var(--muted); font-weight: 400; }
+
+/* who wrote what: the author's note, Claude's figure, the board */
+.from { border-radius: 10px; padding: 1rem 1.2rem; margin: 1.3rem 0; }
+.from.n { background: var(--note); }
+.from .tag { font: 600 .72rem/1 var(--sans); letter-spacing: .07em; text-transform: uppercase; color: var(--teal); display: flex; justify-content: space-between; gap: 1rem; margin-bottom: .45rem; }
+.from .tag a { text-transform: none; letter-spacing: 0; font-weight: 500; font-size: .82rem; }
+.from p { margin: .4rem 0; }
+.src { font: 500 .8rem/1.4 var(--sans); margin: -.1rem 0 .6rem; display: flex; flex-wrap: wrap; gap: .2rem .8rem; }
+.src span { color: var(--muted); }
+.src a { text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--blue) 35%, transparent); }
+.src a:hover { border-bottom-color: var(--blue); }
+.warn { border-left: 3px solid var(--red); padding: .2rem 0 .2rem 1rem; margin: 1.4rem 0; font-family: var(--sans); font-size: .98rem; line-height: 1.6; }
+.warn b { color: var(--red); }
+
+figure { margin: 1.8rem 0; }
+figure .frame { background: #fff; border-radius: 10px; padding: .4rem; border: 1px solid var(--rule); }
+figure img { display: block; width: 100%; height: auto; border-radius: 6px; }
+figcaption { font: 400 .86rem/1.5 var(--sans); color: var(--muted); margin-top: .55rem; display: flex; gap: .5rem; align-items: baseline; }
+figcaption .who { flex: none; font-weight: 600; font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; padding: .15rem .45rem; border-radius: 4px; }
+.who.c { background: var(--claude); color: var(--ink); } .who.b { background: var(--board); color: var(--ink); }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; align-items: start; }
+.pair > figure { margin: 0; min-width: 0; }
+.pair .frame { aspect-ratio: 4 / 3; display: flex; align-items: center; justify-content: center; }
+.pair .frame img { width: 100%; height: 100%; object-fit: contain; }
+.pair .board .frame { background: #1b1f1c; padding: 0; overflow: hidden; }
+.pair .board .frame img { object-fit: cover; border-radius: 9px; }
+@media (max-width: 720px) { .pair { grid-template-columns: 1fr; } }
+
+.side { font: 400 .93rem/1.6 var(--sans); background: var(--wash); border-radius: 10px; padding: 1rem 1.2rem; margin: 1.6rem 0; }
+.side h3 { font: 700 .82rem/1.2 var(--sans); letter-spacing: .06em; text-transform: uppercase; margin: 0 0 .4rem; color: var(--amber); }
+.side p { margin: .4rem 0; }
+
+ol.steps { padding-left: 1.3rem; } ol.steps li { margin: .4rem 0; }
+.check { display: grid; grid-template-columns: auto 1fr; gap: .35rem .9rem; font: 400 .98rem/1.55 var(--sans); margin: 1rem 0; }
+.check .k { font-family: var(--mono); color: var(--teal); }
+
+footer { margin-top: 3.5rem; padding-top: 1.4rem; border-top: 1px solid var(--rule); font: 400 .86rem/1.6 var(--sans); color: var(--muted); }
+footer h3 { font: 700 .78rem/1 var(--sans); letter-spacing: .07em; text-transform: uppercase; color: var(--ink); margin: 1.2rem 0 .4rem; }
+a { color: var(--blue); text-underline-offset: .15em; }
+a:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 2px; }
+</style>
+<style>
+.sw.h { background: #fff7d6; }
+.who.h { background: #fff7d6; color: var(--ink); }
+.pair .hand .frame { background: #0b0b0b; padding: 0; overflow: hidden; } .pair .hand .frame img { object-fit: contain; }
+.toc { display: grid; gap: .35rem; margin-top: 1.4rem; font: 500 .95rem/1.4 var(--sans); }
+.toc a { display: flex; gap: .7rem; align-items: baseline; text-decoration: none; color: var(--ink); padding: .5rem .8rem; border: 1px solid var(--rule); border-radius: 8px; background: #fff; }
+.toc a:hover { border-color: var(--teal); } .toc .no { font: 600 .85rem/1 var(--mono); color: var(--teal); }
+.part { margin-top: 3.2rem; padding-top: 1.6rem; border-top: 2px solid var(--ink); }
+.partno { font: 700 .78rem/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--teal); }
+h2.parth { margin: .5rem 0 1.1rem; font-size: 1.8rem; display: block; }
+h3 { font: 700 1.22rem/1.3 var(--sans); margin: 2.4rem 0 .35rem; display: flex; gap: .6rem; align-items: baseline; text-wrap: balance; }
+h3 .no { font: 500 .9rem/1 var(--mono); color: var(--teal); }
+.vid { display: grid; grid-template-columns: minmax(0, 15rem) minmax(0, 1fr); gap: 1.1rem; background: #fff; border: 1px solid var(--rule); border-radius: 12px; padding: .9rem; margin: 0 0 1rem; }
+.vid .thumb { position: relative; display: block; border-radius: 8px; overflow: hidden; align-self: start; }
+.vid .thumb img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
+.vid .dur { position: absolute; right: .4rem; bottom: .4rem; background: rgba(0,0,0,.78); color: #fff; font: 600 .72rem/1 var(--sans); padding: .25rem .35rem; border-radius: 4px; }
+.vmeta { min-width: 0; font-family: var(--sans); }
+.vk { font: 600 .7rem/1 var(--sans); letter-spacing: .07em; text-transform: uppercase; color: var(--red); }
+.vt { display: block; font: 700 1.02rem/1.35 var(--sans); color: var(--ink); text-decoration: none; margin: .35rem 0 .45rem; }
+.vt:hover { color: var(--blue); }
+ol.ts { list-style: none; padding: 0; margin: 0; display: grid; gap: .1rem; font-size: .86rem; line-height: 1.45; }
+ol.ts a { color: var(--ink); text-decoration: none; display: flex; gap: .55rem; } ol.ts a:hover { color: var(--blue); }
+ol.ts .tt { flex: none; width: 2.6rem; font: 500 .8rem/1.45 var(--mono); color: var(--blue); }
+@media (max-width: 640px) { .vid { grid-template-columns: 1fr; } }
+.tagok { font-weight: 600; padding: .1rem .5rem; border-radius: 5px; }
+.tagok.yes { background: #e3f4ec; color: #146c43; } .tagok.no { background: #fdecea; color: #a32018; }
+.solo { margin-top: 1.4rem; }
+.live3 { aspect-ratio: 16 / 10; padding: 0; background: #fff; } .live3 svg { width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; user-select: none; }
+.live3 svg:active { cursor: grabbing; }
+.live3 .ax { stroke: #c4cad1; stroke-width: 1; }
+.live3 text { font: 600 12px var(--sans); }
+.live3 .axl { fill: #8a929b; font-weight: 500; }
+.live3 .bl { fill: #1a73e8; } .live3 .bl2 { fill: #1a73e8; font-size: 13px; } .live3 .rl { fill: #c5221f; font-weight: 500; } .live3 .rl2 { fill: #c5221f; font-size: 13px; } .live3 .xl { fill: #e37400; font-size: 15px; }
+.ctl { display: flex; flex-wrap: wrap; gap: .6rem 1.4rem; align-items: center; margin-top: .7rem; font: 500 .9rem/1 var(--sans); }
+.ctl label { display: flex; align-items: center; gap: .5rem; } .ctl input[type=range] { width: 9rem; accent-color: #e37400; } .ctl output { width: 2.4rem; font-variant-numeric: tabular-nums; }
+.mx { box-sizing: border-box; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 1rem; background: #fff; border: 1px solid var(--rule); border-radius: 12px; padding: 1rem 1.2rem; margin-top: 1.2rem; font-family: var(--sans); }
+@media (max-width: 640px) { .mx { grid-template-columns: 1fr; } }
+.mxk { font: 600 .72rem/1.3 var(--sans); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: .6rem; }
+.grid { display: grid; grid-template-columns: repeat(2, 4.2rem); gap: .4rem; padding: .4rem .7rem; border-left: 2px solid var(--ink); border-right: 2px solid var(--ink); border-radius: 6px; width: max-content; }
+.grid input { width: 4.2rem; font: 600 1.05rem/1 var(--sans); text-align: center; padding: .45rem .2rem; border: 1px solid #c9d1da; border-radius: 6px; background: var(--paper); color: var(--ink); }
+.grid input:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
+.presets { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .8rem; } .presets .reset { margin: 0; }
+.mxout { min-width: 0; } .mxeq { overflow-x: auto; }
+.facts2 { display: flex; flex-wrap: wrap; gap: .3rem 1.2rem; margin: .4rem 0 .7rem; font-size: .95rem; }
+.figcap { font: 400 .86rem/1.5 var(--sans); color: var(--muted); margin-top: .6rem; }
+.figcap .who { font-weight: 600; font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; padding: .15rem .45rem; border-radius: 4px; margin-right: .3rem; }
+.readout .tagok { font-size: .88rem; }
+.ix { margin: 1.4rem 0; }
+.ixbar { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center; margin-bottom: .6rem; font: 500 .9rem/1.2 var(--sans); }
+.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid #c9d1da; border-radius: 8px; overflow: hidden; }
+.seg button { font: 600 .82rem/1 var(--sans); padding: .5rem .75rem; border: 0; background: #fff; color: var(--ink); cursor: pointer; border-right: 1px solid #e3e6ea; }
+.seg button:last-child { border-right: 0; } .seg button.on { background: var(--ink); color: #fff; }
+.seg button:focus-visible, .ixbar select:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
+.ixin { display: inline-flex; flex-wrap: wrap; gap: .4rem 1rem; } .ixin label { display: inline-flex; align-items: center; gap: .4rem; } .ixin input[type=range] { width: 8rem; accent-color: #1a73e8; } .ixin output { width: 2.2rem; font-variant-numeric: tabular-nums; font-weight: 700; }
+.ix .frame { background: #fff; border-radius: 10px; border: 1px solid var(--rule); }
+.ix .live { aspect-ratio: 4 / 3; max-width: 34rem; } .ix .live svg { width: 100%; height: 100%; display: block; }
+.ix .live .gr { stroke: #eef0f3; } .ix .live .ax { stroke: #c4cad1; }
+.ix .live text { font: 600 12px var(--sans); } .ix .live .kt { fill: #3c4043; } .ix .live .gt { fill: #0f8f7e; }
+.reset.primary { background: var(--ink); color: #fff; border-color: var(--ink); } .reset:disabled { opacity: .35; cursor: default; }
+.stepno { font: 600 .8rem/1 var(--sans); color: var(--muted); }
+.stepbox { background: #fff; border: 1px solid var(--rule); border-radius: 10px; padding: .7rem 1rem; min-height: 7.5rem; }
+.steplab { font: 600 .92rem/1.45 var(--sans); color: var(--ink); }
+.stepbox .mxeq { overflow-x: auto; overflow-y: hidden; }
+.pick { display: inline-flex; gap: .4rem; align-items: center; } .pick select { font: 500 .88rem/1 var(--sans); padding: .35rem .5rem; border-radius: 6px; border: 1px solid #c9d1da; background: #fff; color: var(--ink); }
+.ixcap { font: 400 .86rem/1.5 var(--sans); color: var(--muted); margin-top: .5rem; }
+.ixcap .who { font-weight: 600; font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; padding: .15rem .45rem; border-radius: 4px; margin-right: .3rem; }
+.vid .rng { font: 600 .78rem/1.3 var(--sans); color: var(--muted); margin: -.2rem 0 .4rem; }
+.vids2 { display: grid; gap: .8rem; margin-bottom: 1rem; } .vids2 .vid { margin: 0; }
+</style>
+
+<style>[hidden]{display:none!important} img{max-width:100%} html{-webkit-text-size-adjust:100%} body{margin:0}
+.draft .back { font-weight: 700; text-decoration: none; color: var(--blue); margin-right: .4rem; }</style>
+</head>
+<body>
+<div class="page">
+  <div class="draft"><a class="back" href="../../?bai=L.matmul">← Bản đồ</a><b>Bản nháp</b>
+    <span class="chip"><span class="sw n"></span>nguyên văn ghi chú</span>
+    <span class="chip"><span class="sw c"></span>hình tương tác</span>
+    <span class="chip"><span class="sw b"></span>ảnh bảng MIT OCW</span>
+    <span class="chip">chữ thường: Claude viết lại theo ý ghi chú, tác giả sẽ duyệt lại; mỗi mục có link ghi chú gốc</span></div>
+
+  <header class="ch">
+    <div class="crumb">Đại số tuyến tính · MIT 18.06 bài giảng 3</div>
+    <h1>Nhân ma trận và ma trận nghịch đảo</h1>
+    <p class="lede">Cùng một phép nhân \(C = AB\) có bốn cách nhìn, mỗi cách soi ra một điều khác nhau về ma trận. Từ đó bài này trả lời hai câu hỏi: khi nào \(A\) có nghịch đảo, và nếu có thì tìm nó thế nào.</p>
+    <dl class="facts">
+      <div><dt>Cần biết trước</dt><dd>Khử Gauss bằng ma trận (bài 2)</dd></div>
+      <div><dt>Mở ra</dt><dd>Phân rã A = LU · Hạng · Bốn không gian con</dd></div>
+      <div><dt>Bài giảng của tác giả</dt><dd>Rải qua Part 1, 2 và 3</dd></div>
+    </dl>
+  </header>
+
+  <div class="vids2">
+    <div class="vid">
+      <a class="thumb" href="https://www.youtube.com/watch?v=v2pDiYo2KXA&amp;t=2189s" target="_blank" rel="noopener"><img src="img/yt-v2pDiYo2KXA.jpg" alt="Hình thu nhỏ video Part 1" width="480" height="360"><span class="dur">48:15</span></a>
+      <div class="vmeta"><div class="vk">Video tác giả giảng lại</div>
+        <a class="vt" href="https://www.youtube.com/watch?v=v2pDiYo2KXA&amp;t=2189s" target="_blank" rel="noopener">MIT Linear Algebra Review 18.06 (Part 1)</a>
+        <div class="rng">Phép nhân ma trận: từ 36:29 tới hết video.</div>
+        <ol class="ts"><li><a href="https://www.youtube.com/watch?v=v2pDiYo2KXA&amp;t=2189s" target="_blank" rel="noopener"><span class="tt">36:29</span>Kích thước phải tương thích</a></li><li><a href="https://www.youtube.com/watch?v=v2pDiYo2KXA&amp;t=2251s" target="_blank" rel="noopener"><span class="tt">37:31</span>Góc nhìn 1: hàng × cột</a></li><li><a href="https://www.youtube.com/watch?v=v2pDiYo2KXA&amp;t=2312s" target="_blank" rel="noopener"><span class="tt">38:32</span>Góc nhìn 2: theo cột</a></li><li><a href="https://www.youtube.com/watch?v=v2pDiYo2KXA&amp;t=2616s" target="_blank" rel="noopener"><span class="tt">43:36</span>Góc nhìn 3: theo hàng</a></li></ol></div>
+    </div>
+    <div class="vid">
+      <a class="thumb" href="https://www.youtube.com/watch?v=6X1GNJN_PlY" target="_blank" rel="noopener"><img src="img/yt-6X1GNJN_PlY.jpg" alt="Hình thu nhỏ video Part 2" width="480" height="360"><span class="dur">46:21</span></a>
+      <div class="vmeta"><div class="vk">Video tác giả giảng lại</div>
+        <a class="vt" href="https://www.youtube.com/watch?v=6X1GNJN_PlY" target="_blank" rel="noopener">MIT Linear Algebra Review 18.06 (Part 2)</a>
+        <div class="rng">0:00 – 13:00 và 35:31 – hết: góc nhìn 3, 4 và ma trận hạng 1.</div>
+        <ol class="ts"><li><a href="https://www.youtube.com/watch?v=6X1GNJN_PlY&amp;t=0s" target="_blank" rel="noopener"><span class="tt">0:00</span>Tiếp bốn góc nhìn</a></li><li><a href="https://www.youtube.com/watch?v=6X1GNJN_PlY&amp;t=366s" target="_blank" rel="noopener"><span class="tt">6:06</span>Góc nhìn 2 khi hai cột cùng phương</a></li><li><a href="https://www.youtube.com/watch?v=6X1GNJN_PlY&amp;t=549s" target="_blank" rel="noopener"><span class="tt">9:09</span>Một cột tạo ra từ cột kia</a></li><li><a href="https://www.youtube.com/watch?v=6X1GNJN_PlY&amp;t=671s" target="_blank" rel="noopener"><span class="tt">11:11</span>Góc nhìn 3: hàng gấp đôi hàng</a></li><li><a href="https://www.youtube.com/watch?v=6X1GNJN_PlY&amp;t=2131s" target="_blank" rel="noopener"><span class="tt">35:31</span>Độc lập và phụ thuộc tuyến tính</a></li><li><a href="https://www.youtube.com/watch?v=6X1GNJN_PlY&amp;t=2493s" target="_blank" rel="noopener"><span class="tt">41:33</span>Không gian hàng</a></li><li><a href="https://www.youtube.com/watch?v=6X1GNJN_PlY&amp;t=2674s" target="_blank" rel="noopener"><span class="tt">44:34</span>Số hàng độc lập = số cột độc lập</a></li></ol></div>
+    </div>
+    <div class="vid">
+      <a class="thumb" href="https://www.youtube.com/watch?v=RDBPRq4ccjU&amp;t=666s" target="_blank" rel="noopener"><img src="img/yt-RDBPRq4ccjU.jpg" alt="Hình thu nhỏ video Phần 3" width="480" height="360"><span class="dur">44:26</span></a>
+      <div class="vmeta"><div class="vk">Video tác giả giảng lại</div>
+        <a class="vt" href="https://www.youtube.com/watch?v=RDBPRq4ccjU&amp;t=666s" target="_blank" rel="noopener">Review Đại Số Tuyến Tính MIT 18.06 (Phần 3)</a>
+        <div class="rng">Ma trận nghịch đảo và Gauss–Jordan: 11:06 – 39:30.</div>
+        <ol class="ts"><li><a href="https://www.youtube.com/watch?v=RDBPRq4ccjU&amp;t=666s" target="_blank" rel="noopener"><span class="tt">11:06</span>Ma trận nghịch đảo</a></li><li><a href="https://www.youtube.com/watch?v=RDBPRq4ccjU&amp;t=787s" target="_blank" rel="noopener"><span class="tt">13:07</span>Ví dụ không khả nghịch</a></li><li><a href="https://www.youtube.com/watch?v=RDBPRq4ccjU&amp;t=969s" target="_blank" rel="noopener"><span class="tt">16:09</span>Kiểm tra bằng định thức</a></li><li><a href="https://www.youtube.com/watch?v=RDBPRq4ccjU&amp;t=1029s" target="_blank" rel="noopener"><span class="tt">17:09</span>Có x ≠ 0 với Ax = 0</a></li><li><a href="https://www.youtube.com/watch?v=RDBPRq4ccjU&amp;t=1456s" target="_blank" rel="noopener"><span class="tt">24:16</span>Ma trận không vuông</a></li><li><a href="https://www.youtube.com/watch?v=RDBPRq4ccjU&amp;t=1579s" target="_blank" rel="noopener"><span class="tt">26:19</span>Tìm A⁻¹ là giải hai hệ</a></li><li><a href="https://www.youtube.com/watch?v=RDBPRq4ccjU&amp;t=1942s" target="_blank" rel="noopener"><span class="tt">32:22</span>Gauss–Jordan: [A I]</a></li><li><a href="https://www.youtube.com/watch?v=RDBPRq4ccjU&amp;t=2248s" target="_blank" rel="noopener"><span class="tt">37:28</span>Vì sao bên phải thành A⁻¹</a></li></ol></div>
+    </div>
+  </div>
+
+  <h2><span class="no">1</span>Bốn cách nhìn C = AB</h2>
+  <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_3_multiplication_and_inverse_matrices.md#node-xai4kws" target="_blank" rel="noopener">Cách 1: hàng × cột ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_3_multiplication_and_inverse_matrices.md#node-5x4s87n" target="_blank" rel="noopener">Cách 2: theo cột ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_3_multiplication_and_inverse_matrices.md#node-20avyxm" target="_blank" rel="noopener">Cách 3: theo hàng ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_3_multiplication_and_inverse_matrices.md#node-m7yebf5" target="_blank" rel="noopener">Cách 4: cột × hàng ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_3_multiplication_and_inverse_matrices.md#node-3xcuywk" target="_blank" rel="noopener">Tổng các ma trận con ↗</a></div>
+  <p>Muốn nhân được thì kích thước phải khớp: \(A\) cỡ \(m \times n\), \(B\) cỡ \(n \times p\), số cột của \(A\) bằng số hàng của \(B\), và \(C\) cỡ \(m \times p\).</p>
+  <ol class="steps">
+    <li><strong>Từng số.</strong> \(c_{ij}\) là tích vô hướng của hàng \(i\) của \(A\) với cột \(j\) của \(B\): \(c_{34} = \sum_k a_{3k}b_{k4}\).</li>
+    <li><strong>Theo cột.</strong> Cột \(j\) của \(C\) là \(A\) nhân cột \(j\) của \(B\), tức một tổ hợp các cột của \(A\).</li>
+    <li><strong>Theo hàng.</strong> Hàng \(i\) của \(C\) là hàng \(i\) của \(A\) nhân \(B\), tức một tổ hợp các hàng của \(B\).</li>
+    <li><strong>Cột × hàng.</strong> \(C\) là tổng của \(n\) ma trận, mỗi ma trận là (cột \(k\) của \(A\)) × (hàng \(k\) của \(B\)).</li>
+  </ol>
+  <div class="ix" data-ix="matmul" data-a="2,7;3,8;4,9" data-b="1,6;0,0"></div>
+  <p class="ixcap"><span class="who c">Tương tác</span> Ví dụ trên bảng ở cách 4. <b>Đầu vào:</b> chọn cách nhìn và chọn một số, một cột, một hàng hay một số hạng. <b>Kết quả:</b> phần đó của \(C\) được viết ra theo đúng cách nhìn đã chọn.</p>
+  <div class="pair wide">
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/j41xwjzqsk.png" alt="Bảng: columns of C are combinations of columns of A" width="640" height="480" loading="lazy"></div>
+      <figcaption><span class="who b">Bảng</span><span>"Columns of \(C\) are combinations of columns of \(A\)."</span></figcaption></figure>
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/kihnjdhettf.png" alt="Bảng: cách thứ 4, AB bằng tổng cột của A nhân hàng của B" width="640" height="480" loading="lazy"></div>
+      <figcaption><span class="who b">Bảng</span><span>"4th way: \(AB\) = sum of (cols of \(A\)) × (rows of \(B\))."</span></figcaption></figure>
+  </div>
+
+  <h3><span class="no">1.1</span>Ma trận hạng 1</h3>
+  <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_3_multiplication_and_inverse_matrices.md#node-k9bu4fd" target="_blank" rel="noopener">Không gian hàng và cột ↗</a></div>
+  <p>Mỗi số hạng của cách 4 là một cột nhân một hàng, ví dụ</p>
+  <div class="eq">\[ \begin{bmatrix} 2 \\ 3 \\ 4 \end{bmatrix}\begin{bmatrix} 1 & 6 \end{bmatrix} = \begin{bmatrix} 2 & 12 \\ 3 & 18 \\ 4 & 24 \end{bmatrix}. \]</div>
+  <div class="from n"><span class="tag">Nguyên văn ghi chú <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_3_multiplication_and_inverse_matrices.md#node-k9bu4fd" target="_blank" rel="noopener">mở ghi chú gốc ↗</a></span>
+    <p>Nhận xét chút chỗ này, <strong>các row của matrix con này đều là những vector cùng / trùng nhau</strong>, đều nằm trên đường thẳng của vector [1 6].</p>
+    <p>Gs gọi nó là the <strong>row space</strong> của matrix này là <strong>một line qua vector [1 6]</strong></p>
+    <p>Và tương tự the <strong>column space</strong> của matrix này là <strong>một line đi qua vector [2 3 4]</strong></p></div>
+  <p>Ma trận như vậy có <strong>hạng 1</strong>. Cách 4 nói rằng mọi tích \(AB\) đều là tổng của các ma trận hạng 1, một ý sẽ quay lại rất nhiều lần, đặc biệt ở SVD.</p>
+
+  <h2><span class="no">2</span>Khi nào A có nghịch đảo?</h2>
+  <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_3_multiplication_and_inverse_matrices.md#node-u1faq1i" target="_blank" rel="noopener">Tính khả nghịch ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_3_multiplication_and_inverse_matrices.md#node-ajlmntq" target="_blank" rel="noopener">Ma trận không khả nghịch ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_3_multiplication_and_inverse_matrices.md#node-ui3rjuh" target="_blank" rel="noopener">Nghiệm Ax = 0 ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_3_multiplication_and_inverse_matrices.md#node-wazxltv" target="_blank" rel="noopener">Tổ hợp cột ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_3_multiplication_and_inverse_matrices.md#node-ru11zz5" target="_blank" rel="noopener">Chứng minh phản chứng ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_3_multiplication_and_inverse_matrices.md#node-lwy3cex" target="_blank" rel="noopener">Ý nghĩa ↗</a></div>
+  <p>Với ma trận vuông, nếu \(A^{-1}\) tồn tại thì \(A^{-1}A = I = AA^{-1}\). Ma trận chữ nhật không có nghịch đảo hai phía. Ví dụ không khả nghịch của Strang:</p>
+  <div class="eq">\[ A = \begin{bmatrix} 1 & 3 \\ 2 & 6 \end{bmatrix}, \qquad A\begin{bmatrix} 3 \\ -1 \end{bmatrix} = 3\begin{bmatrix} 1 \\ 2 \end{bmatrix} - 1\begin{bmatrix} 3 \\ 6 \end{bmatrix} = \begin{bmatrix} 0 \\ 0 \end{bmatrix}. \]</div>
+  <p>Có nhiều cách thấy \(A\) suy biến: định thức bằng 0, hai cột cùng phương. Strang thích nhất cách này: <strong>tìm được \(x \neq 0\) mà \(Ax = 0\)</strong>. Nếu \(A^{-1}\) tồn tại, nhân nó vào hai vế được \(x = A^{-1}0 = 0\), mâu thuẫn.</p>
+  <figure><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/65moq0oavk8.png" alt="Bảng: Singular case, no inverse. You can find a vector x ≠ 0 with Ax = 0" width="640" height="480" loading="lazy"></div>
+    <figcaption><span class="who b">Bảng</span><span>"You can find a vector \(x \neq 0\) with \(Ax = 0\)."</span></figcaption></figure>
+  <div class="from n"><span class="tag">Nguyên văn ghi chú <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_3_multiplication_and_inverse_matrices.md#node-lwy3cex" target="_blank" rel="noopener">mở ghi chú gốc ↗</a></span>
+    <p>Một ý rất quan trọng cần hiểu đó là, <strong>equation Ax=0</strong> thể hiện rằng <strong>qua sự biến đổi với A, vector x đã thành 0</strong>, và <strong>không có các nào mà một matrix nào đó có thể đảo ngược chuyện đó bằng cách nhân với vector 0 để biến đổi nó thành lại ra x</strong>.</p>
+    <p>Do đó, việc tồn tại x khiến <strong>Ax=0</strong> là <strong>sự khẳng định cho A là non-invertible matrix</strong></p></div>
+
+  <h2><span class="no">3</span>Tìm A⁻¹ bằng Gauss–Jordan</h2>
+  <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_3_multiplication_and_inverse_matrices.md#node-a4yrkml" target="_blank" rel="noopener">Tiêu chuẩn khả nghịch ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_3_multiplication_and_inverse_matrices.md#node-fl2s39h" target="_blank" rel="noopener">Tìm ma trận nghịch đảo ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_3_multiplication_and_inverse_matrices.md#node-2b3jgm8" target="_blank" rel="noopener">Cột ma trận nghịch đảo ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_3_multiplication_and_inverse_matrices.md#node-o2kdp8j" target="_blank" rel="noopener">Gauss–Jordan ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_3_multiplication_and_inverse_matrices.md#node-1loce7y" target="_blank" rel="noopener">Biến đổi hàng ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_3_multiplication_and_inverse_matrices.md#node-79xa8ph" target="_blank" rel="noopener">Jordan làm tiếp ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_3_multiplication_and_inverse_matrices.md#node-k83bwl3" target="_blank" rel="noopener">Xác minh A⁻¹ ↗</a></div>
+  <p>Lấy \(A = \begin{bmatrix} 1 & 3 \\ 2 & 7 \end{bmatrix}\), khả nghịch. Tìm \(A^{-1}\) tức là tìm hai cột của nó: cột 1 giải \(A\,\text{cột}_1 = (1, 0)\), cột 2 giải \(A\,\text{cột}_2 = (0, 1)\). Hai hệ cùng ma trận \(A\), nên Gauss–Jordan giải cả hai một lượt: viết \([A \mid I]\), khử bên trái cho tới khi thành \(I\). Gauss khử phía dưới đường chéo (ra \(U\)); Jordan khử tiếp phía trên.</p>
+  <div class="ix" data-ix="rowops" data-m="1,3,1,0;2,7,0,1" data-bar="2" data-e="1" data-ops="2,1,-2|1,2,-3" data-labels="[A | I]||Gauss: bên trái đã là U||Jordan: bên trái là I, nên bên phải là A⁻¹"></div>
+  <p class="ixcap"><span class="who c">Tương tác</span> <b>Đầu vào:</b> bấm "Bước tiếp". <b>Kết quả:</b> mỗi bước làm cùng một phép biến đổi hàng cho cả hai nửa; sau hai bước, nửa phải là \(A^{-1} = \begin{bmatrix} 7 & -3 \\ -2 & 1 \end{bmatrix}\).</p>
+  <div class="pair wide">
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/av8nd85ugup.png" alt="Bảng: Gauss-Jordan, solve 2 equations at once" width="640" height="480" loading="lazy"></div>
+      <figcaption><span class="who b">Bảng</span><span>"Gauss–Jordan (solve 2 eqns at once)".</span></figcaption></figure>
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/fxy3da16iyk.png" alt="Bảng: EA = I tells us E = A⁻¹; E[A I] = [I A⁻¹]" width="640" height="480" loading="lazy"></div>
+      <figcaption><span class="who b">Bảng</span><span>"\(EA = I\) tells us \(E = A^{-1}\)."</span></figcaption></figure>
+  </div>
+
+  <h3><span class="no">3.1</span>Vì sao bên phải lại thành A⁻¹?</h3>
+  <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_3_multiplication_and_inverse_matrices.md#node-kwi1phe" target="_blank" rel="noopener">Cơ chế nghịch đảo ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_3_multiplication_and_inverse_matrices.md#node-lznhgl5" target="_blank" rel="noopener">Phép nghịch đảo ma trận ↗</a></div>
+  <p>Mỗi bước khử là nhân một ma trận \(E_i\) vào bên trái. Gom tất cả lại thành \(E = E_2E_1\), cả quá trình là \(E\,[A \mid I] = [EA \mid E]\). Bên trái ra \(I\), tức \(EA = I\), nên \(E = A^{-1}\). Bên phải là \(EI = E\), chính là \(A^{-1}\).</p>
+  <div class="eq">\[ E\,\begin{bmatrix} A & I \end{bmatrix} = \begin{bmatrix} I & A^{-1} \end{bmatrix}. \]</div>
+
+  <footer>
+    <h3>Bài này được làm thế nào</h3>
+    <p>Chữ: viết lại từ <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_3_multiplication_and_inverse_matrices.md" target="_blank" rel="noopener">ghi chú MIT 18.06 bài giảng 3</a> của tác giả. Khung xanh là nguyên văn ghi chú; phần chữ còn lại do Claude soạn theo ý ghi chú và cần tác giả viết lại. Mốc thời gian lấy từ phụ đề tự động của YouTube.</p>
+    <p>Hình tương tác: Claude dựng, số liệu lấy từ ví dụ trên bảng. Ảnh chụp bảng: MIT OpenCourseWare 18.06 Linear Algebra, Spring 2010, Gilbert Strang, giấy phép CC BY-NC-SA 4.0.</p>
+    <h3>Trên bản đồ</h3>
+    <p><a href="../../?bai=L.matmul">Nền móng Machine Learning</a> · lộ trình MIT 18.06, bài 3. Bài trước: <a href="../mit1806-02/">Khử Gauss bằng ma trận</a>. Bài tiếp: <a href="../mit1806-04/">Phân rã A = LU</a>.</p>
+  </footer>
+</div>
+
+<div class="lb" id="lb" hidden><img alt=""><button type="button" id="lbx">Đóng ✕</button></div>
+<script>
+window.MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] }, svg: { fontCache: 'global' }, options: { skipHtmlTags: ['script', 'style', 'textarea', 'svg'] } };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg-full.js" async></script>
+<script>
+// Shared code for chapter pages: lightbox + interactive figures, each started from a <div class="ix" data-ix="..."> on the page.
+// Every figure says what the reader changes (đầu vào) and what is recomputed (kết quả).
+const NS = 'http://www.w3.org/2000/svg';
+const el = (parent, n, a = {}) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); parent.appendChild(e); return e; };
+const vn = v => { const r = Math.round(v * 100) / 100; return (r < 0 ? '−' : '') + Math.abs(r).toString().replace('.', ','); };
+const typeset = n => { try { if (window.MathJax && MathJax.typesetPromise) { MathJax.typesetClear && MathJax.typesetClear([n]); MathJax.typesetPromise([n]); } } catch (e) {} };
+const frac = v => {           // exact small fractions for row operations: 7/3, −1/2 …
+  if (Math.abs(v - Math.round(v)) < 1e-9) return String(Math.round(v));
+  for (let d = 2; d <= 12; d++) { const n = v * d; if (Math.abs(n - Math.round(n)) < 1e-9) return `${Math.round(n) < 0 ? '-' : ''}\\tfrac{${Math.abs(Math.round(n))}}{${d}}`; }
+  return (Math.round(v * 100) / 100).toString();
+};
+const texM = (M, bar) => `\\left[\\begin{array}{${M[0].map((_, j) => (bar && j === bar ? '|' : '') + 'c').join('')}}${M.map(r => r.map(frac).join(' & ')).join(' \\\\ ')}\\end{array}\\right]`;
+const marker = (defs, id, c) => { const m = el(defs, 'marker', { id, viewBox: '0 0 10 10', refX: 8.5, refY: 5, markerWidth: 6, markerHeight: 6, orient: 'auto-start-reverse' }); el(m, 'path', { d: 'M0,0 L10,5 L0,10 z', fill: c }); };
+let MID = 0;
+
+// ---- bigger view of any picture
+(() => {
+  const lb = document.getElementById('lb'); if (!lb) return; const im = lb.querySelector('img');
+  const open = f => { const src = f.querySelector('img'); im.src = src.src; im.alt = src.alt; lb.hidden = false; document.getElementById('lbx').focus(); };
+  const close = () => { lb.hidden = true; im.removeAttribute('src'); };
+  document.querySelectorAll('.zoom').forEach(f => { f.addEventListener('click', () => open(f)); f.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(f); } }); });
+  lb.addEventListener('click', close); addEventListener('keydown', e => { if (e.key === 'Escape' && !lb.hidden) close(); });
+})();
+
+const IX = {};
+
+// ---- row picture / column picture of a 2 × 2 system (lecture 1)
+// data-a="2,-1;-1,2" data-b="0,3"  ·  input: mode, the two coefficients x, y  ·  result: x·cột1 + y·cột2, distance to b
+IX.colpic = (box) => {
+  const A = box.dataset.a.split(';').map(r => r.split(',').map(Number)), b = box.dataset.b.split(',').map(Number);
+  const c1 = [A[0][0], A[1][0]], c2 = [A[0][1], A[1][1]];
+  box.innerHTML = `<div class="ixbar"><div class="seg" role="group" aria-label="Chọn cách nhìn"><button type="button" data-m="row">Row picture</button><button type="button" data-m="col" class="on">Column picture</button></div>
+    <span class="ixin" data-show="col"><label>x <input type="range" min="-3" max="3" step="0.5" value="1"><output>1</output></label><label>y <input type="range" min="-3" max="3" step="0.5" value="1"><output>1</output></label></span></div>
+    <div class="frame live"><svg viewBox="0 0 400 300"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), [sx, sy] = box.querySelectorAll('input[type=range]'), [ox, oy] = box.querySelectorAll('output');
+  const S = 32, O = [200, 190], X = a => O[0] + a * S, Y = v => O[1] - v * S;
+  for (let i = -6; i <= 6; i++) el(svg, 'line', { x1: X(i), x2: X(i), y1: Y(-3.4), y2: Y(5.6), class: 'gr' });
+  for (let j = -3; j <= 5; j++) el(svg, 'line', { x1: X(-6.2), x2: X(6.2), y1: Y(j), y2: Y(j), class: 'gr' });
+  el(svg, 'line', { x1: X(-6.2), x2: X(6.2), y1: Y(0), y2: Y(0), class: 'ax' }); el(svg, 'line', { x1: X(0), x2: X(0), y1: Y(-3.4), y2: Y(5.6), class: 'ax' });
+  const id = 'm' + (++MID), defs = el(svg, 'defs'); marker(defs, id + 'b', '#1a73e8'); marker(defs, id + 'o', '#e37400'); marker(defs, id + 'g', '#0f8f7e'); marker(defs, id + 'k', '#5d6670');
+  const layer = el(svg, 'g'); let mode = 'col';
+  const arrow = (p, q, c, w = 2.6, dash) => el(layer, 'line', { x1: X(p[0]), y1: Y(p[1]), x2: X(q[0]), y2: Y(q[1]), stroke: { b: '#1a73e8', o: '#e37400', g: '#0f8f7e', k: '#5d6670' }[c], 'stroke-width': w, 'marker-end': `url(#${id + c})`, ...(dash ? { 'stroke-dasharray': '5 4' } : {}) });
+  const text = (p, s, cls, dx = 6, dy = -6, anchor = 'start') => { const t = el(layer, 'text', { x: X(p[0]) + dx, y: Y(p[1]) + dy, class: cls, 'text-anchor': anchor }); t.textContent = s; };
+  const sol = (() => { const d = A[0][0] * A[1][1] - A[0][1] * A[1][0]; return [(b[0] * A[1][1] - A[0][1] * b[1]) / d, (A[0][0] * b[1] - b[0] * A[1][0]) / d]; })();
+  function lineOf(r, rhs, c, label) {          // a·x + b·y = rhs, clipped to the grid
+    const [p, q] = r, pts = [];
+    for (const xx of [-6.2, 6.2]) if (Math.abs(q) > 1e-9) pts.push([xx, (rhs - p * xx) / q]);
+    for (const yy of [-3.4, 5.6]) if (Math.abs(p) > 1e-9) pts.push([(rhs - q * yy) / p, yy]);
+    const ins = pts.filter(([x, y]) => x >= -6.21 && x <= 6.21 && y >= -3.41 && y <= 5.61).sort((u, v) => u[0] - v[0] || u[1] - v[1]);
+    if (ins.length < 2) return; const a = ins[0], z = ins[ins.length - 1];
+    el(layer, 'line', { x1: X(a[0]), y1: Y(a[1]), x2: X(z[0]), y2: Y(z[1]), stroke: c, 'stroke-width': 2.6 });
+    const lab = el(layer, 'text', { x: X(z[0]) - 4, y: Y(z[1]) + (z[1] > 5 ? 16 : -6), 'text-anchor': 'end', fill: c, 'font-weight': 700 }); lab.textContent = label;
+  }
+  const eqs = A.map((r, i) => `${vn(r[0])}x ${r[1] < 0 ? '−' : '+'} ${vn(Math.abs(r[1]))}y = ${vn(b[i])}`.replace(/^1x/, 'x').replace(/ 1y/, ' y'));
+  function draw() {
+    layer.innerHTML = '';
+    box.querySelectorAll('[data-show]').forEach(e => e.hidden = e.dataset.show !== mode);
+    if (mode === 'row') {
+      lineOf(A[0], b[0], '#1a73e8', eqs[0]); lineOf(A[1], b[1], '#e37400', eqs[1]);
+      el(layer, 'circle', { cx: X(sol[0]), cy: Y(sol[1]), r: 6, fill: '#0f8f7e', stroke: '#fff', 'stroke-width': 2 });
+      text(sol, `(x, y) = (${vn(sol[0])}, ${vn(sol[1])})`, 'gt', 10, 4);
+      out.innerHTML = `<span><b>Mỗi phương trình là một đường thẳng.</b></span><span>Nghiệm là giao điểm: <b>x = ${vn(sol[0])}, y = ${vn(sol[1])}</b></span>`;
+      return;
+    }
+    const x = +sx.value, y = +sy.value; ox.textContent = vn(x); oy.textContent = vn(y);
+    el(layer, 'circle', { cx: X(b[0]), cy: Y(b[1]), r: 6, fill: '#fff', stroke: '#202124', 'stroke-width': 2 }); text(b, `b = (${vn(b[0])}, ${vn(b[1])})`, 'kt', 9, 4);
+    arrow([0, 0], c1, 'k', 1.6, true); text(c1, 'cột 1', 'kt', 4, 14); arrow([0, 0], c2, 'k', 1.6, true); text(c2, 'cột 2', 'kt', 6, -6);
+    const p1 = [x * c1[0], x * c1[1]], p2 = [p1[0] + y * c2[0], p1[1] + y * c2[1]];
+    if (x) arrow([0, 0], p1, 'b', 3); if (y) arrow(p1, p2, 'o', 3);
+    const hit = Math.hypot(p2[0] - b[0], p2[1] - b[1]) < 1e-9;
+    el(layer, 'circle', { cx: X(p2[0]), cy: Y(p2[1]), r: 4.5, fill: hit ? '#0f8f7e' : '#5d6670' });
+    out.innerHTML = `<span>${vn(x)}·(${c1.map(vn).join('; ')}) + ${vn(y)}·(${c2.map(vn).join('; ')}) = <b>(${p2.map(vn).join('; ')})</b></span><span class="tagok ${hit ? 'yes' : 'no'}">${hit ? 'Tới đúng b: đây là nghiệm' : 'Chưa tới b: thử đổi x, y'}</span>`;
+  }
+  box.querySelectorAll('.seg button').forEach(bt => bt.onclick = () => { mode = bt.dataset.m; box.querySelectorAll('.seg button').forEach(z => z.classList.toggle('on', z === bt)); draw(); });
+  sx.oninput = sy.oninput = draw; draw();
+};
+
+// ---- row operations, one step at a time (elimination, Gauss–Jordan, rref)
+// data-m="1,2,1,2;3,8,1,12;0,4,1,2" data-bar="3" data-ops="2,1,-3|3,2,-2" (row i += k·row j)  or  "s:1,2" (swap)  or  "d:2,0.5" (row i ×= k)
+// optional data-e="1": also show the elimination matrix E of each step
+IX.rowops = (box) => {
+  const M0 = box.dataset.m.split(';').map(r => r.split(',').map(Number)), bar = box.dataset.bar ? +box.dataset.bar : 0, showE = box.dataset.e === '1';
+  const ops = box.dataset.ops.split('|').map(o => o.startsWith('s:') ? { t: 's', i: +o.slice(2).split(',')[0] - 1, j: +o.slice(2).split(',')[1] - 1 } : o.startsWith('d:') ? { t: 'd', i: +o.slice(2).split(',')[0] - 1, k: +o.slice(2).split(',')[1] } : (([i, j, k]) => ({ t: 'a', i: i - 1, j: j - 1, k }))(o.split(',').map(Number)));
+  const n = M0.length, states = [M0.map(r => r.slice())];
+  ops.forEach(o => { const M = states[states.length - 1].map(r => r.slice());
+    if (o.t === 's') [M[o.i], M[o.j]] = [M[o.j], M[o.i]]; else if (o.t === 'd') M[o.i] = M[o.i].map(v => v * o.k); else M[o.i] = M[o.i].map((v, c) => v + o.k * M[o.j][c]);
+    states.push(M); });
+  const Emat = o => { const E = Array.from({ length: n }, (_, i) => Array.from({ length: n }, (_, j) => +(i === j)));
+    if (o.t === 's') { E[o.i][o.i] = E[o.j][o.j] = 0; E[o.i][o.j] = E[o.j][o.i] = 1; } else if (o.t === 'd') E[o.i][o.i] = o.k; else E[o.i][o.j] = o.k; return E; };
+  const say = o => o.t === 's' ? `Đổi chỗ hàng ${o.i + 1} và hàng ${o.j + 1}` : o.t === 'd' ? `Nhân hàng ${o.i + 1} với \\(${frac(o.k)}\\)` : `Hàng ${o.i + 1} ${o.k < 0 ? '\u2212' : '+'} \\(${frac(Math.abs(o.k))}\\) × hàng ${o.j + 1}`;
+  const labels = (box.dataset.labels || '').split('||');
+  box.innerHTML = `<div class="ixbar"><button type="button" class="reset" data-d="-1">← Lùi</button><button type="button" class="reset primary" data-d="1">Bước tiếp →</button><span class="stepno"></span></div><div class="stepbox" aria-live="polite"></div>`;
+  let k = 0; const sb = box.querySelector('.stepbox'), no = box.querySelector('.stepno');
+  function draw() {
+    const o = ops[k - 1];
+    no.textContent = k === 0 ? `Bắt đầu · ${ops.length} bước` : `Bước ${k}/${ops.length}`;
+    const lab = labels[k] ? `<div class="steplab">${labels[k]}</div>` : '';
+    sb.innerHTML = k === 0 ? `${lab}<div class="mxeq">\\[ ${texM(M0, bar)} \\]</div>`
+      : `<div class="steplab">${say(o)}${labels[k] ? ' · ' + labels[k] : ''}</div><div class="mxeq">\\[ ${showE ? `\\underbrace{${texM(Emat(o))}}_{E}\\,` : ''}${texM(states[k - 1], bar)} \\;\\longrightarrow\\; ${texM(states[k], bar)} \\]</div>`;
+    box.querySelector('[data-d="-1"]').disabled = k === 0; box.querySelector('[data-d="1"]').disabled = k === ops.length;
+    typeset(sb);
+  }
+  box.querySelectorAll('[data-d]').forEach(bt => bt.onclick = () => { k = Math.max(0, Math.min(ops.length, k + +bt.dataset.d)); draw(); });
+  draw();
+};
+
+// ---- four ways to see C = AB (lecture 3)  ·  input: the view, and which entry/column/row/term  ·  result: that piece of C, written out
+IX.matmul = (box) => {
+  const A = box.dataset.a.split(';').map(r => r.split(',').map(Number)), B = box.dataset.b.split(';').map(r => r.split(',').map(Number));
+  const m = A.length, nn = B.length, p = B[0].length, C = A.map(r => B[0].map((_, j) => r.reduce((s, v, k) => s + v * B[k][j], 0)));
+  box.innerHTML = `<div class="ixbar"><div class="seg" role="group" aria-label="Chọn cách nhìn"><button type="button" data-v="1" class="on">1 · từng số</button><button type="button" data-v="2">2 · theo cột</button><button type="button" data-v="3">3 · theo hàng</button><button type="button" data-v="4">4 · cột × hàng</button></div>
+    <label class="pick">Chọn <select></select></label></div><div class="stepbox" aria-live="polite"></div>`;
+  const sel = box.querySelector('select'), sb = box.querySelector('.stepbox'); let v = 1;
+  const col = (M, j) => M.map(r => r[j]), vec = a => `\\begin{bmatrix}${a.join(' \\\\ ')}\\end{bmatrix}`, rowv = a => `\\begin{bmatrix}${a.join(' & ')}\\end{bmatrix}`;
+  const hl = (M, f) => `\\begin{bmatrix}${M.map((r, i) => r.map((x, j) => f(i, j) ? `\\color{#e37400}{\\mathbf{${x}}}` : x).join(' & ')).join(' \\\\ ')}\\end{bmatrix}`;
+  function options() {
+    const o = v === 1 ? C.flatMap((r, i) => r.map((_, j) => [`${i},${j}`, `số ở hàng ${i + 1}, cột ${j + 1}`])) : v === 2 ? B[0].map((_, j) => [j, `cột ${j + 1} của C`]) : v === 3 ? A.map((_, i) => [i, `hàng ${i + 1} của C`]) : A[0].map((_, k) => [k, `số hạng thứ ${k + 1}`]);
+    sel.innerHTML = o.map(([val, t]) => `<option value="${val}">${t}</option>`).join('');
+  }
+  function draw() {
+    const s = sel.value; let tex = '', note = '';
+    if (v === 1) { const [i, j] = s.split(',').map(Number);
+      tex = `${hl(A, (a) => a === i)}\\,${hl(B, (_, b) => b === j)} \\Rightarrow c_{${i + 1}${j + 1}} = ${A[i].map((x, k) => `${x}\\cdot${B[k][j]}`).join(' + ')} = ${C[i][j]}`;
+      note = 'Mỗi số của C là tích vô hướng của một hàng của A với một cột của B.'; }
+    if (v === 2) { const j = +s;
+      tex = `\\text{cột } ${j + 1} \\text{ của } C = A${vec(col(B, j))} = ${A[0].map((_, k) => `${B[k][j]}${vec(col(A, k))}`).join(' + ')} = ${vec(col(C, j))}`;
+      note = 'Mỗi cột của C là một tổ hợp các cột của A; hệ số lấy từ cột tương ứng của B.'; }
+    if (v === 3) { const i = +s;
+      tex = `\\text{hàng } ${i + 1} \\text{ của } C = ${rowv(A[i])}B = ${A[i].map((x, k) => `${x}${rowv(B[k])}`).join(' + ')} = ${rowv(C[i])}`;
+      note = 'Mỗi hàng của C là một tổ hợp các hàng của B; hệ số lấy từ hàng tương ứng của A.'; }
+    if (v === 4) { const k = +s, T = col(A, k).map(a => B[k].map(b => a * b));
+      tex = `C = ${A[0].map((_, q) => `${q === k ? '\\color{#e37400}{' : ''}${vec(col(A, q))}${rowv(B[q])}${q === k ? '}' : ''}`).join(' + ')}, \\qquad ${vec(col(A, k))}${rowv(B[k])} = \\begin{bmatrix}${T.map(r => r.join(' & ')).join(' \\\\ ')}\\end{bmatrix}`;
+      note = 'C là tổng của các ma trận (cột k của A) × (hàng k của B). Mỗi ma trận đó có các hàng cùng phương, các cột cùng phương: hạng 1.'; }
+    sb.innerHTML = `<div class="steplab">${note}</div><div class="mxeq">\\[ ${tex} \\]</div>`; typeset(sb);
+  }
+  box.querySelectorAll('.seg button').forEach(bt => bt.onclick = () => { v = +bt.dataset.v; box.querySelectorAll('.seg button').forEach(z => z.classList.toggle('on', z === bt)); options(); draw(); });
+  sel.onchange = draw; options(); draw();
+};
+
+document.querySelectorAll('.ix[data-ix]').forEach(b => { try { IX[b.dataset.ix](b); } catch (e) { console.error(e); b.textContent = 'Không dựng được hình này.'; } });
+
+</script>
+</body>
+</html>
