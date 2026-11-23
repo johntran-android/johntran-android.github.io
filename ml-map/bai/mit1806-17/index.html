@@ -112,7 +112,35 @@ footer { margin-top: 3.5rem; padding-top: 1.4rem; border-top: 1px solid var(--ru
 footer h3 { font: 700 .78rem/1 var(--sans); letter-spacing: .07em; text-transform: uppercase; color: var(--ink); margin: 1.2rem 0 .4rem; }
 a { color: var(--blue); text-underline-offset: .15em; }
 a:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 2px; }
+</style><style>
+/* layout 2 (trial): quieter top bar, collapsed note links, boxed interactives */
+.draft2 { font: 500 .82rem/1.5 var(--sans); color: var(--muted); border-bottom: 1px solid var(--rule); padding: .9rem 0; display: flex; flex-wrap: wrap; gap: .4rem 1rem; align-items: center; }
+.draft2 .back { font-weight: 700; text-decoration: none; color: var(--blue); }
+.draft2 .dtag { background: #eef0f3; color: var(--ink); font-weight: 600; padding: .1rem .5rem; border-radius: 5px; }
+.legend summary { cursor: pointer; list-style: none; } .legend summary::-webkit-details-marker { display: none; }
+.legend summary:hover { color: var(--ink); } .legend[open] { flex-basis: 100%; }
+.legendb { display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; margin-top: .6rem; padding: .7rem .9rem; background: #fff; border: 1px solid var(--rule); border-radius: 8px; }
+.legendb p { margin: .2rem 0 0; flex-basis: 100%; font-size: .82rem; }
+.src2 { margin: -.15rem 0 .9rem; font: 500 .8rem/1.4 var(--sans); }
+.src2 summary { display: inline-flex; align-items: center; gap: .35rem; cursor: pointer; list-style: none; color: var(--muted); padding: .18rem .6rem; border: 1px solid var(--rule); border-radius: 999px; background: #fff; }
+.src2 summary::-webkit-details-marker { display: none; } .src2 summary::before { content: '📝'; font-size: .75rem; }
+.src2 summary::after { content: '▾'; font-size: .7rem; } .src2[open] summary::after { content: '▴'; } .src2 summary:hover { color: var(--ink); border-color: #c9d1da; }
+.src2 summary:focus-visible, .legend summary:focus-visible, .ixmore summary:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.srcl { display: flex; flex-wrap: wrap; gap: .35rem 1rem; margin-top: .5rem; padding: .65rem .85rem; background: #fff; border: 1px solid var(--rule); border-radius: 8px; }
+.srcl a { text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--blue) 35%, transparent); }
+.ixbox { border: 1px solid var(--rule); border-radius: 14px; background: #fff; padding: 1.1rem 1.2rem 1rem; margin: 2rem 0; box-shadow: 0 1px 3px rgba(20, 30, 40, .05); }
+.ixhead { display: flex; align-items: center; gap: .6rem; font: 700 1.05rem/1.3 var(--sans); color: var(--ink); }
+.ixhead .who { font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; padding: .18rem .5rem; border-radius: 4px; }
+.ixhow { font: 500 .95rem/1.5 var(--sans); color: var(--ink); margin: .4rem 0 1rem; }
+.ixbox .presets::before { content: 'Ví dụ có sẵn:'; font: 600 .78rem/1 var(--sans); color: var(--muted); align-self: center; margin-right: .1rem; }
+.ixbox .presets .reset:not(.primary) { color: var(--ink); background: #f1f3f5; border-color: #e1e5ea; border-radius: 999px; padding: .4rem .8rem; }
+.ixbox .presets .reset:not(.primary):hover { background: #e6e9ed; }
+.ixbox .readout { margin-bottom: .8rem; } .ixbox .presets { margin-bottom: .8rem; }
+.ixmore summary { cursor: pointer; font: 600 .86rem/1.4 var(--sans); color: var(--blue); }
+.ixmore p { font: 400 .9rem/1.6 var(--sans); color: var(--muted); margin: .5rem 0 0; }
+@media (max-width: 640px) { .ixbox { padding: .9rem .8rem; margin: 1.6rem -.4rem; } }
 </style>
+
 <style>
 .sw.h { background: #fff7d6; }
 .who.h { background: #fff7d6; color: var(--ink); }
@@ -202,8 +230,8 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <div class="draft"><a class="back" href="../../?bai=L.gs">← Bản đồ</a><b>Bản nháp</b>
     <span class="chip"><span class="sw n"></span>nguyên văn ghi chú</span>
     <span class="chip"><span class="sw c"></span>hình tương tác</span>
-    <span class="chip"><span class="sw b"></span>ảnh bảng MIT OCW</span>
-    <span class="chip">chữ thường: Claude viết lại theo ý ghi chú, tác giả sẽ duyệt lại; mỗi mục có link ghi chú gốc</span></div>
+    <span class="chip"><span class="sw b"></span>ảnh chụp bài giảng MIT</span>
+    <span class="chip">phần chữ còn lại: Claude viết từ ghi chú, tác giả sẽ duyệt lại</span></div>
 
   <header class="ch">
     <div class="crumb">Đại số tuyến tính · MIT 18.06 bài giảng 17</div>
@@ -211,8 +239,8 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
     <p class="lede">Một cơ sở mà các vector vuông góc nhau và dài bằng 1 làm mọi thứ dễ hẳn: phép chiếu, bình phương tối thiểu, tất cả đều bớt đi một phép nghịch đảo. Bài này cho thấy vì sao, rồi đưa ra cách biến bất kỳ cơ sở nào thành một cơ sở như vậy: Gram–Schmidt, gói gọn trong \(A = QR\).</p>
     <dl class="facts">
       <div><dt>Cần biết trước</dt><dd>Phép chiếu (bài 15) · Bình phương tối thiểu (bài 16)</dd></div>
-      <div><dt>Mở ra</dt><dd>Định thức · Định lý phổ · SVD · QR trong tối ưu số</dd></div>
-      <div><dt>Bài giảng của tác giả</dt><dd>Đang làm, sẽ gắn vào đây khi xong</dd></div>
+      <div><dt>Học tiếp</dt><dd>Định thức · Định lý phổ · SVD · QR trong tối ưu số</dd></div>
+      <div><dt>Video giảng lại</dt><dd>Đang làm, sẽ gắn vào đây khi xong</dd></div>
     </dl>
   </header>
 
@@ -221,18 +249,18 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <p>Các vector \(q_1, \dots, q_n\) <strong>trực chuẩn</strong> (orthonormal) khi chúng vuông góc từng đôi và có độ dài 1:</p>
   <div class="eq">\[ q_i^Tq_j = \begin{cases} 0 & i \neq j \\ 1 & i = j \end{cases} \qquad\Longleftrightarrow\qquad Q^TQ = I. \]</div>
   <p>Đặt chúng làm cột của \(Q\) thì mỗi số trong \(Q^TQ\) là một tích \(q_i^Tq_j\), nên \(Q^TQ = I\), dù \(Q\) có vuông hay không. Đây là phiên bản đặc biệt của \(A^TA\) ở các bài trước.</p>
-  <figure><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/2rn3ezoqnch.png" alt="Bảng: orthonormal vectors, qiᵀqj = 0 nếu i ≠ j, 1 nếu i = j" width="640" height="480" loading="lazy"></div>
-    <figcaption><span class="who b">Bảng</span><span>Định nghĩa trực chuẩn.</span></figcaption></figure>
+  <figure><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/2rn3ezoqnch.png" alt="Bảng: orthonormal vectors, qiᵀqj = 0 nếu i ≠ j, 1 nếu i = j" width="640" height="480" loading="lazy"></div>
+    <figcaption><span class="who b">Bài giảng MIT</span><span>Định nghĩa trực chuẩn.</span></figcaption></figure>
 
   <h2><span class="no">2</span>Ma trận trực giao</h2>
   <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_17_orthogonal_matrices_and_gram_schmidt.md#node-7wr80wv" target="_blank" rel="noopener">Chỉ gọi khi vuông ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_17_orthogonal_matrices_and_gram_schmidt.md#node-9bg3l8w" target="_blank" rel="noopener">Qᵀ = Q⁻¹ ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_17_orthogonal_matrices_and_gram_schmidt.md#node-otgfo5x" target="_blank" rel="noopener">Ví dụ: ma trận hoán vị ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_17_orthogonal_matrices_and_gram_schmidt.md#node-3y8eqqt" target="_blank" rel="noopener">Ví dụ khác ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_17_orthogonal_matrices_and_gram_schmidt.md#node-8e10cfj" target="_blank" rel="noopener">Chia cho 3 ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_17_orthogonal_matrices_and_gram_schmidt.md#node-87qoii9" target="_blank" rel="noopener">Thêm cột thứ ba ↗</a></div>
   <p>Strang chỉ gọi \(Q\) là <strong>ma trận trực giao</strong> khi nó <strong>vuông</strong>. Khi đó các cột độc lập và đủ số lượng, \(Q\) khả nghịch, và \(Q^TQ = I\) cho luôn \(Q^T = Q^{-1}\). Ví dụ: mọi ma trận hoán vị; ma trận quay \(\begin{bmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{bmatrix}\); và</p>
   <div class="eq">\[ Q = \frac{1}{3}\begin{bmatrix} 1 & -2 & 2 \\ 2 & -1 & -2 \\ 2 & 2 & 1 \end{bmatrix}. \]</div>
   <div class="pair wide">
-    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/zwre6qhw1m.png" alt="Bảng: If Q is square then QᵀQ = I tells us Qᵀ = Q⁻¹" width="640" height="480" loading="lazy"></div>
-      <figcaption><span class="who b">Bảng</span><span>"If \(Q\) is square then \(Q^TQ = I\) tells us \(Q^T = Q^{-1}\)."</span></figcaption></figure>
-    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/sepbflvh79.png" alt="Bảng: các ví dụ ma trận trực giao: ma trận quay, ma trận chia cho 3" width="640" height="480" loading="lazy"></div>
-      <figcaption><span class="who b">Bảng</span><span>Các ví dụ: ma trận quay, ma trận chia cho 3.</span></figcaption></figure>
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/zwre6qhw1m.png" alt="Bảng: If Q is square then QᵀQ = I tells us Qᵀ = Q⁻¹" width="640" height="480" loading="lazy"></div>
+      <figcaption><span class="who b">Bài giảng MIT</span><span>"If \(Q\) is square then \(Q^TQ = I\) tells us \(Q^T = Q^{-1}\)."</span></figcaption></figure>
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/sepbflvh79.png" alt="Bảng: các ví dụ ma trận trực giao: ma trận quay, ma trận chia cho 3" width="640" height="480" loading="lazy"></div>
+      <figcaption><span class="who b">Bài giảng MIT</span><span>Các ví dụ: ma trận quay, ma trận chia cho 3.</span></figcaption></figure>
   </div>
 
   <h2><span class="no">3</span>Vì sao Q tốt: phép chiếu và bình phương tối thiểu</h2>
@@ -244,10 +272,10 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
     <p>Và việc <strong>x̂ = Qᵀb</strong> <strong>CÓ NGHĨA</strong> LÀ <strong>PHẨN TỬ THỨ i CỦA x̂</strong> CHỈ LÀ <strong>BASIS VECTOR THỨ i DOT PRODUCT VỚI b</strong></p>
     <p>(Ta đừng nhìn theo Qᵀb theo linear combination các columns của Qᵀ, mà hãy nhìn Qᵀb theo góc nhìn là row của Q dot product với b)</p></div>
   <div class="pair wide">
-    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/delvy8esb76.png" alt="Bảng: Q has orthonormal columns, project onto its column space, P = Q(QᵀQ)⁻¹Qᵀ = QQᵀ" width="640" height="480" loading="lazy"></div>
-      <figcaption><span class="who b">Bảng</span><span>\(P = Q(Q^TQ)^{-1}Q^T = QQ^T\).</span></figcaption></figure>
-    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/wturhxqhoi.png" alt="Bảng: AᵀAx̂ = Aᵀb, now A is Q, x̂ = Qᵀb" width="640" height="480" loading="lazy"></div>
-      <figcaption><span class="who b">Bảng</span><span>"Now \(A\) is \(Q\)": \(\hat{x} = Q^Tb\).</span></figcaption></figure>
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/delvy8esb76.png" alt="Bảng: Q has orthonormal columns, project onto its column space, P = Q(QᵀQ)⁻¹Qᵀ = QQᵀ" width="640" height="480" loading="lazy"></div>
+      <figcaption><span class="who b">Bài giảng MIT</span><span>\(P = Q(Q^TQ)^{-1}Q^T = QQ^T\).</span></figcaption></figure>
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/wturhxqhoi.png" alt="Bảng: AᵀAx̂ = Aᵀb, now A is Q, x̂ = Qᵀb" width="640" height="480" loading="lazy"></div>
+      <figcaption><span class="who b">Bài giảng MIT</span><span>"Now \(A\) is \(Q\)": \(\hat{x} = Q^Tb\).</span></figcaption></figure>
   </div>
 
   <h2><span class="no">4</span>Gram–Schmidt</h2>
@@ -257,12 +285,12 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <p>Vì \(a, b\) độc lập nên \(B\) không bao giờ bằng 0. Thêm vector thứ ba \(c\): trừ đi phần chiếu lên \(A\) và phần chiếu lên \(B\), còn lại \(C\) vuông góc với cả hai.</p>
   <div class="eq">\[ C = c - \frac{A^Tc}{A^TA}A - \frac{B^Tc}{B^TB}B. \]</div>
   <div class="ix" data-ix="proj2d" data-gs="1"></div>
-  <p class="ixcap"><span class="who c">Tương tác</span> <b>Đầu vào:</b> kéo \(a\) và \(b\). <b>Kết quả:</b> \(B = b - p\) vuông góc với \(A = a\), và hai vector đơn vị \(q_1, q_2\) (tím). Kéo \(b\) về cùng phương với \(a\) để thấy \(B = 0\).</p>
+  <p class="ixcap"><span class="who c">Hình tương tác</span> <b>Đầu vào:</b> kéo \(a\) và \(b\). <b>Kết quả:</b> \(B = b - p\) vuông góc với \(A = a\), và hai vector đơn vị \(q_1, q_2\) (tím). Kéo \(b\) về cùng phương với \(a\) để thấy \(B = 0\).</p>
   <div class="pair wide">
-    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/qy1tcr5p4t.png" alt="Bảng: Gram-Schmidt, q1 = A/‖A‖, q2 = B/‖B‖, B = b − (Aᵀb/AᵀA)A" width="640" height="480" loading="lazy"></div>
-      <figcaption><span class="who b">Bảng</span><span>Gram–Schmidt cho hai vector.</span></figcaption></figure>
-    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/h8mdzcvxjcm.png" alt="Bảng: ví dụ a = (1,1,1), b = (1,0,2), Q với cột 1/√3 và (0, −1, 1)/√2" width="640" height="480" loading="lazy"></div>
-      <figcaption><span class="who b">Bảng</span><span>Ví dụ \(a = (1,1,1)\), \(b = (1,0,2)\).</span></figcaption></figure>
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/qy1tcr5p4t.png" alt="Bảng: Gram-Schmidt, q1 = A/‖A‖, q2 = B/‖B‖, B = b − (Aᵀb/AᵀA)A" width="640" height="480" loading="lazy"></div>
+      <figcaption><span class="who b">Bài giảng MIT</span><span>Gram–Schmidt cho hai vector.</span></figcaption></figure>
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/h8mdzcvxjcm.png" alt="Bảng: ví dụ a = (1,1,1), b = (1,0,2), Q với cột 1/√3 và (0, −1, 1)/√2" width="640" height="480" loading="lazy"></div>
+      <figcaption><span class="who b">Bài giảng MIT</span><span>Ví dụ \(a = (1,1,1)\), \(b = (1,0,2)\).</span></figcaption></figure>
   </div>
 
   <h3><span class="no">4.1</span>Một ví dụ bằng số</h3>
@@ -274,8 +302,8 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_17_orthogonal_matrices_and_gram_schmidt.md#node-t28vmfw" target="_blank" rel="noopener">A = LU ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_17_orthogonal_matrices_and_gram_schmidt.md#node-3rhmt7i" target="_blank" rel="noopener">A = QR ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_17_orthogonal_matrices_and_gram_schmidt.md#node-8v7pa78" target="_blank" rel="noopener">R tam giác trên ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_17_orthogonal_matrices_and_gram_schmidt.md#node-twmm3fp" target="_blank" rel="noopener">Tóm lại ↗</a></div>
   <p>Khử Gauss gói thành \(A = LU\); Gram–Schmidt gói thành \(A = QR\). \(R = Q^TA\) có \(r_{ij} = q_i^Ta_j\), và là <strong>tam giác trên</strong>: \(q_2\) được dựng sau \(a_1\) nên vuông góc với nó, \(q_2^Ta_1 = 0\); tổng quát, \(q_i\) vuông góc với mọi \(a_j\) đến trước.</p>
   <div class="eq">\[ \begin{bmatrix} a_1 & a_2 \end{bmatrix} = \begin{bmatrix} q_1 & q_2 \end{bmatrix}\begin{bmatrix} q_1^Ta_1 & q_1^Ta_2 \\ 0 & q_2^Ta_2 \end{bmatrix}. \]</div>
-  <figure><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/vlm1fhqkyhn.png" alt="Bảng: [a1 a2] = [q1 q2][q1ᵀa1 *; q1ᵀa2... ] với số 0 khoanh tròn" width="640" height="480" loading="lazy"></div>
-    <figcaption><span class="who b">Bảng</span><span>\(R\) tam giác trên: số 0 khoanh tròn là \(q_2^Ta_1\).</span></figcaption></figure>
+  <figure><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/vlm1fhqkyhn.png" alt="Bảng: [a1 a2] = [q1 q2][q1ᵀa1 *; q1ᵀa2... ] với số 0 khoanh tròn" width="640" height="480" loading="lazy"></div>
+    <figcaption><span class="who b">Bài giảng MIT</span><span>\(R\) tam giác trên: số 0 khoanh tròn là \(q_2^Ta_1\).</span></figcaption></figure>
 
   <footer>
     <h3>Bài này được làm thế nào</h3>
@@ -555,7 +583,7 @@ IX.colspace = (box) => {
     const b = ins.map(i => Number(i.value) || 0), aug = A.map((row, i) => [...row, b[i]]), { R, piv } = rref(aug), ok = !piv.includes(n);
     let sol = '';
     if (ok) { const x = Array(n).fill(0); piv.forEach((pc, i) => x[pc] = R[i][n]); sol = `\\[ x = ${vecTex(x)} :\\quad ${x.map((c, j) => `${frac(c)}\\,${vecTex(A.map(row => row[j]))}`).join(' + ')} = ${vecTex(b)} \\]`; }
-    out.innerHTML = `<div class="mxk">Kết quả, tự tính lại</div><div class="tagok ${ok ? 'yes' : 'no'}">${ok ? 'b nằm trong column space: Ax = b có nghiệm' : 'b nằm ngoài column space: Ax = b vô nghiệm'}</div>
+    out.innerHTML = `<div class="mxk">Kết quả (tính lại ngay khi đổi đầu vào)</div><div class="tagok ${ok ? 'yes' : 'no'}">${ok ? 'b nằm trong column space: Ax = b có nghiệm' : 'b nằm ngoài column space: Ax = b vô nghiệm'}</div>
       <div class="mxeq">${sol}</div><div class="facts2"><span>hạng của A: <b>${r}</b></span><span>C(A) là không gian ${r} chiều trong ℝ<sup>${m}</sup></span></div>
       <div class="mxeq">\\[ N(A) = \\left\\{ ${N.length ? N.map((x, i) => `${'cdef'[i]}\\,${vecTex(x)}`).join(' + ') : '0'} \\right\\} \\]</div>`;
     typeset(out);
@@ -686,7 +714,7 @@ IX.rank1 = (box) => {
     const u = [0, 1].map(i => Number(ins[i].value) || 0), v = [0, 1, 2].map(i => Number(ins[2 + i].value) || 0);
     let A = u.map(a => v.map(b => a * b)); if (chk.checked) A = A.map((r, i) => r.map((x, j) => x + U2[i] * V2[j]));
     const r = rank(A);
-    out.innerHTML = `<div class="mxk">Kết quả, tự tính lại</div><div class="mxeq">\\[ A = ${chk.checked ? `${vecTex(u)}\\begin{bmatrix}${v.map(frac).join(' & ')}\\end{bmatrix} + ${vecTex(U2)}\\begin{bmatrix}${V2.join(' & ')}\\end{bmatrix}` : `${vecTex(u)}\\begin{bmatrix}${v.map(frac).join(' & ')}\\end{bmatrix}`} = ${texM(A)} \\]</div>
+    out.innerHTML = `<div class="mxk">Kết quả (tính lại ngay khi đổi đầu vào)</div><div class="mxeq">\\[ A = ${chk.checked ? `${vecTex(u)}\\begin{bmatrix}${v.map(frac).join(' & ')}\\end{bmatrix} + ${vecTex(U2)}\\begin{bmatrix}${V2.join(' & ')}\\end{bmatrix}` : `${vecTex(u)}\\begin{bmatrix}${v.map(frac).join(' & ')}\\end{bmatrix}`} = ${texM(A)} \\]</div>
       <div class="facts2"><span>hạng của A: <b>${r}</b></span></div><div class="tagok ${r <= 1 ? 'yes' : 'no'}">${r === 1 ? 'Hạng 1: mọi hàng là bội của vᵀ, mọi cột là bội của u' : r === 0 ? 'A = 0' : 'Cộng hai ma trận hạng 1 ra hạng 2: tập ma trận hạng 1 không phải không gian con'}</div>`;
     typeset(out);
   }
@@ -807,7 +835,7 @@ IX.det2 = (box) => {
   box.querySelectorAll('[data-o]').forEach(bt => bt.onclick = () => { const o = bt.dataset.o, d0 = R[0][0] * R[1][1] - R[0][1] * R[1][0];
     if (o === 'swap') { R = [R[1], R[0]]; last = 'Đổi hai hàng: det đổi dấu (tính chất 2).'; }
     if (o === 'scale') { R[0] = R[0].map(v => v * 2); last = 'Nhân một hàng với 2: det nhân 2 (tính chất 3a).'; }
-    if (o === 'shear') { R[1] = [R[1][0] - R[0][0], R[1][1] - R[0][1]]; last = 'Trừ bội của hàng khác: hình bị xô nghiêng nhưng diện tích giữ nguyên (tính chất 5).'; }
+    if (o === 'shear') { R[1] = [R[1][0] - R[0][0], R[1][1] - R[0][1]]; last = 'Trừ bội của hàng khác: hình bị kéo xiên nhưng diện tích giữ nguyên (tính chất 5).'; }
     if (o === 'reset') { R = R0.map(r => r.slice()); last = ''; }
     draw(); });
   draw();
@@ -839,12 +867,236 @@ IX.det3 = (box) => {
       tex = D ? `x_j = \\frac{\\det B_j}{\\det A}: \\quad ${dj.map((d, j) => `x_${j + 1} = \\frac{${d}}{${D}} = ${frac(d / D)}`).join(',\;\; ')}` : '\\det A = 0: \\text{ Cramer không dùng được}';
       note = 'Bⱼ là A với cột j thay bằng b. Đúng nhưng tốn: phải tính n + 1 định thức.';
     }
-    out.innerHTML = `<div class="mxk">Kết quả, tự tính lại</div><div class="steplab" style="font-weight:400">${note}</div><div class="mxeq">\\[ \\begin{aligned} ${tex.replaceAll(' \\\\ = ', ' \\\\ &= ').replace(' \\\\ \\quad ', ' \\\\ &\\quad ').replace('\\det A = ', '\\det A &= ')} \\end{aligned} \\]</div><div class="tagok ${D ? 'yes' : 'no'}">${D ? `det A = ${D}: khả nghịch` : 'det A = 0: suy biến'}</div>`;
+    out.innerHTML = `<div class="mxk">Kết quả (tính lại ngay khi đổi đầu vào)</div><div class="steplab" style="font-weight:400">${note}</div><div class="mxeq">\\[ \\begin{aligned} ${tex.replaceAll(' \\\\ = ', ' \\\\ &= ').replace(' \\\\ \\quad ', ' \\\\ &\\quad ').replace('\\det A = ', '\\det A &= ')} \\end{aligned} \\]</div><div class="tagok ${D ? 'yes' : 'no'}">${D ? `det A = ${D}: khả nghịch` : 'det A = 0: suy biến'}</div>`;
     typeset(out);
   }
   [...ins, ...bins].forEach(i => i.addEventListener('input', calc));
   box.querySelectorAll('.seg button').forEach(bt => bt.onclick = () => { view = bt.dataset.v; box.querySelectorAll('.seg button').forEach(z => z.classList.toggle('on', z === bt)); calc(); });
   calc();
+};
+
+// ==== lectures 21–25: eigenvalues ====
+// shared: presets "Nhãn:a,b,c,d[:u1,u2]|…", a 2 × 2 matrix box the reader edits, eigen-analysis of a real 2 × 2 matrix
+const parseP = s => (s || '').split('|').filter(Boolean).map(p => { const [l, m, u] = p.split(':'); return { l, m: m.split(',').map(Number), u: u ? u.split(',').map(Number) : null }; });
+const vk = v => { const r = Math.round(v * 1000) / 1000; return (r < 0 ? '−' : '') + Math.abs(r).toLocaleString('vi-VN', { maximumFractionDigits: 3 }); };
+const vbig = v => Math.abs(v) >= 1e6 ? (v < 0 ? '−' : '') + Math.abs(v).toExponential(3).replace('.', ',').replace('e+', '·10^') : vk(v);
+const eig2 = (a, b, c, d) => {
+  const tr = a + d, de = a * d - b * c, D = tr * tr / 4 - de;
+  if (D < -1e-10) return { tr, de, cx: true, re: tr / 2, im: Math.sqrt(-D) };
+  const s = Math.sqrt(Math.max(D, 0)), L = s < 1e-9 ? [tr / 2, tr / 2] : [tr / 2 + s, tr / 2 - s];
+  const vec = l => { const r1 = [a - l, b], r2 = [c, d - l], r = Math.hypot(...r1) >= Math.hypot(...r2) ? r1 : r2; if (Math.hypot(...r) < 1e-9) return null;
+    let v = [-r[1], r[0]]; const m = Math.abs(v[0]) > 1e-9 ? v[0] : v[1]; const k = Math.max(Math.abs(v[0]), Math.abs(v[1])); v = v.map(x => x / k * Math.sign(m));
+    const mn = Math.min(...v.filter(z => Math.abs(z) > 1e-9).map(Math.abs)), w = v.map(z => z / mn); if (w.every(z => Math.abs(z - Math.round(z)) < 1e-6 && Math.abs(z) <= 9)) v = w.map(Math.round); return v; };
+  if (s < 1e-9) { const v = vec(L[0]); return { tr, de, L, V: v ? [v] : null, rep: true, all: !v }; }
+  return { tr, de, L, V: [vec(L[0]), vec(L[1])] };
+};
+const vtxt = v => `(${v.map(vk).join('; ')})`;
+const matBox = (host, A0, onChange, sym) => {
+  host.innerHTML = `<span class="mxk" style="margin:0">Đầu vào: A =</span><div class="grid" style="grid-template-columns:repeat(2,3.6rem)">${[0, 1, 2, 3].map(i => `<input type="number" step="0.1" value="${A0[i]}" aria-label="a${(i >> 1) + 1}${(i & 1) + 1}">`).join('')}</div>`;
+  const ins = [...host.querySelectorAll('input')];
+  ins.forEach((inp, i) => inp.addEventListener('input', () => { if (sym && (i === 1 || i === 2)) ins[3 - i].value = inp.value; onChange(); }));
+  return { get: () => ins.map(i => Number(i.value) || 0), set: m => { m.forEach((v, i) => ins[i].value = v); onChange(); } };
+};
+const plane = (svg, S, O, xr, yr) => { const g = el(svg, 'g'); const X = a => O[0] + a * S, Y = b => O[1] - b * S;
+  const step = S < 14 ? 5 : S < 26 ? 2 : 1;
+  for (let i = Math.ceil(-xr / step) * step; i <= xr; i += step) el(g, 'line', { x1: X(i), x2: X(i), y1: 0, y2: 300, class: 'gr' });
+  for (let j = Math.ceil(-yr / step) * step; j <= yr; j += step) el(g, 'line', { x1: 0, x2: 400, y1: Y(j), y2: Y(j), class: 'gr' });
+  el(g, 'line', { x1: 0, x2: 400, y1: Y(0), y2: Y(0), class: 'ax' }); el(g, 'line', { x1: X(0), x2: X(0), y1: 0, y2: 300, class: 'ax' }); return g; };
+const COL = { b: '#1a73e8', o: '#e37400', g: '#0f8f7e', r: '#c5221f', v: '#8e24aa', k: '#5d6670' };
+const svgText = (p, x, y, t, c, size = 12) => { const e = el(p, 'text', { x, y, fill: c, style: `font:700 ${size}px var(--sans);paint-order:stroke;stroke:#fff;stroke-width:4px` }); e.textContent = t; return e; };
+
+// ---- eigshow (lectures 21, 25)  ·  input: the matrix, and the unit vector x (drag, arrow keys, or let it turn)  ·  result: Ax; when Ax lines up with x, x is an eigenvector
+IX.eigshow = (box) => {
+  const P = parseP(box.dataset.presets);
+  box.innerHTML = `<div class="ixbar"><div class="r1 mi"></div></div><div class="presets">${P.map((p, i) => `<button type="button" class="reset" data-p="${i}">${p.l}</button>`).join('')}<button type="button" class="reset primary" data-go>▶ Cho x quay một vòng</button></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Vector x trên đường tròn đơn vị và vector Ax"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout');
+  const id = 'e' + (++MID), defs = el(svg, 'defs'); Object.entries(COL).forEach(([k, c]) => marker(defs, id + k, c));
+  let bg = el(svg, 'g'); const layer = el(svg, 'g'), hs = el(svg, 'g');
+  let th = Math.PI / 6, S = 50, anim = null; const O = [200, 150];
+  const X = a => O[0] + a * S, Y = b => O[1] - b * S;
+  const mb = matBox(box.querySelector('.mi'), P[0].m, () => { rescale(); draw(); });
+  const H = el(hs, 'g', { class: 'handle', tabindex: 0, role: 'slider', 'aria-label': 'Hướng của x' }); el(H, 'circle', { r: 16, fill: 'transparent' }); el(H, 'circle', { r: 6.5, fill: COL.b, stroke: '#fff', 'stroke-width': 1.5 });
+  function rescale() { const [a, b, c, d] = mb.get(); let m = 1; for (let i = 0; i < 90; i++) { const t = i * Math.PI / 90, x = [Math.cos(t), Math.sin(t)]; m = Math.max(m, Math.hypot(a * x[0] + b * x[1], c * x[0] + d * x[1])); }
+    S = Math.min(70, 132 / m); bg.remove(); bg = plane(svg, S, O, 200 / S, 150 / S); svg.insertBefore(bg, layer); }
+  const snap = t => { const [a, b, c, d] = mb.get(), E = eig2(a, b, c, d); if (anim || E.cx || !E.V) return t;
+    for (const v of E.V) { const ang = Math.atan2(v[1], v[0]); for (const s of [0, Math.PI]) { let df = Math.atan2(Math.sin(t - ang - s), Math.cos(t - ang - s)); if (Math.abs(df) < 0.05) return ang + s; } } return t; };
+  let drag = false; const pick = e => { const r = svg.getBoundingClientRect(), px = (e.clientX - r.left) * 400 / r.width, py = (e.clientY - r.top) * 300 / r.height; if (Math.hypot(px - O[0], py - O[1]) < 4) return; th = snap(Math.atan2(O[1] - py, px - O[0])); draw(); };
+  svg.addEventListener('pointerdown', e => { drag = true; svg.setPointerCapture(e.pointerId); stop(); pick(e); }); svg.addEventListener('pointermove', e => drag && pick(e)); ['pointerup', 'pointercancel'].forEach(t => svg.addEventListener(t, () => drag = false));
+  H.addEventListener('keydown', e => { const d = { ArrowLeft: 1, ArrowUp: 1, ArrowRight: -1, ArrowDown: -1 }[e.key]; if (!d) return; e.preventDefault(); stop(); th += d * Math.PI / 90; draw(); });
+  svg.style.touchAction = 'none';
+  const stop = () => { if (anim) { cancelAnimationFrame(anim); anim = null; } };
+  box.querySelector('[data-go]').onclick = () => { stop(); const t0 = performance.now(), th0 = th; const f = now => { const k = (now - t0) / 6000; th = th0 + k * 2 * Math.PI; draw(); anim = k < 1 ? requestAnimationFrame(f) : null; if (!anim) draw(); }; anim = requestAnimationFrame(f); };
+  box.querySelectorAll('[data-p]').forEach(bt => bt.onclick = () => { stop(); mb.set(P[+bt.dataset.p].m); });
+  const arrow = (q, k, w = 3) => el(layer, 'line', { x1: X(0), y1: Y(0), x2: X(q[0]), y2: Y(q[1]), stroke: COL[k], 'stroke-width': w, 'marker-end': `url(#${id + k})` });
+  function draw() {
+    const [a, b, c, d] = mb.get(), E = eig2(a, b, c, d), x = [Math.cos(th), Math.sin(th)], Ax = [a * x[0] + b * x[1], c * x[0] + d * x[1]];
+    layer.innerHTML = '';
+    el(layer, 'circle', { cx: X(0), cy: Y(0), r: S, fill: 'none', stroke: 'rgba(26,115,232,.35)', 'stroke-dasharray': '4 4' });
+    let pth = ''; for (let i = 0; i <= 120; i++) { const t = i * Math.PI / 60, v = [a * Math.cos(t) + b * Math.sin(t), c * Math.cos(t) + d * Math.sin(t)]; pth += `${i ? 'L' : 'M'}${X(v[0])},${Y(v[1])}`; }
+    el(layer, 'path', { d: pth, fill: 'none', stroke: 'rgba(227,116,0,.35)', 'stroke-width': 1.5 });
+    if (!E.cx && E.V) E.V.forEach((v, i) => { const n = Math.hypot(...v), u = v.map(z => z / n * 9); el(layer, 'line', { x1: X(-u[0]), y1: Y(-u[1]), x2: X(u[0]), y2: Y(u[1]), stroke: 'rgba(15,143,126,.5)', 'stroke-width': 2, 'stroke-dasharray': '7 5' });
+      const sg = (v[1] / n < -0.2) ? -1 : 1, r = 128 / S, lp = [sg * v[0] / n * r, sg * v[1] / n * r]; svgText(layer, X(lp[0]) + (lp[0] > 0 ? -58 : 6), Y(lp[1]) + 14, `λ${i ? '₂' : '₁'} = ${vk(E.L[i])}`, COL.g, 11); });
+    const cross = x[0] * Ax[1] - x[1] * Ax[0], nA = Math.hypot(...Ax), par = nA < 1e-6 || Math.abs(cross) < 0.012 * Math.max(1, nA), lam = x[0] * Ax[0] + x[1] * Ax[1];
+    if (nA > 1e-6) arrow(Ax, 'o', par ? 4.2 : 3); arrow(x, 'b', 3);
+    svgText(layer, X(x[0]) + 8, Y(x[1]) - 8, 'x', COL.b); if (nA > 1e-6) svgText(layer, X(Ax[0]) + 8, Y(Ax[1]) + 16, 'Ax', COL.o);
+    H.setAttribute('transform', `translate(${X(x[0])},${Y(x[1])})`);
+    const symm = Math.abs(b - c) < 1e-9;
+    let eig = E.cx ? `<span>λ = ${vk(E.re)} ± ${vk(E.im)}i: số phức, <b>không có hướng thực nào</b> mà Ax cùng phương x</span>`
+      : E.all ? `<span>λ₁ = λ₂ = ${vk(E.L[0])} và A = ${vk(E.L[0])}I: <b>mọi vector đều là eigenvector</b></span>`
+      : E.rep ? `<span>λ₁ = λ₂ = ${vk(E.L[0])} (lặp) nhưng chỉ có <b>một</b> hướng eigenvector ${vtxt(E.V[0])}</span>`
+      : `<span>λ₁ = <b>${vk(E.L[0])}</b>, x₁ = ${vtxt(E.V[0])}</span><span>λ₂ = <b>${vk(E.L[1])}</b>, x₂ = ${vtxt(E.V[1])}</span>`;
+    out.innerHTML = `<span>x = (${vk(x[0])}; ${vk(x[1])})</span><span>Ax = (${vk(Ax[0])}; ${vk(Ax[1])})</span><span class="tagok ${par ? 'yes' : 'no'}">${par ? `Ax cùng phương x: x là eigenvector, λ = ${vk(nA < 1e-6 ? 0 : lam)}` : 'Ax lệch hướng x'}</span>
+      <span>vết = ${vk(E.tr)}, det = ${vk(E.de)}: λ² − (${vk(E.tr)})λ + (${vk(E.de)}) = 0</span>${eig}${symm && !E.cx && !E.rep ? `<span>A đối xứng: x₁ᵀx₂ = <b>${vk(E.V[0][0] * E.V[1][0] + E.V[0][1] * E.V[1][1])}</b>, hai hướng vuông góc</span>` : ''}`;
+  }
+  rescale(); draw();
+};
+
+// ---- powers u_k = A^k u_0 (lectures 22, 24)  ·  input: matrix, u_0, k  ·  result: the path u_0 … u_k and the split c₁λ₁^k x₁ + c₂λ₂^k x₂
+IX.powers = (box) => {
+  const P = parseP(box.dataset.presets), K = Number(box.dataset.kmax || 20);
+  box.innerHTML = `<div class="ixbar"><div class="r1 mi"></div><div class="r1"><span class="mxk" style="margin:0">u₀ =</span><div class="grid u0g" style="grid-template-columns:4.4rem"><input type="number" step="1" aria-label="u0 thành phần 1"><input type="number" step="1" aria-label="u0 thành phần 2"></div></div>
+    <span class="ixin"><label>k <input type="range" min="0" max="${K}" step="1" value="${Math.min(8, K)}"><output></output></label></span></div><div class="presets">${P.map((p, i) => `<button type="button" class="reset" data-p="${i}">${p.l}</button>`).join('')}</div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Các điểm u0, u1, …, uk"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), us = [...box.querySelectorAll('.u0g input')], rk = box.querySelector('input[type=range]'), ok = box.querySelector('output');
+  const id = 'w' + (++MID), defs = el(svg, 'defs'); Object.entries(COL).forEach(([k, c]) => marker(defs, id + k, c));
+  let bg = el(svg, 'g'); const layer = el(svg, 'g');
+  const mb = matBox(box.querySelector('.mi'), P[0].m, () => draw());
+  const setU = u => { us[0].value = u[0]; us[1].value = u[1]; };
+  setU(P[0].u || [1, 0]); [...us, rk].forEach(i => i.addEventListener('input', () => draw()));
+  box.querySelectorAll('[data-p]').forEach(bt => bt.onclick = () => { const p = P[+bt.dataset.p]; setU(p.u || [1, 0]); mb.set(p.m); });
+  function draw() {
+    const [a, b, c, d] = mb.get(), E = eig2(a, b, c, d), k = +rk.value; ok.textContent = k;
+    const pts = [[Number(us[0].value) || 0, Number(us[1].value) || 0]]; for (let i = 0; i < k; i++) { const u = pts[i]; pts.push([a * u[0] + b * u[1], c * u[0] + d * u[1]]); }
+    let m = 1e-9; pts.forEach(p => m = Math.max(m, Math.abs(p[0]) / 1.55, Math.abs(p[1]))); const S = 125 / m, mnx = Math.min(0, ...pts.map(p => p[0])), mny = Math.min(0, ...pts.map(p => p[1]));
+    const O = [mnx < -1e-9 ? 200 : 40, mny < -1e-9 ? 150 : 270], X = v => O[0] + v * S, Y = v => O[1] - v * S;
+    bg.remove(); bg = el(svg, 'g'); svg.insertBefore(bg, layer); el(bg, 'line', { x1: 0, x2: 400, y1: Y(0), y2: Y(0), class: 'ax' }); el(bg, 'line', { x1: X(0), x2: X(0), y1: 0, y2: 300, class: 'ax' });
+    layer.innerHTML = '';
+    if (!E.cx && E.V) E.V.forEach((v, i) => { const n = Math.hypot(...v), t = 600 / S; el(layer, 'line', { x1: X(-v[0] / n * t), y1: Y(-v[1] / n * t), x2: X(v[0] / n * t), y2: Y(v[1] / n * t), stroke: i ? 'rgba(142,36,170,.45)' : 'rgba(15,143,126,.55)', 'stroke-width': 2, 'stroke-dasharray': '7 5' }); });
+    el(layer, 'polyline', { points: pts.map(p => `${X(p[0])},${Y(p[1])}`).join(' '), fill: 'none', stroke: 'rgba(93,102,112,.5)', 'stroke-width': 1.2 });
+    pts.forEach((p, i) => el(layer, 'circle', { cx: X(p[0]), cy: Y(p[1]), r: i === k ? 6 : 3.2, fill: i === k ? COL.o : i ? 'rgba(227,116,0,.45)' : COL.b, stroke: '#fff', 'stroke-width': 1 }));
+    const uk = pts[k]; el(layer, 'line', { x1: X(0), y1: Y(0), x2: X(uk[0]), y2: Y(uk[1]), stroke: COL.o, 'stroke-width': 2.4, 'marker-end': `url(#${id}o)` });
+    svgText(layer, X(pts[0][0]) + 7, Y(pts[0][1]) - 7, 'u₀', COL.b); if (k) svgText(layer, X(uk[0]) + 8, Y(uk[1]) + 16, `u${String(k).split('').map(ch => '₀₁₂₃₄₅₆₇₈₉'[ch]).join('')}`, COL.o);
+    let split = '';
+    if (!E.cx && E.V && E.V.length === 2) { const [x1, x2] = E.V, det = x1[0] * x2[1] - x2[0] * x1[1], u0 = pts[0], c1 = (u0[0] * x2[1] - x2[0] * u0[1]) / det, c2 = (x1[0] * u0[1] - u0[0] * x1[1]) / det;
+      const p1 = c1 * Math.pow(E.L[0], k), p2 = c2 * Math.pow(E.L[1], k);
+      split = `<span>λ₁ = <b>${vk(E.L[0])}</b>, x₁ = ${vtxt(x1)} · λ₂ = <b>${vk(E.L[1])}</b>, x₂ = ${vtxt(x2)}</span><span>u₀ = Sc: c₁ = ${vk(c1)}, c₂ = ${vk(c2)}</span>
+        <span>u<sub>${k}</sub> = c₁λ₁<sup>${k}</sup>x₁ + c₂λ₂<sup>${k}</sup>x₂ = ${vbig(p1)}·x₁ ${p2 < 0 ? '−' : '+'} ${vbig(Math.abs(p2))}·x₂</span>
+        <span class="tagok ${Math.abs(p2) < 0.01 * Math.max(1e-12, Math.abs(p1)) ? 'yes' : 'no'}">${Math.abs(p2) < 0.01 * Math.max(1e-12, Math.abs(p1)) ? 'phần x₂ gần như biến mất: uₖ nằm trên đường x₁' : 'phần x₂ vẫn còn đáng kể'}</span>`;
+    } else split = `<span>${E.cx ? 'λ phức: các điểm xoay vòng quanh gốc' : 'A không có đủ 2 eigenvector độc lập: không tách u₀ = Sc được'}</span>`;
+    const prev = pts[Math.max(0, k - 1)], ratio = k && Math.hypot(...prev) > 1e-12 ? Math.hypot(...uk) / Math.hypot(...prev) : null;
+    out.innerHTML = `<span>u<sub>${k}</sub> = A<sup>${k}</sup>u₀ = <b>(${vbig(uk[0])}; ${vbig(uk[1])})</b></span>${ratio !== null ? `<span>‖u<sub>${k}</sub>‖ / ‖u<sub>${k - 1}</sub>‖ = <b>${vk(ratio)}</b></span>` : ''}${Math.abs(a + c - 1) < 1e-9 && Math.abs(b + d - 1) < 1e-9 ? `<span>Markov: tổng = ${vk(uk[0] + uk[1])}, giữ nguyên</span>` : ''}${split}`;
+  }
+  draw();
+};
+
+// ---- du/dt = Au in the phase plane (lecture 23)  ·  input: matrix, starting point u(0) (drag), time t  ·  result: the path u(t), its limit, stable / steady / blow-up
+IX.ode2 = (box) => {
+  const P = parseP(box.dataset.presets);
+  box.innerHTML = `<div class="ixbar"><div class="r1 mi"></div><span class="ixin"><label>t <input type="range" min="0" max="6" step="0.05" value="1.5"><output></output></label></span></div><div class="presets">${P.map((p, i) => `<button type="button" class="reset" data-p="${i}">${p.l}</button>`).join('')}</div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Mặt phẳng pha: đường đi của u(t)"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), rt = box.querySelector('input[type=range]'), ot = box.querySelector('output');
+  let S = 40; const O = [200, 150], X = a => O[0] + a * S, Y = b => O[1] - b * S, iX = px => (px - O[0]) / S, iY = py => (O[1] - py) / S;
+  let bg = el(svg, 'g'); const fit = () => { S = Math.min(110, 115 / Math.max(0.5, Math.abs(u0[0]) / 1.35, Math.abs(u0[1]))); bg.remove(); bg = plane(svg, S, O, 200 / S, 150 / S); svg.insertBefore(bg, svg.firstChild); };
+  const id = 'q' + (++MID), defs = el(svg, 'defs'); Object.entries(COL).forEach(([k, c]) => marker(defs, id + k, c)); marker(defs, id + 'f', '#aab3bd');
+  const field = el(svg, 'g'), layer = el(svg, 'g'), hs = el(svg, 'g');
+  let u0 = (P[0].u || [1, 0]).slice();
+  const mb = matBox(box.querySelector('.mi'), P[0].m, () => draw());
+  const H = el(hs, 'g', { class: 'handle', tabindex: 0, role: 'slider', 'aria-label': 'Điểm đầu u(0)' }); el(H, 'circle', { r: 16, fill: 'transparent' }); el(H, 'circle', { r: 6.5, fill: COL.b, stroke: '#fff', 'stroke-width': 1.5 });
+  let drag = false; H.addEventListener('pointerdown', e => { drag = true; H.setPointerCapture(e.pointerId); });
+  H.addEventListener('pointermove', e => { if (!drag) return; const r = svg.getBoundingClientRect(); const g = S > 60 ? 20 : 10; u0 = [Math.max(-185 / S, Math.min(185 / S, Math.round(iX((e.clientX - r.left) * 400 / r.width) * g) / g)), Math.max(-138 / S, Math.min(138 / S, Math.round(iY((e.clientY - r.top) * 300 / r.height) * g) / g))]; draw(); });
+  ['pointerup', 'pointercancel'].forEach(t => H.addEventListener(t, () => drag = false));
+  H.addEventListener('keydown', e => { const d = { ArrowLeft: [-.2, 0], ArrowRight: [.2, 0], ArrowUp: [0, .2], ArrowDown: [0, -.2] }[e.key]; if (!d) return; e.preventDefault(); u0 = [u0[0] + d[0], u0[1] + d[1]]; draw(); });
+  rt.addEventListener('input', () => draw()); fit();
+  box.querySelectorAll('[data-p]').forEach(bt => bt.onclick = () => { const p = P[+bt.dataset.p]; u0 = (p.u || [1, 0]).slice(); fit(); mb.set(p.m); });
+  const f = (A, u) => [A[0] * u[0] + A[1] * u[1], A[2] * u[0] + A[3] * u[1]];
+  function draw() {
+    const A = mb.get(), [a, b, c, d] = A, E = eig2(a, b, c, d), T = +rt.value; ot.textContent = vn(T);
+    field.innerHTML = ''; const gs = 45 / S; for (let i = -4; i <= 4; i++) for (let j = -3; j <= 3; j++) { const p0 = [i * gs, j * gs], v = f(A, p0), n = Math.hypot(...v); if (n < 1e-9) continue; const s = 0.32 * gs / n; const [i0, j0] = [i, j]; i = p0[0]; j = p0[1]; el(field, 'line', { x1: X(i - v[0] * s / 2), y1: Y(j - v[1] * s / 2), x2: X(i + v[0] * s / 2), y2: Y(j + v[1] * s / 2), stroke: '#c3cad2', 'stroke-width': 1.2, 'marker-end': `url(#${id}f)` }); i = i0; j = j0; }
+    layer.innerHTML = '';
+    if (!E.cx && E.V) E.V.forEach((v, i) => { const n = Math.hypot(...v), t = 600 / S; el(layer, 'line', { x1: X(-v[0] / n * t), y1: Y(-v[1] / n * t), x2: X(v[0] / n * t), y2: Y(v[1] / n * t), stroke: i ? 'rgba(142,36,170,.45)' : 'rgba(15,143,126,.55)', 'stroke-width': 2, 'stroke-dasharray': '7 5' }); });
+    const h = 0.01, path = [u0.slice()]; let u = u0.slice(), cur = u0.slice();
+    for (let s = 1; s <= 600; s++) { const k1 = f(A, u), k2 = f(A, [u[0] + h / 2 * k1[0], u[1] + h / 2 * k1[1]]), k3 = f(A, [u[0] + h / 2 * k2[0], u[1] + h / 2 * k2[1]]), k4 = f(A, [u[0] + h * k3[0], u[1] + h * k3[1]]);
+      u = [u[0] + h / 6 * (k1[0] + 2 * k2[0] + 2 * k3[0] + k4[0]), u[1] + h / 6 * (k1[1] + 2 * k2[1] + 2 * k3[1] + k4[1])]; if (Math.hypot(...u) > 60) break; path.push(u); if (Math.abs(s * h - T) < h / 2) cur = u; }
+    const pd = pts => pts.map((p, i) => `${i ? 'L' : 'M'}${X(p[0])},${Y(p[1])}`).join('');
+    el(layer, 'path', { d: pd(path), fill: 'none', stroke: 'rgba(227,116,0,.3)', 'stroke-width': 2 });
+    const nT = Math.min(path.length - 1, Math.round(T / h)); if (T > 0) { cur = path[nT]; el(layer, 'path', { d: pd(path.slice(0, nT + 1)), fill: 'none', stroke: COL.o, 'stroke-width': 3 }); }
+    el(layer, 'circle', { cx: X(cur[0]), cy: Y(cur[1]), r: 6, fill: COL.o, stroke: '#fff', 'stroke-width': 1.5 });
+    svgText(layer, X(u0[0]) + 9, Y(u0[1]) - 8, 'u(0)', COL.b); svgText(layer, X(cur[0]) - 70, Y(cur[1]) + 20, `u(t = ${vn(T)})`, COL.o);
+    H.setAttribute('transform', `translate(${X(u0[0])},${Y(u0[1])})`);
+    const re = E.cx ? [E.re, E.re] : E.L, mx = Math.max(...re), z = re.filter(r => Math.abs(r) < 1e-9).length;
+    const kind = mx > 1e-9 ? ['no', 'Có Re λ > 0: nổ tung (blow up), trừ khi u(0) nằm đúng trên hướng của λ âm'] : mx < -1e-9 ? ['yes', 'Mọi Re λ < 0: ổn định, u(t) → 0'] : z === 1 && !E.cx ? ['yes', 'Một λ = 0, λ còn lại < 0: steady state, u(t) → c₁x₁'] : ['no', E.cx ? 'Re λ = 0: xoay vòng mãi, không tắt, không nổ' : 'Trường hợp biên'];
+    let sol = '';
+    if (!E.cx && E.V && E.V.length === 2) { const [x1, x2] = E.V, det = x1[0] * x2[1] - x2[0] * x1[1], c1 = (u0[0] * x2[1] - x2[0] * u0[1]) / det, c2 = (x1[0] * u0[1] - u0[0] * x1[1]) / det;
+      sol = `<span>u(t) = c₁e<sup>λ₁t</sup>x₁ + c₂e<sup>λ₂t</sup>x₂ với λ₁ = <b>${vk(E.L[0])}</b>, x₁ = ${vtxt(x1)}, λ₂ = <b>${vk(E.L[1])}</b>, x₂ = ${vtxt(x2)}</span><span>u(0) = Sc: c₁ = ${vk(c1)}, c₂ = ${vk(c2)}</span>${z === 1 && mx < 1e-9 ? `<span>u(∞) = <b>${vtxt((Math.abs(E.L[0]) < 1e-9 ? [c1 * x1[0], c1 * x1[1]] : [c2 * x2[0], c2 * x2[1]]))}</b></span>` : ''}`;
+    } else if (E.cx) sol = `<span>λ = ${vk(E.re)} ± ${vk(E.im)}i: |e<sup>λt</sup>| = e<sup>${vk(E.re)}t</sup>, phần ảo chỉ làm xoay</span>`;
+    out.innerHTML = `<span>u(t = ${vn(T)}) ≈ <b>(${vk(cur[0])}; ${vk(cur[1])})</b></span><span>vết = ${vk(E.tr)}, det = ${vk(E.de)}${E.tr < 0 && E.de > 0 ? ' (vết < 0, det > 0)' : ''}</span>${sol}<span class="tagok ${kind[0]}">${kind[1]}</span>`;
+  }
+  draw();
+};
+
+// ---- Fourier series as projection onto 1, cos kx, sin kx (lecture 24)  ·  input: the function, number of terms N  ·  result: partial sum and coefficients a_k = (1/π)∫ f cos kx
+IX.fourier = (box) => {
+  const F = { sq: ['Sóng vuông', x => x < Math.PI ? 1 : -1], saw: ['Răng cưa', x => (Math.PI - x) / 2], tri: ['Tam giác', x => Math.abs(x - Math.PI)] };
+  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Đầu vào:</span><div class="seg" role="group" aria-label="Chọn hàm f">${Object.entries(F).map(([k, v], i) => `<button type="button" data-f="${k}"${i ? '' : ' class="on"'}>${v[0]}</button>`).join('')}</div><span class="ixin"><label>N <input type="range" min="0" max="25" step="1" value="3"><output></output></label></span></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Hàm f và tổng Fourier N số hạng"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), rn = box.querySelector('input[type=range]'), on = box.querySelector('output'); let fk = 'sq';
+  const X = x => 30 + x / (2 * Math.PI) * 350, Y = y => 150 - y * 62;
+  [0, Math.PI / 2, Math.PI, 3 * Math.PI / 2, 2 * Math.PI].forEach((x, i) => { el(svg, 'line', { x1: X(x), x2: X(x), y1: 10, y2: 278, class: 'gr' }); svgText(svg, X(x) - 8, 294, ['0', 'π/2', 'π', '3π/2', '2π'][i], '#5d6670', 10); });
+  [-2, -1, 1, 2].forEach(y => el(svg, 'line', { x1: 30, x2: 380, y1: Y(y), y2: Y(y), class: 'gr' })); el(svg, 'line', { x1: 30, x2: 380, y1: Y(0), y2: Y(0), class: 'ax' });
+  const layer = el(svg, 'g'); const M = 4000;
+  const coef = f => { const a = [], b = []; for (let k = 0; k <= 25; k++) { let sa = 0, sb = 0; for (let i = 0; i < M; i++) { const x = (i + .5) * 2 * Math.PI / M, v = f(x); sa += v * Math.cos(k * x); sb += v * Math.sin(k * x); } const w = 2 * Math.PI / M; a.push(k ? sa * w / Math.PI : sa * w / (2 * Math.PI)); b.push(k ? sb * w / Math.PI : 0); } return { a, b }; };
+  const C = {}; Object.keys(F).forEach(k => C[k] = coef(F[k][1]));
+  rn.addEventListener('input', draw); box.querySelectorAll('[data-f]').forEach(bt => bt.onclick = () => { fk = bt.dataset.f; box.querySelectorAll('[data-f]').forEach(z => z.classList.toggle('on', z === bt)); draw(); });
+  function draw() {
+    const N = +rn.value, f = F[fk][1], { a, b } = C[fk]; on.textContent = N; layer.innerHTML = '';
+    const S = x => { let s = a[0]; for (let k = 1; k <= N; k++) s += a[k] * Math.cos(k * x) + b[k] * Math.sin(k * x); return s; };
+    let p1 = '', p2 = '', err = 0; for (let i = 0; i <= 400; i++) { const x = i * 2 * Math.PI / 400; p1 += `${i ? 'L' : 'M'}${X(x)},${Y(f(Math.min(x, 2 * Math.PI - 1e-9)))}`; const s = S(x); p2 += `${i ? 'L' : 'M'}${X(x)},${Y(s)}`; if (i < 400) err += (f(x + 1e-9) - s) ** 2; }
+    el(layer, 'path', { d: p1, fill: 'none', stroke: COL.b, 'stroke-width': 2.4 }); el(layer, 'path', { d: p2, fill: 'none', stroke: COL.o, 'stroke-width': 2.4 });
+    svgText(layer, 40, 22, 'f(x)', COL.b); svgText(layer, 80, 22, `tổng Fourier, N = ${N}`, COL.o);
+    const z = v => Math.abs(v) < 5e-4 ? '0' : vk(v), list = []; for (let k = 1; k <= Math.min(5, Math.max(N, 1)); k++) list.push(`a${'₀₁₂₃₄₅'[k]} = ${z(a[k])}, b${'₀₁₂₃₄₅'[k]} = ${z(b[k])}`);
+    out.innerHTML = `<span>a₀ = trung bình của f = <b>${z(a[0])}</b></span><span>${list.join(' · ')}</span><span>aₖ = (1/π)·∫ f(x) cos kx dx trên [0, 2π]; chia π vì ∫ cos²kx dx = π</span><span>sai số trung bình bình phương ≈ <b>${vk(Math.sqrt(err / 400))}</b></span>`;
+  }
+  draw();
+};
+
+// ---- symmetric A = λ₁q₁q₁ᵀ + λ₂q₂q₂ᵀ (lecture 25)  ·  input: a, b, c of [a b; b c], and x (drag)  ·  result: the two projections of x, scaled by λ, add up to Ax; pivot signs = eigenvalue signs
+IX.spectral = (box) => {
+  const P = parseP(box.dataset.presets);
+  box.innerHTML = `<div class="ixbar"><div class="r1 mi"></div></div><div class="presets">${P.map((p, i) => `<button type="button" class="reset" data-p="${i}">${p.l}</button>`).join('')}</div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="x tách thành hai hình chiếu lên q1, q2; mỗi phần nhân λ rồi cộng lại thành Ax"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout');
+  const id = 's' + (++MID), defs = el(svg, 'defs'); Object.entries(COL).forEach(([k, c]) => marker(defs, id + k, c));
+  let bg = el(svg, 'g'); const layer = el(svg, 'g'), hs = el(svg, 'g'); const O = [200, 150]; let S = 40, x = [0.25, 1];
+  const X = a => O[0] + a * S, Y = b => O[1] - b * S, iX = px => (px - O[0]) / S, iY = py => (O[1] - py) / S;
+  const mb = matBox(box.querySelector('.mi'), P[0].m, () => { rescale(); draw(); }, true);
+  box.querySelectorAll('[data-p]').forEach(bt => bt.onclick = () => mb.set(P[+bt.dataset.p].m));
+  const H = el(hs, 'g', { class: 'handle', tabindex: 0, role: 'slider', 'aria-label': 'Vector x' }); el(H, 'circle', { r: 16, fill: 'transparent' }); el(H, 'circle', { r: 6.5, fill: COL.b, stroke: '#fff', 'stroke-width': 1.5 });
+  let drag = false; H.addEventListener('pointerdown', e => { drag = true; H.setPointerCapture(e.pointerId); });
+  H.addEventListener('pointermove', e => { if (!drag) return; const r = svg.getBoundingClientRect(); let q = [iX((e.clientX - r.left) * 400 / r.width), iY((e.clientY - r.top) * 300 / r.height)]; const n = Math.hypot(...q); if (n > 1.3) q = q.map(v => v / n * 1.3); if (n > 0.05) { x = q; draw(); } });
+  ['pointerup', 'pointercancel'].forEach(t => H.addEventListener(t, () => drag = false));
+  H.addEventListener('keydown', e => { const d = { ArrowLeft: [-.1, 0], ArrowRight: [.1, 0], ArrowUp: [0, .1], ArrowDown: [0, -.1] }[e.key]; if (!d) return; e.preventDefault(); x = [x[0] + d[0], x[1] + d[1]]; draw(); });
+  function rescale() { const [a, b, , c] = mb.get(), E = eig2(a, b, b, c), m = E.cx ? 1 : Math.max(1, ...E.L.map(Math.abs)); S = Math.min(70, 135 / (1.3 * m)); bg.remove(); bg = plane(svg, S, O, 200 / S, 150 / S); svg.insertBefore(bg, layer); }
+  const arrow = (p, q, k, w = 2.8, dash) => el(layer, 'line', { x1: X(p[0]), y1: Y(p[1]), x2: X(q[0]), y2: Y(q[1]), stroke: COL[k], 'stroke-width': w, 'marker-end': `url(#${id + k})`, ...(dash ? { 'stroke-dasharray': '5 4' } : {}) });
+  function draw() {
+    const [a, b, , c] = mb.get(), E = eig2(a, b, b, c); layer.innerHTML = '';
+    let Q = E.all ? [[1, 0], [0, 1]] : [E.V[0], E.V[1] || [-E.V[0][1], E.V[0][0]]]; Q = Q.map(v => { const n = Math.hypot(...v); return v.map(z => z / n); });
+    const L = E.L, Ax = [a * x[0] + b * x[1], b * x[0] + c * x[1]];
+    Q.forEach((q, i) => el(layer, 'line', { x1: X(-q[0] * 9), y1: Y(-q[1] * 9), x2: X(q[0] * 9), y2: Y(q[1] * 9), stroke: i ? 'rgba(142,36,170,.4)' : 'rgba(15,143,126,.5)', 'stroke-width': 2, 'stroke-dasharray': '7 5' }));
+    const pr = Q.map(q => { const t = q[0] * x[0] + q[1] * x[1]; return [t * q[0], t * q[1]]; }), sc = pr.map((p, i) => [p[0] * L[i], p[1] * L[i]]);
+    pr.forEach(p => el(layer, 'line', { x1: X(x[0]), y1: Y(x[1]), x2: X(p[0]), y2: Y(p[1]), stroke: '#aab3bd', 'stroke-width': 1.2, 'stroke-dasharray': '3 3' }));
+    el(layer, 'path', { d: `M${X(sc[0][0])},${Y(sc[0][1])}L${X(Ax[0])},${Y(Ax[1])}L${X(sc[1][0])},${Y(sc[1][1])}`, fill: 'none', stroke: '#c9d1da', 'stroke-width': 1.2, 'stroke-dasharray': '4 3' });
+    arrow([0, 0], sc[0], 'g', 3); arrow([0, 0], sc[1], 'v', 3); arrow([0, 0], Ax, 'o', 3.4); arrow([0, 0], x, 'b', 3);
+    svgText(layer, X(x[0]) + 8, Y(x[1]) - 8, 'x', COL.b); svgText(layer, X(Ax[0]) + 8, Y(Ax[1]) - 6, 'Ax', COL.o);
+    svgText(layer, X(sc[0][0]) + 6, Y(sc[0][1]) + 16, 'λ₁q₁q₁ᵀx', COL.g, 11); svgText(layer, X(sc[1][0]) + 6, Y(sc[1][1]) + 16, 'λ₂q₂q₂ᵀx', COL.v, 11);
+    H.setAttribute('transform', `translate(${X(x[0])},${Y(x[1])})`);
+    const de = a * c - b * b, piv = a !== 0 ? [a, de / a] : null, pos = L.filter(l => l > 1e-9).length, ppos = piv ? piv.filter(p => p > 1e-9).length : null, pd = a > 0 && de > 0;
+    out.innerHTML = `<span>λ₁ = <b>${vk(L[0])}</b>, q₁ = ${vtxt(Q[0])} · λ₂ = <b>${vk(L[1])}</b>, q₂ = ${vtxt(Q[1])} · q₁ᵀq₂ = ${vk(Q[0][0] * Q[1][0] + Q[0][1] * Q[1][1])}</span>
+      <span>Ax = λ₁q₁(q₁ᵀx) + λ₂q₂(q₂ᵀx) = <b>(${vk(Ax[0])}; ${vk(Ax[1])})</b></span>
+      <span>pivot: ${piv ? `${vk(piv[0])} và ${vk(piv[1])}` : 'a = 0, phải đổi hàng'}${piv ? ` · ${ppos} pivot dương, ${pos} λ dương${ppos === pos ? ': khớp' : ''}` : ''}</span>
+      <span>định thức con: ${vk(a)} và ${vk(de)} · tích pivot = det = λ₁λ₂ = ${vk(de)}</span><span class="tagok ${pd ? 'yes' : 'no'}">${pd ? 'Xác định dương: λ, pivot, định thức con đều dương' : 'Không xác định dương'}</span>`;
+  }
+  rescale(); draw();
 };
 
 document.querySelectorAll('.ix[data-ix]').forEach(b => { try { IX[b.dataset.ix](b); } catch (e) { console.error(e); b.textContent = 'Không dựng được hình này.'; } });

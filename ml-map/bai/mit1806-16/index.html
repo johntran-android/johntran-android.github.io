@@ -123,7 +123,7 @@ a:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-ra
 <div class="page">
   <div class="draft"><a class="back" href="../../?bai=L.lsq">← Bản đồ</a><b>Bản nháp</b>
     <span class="chip"><span class="sw n"></span>nguyên văn ghi chú</span>
-    <span class="chip">chữ thường: Claude viết lại theo ý ghi chú, tác giả sẽ duyệt lại; mỗi mục có link ghi chú gốc</span>
+    <span class="chip">phần chữ còn lại: Claude viết từ ghi chú, tác giả sẽ duyệt lại</span>
     <span class="chip"><span class="sw c"></span>hình Claude vẽ lại / tương tác</span>
     <span class="chip"><span class="sw b"></span>ảnh chụp bảng, MIT OCW</span></div>
 
@@ -133,7 +133,7 @@ a:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-ra
     <p class="lede">Ba điểm không thẳng hàng thì không có đường thẳng nào đi qua cả ba. Bài này tìm đường thẳng <em>gần nhất</em>, và cho thấy nó chính là một phép chiếu.</p>
     <dl class="facts">
       <div><dt>Cần biết trước</dt><dd>Phép chiếu · Ma trận nghịch đảo</dd></div>
-      <div><dt>Mở ra</dt><dd>Giả nghịch đảo · Hồi quy tuyến tính đơn (Casella 11.3) · Khớp đa thức (Bishop 1.1) · QR, SVD cho bình phương tối thiểu (Nocedal 10.2)</dd></div>
+      <div><dt>Học tiếp</dt><dd>Giả nghịch đảo · Hồi quy tuyến tính đơn (Casella 11.3) · Khớp đa thức (Bishop 1.1) · QR, SVD cho bình phương tối thiểu (Nocedal 10.2)</dd></div>
       <div><dt>Học từ</dt><dd>MIT 18.06, bài giảng 16 (Gilbert Strang)</dd></div>
     </dl>
   </header>
@@ -159,20 +159,20 @@ a:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-ra
   <p>Strang nhấn mạnh: phải nhớ là ta có <strong>hai</strong> bức tranh. Bức tranh thứ nhất nằm trong mặt phẳng \((t, y)\), nơi ta nhìn thấy đường thẳng và các sai số. Gọi \(p_1, p_2, p_3\) là ba điểm trên đường thẳng ứng với \(t = 1, 2, 3\); khoảng cách từ \(p_i\) đến \(b_i\) là sai số \(e_i\). Error của cả bài là \(e_1^2 + e_2^2 + e_3^2\), và ta chọn đường thẳng làm tổng đó nhỏ nhất.</p>
 
   <div class="pair wide">
-    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/mgxiqjbn6l.png" alt="Strang vẽ ba điểm, đường thẳng y = C + Dt và các sai số e1, e2, e3 trên bảng" width="640" height="482" loading="lazy"></div>
-      <figcaption><span class="who b">Bảng</span><span>Bức tranh 1 trên lớp: ba điểm, đường thẳng và các sai số.</span></figcaption></figure>
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/mgxiqjbn6l.png" alt="Strang vẽ ba điểm, đường thẳng y = C + Dt và các sai số e1, e2, e3 trên bảng" width="640" height="482" loading="lazy"></div>
+      <figcaption><span class="who b">Bài giảng MIT</span><span>Bức tranh 1 trên lớp: ba điểm, đường thẳng và các sai số.</span></figcaption></figure>
     <figure><div class="frame live" id="lsq"><svg viewBox="0 0 400 300" role="img" aria-label="Kéo ba điểm cam lên xuống, đường thẳng tốt nhất tính lại ngay"></svg></div>
-      <figcaption><span class="who c">Tương tác</span><span>Chấm cam là số liệu của bài, \(b = (1, 2, 2)\). <b>Thử kéo một chấm lên xuống</b> để hỏi: nếu số liệu khác đi thì sao? Đường thẳng tốt nhất, các điểm \(p\), các sai số và \(C, D\) là kết quả, tính lại ngay bằng phương trình chuẩn ở mục 3. <button type="button" class="reset" id="lsqReset">Về số liệu của bài</button></span></figcaption></figure>
+      <figcaption><span class="who c">Hình tương tác</span><span>Chấm cam là số liệu của bài, \(b = (1, 2, 2)\). <b>Thử kéo một chấm lên xuống</b> để hỏi: nếu số liệu khác đi thì sao? Đường thẳng tốt nhất, các điểm \(p\), các sai số và \(C, D\) là kết quả, tính lại ngay bằng phương trình chuẩn ở mục 3. <button type="button" class="reset" id="lsqReset">Về số liệu của bài</button></span></figcaption></figure>
   </div>
   <div class="readout" id="lsqOut" aria-live="polite"></div>
 
   <p>Bức tranh thứ hai nằm trong \(\mathbb{R}^3\), nơi mỗi vector có ba thành phần (một thành phần cho mỗi điểm). Ở đây \(b = (1, 2, 2)\) nằm ngoài mặt phẳng \(C(A)\), mặt phẳng căng bởi hai cột \((1, 1, 1)\) và \((1, 2, 3)\). Vector \(p = (p_1, p_2, p_3)\) nằm trong mặt phẳng, và là vector gần \(b\) nhất trong đó.</p>
 
   <div class="pair wide">
-    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/f8bhrzisfx.png" alt="Strang chỉ vào b, p, e và N(Aᵀ) trên bảng" width="640" height="586" loading="lazy"></div>
-      <figcaption><span class="who b">Bảng</span><span>Bức tranh 2 trên lớp: \(b\), \(p\), \(e\) và \(N(A^T)\).</span></figcaption></figure>
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/f8bhrzisfx.png" alt="Strang chỉ vào b, p, e và N(Aᵀ) trên bảng" width="640" height="586" loading="lazy"></div>
+      <figcaption><span class="who b">Bài giảng MIT</span><span>Bức tranh 2 trên lớp: \(b\), \(p\), \(e\) và \(N(A^T)\).</span></figcaption></figure>
     <figure><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to hình vẽ lại"><img src="img/3-binh-phuong-toi-thieu-hinh-2.png" alt="Mặt phẳng C(A) nằm ngang, b phía trên, p là hình chiếu trong mặt phẳng, e dựng đứng theo hướng N(Aᵀ)" width="1632" height="1258" loading="lazy"></div>
-      <figcaption><span class="who c">Vẽ lại</span><span>Mặt phẳng \(C(A)\) được xoay cho nằm ngang, nên \(e\) dựng đứng: thấy ngay \(e\) vuông góc với cả mặt phẳng.</span></figcaption></figure>
+      <figcaption><span class="who c">Hình minh hoạ</span><span>Mặt phẳng \(C(A)\) được xoay cho nằm ngang, nên \(e\) dựng đứng: thấy ngay \(e\) vuông góc với cả mặt phẳng.</span></figcaption></figure>
   </div>
   <p class="hint">Bấm vào ảnh để xem to.</p>
 

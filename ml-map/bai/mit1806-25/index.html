@@ -112,7 +112,35 @@ footer { margin-top: 3.5rem; padding-top: 1.4rem; border-top: 1px solid var(--ru
 footer h3 { font: 700 .78rem/1 var(--sans); letter-spacing: .07em; text-transform: uppercase; color: var(--ink); margin: 1.2rem 0 .4rem; }
 a { color: var(--blue); text-underline-offset: .15em; }
 a:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 2px; }
+</style><style>
+/* layout 2 (trial): quieter top bar, collapsed note links, boxed interactives */
+.draft2 { font: 500 .82rem/1.5 var(--sans); color: var(--muted); border-bottom: 1px solid var(--rule); padding: .9rem 0; display: flex; flex-wrap: wrap; gap: .4rem 1rem; align-items: center; }
+.draft2 .back { font-weight: 700; text-decoration: none; color: var(--blue); }
+.draft2 .dtag { background: #eef0f3; color: var(--ink); font-weight: 600; padding: .1rem .5rem; border-radius: 5px; }
+.legend summary { cursor: pointer; list-style: none; } .legend summary::-webkit-details-marker { display: none; }
+.legend summary:hover { color: var(--ink); } .legend[open] { flex-basis: 100%; }
+.legendb { display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; margin-top: .6rem; padding: .7rem .9rem; background: #fff; border: 1px solid var(--rule); border-radius: 8px; }
+.legendb p { margin: .2rem 0 0; flex-basis: 100%; font-size: .82rem; }
+.src2 { margin: -.15rem 0 .9rem; font: 500 .8rem/1.4 var(--sans); }
+.src2 summary { display: inline-flex; align-items: center; gap: .35rem; cursor: pointer; list-style: none; color: var(--muted); padding: .18rem .6rem; border: 1px solid var(--rule); border-radius: 999px; background: #fff; }
+.src2 summary::-webkit-details-marker { display: none; } .src2 summary::before { content: '📝'; font-size: .75rem; }
+.src2 summary::after { content: '▾'; font-size: .7rem; } .src2[open] summary::after { content: '▴'; } .src2 summary:hover { color: var(--ink); border-color: #c9d1da; }
+.src2 summary:focus-visible, .legend summary:focus-visible, .ixmore summary:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.srcl { display: flex; flex-wrap: wrap; gap: .35rem 1rem; margin-top: .5rem; padding: .65rem .85rem; background: #fff; border: 1px solid var(--rule); border-radius: 8px; }
+.srcl a { text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--blue) 35%, transparent); }
+.ixbox { border: 1px solid var(--rule); border-radius: 14px; background: #fff; padding: 1.1rem 1.2rem 1rem; margin: 2rem 0; box-shadow: 0 1px 3px rgba(20, 30, 40, .05); }
+.ixhead { display: flex; align-items: center; gap: .6rem; font: 700 1.05rem/1.3 var(--sans); color: var(--ink); }
+.ixhead .who { font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; padding: .18rem .5rem; border-radius: 4px; }
+.ixhow { font: 500 .95rem/1.5 var(--sans); color: var(--ink); margin: .4rem 0 1rem; }
+.ixbox .presets::before { content: 'Ví dụ có sẵn:'; font: 600 .78rem/1 var(--sans); color: var(--muted); align-self: center; margin-right: .1rem; }
+.ixbox .presets .reset:not(.primary) { color: var(--ink); background: #f1f3f5; border-color: #e1e5ea; border-radius: 999px; padding: .4rem .8rem; }
+.ixbox .presets .reset:not(.primary):hover { background: #e6e9ed; }
+.ixbox .readout { margin-bottom: .8rem; } .ixbox .presets { margin-bottom: .8rem; }
+.ixmore summary { cursor: pointer; font: 600 .86rem/1.4 var(--sans); color: var(--blue); }
+.ixmore p { font: 400 .9rem/1.6 var(--sans); color: var(--muted); margin: .5rem 0 0; }
+@media (max-width: 640px) { .ixbox { padding: .9rem .8rem; margin: 1.6rem -.4rem; } }
 </style>
+
 <style>
 .sw.h { background: #fff7d6; }
 .who.h { background: #fff7d6; color: var(--ink); }
@@ -202,9 +230,9 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <div class="draft"><a class="back" href="../../?bai=L.sym">← Bản đồ</a><b>Bản nháp</b>
     <span class="chip"><span class="sw n"></span>nguyên văn ghi chú</span>
     <span class="chip"><span class="sw c"></span>hình tương tác</span>
-    <span class="chip"><span class="sw b"></span>ảnh bảng MIT OCW</span>
-    <span class="chip"><span class="sw h"></span>trang viết tay của tác giả</span>
-    <span class="chip">chữ thường: Claude viết lại theo ý ghi chú, tác giả sẽ duyệt lại; mỗi mục có link ghi chú gốc</span></div>
+    <span class="chip"><span class="sw b"></span>ảnh chụp bài giảng MIT</span>
+    <span class="chip"><span class="sw h"></span>ghi chú viết tay của tác giả</span>
+    <span class="chip">phần chữ còn lại: Claude viết từ ghi chú, tác giả sẽ duyệt lại</span></div>
 
   <header class="ch">
     <div class="crumb">Đại số tuyến tính · MIT 18.06 bài giảng 25</div>
@@ -212,8 +240,8 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
     <p class="lede">Strang gọi ma trận đối xứng là ma trận quan trọng nhất. Eigenvalue của nó luôn thực, eigenvector luôn chọn được vuông góc, nên \(S\) trở thành ma trận trực giao \(Q\) và \(A = Q\Lambda Q^T\). Mỗi ma trận đối xứng là tổng của các phép chiếu vuông góc. Cuối bài mở sang ma trận xác định dương: "ma trận tốt" thành "ma trận xuất sắc".</p>
     <dl class="facts">
       <div><dt>Cần biết trước</dt><dd>Chéo hoá (bài 22) · Ma trận trực giao Q (bài 17) · Ma trận chiếu (bài 15)</dd></div>
-      <div><dt>Mở ra</dt><dd>Ma trận xác định dương (bài 27–28) · SVD (bài 29) · Hiệp phương sai, PCA</dd></div>
-      <div><dt>Bài giảng của tác giả</dt><dd>Chưa có video cho bài này</dd></div>
+      <div><dt>Học tiếp</dt><dd>Ma trận xác định dương (bài 27–28) · SVD (bài 29) · Hiệp phương sai, PCA</dd></div>
+      <div><dt>Video giảng lại</dt><dd>Chưa có video cho bài này</dd></div>
     </dl>
   </header>
 
@@ -224,8 +252,8 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
     <li>Eigenvector <strong>vuông góc</strong> với nhau (chọn được như vậy).</li>
   </ol>
   <p>"Chọn được" là vì khi \(\lambda\) lặp có thể có cả một mặt phẳng eigenvector, như với \(I\): khi đó mọi vector đều là eigenvector, không phải cặp nào cũng vuông góc, nhưng luôn chọn ra được một bộ vuông góc. Và ma trận đối xứng <strong>luôn có đủ \(n\) eigenvector độc lập</strong>, kể cả khi \(\lambda\) lặp: luôn chéo hoá được.</p>
-  <figure class="board solo"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/tnqddu2sa7.png" alt="Bảng: A = Aᵀ, 1. The eigenvalues are REAL, 2. The eigenvectors are PERPENDICULAR" width="640" height="486" loading="lazy"></div>
-    <figcaption><span class="who b">Bảng</span><span>"Eigenvalues are REAL, eigenvectors are PERPENDICULAR."</span></figcaption></figure>
+  <figure class="board solo"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/tnqddu2sa7.png" alt="Bảng: A = Aᵀ, 1. The eigenvalues are REAL, 2. The eigenvectors are PERPENDICULAR" width="640" height="486" loading="lazy"></div>
+    <figcaption><span class="who b">Bài giảng MIT</span><span>"Eigenvalues are REAL, eigenvectors are PERPENDICULAR."</span></figcaption></figure>
 
   <h2><span class="no">2</span>A = QΛQᵀ</h2>
   <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_25_symmetric_matrices_and_positive_definiteness.md#node-jbwmqmp" target="_blank" rel="noopener">S thành gì? ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_25_symmetric_matrices_and_positive_definiteness.md#node-by156v3" target="_blank" rel="noopener">Q, và chứng minh vuông góc ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_25_symmetric_matrices_and_positive_definiteness.md#node-jeo4tcj" target="_blank" rel="noopener">A = QΛQᵀ ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_25_symmetric_matrices_and_positive_definiteness.md#node-v3v0loc" target="_blank" rel="noopener">Định lý phổ ↗</a></div>
@@ -236,8 +264,8 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <div class="eq">\[ \lambda_1x^Ty = (Ax)^Ty = x^TA^Ty = x^TAy = \lambda_2x^Ty. \]</div>
   <div class="from n"><span class="tag">Nguyên văn ghi chú <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_25_symmetric_matrices_and_positive_definiteness.md#node-by156v3" target="_blank" rel="noopener">mở ghi chú gốc ↗</a></span>
     <p>Vậy λ1xᵀy = λ2xᵀy, mà λ1 khác λ2 do ta đang assum hai eigenvalue khác nhau. Vậy suy ra xᵀy = 0 ⇒ x,y vuông góc</p></div>
-  <figure class="board solo"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/ee3v0m6oavc.png" alt="Bảng: Usual case A = SΛS⁻¹, symmetric case A = QΛQ⁻¹ = QΛQᵀ, orthonormal eigenvectors columns of Q" width="640" height="492" loading="lazy"></div>
-    <figcaption><span class="who b">Bảng</span><span>Trường hợp thường \(S\Lambda S^{-1}\); đối xứng \(Q\Lambda Q^T\).</span></figcaption></figure>
+  <figure class="board solo"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/ee3v0m6oavc.png" alt="Bảng: Usual case A = SΛS⁻¹, symmetric case A = QΛQ⁻¹ = QΛQᵀ, orthonormal eigenvectors columns of Q" width="640" height="492" loading="lazy"></div>
+    <figcaption><span class="who b">Bài giảng MIT</span><span>Trường hợp thường \(S\Lambda S^{-1}\); đối xứng \(Q\Lambda Q^T\).</span></figcaption></figure>
 
   <h2><span class="no">3</span>Vì sao eigenvalue thực</h2>
   <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_25_symmetric_matrices_and_positive_definiteness.md#node-0el7my9" target="_blank" rel="noopener">Số phức liên hợp ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_25_symmetric_matrices_and_positive_definiteness.md#node-x9kgd1j" target="_blank" rel="noopener">Liên hợp cả phương trình ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_25_symmetric_matrices_and_positive_definiteness.md#node-tlpoiae" target="_blank" rel="noopener">Hai cách nhân ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_25_symmetric_matrices_and_positive_definiteness.md#node-5tsdqv5" target="_blank" rel="noopener">λ = λ̄ ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_25_symmetric_matrices_and_positive_definiteness.md#node-rfbv3be" target="_blank" rel="noopener">x̄ᵀx > 0 ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_25_symmetric_matrices_and_positive_definiteness.md#node-g7u6yre" target="_blank" rel="noopener">Ma trận tốt ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_25_symmetric_matrices_and_positive_definiteness.md#node-q608rwb" target="_blank" rel="noopener">Nếu A phức ↗</a></div>
@@ -246,9 +274,9 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <p>Vế trái giống nhau nên \(\lambda\,\bar x^Tx = \bar\lambda\,\bar x^Tx\). Mà \(\bar x^Tx = |x_1|^2 + \cdots + |x_n|^2 > 0\) (eigenvector khác 0), chia đi được \(\lambda = \bar\lambda\): \(\lambda\) là số thực.</p>
   <div class="pair wide">
     <figure class="hand"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ghi chú tay của tác giả"><img src="img/fqvd4ezuzsj.png" alt="Nét vẽ màu của tác giả trên bảng: khoanh Ax = λx và x̄ᵀA = x̄ᵀλ̄, nối hai cách nhân ra λx̄ᵀx = λ̄x̄ᵀx" width="640" height="476" loading="lazy"></div>
-      <figcaption><span class="who h">Tay tác giả</span><span>Nối hai cách nhân về cùng \(\bar x^TAx\).</span></figcaption></figure>
-    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/zrhmjy77cu.png" alt="Bảng: λ x̄ᵀx = λ̄ x̄ᵀx, λ = λ̄, λ is real!" width="640" height="496" loading="lazy"></div>
-      <figcaption><span class="who b">Bảng</span><span>"\(\lambda = \bar\lambda\), \(\lambda\) is real!"</span></figcaption></figure>
+      <figcaption><span class="who h">Ghi chú tay</span><span>Nối hai cách nhân về cùng \(\bar x^TAx\).</span></figcaption></figure>
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/zrhmjy77cu.png" alt="Bảng: λ x̄ᵀx = λ̄ x̄ᵀx, λ = λ̄, λ is real!" width="640" height="496" loading="lazy"></div>
+      <figcaption><span class="who b">Bài giảng MIT</span><span>"\(\lambda = \bar\lambda\), \(\lambda\) is real!"</span></figcaption></figure>
   </div>
 
   <h2><span class="no">4</span>Tổng các phép chiếu vuông góc</h2>
@@ -258,13 +286,13 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <p>Mỗi \(q_iq_i^T\) là ma trận chiếu lên \(q_i\) (công thức \(aa^T/a^Ta\) với \(q^Tq = 1\)); kiểm lại \((q q^T)^2 = q(q^Tq)q^T = qq^T\). Vậy <strong>mọi ma trận đối xứng là tổ hợp của các phép chiếu lên những hướng vuông góc nhau</strong>. Nhân với \(x\): chiếu \(x\) lên từng \(q_i\), nhân với \(\lambda_i\), rồi cộng lại thành \(Ax\).</p>
   <div class="pair wide">
     <figure class="hand"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ghi chú tay của tác giả"><img src="img/u5dqnh5aaml.png" alt="Nét vẽ màu của tác giả trên bảng: hàng λ1 q1ᵀ của ΛQᵀ, cột q1 của Q, tích ra λ1 q1q1ᵀ + λ2 q2q2ᵀ" width="640" height="489" loading="lazy"></div>
-      <figcaption><span class="who h">Tay tác giả</span><span>Hàng của \(\Lambda Q^T\) là \(\lambda_iq_i^T\); cột nhân hàng ra \(\lambda_iq_iq_i^T\).</span></figcaption></figure>
-    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/7biirbhznai.png" alt="Bảng: Every symmetric matrix is a combination of perpendicular projection matrices, = λ1 q1q1ᵀ + λ2 q2q2ᵀ + …" width="640" height="481" loading="lazy"></div>
-      <figcaption><span class="who b">Bảng</span><span>"Every symm matrix is a comb of perp projection matrices."</span></figcaption></figure>
+      <figcaption><span class="who h">Ghi chú tay</span><span>Hàng của \(\Lambda Q^T\) là \(\lambda_iq_i^T\); cột nhân hàng ra \(\lambda_iq_iq_i^T\).</span></figcaption></figure>
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/7biirbhznai.png" alt="Bảng: Every symmetric matrix is a combination of perpendicular projection matrices, = λ1 q1q1ᵀ + λ2 q2q2ᵀ + …" width="640" height="481" loading="lazy"></div>
+      <figcaption><span class="who b">Bài giảng MIT</span><span>"Every symm matrix is a comb of perp projection matrices."</span></figcaption></figure>
   </div>
 
   <div class="ix" data-ix="spectral" data-presets="[2 1; 1 2]:2,1,1,2|Bảng Strang [5 2; 2 3]:5,2,2,3|[1 2; 2 1]:1,2,2,1|[−1 0; 0 −3]:-1,0,0,-3"></div>
-  <p class="ixcap"><span class="who c">Tương tác</span> <b>Đầu vào:</b> ma trận đối xứng (gõ \(a_{12}\) thì \(a_{21}\) tự đổi theo) và vector \(x\) (kéo chấm xanh). <b>Kết quả:</b> hai hướng \(q_1, q_2\) (đường đứt, luôn vuông góc), hình chiếu của \(x\) lên từng hướng đã nhân \(\lambda\) (xanh lá, tím), và tổng của chúng đúng bằng \(Ax\) (cam). Bên dưới: pivot, định thức con và dấu của chúng so với dấu \(\lambda\).</p>
+  <p class="ixcap"><span class="who c">Hình tương tác</span> <b>Đầu vào:</b> ma trận đối xứng (gõ \(a_{12}\) thì \(a_{21}\) tự đổi theo) và vector \(x\) (kéo chấm xanh). <b>Kết quả:</b> hai hướng \(q_1, q_2\) (đường đứt, luôn vuông góc), hình chiếu của \(x\) lên từng hướng đã nhân \(\lambda\) (xanh lá, tím), và tổng của chúng đúng bằng \(Ax\) (cam). Bên dưới: pivot, định thức con và dấu của chúng so với dấu \(\lambda\).</p>
 
   <h2><span class="no">5</span>Dấu của pivot là dấu của eigenvalue</h2>
   <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_25_symmetric_matrices_and_positive_definiteness.md#node-dhxsimm" target="_blank" rel="noopener">Ma trận 50 × 50 ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_25_symmetric_matrices_and_positive_definiteness.md#node-83e30v4" target="_blank" rel="noopener">Dấu pivot = dấu λ ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_25_symmetric_matrices_and_positive_definiteness.md#node-98g3d6e" target="_blank" rel="noopener">Tích pivot = tích λ ↗</a></div>
@@ -274,8 +302,8 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
     <li>tích các pivot \(= \pm\det A =\) tích các eigenvalue.</li>
   </ul>
   <p>Biết bao nhiêu \(\lambda\) dương, bao nhiêu âm đã khoanh vùng được chỗ phải tìm. Dịch \(A - bI\) rồi đếm pivot âm là biết có bao nhiêu \(\lambda < b\).</p>
-  <figure class="board solo"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/stgljdncy1p.png" alt="Bảng: A = Aᵀ, signs of pivots same as signs of λ's, # pivots positive = # positive λ's" width="640" height="487" loading="lazy"></div>
-    <figcaption><span class="who b">Bảng</span><span>"# positive pivots = # positive \(\lambda\)'s."</span></figcaption></figure>
+  <figure class="board solo"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/stgljdncy1p.png" alt="Bảng: A = Aᵀ, signs of pivots same as signs of λ's, # pivots positive = # positive λ's" width="640" height="487" loading="lazy"></div>
+    <figcaption><span class="who b">Bài giảng MIT</span><span>"# positive pivots = # positive \(\lambda\)'s."</span></figcaption></figure>
 
   <h2><span class="no">6</span>Ma trận xác định dương</h2>
   <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_25_symmetric_matrices_and_positive_definiteness.md#node-olockqf" target="_blank" rel="noopener">Tốt và xuất sắc ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_25_symmetric_matrices_and_positive_definiteness.md#node-ocb9kxz" target="_blank" rel="noopener">λ và pivot đều dương ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_25_symmetric_matrices_and_positive_definiteness.md#node-kiqr3vj" target="_blank" rel="noopener">Định thức con ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_25_symmetric_matrices_and_positive_definiteness.md#node-sjnibmp" target="_blank" rel="noopener">Hai bài sau ↗</a></div>
@@ -291,17 +319,17 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
     <p>Vì có thể có matrix như [[-1 0] [0 -3]], vẫn symmetric, và positive det nhưng các eigenvalue và pivot đều âm.</p></div>
   <p>Thử preset \([-1\;0;\;0\;-3]\) ở hình trên: \(\det = 3 > 0\) nhưng định thức con đầu là \(-1\). Hai bài sau (27–28) sẽ gom tất cả lại.</p>
   <div class="pair wide">
-    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/7wlqte2lfs3.png" alt="Bảng: positive definite symmetric matrix, all eigenvalues positive, all pivots positive, [5 2; 2 3], pivots 5, 11/5, λ² − 8λ + 11 = 0" width="640" height="487" loading="lazy"></div>
-      <figcaption><span class="who b">Bảng</span><span>Ví dụ \(\begin{bmatrix} 5 & 2 \\ 2 & 3 \end{bmatrix}\) và phản ví dụ \(\begin{bmatrix} -1 & 0 \\ 0 & -3 \end{bmatrix}\).</span></figcaption></figure>
-    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/41tm0f1tqm8.png" alt="Bảng: all eigenvalues are positive, all pivots are positive, all subdeterminants are positive" width="640" height="489" loading="lazy"></div>
-      <figcaption><span class="who b">Bảng</span><span>Ba điều kiện: \(\lambda\), pivot, định thức con.</span></figcaption></figure>
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/7wlqte2lfs3.png" alt="Bảng: positive definite symmetric matrix, all eigenvalues positive, all pivots positive, [5 2; 2 3], pivots 5, 11/5, λ² − 8λ + 11 = 0" width="640" height="487" loading="lazy"></div>
+      <figcaption><span class="who b">Bài giảng MIT</span><span>Ví dụ \(\begin{bmatrix} 5 & 2 \\ 2 & 3 \end{bmatrix}\) và phản ví dụ \(\begin{bmatrix} -1 & 0 \\ 0 & -3 \end{bmatrix}\).</span></figcaption></figure>
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/41tm0f1tqm8.png" alt="Bảng: all eigenvalues are positive, all pivots are positive, all subdeterminants are positive" width="640" height="489" loading="lazy"></div>
+      <figcaption><span class="who b">Bài giảng MIT</span><span>Ba điều kiện: \(\lambda\), pivot, định thức con.</span></figcaption></figure>
   </div>
 
   <footer>
     <h3>Bài này được làm thế nào</h3>
     <p>Chữ: viết lại từ <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_25_symmetric_matrices_and_positive_definiteness.md" target="_blank" rel="noopener">ghi chú MIT 18.06 bài giảng 25</a> của tác giả. Khung xanh là nguyên văn ghi chú; phần chữ còn lại do Claude soạn theo ý ghi chú và cần tác giả viết lại. Bài này chưa có video giảng lại.</p>
     <p>Chỗ đã sửa và trả lời so với ghi chú: ở <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_25_symmetric_matrices_and_positive_definiteness.md#node-rfbv3be" target="_blank" rel="noopener">node-rfbv3be</a>, \(\bar x_ix_i = a_i^2 + b_i^2\) gồm bình phương cả phần thực lẫn phần ảo (không chỉ phần thực); và câu hỏi "không âm thì đúng hơn?": tổng này <em>dương thật sự</em> vì eigenvector khác 0. Ở <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_25_symmetric_matrices_and_positive_definiteness.md#node-tlpoiae" target="_blank" rel="noopener">node-tlpoiae</a>, bước (ii) đi từ \(A\bar x = \bar\lambda\bar x\) sang \(\bar x^TA = \bar\lambda\bar x^T\) chính là chỗ dùng \(A^T = A\). Ở <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_25_symmetric_matrices_and_positive_definiteness.md#node-q608rwb" target="_blank" rel="noopener">node-q608rwb</a>, với \(A\) phức điều kiện "tốt" là \(\bar A^T = A\) (liên hợp rồi chuyển vị), không phải \(A = \bar A\).</p>
-    <p>Hình tương tác: Claude dựng. Trang viết tay: tác giả viết trong StudyBoard khi học. Ảnh chụp bảng: MIT OpenCourseWare 18.06 Linear Algebra, Spring 2010, Gilbert Strang, giấy phép CC BY-NC-SA 4.0.</p>
+    <p>Hình tương tác: Claude dựng. Ghi chú viết tay: tác giả viết trong StudyBoard khi học. Ảnh chụp bảng: MIT OpenCourseWare 18.06 Linear Algebra, Spring 2010, Gilbert Strang, giấy phép CC BY-NC-SA 4.0.</p>
     <h3>Trên bản đồ</h3>
     <p><a href="../../?bai=L.sym">Nền móng Machine Learning</a> · lộ trình MIT 18.06. Bài trước: <a href="../mit1806-24/">Ma trận Markov và chuỗi Fourier</a>.</p>
   </footer>
@@ -575,7 +603,7 @@ IX.colspace = (box) => {
     const b = ins.map(i => Number(i.value) || 0), aug = A.map((row, i) => [...row, b[i]]), { R, piv } = rref(aug), ok = !piv.includes(n);
     let sol = '';
     if (ok) { const x = Array(n).fill(0); piv.forEach((pc, i) => x[pc] = R[i][n]); sol = `\\[ x = ${vecTex(x)} :\\quad ${x.map((c, j) => `${frac(c)}\\,${vecTex(A.map(row => row[j]))}`).join(' + ')} = ${vecTex(b)} \\]`; }
-    out.innerHTML = `<div class="mxk">Kết quả, tự tính lại</div><div class="tagok ${ok ? 'yes' : 'no'}">${ok ? 'b nằm trong column space: Ax = b có nghiệm' : 'b nằm ngoài column space: Ax = b vô nghiệm'}</div>
+    out.innerHTML = `<div class="mxk">Kết quả (tính lại ngay khi đổi đầu vào)</div><div class="tagok ${ok ? 'yes' : 'no'}">${ok ? 'b nằm trong column space: Ax = b có nghiệm' : 'b nằm ngoài column space: Ax = b vô nghiệm'}</div>
       <div class="mxeq">${sol}</div><div class="facts2"><span>hạng của A: <b>${r}</b></span><span>C(A) là không gian ${r} chiều trong ℝ<sup>${m}</sup></span></div>
       <div class="mxeq">\\[ N(A) = \\left\\{ ${N.length ? N.map((x, i) => `${'cdef'[i]}\\,${vecTex(x)}`).join(' + ') : '0'} \\right\\} \\]</div>`;
     typeset(out);
@@ -706,7 +734,7 @@ IX.rank1 = (box) => {
     const u = [0, 1].map(i => Number(ins[i].value) || 0), v = [0, 1, 2].map(i => Number(ins[2 + i].value) || 0);
     let A = u.map(a => v.map(b => a * b)); if (chk.checked) A = A.map((r, i) => r.map((x, j) => x + U2[i] * V2[j]));
     const r = rank(A);
-    out.innerHTML = `<div class="mxk">Kết quả, tự tính lại</div><div class="mxeq">\\[ A = ${chk.checked ? `${vecTex(u)}\\begin{bmatrix}${v.map(frac).join(' & ')}\\end{bmatrix} + ${vecTex(U2)}\\begin{bmatrix}${V2.join(' & ')}\\end{bmatrix}` : `${vecTex(u)}\\begin{bmatrix}${v.map(frac).join(' & ')}\\end{bmatrix}`} = ${texM(A)} \\]</div>
+    out.innerHTML = `<div class="mxk">Kết quả (tính lại ngay khi đổi đầu vào)</div><div class="mxeq">\\[ A = ${chk.checked ? `${vecTex(u)}\\begin{bmatrix}${v.map(frac).join(' & ')}\\end{bmatrix} + ${vecTex(U2)}\\begin{bmatrix}${V2.join(' & ')}\\end{bmatrix}` : `${vecTex(u)}\\begin{bmatrix}${v.map(frac).join(' & ')}\\end{bmatrix}`} = ${texM(A)} \\]</div>
       <div class="facts2"><span>hạng của A: <b>${r}</b></span></div><div class="tagok ${r <= 1 ? 'yes' : 'no'}">${r === 1 ? 'Hạng 1: mọi hàng là bội của vᵀ, mọi cột là bội của u' : r === 0 ? 'A = 0' : 'Cộng hai ma trận hạng 1 ra hạng 2: tập ma trận hạng 1 không phải không gian con'}</div>`;
     typeset(out);
   }
@@ -827,7 +855,7 @@ IX.det2 = (box) => {
   box.querySelectorAll('[data-o]').forEach(bt => bt.onclick = () => { const o = bt.dataset.o, d0 = R[0][0] * R[1][1] - R[0][1] * R[1][0];
     if (o === 'swap') { R = [R[1], R[0]]; last = 'Đổi hai hàng: det đổi dấu (tính chất 2).'; }
     if (o === 'scale') { R[0] = R[0].map(v => v * 2); last = 'Nhân một hàng với 2: det nhân 2 (tính chất 3a).'; }
-    if (o === 'shear') { R[1] = [R[1][0] - R[0][0], R[1][1] - R[0][1]]; last = 'Trừ bội của hàng khác: hình bị xô nghiêng nhưng diện tích giữ nguyên (tính chất 5).'; }
+    if (o === 'shear') { R[1] = [R[1][0] - R[0][0], R[1][1] - R[0][1]]; last = 'Trừ bội của hàng khác: hình bị kéo xiên nhưng diện tích giữ nguyên (tính chất 5).'; }
     if (o === 'reset') { R = R0.map(r => r.slice()); last = ''; }
     draw(); });
   draw();
@@ -859,7 +887,7 @@ IX.det3 = (box) => {
       tex = D ? `x_j = \\frac{\\det B_j}{\\det A}: \\quad ${dj.map((d, j) => `x_${j + 1} = \\frac{${d}}{${D}} = ${frac(d / D)}`).join(',\;\; ')}` : '\\det A = 0: \\text{ Cramer không dùng được}';
       note = 'Bⱼ là A với cột j thay bằng b. Đúng nhưng tốn: phải tính n + 1 định thức.';
     }
-    out.innerHTML = `<div class="mxk">Kết quả, tự tính lại</div><div class="steplab" style="font-weight:400">${note}</div><div class="mxeq">\\[ \\begin{aligned} ${tex.replaceAll(' \\\\ = ', ' \\\\ &= ').replace(' \\\\ \\quad ', ' \\\\ &\\quad ').replace('\\det A = ', '\\det A &= ')} \\end{aligned} \\]</div><div class="tagok ${D ? 'yes' : 'no'}">${D ? `det A = ${D}: khả nghịch` : 'det A = 0: suy biến'}</div>`;
+    out.innerHTML = `<div class="mxk">Kết quả (tính lại ngay khi đổi đầu vào)</div><div class="steplab" style="font-weight:400">${note}</div><div class="mxeq">\\[ \\begin{aligned} ${tex.replaceAll(' \\\\ = ', ' \\\\ &= ').replace(' \\\\ \\quad ', ' \\\\ &\\quad ').replace('\\det A = ', '\\det A &= ')} \\end{aligned} \\]</div><div class="tagok ${D ? 'yes' : 'no'}">${D ? `det A = ${D}: khả nghịch` : 'det A = 0: suy biến'}</div>`;
     typeset(out);
   }
   [...ins, ...bins].forEach(i => i.addEventListener('input', calc));

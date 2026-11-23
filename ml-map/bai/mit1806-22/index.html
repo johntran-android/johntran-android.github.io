@@ -112,7 +112,35 @@ footer { margin-top: 3.5rem; padding-top: 1.4rem; border-top: 1px solid var(--ru
 footer h3 { font: 700 .78rem/1 var(--sans); letter-spacing: .07em; text-transform: uppercase; color: var(--ink); margin: 1.2rem 0 .4rem; }
 a { color: var(--blue); text-underline-offset: .15em; }
 a:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 2px; }
+</style><style>
+/* layout 2 (trial): quieter top bar, collapsed note links, boxed interactives */
+.draft2 { font: 500 .82rem/1.5 var(--sans); color: var(--muted); border-bottom: 1px solid var(--rule); padding: .9rem 0; display: flex; flex-wrap: wrap; gap: .4rem 1rem; align-items: center; }
+.draft2 .back { font-weight: 700; text-decoration: none; color: var(--blue); }
+.draft2 .dtag { background: #eef0f3; color: var(--ink); font-weight: 600; padding: .1rem .5rem; border-radius: 5px; }
+.legend summary { cursor: pointer; list-style: none; } .legend summary::-webkit-details-marker { display: none; }
+.legend summary:hover { color: var(--ink); } .legend[open] { flex-basis: 100%; }
+.legendb { display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; margin-top: .6rem; padding: .7rem .9rem; background: #fff; border: 1px solid var(--rule); border-radius: 8px; }
+.legendb p { margin: .2rem 0 0; flex-basis: 100%; font-size: .82rem; }
+.src2 { margin: -.15rem 0 .9rem; font: 500 .8rem/1.4 var(--sans); }
+.src2 summary { display: inline-flex; align-items: center; gap: .35rem; cursor: pointer; list-style: none; color: var(--muted); padding: .18rem .6rem; border: 1px solid var(--rule); border-radius: 999px; background: #fff; }
+.src2 summary::-webkit-details-marker { display: none; } .src2 summary::before { content: '📝'; font-size: .75rem; }
+.src2 summary::after { content: '▾'; font-size: .7rem; } .src2[open] summary::after { content: '▴'; } .src2 summary:hover { color: var(--ink); border-color: #c9d1da; }
+.src2 summary:focus-visible, .legend summary:focus-visible, .ixmore summary:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.srcl { display: flex; flex-wrap: wrap; gap: .35rem 1rem; margin-top: .5rem; padding: .65rem .85rem; background: #fff; border: 1px solid var(--rule); border-radius: 8px; }
+.srcl a { text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--blue) 35%, transparent); }
+.ixbox { border: 1px solid var(--rule); border-radius: 14px; background: #fff; padding: 1.1rem 1.2rem 1rem; margin: 2rem 0; box-shadow: 0 1px 3px rgba(20, 30, 40, .05); }
+.ixhead { display: flex; align-items: center; gap: .6rem; font: 700 1.05rem/1.3 var(--sans); color: var(--ink); }
+.ixhead .who { font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; padding: .18rem .5rem; border-radius: 4px; }
+.ixhow { font: 500 .95rem/1.5 var(--sans); color: var(--ink); margin: .4rem 0 1rem; }
+.ixbox .presets::before { content: 'Ví dụ có sẵn:'; font: 600 .78rem/1 var(--sans); color: var(--muted); align-self: center; margin-right: .1rem; }
+.ixbox .presets .reset:not(.primary) { color: var(--ink); background: #f1f3f5; border-color: #e1e5ea; border-radius: 999px; padding: .4rem .8rem; }
+.ixbox .presets .reset:not(.primary):hover { background: #e6e9ed; }
+.ixbox .readout { margin-bottom: .8rem; } .ixbox .presets { margin-bottom: .8rem; }
+.ixmore summary { cursor: pointer; font: 600 .86rem/1.4 var(--sans); color: var(--blue); }
+.ixmore p { font: 400 .9rem/1.6 var(--sans); color: var(--muted); margin: .5rem 0 0; }
+@media (max-width: 640px) { .ixbox { padding: .9rem .8rem; margin: 1.6rem -.4rem; } }
 </style>
+
 <style>
 .sw.h { background: #fff7d6; }
 .who.h { background: #fff7d6; color: var(--ink); }
@@ -202,9 +230,9 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <div class="draft"><a class="back" href="../../?bai=L.eig">← Bản đồ</a><b>Bản nháp</b>
     <span class="chip"><span class="sw n"></span>nguyên văn ghi chú</span>
     <span class="chip"><span class="sw c"></span>hình tương tác</span>
-    <span class="chip"><span class="sw b"></span>ảnh bảng MIT OCW</span>
-    <span class="chip"><span class="sw h"></span>trang viết tay của tác giả</span>
-    <span class="chip">chữ thường: Claude viết lại theo ý ghi chú, tác giả sẽ duyệt lại; mỗi mục có link ghi chú gốc</span></div>
+    <span class="chip"><span class="sw b"></span>ảnh chụp bài giảng MIT</span>
+    <span class="chip"><span class="sw h"></span>ghi chú viết tay của tác giả</span>
+    <span class="chip">phần chữ còn lại: Claude viết từ ghi chú, tác giả sẽ duyệt lại</span></div>
 
   <header class="ch">
     <div class="crumb">Đại số tuyến tính · MIT 18.06 bài giảng 22</div>
@@ -212,8 +240,8 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
     <p class="lede">Đặt các eigenvector của \(A\) làm cột của một ma trận \(S\), thì \(A\) trở thành ma trận đường chéo \(\Lambda\) khi nhìn từ \(S\). Hệ quả lớn nhất: lũy thừa \(A^k\) tính dễ như lũy thừa từng số \(\lambda^k\). Bài kết thúc bằng một câu hỏi cụ thể: số Fibonacci thứ 100 lớn cỡ nào?</p>
     <dl class="facts">
       <div><dt>Cần biết trước</dt><dd>Eigenvalue, eigenvector (bài 21) · Nhân ma trận theo cột (bài 3)</dd></div>
-      <div><dt>Mở ra</dt><dd>Phương trình vi phân (bài 23) · Ma trận Markov (bài 24) · A = QΛQᵀ (bài 25)</dd></div>
-      <div><dt>Bài giảng của tác giả</dt><dd>Chưa có video cho bài này</dd></div>
+      <div><dt>Học tiếp</dt><dd>Phương trình vi phân (bài 23) · Ma trận Markov (bài 24) · A = QΛQᵀ (bài 25)</dd></div>
+      <div><dt>Video giảng lại</dt><dd>Chưa có video cho bài này</dd></div>
     </dl>
   </header>
 
@@ -226,10 +254,10 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
     <p>Và cần phải chú ý rằng việc matrix A square và có N INDEPENDENT EIGENVECTORS KHÔNG KHIẾN A FULL-RANK. Vì sao, vì nó chỉ dẫn tới là eigenvectors span toàn bộ Rn</p></div>
   <p>Ví dụ: ma trận chiếu ở bài 21 có đủ eigenvector (mặt phẳng và pháp tuyến) nhưng suy biến, vì một eigenvalue bằng 0. Khả nghịch là chuyện của \(\lambda\) (không có \(\lambda = 0\)); chéo hoá được là chuyện của eigenvector (có đủ \(n\) cái độc lập). Hai chuyện độc lập với nhau.</p>
   <div class="pair wide">
-    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/yvz1vmvsf1.png" alt="Bảng: AS = [λ1x1 … λnxn] = [x1 … xn] diag(λ1 … λn) = SΛ" width="640" height="493" loading="lazy"></div>
-      <figcaption><span class="who b">Bảng</span><span>Tách các \(\lambda\) ra thành \(S\Lambda\).</span></figcaption></figure>
-    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/0e59c8iq2s8.png" alt="Bảng: AS = SΛ, S⁻¹AS = Λ, A = SΛS⁻¹" width="640" height="484" loading="lazy"></div>
-      <figcaption><span class="who b">Bảng</span><span>\(S^{-1}AS = \Lambda\) và \(A = S\Lambda S^{-1}\).</span></figcaption></figure>
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/yvz1vmvsf1.png" alt="Bảng: AS = [λ1x1 … λnxn] = [x1 … xn] diag(λ1 … λn) = SΛ" width="640" height="493" loading="lazy"></div>
+      <figcaption><span class="who b">Bài giảng MIT</span><span>Tách các \(\lambda\) ra thành \(S\Lambda\).</span></figcaption></figure>
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/0e59c8iq2s8.png" alt="Bảng: AS = SΛ, S⁻¹AS = Λ, A = SΛS⁻¹" width="640" height="484" loading="lazy"></div>
+      <figcaption><span class="who b">Bài giảng MIT</span><span>\(S^{-1}AS = \Lambda\) và \(A = S\Lambda S^{-1}\).</span></figcaption></figure>
   </div>
 
   <h2><span class="no">2</span>Lũy thừa: Aᵏ = SΛᵏS⁻¹</h2>
@@ -237,24 +265,24 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <p>Nhân \(Ax = \lambda x\) thêm một lần \(A\): \(A^2x = \lambda Ax = \lambda^2 x\). Eigenvector giữ nguyên, eigenvalue bình phương. Nhìn qua phân tích còn gọn hơn, vì \(S^{-1}S\) ở giữa triệt tiêu:</p>
   <div class="eq">\[ A^2 = S\Lambda S^{-1}\,S\Lambda S^{-1} = S\Lambda^2 S^{-1}, \qquad A^k = S\Lambda^k S^{-1}. \]</div>
   <p>Lũy thừa của ma trận đường chéo chỉ là lũy thừa từng số trên đường chéo. \(LU\) hay \(QR\) không làm được điều này. Từ đó trả lời ngay câu "khi nào \(A^k \to 0\)": khi <strong>mọi \(|\lambda_i| < 1\)</strong> (và \(A\) có đủ eigenvector).</p>
-  <figure class="board solo"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/pea1k9b1hm.png" alt="Bảng: Theorem: A^k → 0 as k → ∞ if all |λi| < 1" width="640" height="489" loading="lazy"></div>
-    <figcaption><span class="who b">Bảng</span><span>"\(A^k \to 0\) as \(k \to \infty\) if all \(|\lambda_i| < 1\)."</span></figcaption></figure>
+  <figure class="board solo"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/pea1k9b1hm.png" alt="Bảng: Theorem: A^k → 0 as k → ∞ if all |λi| < 1" width="640" height="489" loading="lazy"></div>
+    <figcaption><span class="who b">Bài giảng MIT</span><span>"\(A^k \to 0\) as \(k \to \infty\) if all \(|\lambda_i| < 1\)."</span></figcaption></figure>
 
   <h2><span class="no">3</span>Khi nào có đủ n eigenvector</h2>
   <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_22_diagonalization_and_powers_of_a.md#node-wnlq1co" target="_blank" rel="noopener">Điều kiện ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_22_diagonalization_and_powers_of_a.md#node-w2dekai" target="_blank" rel="noopener">λ khác nhau là đủ ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_22_diagonalization_and_powers_of_a.md#node-82tb4xh" target="_blank" rel="noopener">Ma trận ngẫu nhiên ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_22_diagonalization_and_powers_of_a.md#node-1do5ouu" target="_blank" rel="noopener">λ lặp: phải kiểm ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_22_diagonalization_and_powers_of_a.md#node-i3svf3p" target="_blank" rel="noopener">Ma trận I ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_22_diagonalization_and_powers_of_a.md#node-rrzsmr6" target="_blank" rel="noopener">Ví dụ λ = 2, 2 ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_22_diagonalization_and_powers_of_a.md#node-g7ozwqu" target="_blank" rel="noopener">Chỉ một hướng ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_22_diagonalization_and_powers_of_a.md#node-xlwzbiy" target="_blank" rel="noopener">Thực tế ↗</a></div>
   <p><strong>Nếu \(n\) eigenvalue khác nhau từng đôi, chắc chắn có \(n\) eigenvector độc lập.</strong> Ma trận ngẫu nhiên gần như luôn rơi vào trường hợp này (Strang lấy ví dụ <code>eig(rand(10,10))</code>).</p>
   <p>Khi có \(\lambda\) lặp thì <em>phải kiểm tra</em>, có thể đủ mà cũng có thể thiếu:</p>
   <ul class="steps">
-    <li>\(I\) có \(\lambda = 1\) lặp \(n\) lần nhưng mọi vector đều là eigenvector: dư sức chọn \(n\) cái độc lập. \(I\) vốn đã là \(\Lambda\).</li>
-    <li>\(A = \begin{bmatrix} 2 & 1 \\ 0 & 2 \end{bmatrix}\): \(\lambda = 2, 2\) (đường đại số cho hai \(\lambda\)), nhưng \(A - 2I = \begin{bmatrix} 0 & 1 \\ 0 & 0 \end{bmatrix}\) có nullspace một chiều (đường hình học chỉ cho một hướng \((1, 0)\)). Không chéo hoá được.</li>
+    <li>\(I\) có \(\lambda = 1\) lặp \(n\) lần nhưng mọi vector đều là eigenvector: luôn chọn được \(n\) cái độc lập. \(I\) vốn đã là \(\Lambda\).</li>
+    <li>\(A = \begin{bmatrix} 2 & 1 \\ 0 & 2 \end{bmatrix}\): \(\lambda = 2, 2\) (về đại số: hai \(\lambda\)), nhưng \(A - 2I = \begin{bmatrix} 0 & 1 \\ 0 & 0 \end{bmatrix}\) có nullspace một chiều (về hình học: chỉ một hướng \((1, 0)\)). Không chéo hoá được.</li>
   </ul>
   <div class="from n"><span class="tag">Nguyên văn ghi chú <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_22_diagonalization_and_powers_of_a.md#node-1do5ouu" target="_blank" rel="noopener">mở ghi chú gốc ↗</a></span>
     <p>Nhưng KHÔNG PHẢI CỨ CÓ REPEAT EIGENVALUES THÌ SẼ KHÔNG CÓ INDEPENDENT EIGENVECTORS Mà ta phải check lại, vì vẫn có thể có eigenvalue giống nhau nhưng vẫn có (đủ bộ) eigenvector độc lập</p></div>
   <div class="pair wide">
-    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/ogwwqco56x8.png" alt="Bảng: A is sure to have n independent eigenvectors (and be diagonalizable) if all the λ's are different" width="640" height="490" loading="lazy"></div>
-      <figcaption><span class="who b">Bảng</span><span>\(\lambda\) khác nhau thì chắc chắn chéo hoá được.</span></figcaption></figure>
-    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/5wkpe7ivqna.png" alt="Bảng: repeated eigenvalues, A − 2I = [0 1; 0 0], x1 = (1, 0)" width="640" height="484" loading="lazy"></div>
-      <figcaption><span class="who b">Bảng</span><span>\(\lambda\) lặp, chỉ một eigenvector.</span></figcaption></figure>
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/ogwwqco56x8.png" alt="Bảng: A is sure to have n independent eigenvectors (and be diagonalizable) if all the λ's are different" width="640" height="490" loading="lazy"></div>
+      <figcaption><span class="who b">Bài giảng MIT</span><span>\(\lambda\) khác nhau thì chắc chắn chéo hoá được.</span></figcaption></figure>
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/5wkpe7ivqna.png" alt="Bảng: repeated eigenvalues, A − 2I = [0 1; 0 0], x1 = (1, 0)" width="640" height="484" loading="lazy"></div>
+      <figcaption><span class="who b">Bài giảng MIT</span><span>\(\lambda\) lặp, chỉ một eigenvector.</span></figcaption></figure>
   </div>
 
   <h2><span class="no">4</span>Phương trình sai phân uₖ₊₁ = Auₖ</h2>
@@ -265,10 +293,10 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
     <p>Việc Ax = λx thật ra chẳng cho kết luận rằng x là thuộc columns space, vì sao, vì khi λ = 0, x thuộc nullspace.</p></div>
   <p>Đây là tác giả tự sửa một hiểu sai trước đó trong ghi chú (dòng bị gạch). Kết luận đúng: \(n\) eigenvector độc lập span \(\mathbb{R}^n\), chỉ vậy, không nói gì về column space.</p>
   <div class="pair wide">
-    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/7e0aha832h8.png" alt="Bảng: To really solve: write u0 = c1x1 + c2x2 + … + cnxn, A^100 u0 = c1λ1^100 x1 + …" width="640" height="486" loading="lazy"></div>
-      <figcaption><span class="who b">Bảng</span><span>\(A^{100}u_0 = c_1\lambda_1^{100}x_1 + \cdots\).</span></figcaption></figure>
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/7e0aha832h8.png" alt="Bảng: To really solve: write u0 = c1x1 + c2x2 + … + cnxn, A^100 u0 = c1λ1^100 x1 + …" width="640" height="486" loading="lazy"></div>
+      <figcaption><span class="who b">Bài giảng MIT</span><span>\(A^{100}u_0 = c_1\lambda_1^{100}x_1 + \cdots\).</span></figcaption></figure>
     <figure class="hand"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ghi chú tay của tác giả"><img src="img/gtx1d2qizdt.png" alt="Nét vẽ cam của tác giả trên bảng: u0 = Sc, Au0 = ASc = SΛc, A²u0 = SΛ²c, A^100 u0 = SΛ^100 c" width="640" height="480" loading="lazy"></div>
-      <figcaption><span class="who h">Tay tác giả</span><span>Viết lại bằng ma trận: \(A^{100}u_0 = S\Lambda^{100}c\).</span></figcaption></figure>
+      <figcaption><span class="who h">Ghi chú tay</span><span>Viết lại bằng ma trận: \(A^{100}u_0 = S\Lambda^{100}c\).</span></figcaption></figure>
   </div>
 
   <h2><span class="no">5</span>Số Fibonacci thứ 100</h2>
@@ -281,13 +309,13 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <div class="eq">\[ F_{100} \approx \frac{1}{\sqrt5}\left(\frac{1+\sqrt5}{2}\right)^{100} \approx 3{,}54 \cdot 10^{20}. \]</div>
   <div class="pair wide">
     <figure class="hand"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to trang viết tay của tác giả"><img src="img/cpd9y9fc7od.png" alt="Trang viết tay của tác giả: u_{k+1} = [F_k + F_{k+1}; F_{k+1}] = F_{k+1}(1,1) + F_k(1,0) = [1 1; 1 0] u_k" width="547" height="640" loading="lazy"></div>
-      <figcaption><span class="who h">Tay tác giả</span><span>Tự tìm ra ma trận \(\begin{bmatrix} 1 & 1 \\ 1 & 0 \end{bmatrix}\) bằng cách nhìn theo cột.</span></figcaption></figure>
-    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/4jdp47tznv6.png" alt="Bảng: F100 ≈ c1 ((1+√5)/2)^100" width="640" height="484" loading="lazy"></div>
-      <figcaption><span class="who b">Bảng</span><span>\(F_{100} \approx c_1\big(\tfrac{1+\sqrt5}{2}\big)^{100}\).</span></figcaption></figure>
+      <figcaption><span class="who h">Ghi chú tay</span><span>Tự tìm ra ma trận \(\begin{bmatrix} 1 & 1 \\ 1 & 0 \end{bmatrix}\) bằng cách nhìn theo cột.</span></figcaption></figure>
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/4jdp47tznv6.png" alt="Bảng: F100 ≈ c1 ((1+√5)/2)^100" width="640" height="484" loading="lazy"></div>
+      <figcaption><span class="who b">Bài giảng MIT</span><span>\(F_{100} \approx c_1\big(\tfrac{1+\sqrt5}{2}\big)^{100}\).</span></figcaption></figure>
   </div>
 
   <div class="ix" data-ix="powers" data-kmax="30" data-presets="Fibonacci:1,1,1,0:1,0|Tắt dần (λ = 0,8 và 0,3):0.6,0.3,0.2,0.5:4,1|Thiếu eigenvector [2 1; 0 2]:2,1,0,2:0,1"></div>
-  <p class="ixcap"><span class="who c">Tương tác</span> <b>Đầu vào:</b> ma trận \(A\), điểm đầu \(u_0\) và số bước \(k\). <b>Kết quả:</b> các điểm \(u_0, u_1, \dots, u_k\) (hình tự co giãn cho vừa), hai đường eigenvector (đứt), và \(u_k\) tách thành \(c_1\lambda_1^kx_1 + c_2\lambda_2^kx_2\). Với Fibonacci, kéo \(k\) lên: các điểm nhanh chóng nằm trên đường \(x_1\) và tỉ số \(\|u_k\| / \|u_{k-1}\|\) tiến về \(1{,}618\).</p>
+  <p class="ixcap"><span class="who c">Hình tương tác</span> <b>Đầu vào:</b> ma trận \(A\), điểm đầu \(u_0\) và số bước \(k\). <b>Kết quả:</b> các điểm \(u_0, u_1, \dots, u_k\) (hình tự co giãn cho vừa), hai đường eigenvector (đứt), và \(u_k\) tách thành \(c_1\lambda_1^kx_1 + c_2\lambda_2^kx_2\). Với Fibonacci, kéo \(k\) lên: các điểm nhanh chóng nằm trên đường \(x_1\) và tỉ số \(\|u_k\| / \|u_{k-1}\|\) tiến về \(1{,}618\).</p>
 
   <div class="from n"><span class="tag">Nguyên văn ghi chú <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_22_diagonalization_and_powers_of_a.md#node-u0perki" target="_blank" rel="noopener">mở ghi chú gốc ↗</a></span>
     <p>tóm lại ý tưởng cốt lõi của bài toán này đó là: Khi có một thứ gì đó tăng lên theo thời gian bởi một first order equation system bắt đầu từ một giá trị ban đầu u_0. Thì chìa khóa là ta cần tìm eigenvalues của matrix A</p></div>
@@ -296,7 +324,7 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
     <h3>Bài này được làm thế nào</h3>
     <p>Chữ: viết lại từ <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_22_diagonalization_and_powers_of_a.md" target="_blank" rel="noopener">ghi chú MIT 18.06 bài giảng 22</a> của tác giả. Khung xanh là nguyên văn ghi chú; phần chữ còn lại do Claude soạn theo ý ghi chú và cần tác giả viết lại. Bài này chưa có video giảng lại.</p>
     <p>Chỗ đã sửa so với ghi chú: <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_22_diagonalization_and_powers_of_a.md#node-82tb4xh" target="_blank" rel="noopener">node-82tb4xh</a> ghi "n eigenvector của nó sẽ khác nhau", ý là n <em>eigenvalue</em> khác nhau; <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_22_diagonalization_and_powers_of_a.md#node-1do5ouu" target="_blank" rel="noopener">node-1do5ouu</a> ghi "n eigenvalue độc lập", ý là n <em>eigenvector</em> độc lập. Ở <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_22_diagonalization_and_powers_of_a.md#node-mfpw03f" target="_blank" rel="noopener">node-mfpw03f</a>, \(\lambda_2 = -0{,}618\) (âm); điều làm nó tắt là \(|\lambda_2| < 1\). Số \(F_{100}\) chính xác là 354 224 848 179 261 915 075.</p>
-    <p>Hình tương tác: Claude dựng. Trang viết tay: tác giả viết trong StudyBoard khi học. Ảnh chụp bảng: MIT OpenCourseWare 18.06 Linear Algebra, Spring 2010, Gilbert Strang, giấy phép CC BY-NC-SA 4.0.</p>
+    <p>Hình tương tác: Claude dựng. Ghi chú viết tay: tác giả viết trong StudyBoard khi học. Ảnh chụp bảng: MIT OpenCourseWare 18.06 Linear Algebra, Spring 2010, Gilbert Strang, giấy phép CC BY-NC-SA 4.0.</p>
     <h3>Trên bản đồ</h3>
     <p><a href="../../?bai=L.eig">Nền móng Machine Learning</a> · lộ trình MIT 18.06. Bài trước: <a href="../mit1806-21/">Eigenvalue và eigenvector</a>. Bài tiếp: <a href="../mit1806-23/">Phương trình vi phân và eᴬᵗ</a>.</p>
   </footer>
@@ -570,7 +598,7 @@ IX.colspace = (box) => {
     const b = ins.map(i => Number(i.value) || 0), aug = A.map((row, i) => [...row, b[i]]), { R, piv } = rref(aug), ok = !piv.includes(n);
     let sol = '';
     if (ok) { const x = Array(n).fill(0); piv.forEach((pc, i) => x[pc] = R[i][n]); sol = `\\[ x = ${vecTex(x)} :\\quad ${x.map((c, j) => `${frac(c)}\\,${vecTex(A.map(row => row[j]))}`).join(' + ')} = ${vecTex(b)} \\]`; }
-    out.innerHTML = `<div class="mxk">Kết quả, tự tính lại</div><div class="tagok ${ok ? 'yes' : 'no'}">${ok ? 'b nằm trong column space: Ax = b có nghiệm' : 'b nằm ngoài column space: Ax = b vô nghiệm'}</div>
+    out.innerHTML = `<div class="mxk">Kết quả (tính lại ngay khi đổi đầu vào)</div><div class="tagok ${ok ? 'yes' : 'no'}">${ok ? 'b nằm trong column space: Ax = b có nghiệm' : 'b nằm ngoài column space: Ax = b vô nghiệm'}</div>
       <div class="mxeq">${sol}</div><div class="facts2"><span>hạng của A: <b>${r}</b></span><span>C(A) là không gian ${r} chiều trong ℝ<sup>${m}</sup></span></div>
       <div class="mxeq">\\[ N(A) = \\left\\{ ${N.length ? N.map((x, i) => `${'cdef'[i]}\\,${vecTex(x)}`).join(' + ') : '0'} \\right\\} \\]</div>`;
     typeset(out);
@@ -701,7 +729,7 @@ IX.rank1 = (box) => {
     const u = [0, 1].map(i => Number(ins[i].value) || 0), v = [0, 1, 2].map(i => Number(ins[2 + i].value) || 0);
     let A = u.map(a => v.map(b => a * b)); if (chk.checked) A = A.map((r, i) => r.map((x, j) => x + U2[i] * V2[j]));
     const r = rank(A);
-    out.innerHTML = `<div class="mxk">Kết quả, tự tính lại</div><div class="mxeq">\\[ A = ${chk.checked ? `${vecTex(u)}\\begin{bmatrix}${v.map(frac).join(' & ')}\\end{bmatrix} + ${vecTex(U2)}\\begin{bmatrix}${V2.join(' & ')}\\end{bmatrix}` : `${vecTex(u)}\\begin{bmatrix}${v.map(frac).join(' & ')}\\end{bmatrix}`} = ${texM(A)} \\]</div>
+    out.innerHTML = `<div class="mxk">Kết quả (tính lại ngay khi đổi đầu vào)</div><div class="mxeq">\\[ A = ${chk.checked ? `${vecTex(u)}\\begin{bmatrix}${v.map(frac).join(' & ')}\\end{bmatrix} + ${vecTex(U2)}\\begin{bmatrix}${V2.join(' & ')}\\end{bmatrix}` : `${vecTex(u)}\\begin{bmatrix}${v.map(frac).join(' & ')}\\end{bmatrix}`} = ${texM(A)} \\]</div>
       <div class="facts2"><span>hạng của A: <b>${r}</b></span></div><div class="tagok ${r <= 1 ? 'yes' : 'no'}">${r === 1 ? 'Hạng 1: mọi hàng là bội của vᵀ, mọi cột là bội của u' : r === 0 ? 'A = 0' : 'Cộng hai ma trận hạng 1 ra hạng 2: tập ma trận hạng 1 không phải không gian con'}</div>`;
     typeset(out);
   }
@@ -822,7 +850,7 @@ IX.det2 = (box) => {
   box.querySelectorAll('[data-o]').forEach(bt => bt.onclick = () => { const o = bt.dataset.o, d0 = R[0][0] * R[1][1] - R[0][1] * R[1][0];
     if (o === 'swap') { R = [R[1], R[0]]; last = 'Đổi hai hàng: det đổi dấu (tính chất 2).'; }
     if (o === 'scale') { R[0] = R[0].map(v => v * 2); last = 'Nhân một hàng với 2: det nhân 2 (tính chất 3a).'; }
-    if (o === 'shear') { R[1] = [R[1][0] - R[0][0], R[1][1] - R[0][1]]; last = 'Trừ bội của hàng khác: hình bị xô nghiêng nhưng diện tích giữ nguyên (tính chất 5).'; }
+    if (o === 'shear') { R[1] = [R[1][0] - R[0][0], R[1][1] - R[0][1]]; last = 'Trừ bội của hàng khác: hình bị kéo xiên nhưng diện tích giữ nguyên (tính chất 5).'; }
     if (o === 'reset') { R = R0.map(r => r.slice()); last = ''; }
     draw(); });
   draw();
@@ -854,7 +882,7 @@ IX.det3 = (box) => {
       tex = D ? `x_j = \\frac{\\det B_j}{\\det A}: \\quad ${dj.map((d, j) => `x_${j + 1} = \\frac{${d}}{${D}} = ${frac(d / D)}`).join(',\;\; ')}` : '\\det A = 0: \\text{ Cramer không dùng được}';
       note = 'Bⱼ là A với cột j thay bằng b. Đúng nhưng tốn: phải tính n + 1 định thức.';
     }
-    out.innerHTML = `<div class="mxk">Kết quả, tự tính lại</div><div class="steplab" style="font-weight:400">${note}</div><div class="mxeq">\\[ \\begin{aligned} ${tex.replaceAll(' \\\\ = ', ' \\\\ &= ').replace(' \\\\ \\quad ', ' \\\\ &\\quad ').replace('\\det A = ', '\\det A &= ')} \\end{aligned} \\]</div><div class="tagok ${D ? 'yes' : 'no'}">${D ? `det A = ${D}: khả nghịch` : 'det A = 0: suy biến'}</div>`;
+    out.innerHTML = `<div class="mxk">Kết quả (tính lại ngay khi đổi đầu vào)</div><div class="steplab" style="font-weight:400">${note}</div><div class="mxeq">\\[ \\begin{aligned} ${tex.replaceAll(' \\\\ = ', ' \\\\ &= ').replace(' \\\\ \\quad ', ' \\\\ &\\quad ').replace('\\det A = ', '\\det A &= ')} \\end{aligned} \\]</div><div class="tagok ${D ? 'yes' : 'no'}">${D ? `det A = ${D}: khả nghịch` : 'det A = 0: suy biến'}</div>`;
     typeset(out);
   }
   [...ins, ...bins].forEach(i => i.addEventListener('input', calc));

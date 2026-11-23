@@ -112,7 +112,35 @@ footer { margin-top: 3.5rem; padding-top: 1.4rem; border-top: 1px solid var(--ru
 footer h3 { font: 700 .78rem/1 var(--sans); letter-spacing: .07em; text-transform: uppercase; color: var(--ink); margin: 1.2rem 0 .4rem; }
 a { color: var(--blue); text-underline-offset: .15em; }
 a:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 2px; }
+</style><style>
+/* layout 2 (trial): quieter top bar, collapsed note links, boxed interactives */
+.draft2 { font: 500 .82rem/1.5 var(--sans); color: var(--muted); border-bottom: 1px solid var(--rule); padding: .9rem 0; display: flex; flex-wrap: wrap; gap: .4rem 1rem; align-items: center; }
+.draft2 .back { font-weight: 700; text-decoration: none; color: var(--blue); }
+.draft2 .dtag { background: #eef0f3; color: var(--ink); font-weight: 600; padding: .1rem .5rem; border-radius: 5px; }
+.legend summary { cursor: pointer; list-style: none; } .legend summary::-webkit-details-marker { display: none; }
+.legend summary:hover { color: var(--ink); } .legend[open] { flex-basis: 100%; }
+.legendb { display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; margin-top: .6rem; padding: .7rem .9rem; background: #fff; border: 1px solid var(--rule); border-radius: 8px; }
+.legendb p { margin: .2rem 0 0; flex-basis: 100%; font-size: .82rem; }
+.src2 { margin: -.15rem 0 .9rem; font: 500 .8rem/1.4 var(--sans); }
+.src2 summary { display: inline-flex; align-items: center; gap: .35rem; cursor: pointer; list-style: none; color: var(--muted); padding: .18rem .6rem; border: 1px solid var(--rule); border-radius: 999px; background: #fff; }
+.src2 summary::-webkit-details-marker { display: none; } .src2 summary::before { content: '📝'; font-size: .75rem; }
+.src2 summary::after { content: '▾'; font-size: .7rem; } .src2[open] summary::after { content: '▴'; } .src2 summary:hover { color: var(--ink); border-color: #c9d1da; }
+.src2 summary:focus-visible, .legend summary:focus-visible, .ixmore summary:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.srcl { display: flex; flex-wrap: wrap; gap: .35rem 1rem; margin-top: .5rem; padding: .65rem .85rem; background: #fff; border: 1px solid var(--rule); border-radius: 8px; }
+.srcl a { text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--blue) 35%, transparent); }
+.ixbox { border: 1px solid var(--rule); border-radius: 14px; background: #fff; padding: 1.1rem 1.2rem 1rem; margin: 2rem 0; box-shadow: 0 1px 3px rgba(20, 30, 40, .05); }
+.ixhead { display: flex; align-items: center; gap: .6rem; font: 700 1.05rem/1.3 var(--sans); color: var(--ink); }
+.ixhead .who { font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; padding: .18rem .5rem; border-radius: 4px; }
+.ixhow { font: 500 .95rem/1.5 var(--sans); color: var(--ink); margin: .4rem 0 1rem; }
+.ixbox .presets::before { content: 'Ví dụ có sẵn:'; font: 600 .78rem/1 var(--sans); color: var(--muted); align-self: center; margin-right: .1rem; }
+.ixbox .presets .reset:not(.primary) { color: var(--ink); background: #f1f3f5; border-color: #e1e5ea; border-radius: 999px; padding: .4rem .8rem; }
+.ixbox .presets .reset:not(.primary):hover { background: #e6e9ed; }
+.ixbox .readout { margin-bottom: .8rem; } .ixbox .presets { margin-bottom: .8rem; }
+.ixmore summary { cursor: pointer; font: 600 .86rem/1.4 var(--sans); color: var(--blue); }
+.ixmore p { font: 400 .9rem/1.6 var(--sans); color: var(--muted); margin: .5rem 0 0; }
+@media (max-width: 640px) { .ixbox { padding: .9rem .8rem; margin: 1.6rem -.4rem; } }
 </style>
+
 <style>
 .sw.h { background: #fff7d6; }
 .who.h { background: #fff7d6; color: var(--ink); }
@@ -202,9 +230,9 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <div class="draft"><a class="back" href="../../?bai=L.eig">← Bản đồ</a><b>Bản nháp</b>
     <span class="chip"><span class="sw n"></span>nguyên văn ghi chú</span>
     <span class="chip"><span class="sw c"></span>hình tương tác</span>
-    <span class="chip"><span class="sw b"></span>ảnh bảng MIT OCW</span>
-    <span class="chip"><span class="sw h"></span>trang viết tay của tác giả</span>
-    <span class="chip">chữ thường: Claude viết lại theo ý ghi chú, tác giả sẽ duyệt lại; mỗi mục có link ghi chú gốc</span></div>
+    <span class="chip"><span class="sw b"></span>ảnh chụp bài giảng MIT</span>
+    <span class="chip"><span class="sw h"></span>ghi chú viết tay của tác giả</span>
+    <span class="chip">phần chữ còn lại: Claude viết từ ghi chú, tác giả sẽ duyệt lại</span></div>
 
   <header class="ch">
     <div class="crumb">Đại số tuyến tính · MIT 18.06 bài giảng 21</div>
@@ -212,8 +240,8 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
     <p class="lede">Nhân một vector với ma trận thì thường nó bị xoay sang hướng khác. Có vài vector đặc biệt không bị xoay, chỉ bị co giãn: đó là eigenvector, và hệ số co giãn là eigenvalue. Bài này là cách tìm chúng, cùng vài ví dụ cho thấy chúng có thể kỳ lạ đến đâu: số phức, hay thiếu hẳn một eigenvector.</p>
     <dl class="facts">
       <div><dt>Cần biết trước</dt><dd>Nullspace · Định thức (bài 18–19) · Ma trận chiếu (bài 15)</dd></div>
-      <div><dt>Mở ra</dt><dd>Chéo hoá và Aᵏ (bài 22) · Phương trình vi phân (bài 23) · Ma trận đối xứng (bài 25)</dd></div>
-      <div><dt>Bài giảng của tác giả</dt><dd>Chưa có video cho bài này</dd></div>
+      <div><dt>Học tiếp</dt><dd>Chéo hoá và Aᵏ (bài 22) · Phương trình vi phân (bài 23) · Ma trận đối xứng (bài 25)</dd></div>
+      <div><dt>Video giảng lại</dt><dd>Chưa có video cho bài này</dd></div>
     </dl>
   </header>
 
@@ -224,11 +252,11 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <p>Vì \(x\) vừa là đầu vào (trong \(\mathbb{R}^n\)) vừa phải so được với đầu ra (trong \(\mathbb{R}^m\)), khái niệm này chỉ có nghĩa với ma trận vuông. Một loại eigenvector ta đã gặp rồi: mọi vector khác 0 trong nullspace thoả \(Ax = 0x\), nên là eigenvector với \(\lambda = 0\). Ma trận suy biến luôn có \(\lambda = 0\) là một eigenvalue.</p>
   <div class="from n"><span class="tag">Nguyên văn ghi chú <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_21_eigenvalues_and_eigenvectors.md#node-xbuhg48" target="_blank" rel="noopener">mở ghi chú gốc ↗</a></span>
     <p>VÀ CHÚ Ý ZERO VECTOR KHÔNG PHẢI EIGENVECTOR DÙ A × ZERO_VECTOR = 0 × 0. VÌ VỚI EIGENVECTOR TA CHỈ XÉT CÁC NON-ZERO VECTOR</p></div>
-  <figure class="board solo"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/goktu7dy0op.png" alt="Bảng: Ax, eigenvectors parallel to x, Ax = λx" width="640" height="490" loading="lazy"></div>
-    <figcaption><span class="who b">Bảng</span><span>"Eigenvectors: Ax parallel to x."</span></figcaption></figure>
+  <figure class="board solo"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/goktu7dy0op.png" alt="Bảng: Ax, eigenvectors parallel to x, Ax = λx" width="640" height="490" loading="lazy"></div>
+    <figcaption><span class="who b">Bài giảng MIT</span><span>"Eigenvectors: Ax parallel to x."</span></figcaption></figure>
 
   <div class="ix" data-ix="eigshow" data-presets="[3 1; 1 3]:3,1,1,3|Chiếu lên y = x:0.5,0.5,0.5,0.5|Hoán vị:0,1,1,0|Xoay 90°:0,-1,1,0|Tam giác [3 1; 0 3]:3,1,0,3"></div>
-  <p class="ixcap"><span class="who c">Tương tác</span> <b>Đầu vào:</b> ma trận \(A\) (gõ số hoặc bấm một ví dụ của bài) và vector đơn vị \(x\) (kéo, dùng phím mũi tên, hoặc bấm "quay một vòng"). <b>Kết quả:</b> mũi tên cam \(Ax\); đường cam nhạt là \(Ax\) khi \(x\) đi hết vòng tròn. Khi \(Ax\) nằm trên đường thẳng của \(x\) (đường đứt xanh lá), \(x\) là eigenvector và độ dài có dấu của \(Ax\) là \(\lambda\). Thử "Xoay 90°": không lúc nào trùng.</p>
+  <p class="ixcap"><span class="who c">Hình tương tác</span> <b>Đầu vào:</b> ma trận \(A\) (gõ số hoặc bấm một ví dụ của bài) và vector đơn vị \(x\) (kéo, dùng phím mũi tên, hoặc bấm "quay một vòng"). <b>Kết quả:</b> mũi tên cam \(Ax\); đường cam nhạt là \(Ax\) khi \(x\) đi hết vòng tròn. Khi \(Ax\) nằm trên đường thẳng của \(x\) (đường đứt xanh lá), \(x\) là eigenvector và độ dài có dấu của \(Ax\) là \(\lambda\). Thử "Xoay 90°": không lúc nào trùng.</p>
 
   <h2><span class="no">2</span>Hai ví dụ nhìn là ra</h2>
   <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_21_eigenvalues_and_eigenvectors.md#node-wrcf705" target="_blank" rel="noopener">Ma trận chiếu ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_21_eigenvalues_and_eigenvectors.md#node-q8uugka" target="_blank" rel="noopener">Mặt phẳng: λ = 1 ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_21_eigenvalues_and_eigenvectors.md#node-1c5emzq" target="_blank" rel="noopener">Cả mặt phẳng ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_21_eigenvalues_and_eigenvectors.md#node-0durwk8" target="_blank" rel="noopener">Vuông góc: λ = 0 ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_21_eigenvalues_and_eigenvectors.md#node-rzpb92p" target="_blank" rel="noopener">Ma trận hoán vị ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_21_eigenvalues_and_eigenvectors.md#node-9pwpzco" target="_blank" rel="noopener">λ = 1 và −1 ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_21_eigenvalues_and_eigenvectors.md#node-061q5da" target="_blank" rel="noopener">Tổng λ = vết ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_21_eigenvalues_and_eigenvectors.md#node-mhl59wl" target="_blank" rel="noopener">Dùng vết ↗</a></div>
@@ -237,10 +265,10 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
     <p>Me: Mình nghĩ rằng nếu muốn b thông qua P vẫn giữ nguyên hướng, hay nói cách khác Pb và b cùng phương thì chỉ có thể có một khả năng là b đã nằm trong cols space sẵn rồi, khi đó cơ bản P sẽ project b trở thành chính nó.</p></div>
   <p><strong>Ma trận hoán vị \(\begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix}\)</strong> đổi chỗ hai thành phần, tức là lật qua đường \(y = x\). Vector nằm trên đường đó, như \((1, 1)\), không đổi: \(\lambda = 1\). Vector vuông góc, như \((-1, 1)\), bị lật ngược: \(\lambda = -1\).</p>
   <div class="pair wide">
-    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/p0qjmvt2cho.png" alt="Bảng: eigenvector của ma trận chiếu: x trong mặt phẳng Px = x, λ = 1; x vuông góc Px = 0, λ = 0" width="640" height="493" loading="lazy"></div>
-      <figcaption><span class="who b">Bảng</span><span>Ma trận chiếu: \(\lambda = 1\) và \(\lambda = 0\).</span></figcaption></figure>
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/p0qjmvt2cho.png" alt="Bảng: eigenvector của ma trận chiếu: x trong mặt phẳng Px = x, λ = 1; x vuông góc Px = 0, λ = 0" width="640" height="493" loading="lazy"></div>
+      <figcaption><span class="who b">Bài giảng MIT</span><span>Ma trận chiếu: \(\lambda = 1\) và \(\lambda = 0\).</span></figcaption></figure>
     <figure class="hand"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to hình vẽ tay của tác giả"><img src="img/uwci72wpat.png" alt="Hình vẽ tay của tác giả: (1,1) nằm trên đường y = x giữ nguyên, (−1,1) bị lật thành (1,−1)" width="608" height="518" loading="lazy"></div>
-      <figcaption><span class="who h">Tay tác giả</span><span>Hoán vị = lật qua \(y = x\): \((1,1)\) đứng yên, \((-1,1)\) đổi chiều.</span></figcaption></figure>
+      <figcaption><span class="who h">Ghi chú tay</span><span>Hoán vị = lật qua \(y = x\): \((1,1)\) đứng yên, \((-1,1)\) đổi chiều.</span></figcaption></figure>
   </div>
   <p>Một sự thật Strang nêu luôn: ma trận \(n \times n\) có \(n\) eigenvalue, và <strong>tổng của chúng bằng vết</strong> (tổng đường chéo). Với ma trận hoán vị, vết \(= 0 + 0 = 0\), nên biết \(\lambda_1 = 1\) là suy ra \(\lambda_2 = -1\).</p>
 
@@ -260,8 +288,8 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <div class="from n"><span class="tag">Nguyên văn ghi chú <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_21_eigenvalues_and_eigenvectors.md#node-9lb7oqk" target="_blank" rel="noopener">mở ghi chú gốc ↗</a></span>
     <p>gs nhấn mạnh rằng A có thể không singular, nhưng A - 4 × I phải  singular để rồi nullspace của nó khác zero, và sẽ chứa các eigenvectors tương ứng với eigenvalue = 4</p></div>
   <p>\(A\) đối xứng, và hai eigenvector \((1, 1)\), \((-1, 1)\) vuông góc với nhau. Không phải trùng hợp: bài 25 sẽ chứng minh.</p>
-  <figure class="board solo"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/678srwfc60j.png" alt="Bảng: det(A − λI) = (3 − λ)² − 1 = λ² − 6λ + 8 = (λ − 4)(λ − 2), λ1 = 4, λ2 = 2" width="640" height="485" loading="lazy"></div>
-    <figcaption><span class="who b">Bảng</span><span>Phương trình đặc trưng của \(\begin{bmatrix} 3 & 1 \\ 1 & 3 \end{bmatrix}\).</span></figcaption></figure>
+  <figure class="board solo"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/678srwfc60j.png" alt="Bảng: det(A − λI) = (3 − λ)² − 1 = λ² − 6λ + 8 = (λ − 4)(λ − 2), λ1 = 4, λ2 = 2" width="640" height="485" loading="lazy"></div>
+    <figcaption><span class="who b">Bài giảng MIT</span><span>Phương trình đặc trưng của \(\begin{bmatrix} 3 & 1 \\ 1 & 3 \end{bmatrix}\).</span></figcaption></figure>
 
   <h2><span class="no">4</span>Cộng thêm 3I thì sao, và cái bẫy A + B</h2>
   <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_21_eigenvalues_and_eigenvectors.md#node-ero3xcs" target="_blank" rel="noopener">Hoán vị + 3I ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_21_eigenvalues_and_eigenvectors.md#node-0e91uh1" target="_blank" rel="noopener">Vì sao ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_21_eigenvalues_and_eigenvectors.md#node-pn31vjm" target="_blank" rel="noopener">Lập luận sai ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_21_eigenvalues_and_eigenvectors.md#node-bldutr8" target="_blank" rel="noopener">x không chung ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_21_eigenvalues_and_eigenvectors.md#node-qalbho2" target="_blank" rel="noopener">Chỉ đúng khi B = αI ↗</a></div>
@@ -270,16 +298,16 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <p>Nhưng đừng suy rộng ra \(A + B\). "Cộng \(Ax = \lambda x\) với \(Bx = \alpha x\) được \((A+B)x = (\lambda + \alpha)x\)" là sai, vì không có lý do gì để eigenvector của \(A\) cũng là eigenvector của \(B\). Biết eigenvalue của \(A\) và \(B\) nói chung không cho biết gì về \(A + B\) hay \(AB\).</p>
   <div class="from n"><span class="tag">Nguyên văn ghi chú <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_21_eigenvalues_and_eigenvectors.md#node-pn31vjm" target="_blank" rel="noopener">mở ghi chú gốc ↗</a></span>
     <p>Me: Có thể thấy nó sai ở chỗ x không giống nhau.</p></div>
-  <figure class="board solo"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/k1s5h25yji.png" alt="Bảng: Not so great: B has eigenvalues α, By = αy, (A+B)x = (λ+α)x bị gạch" width="640" height="491" loading="lazy"></div>
-    <figcaption><span class="who b">Bảng</span><span>"Not so great": \(B\) có eigenvector riêng \(y\), không phải \(x\).</span></figcaption></figure>
+  <figure class="board solo"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/k1s5h25yji.png" alt="Bảng: Not so great: B has eigenvalues α, By = αy, (A+B)x = (λ+α)x bị gạch" width="640" height="491" loading="lazy"></div>
+    <figcaption><span class="who b">Bài giảng MIT</span><span>"Not so great": \(B\) có eigenvector riêng \(y\), không phải \(x\).</span></figcaption></figure>
 
   <h2><span class="no">5</span>Ma trận xoay 90°: eigenvalue phức</h2>
   <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_21_eigenvalues_and_eigenvectors.md#node-tww78p6" target="_blank" rel="noopener">Q xoay 90° ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_21_eigenvalues_and_eigenvectors.md#node-hbavz7t" target="_blank" rel="noopener">Rắc rối với Q ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_21_eigenvalues_and_eigenvectors.md#node-5h40uce" target="_blank" rel="noopener">λ² + 1 = 0 ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_21_eigenvalues_and_eigenvectors.md#node-sjbuwf9" target="_blank" rel="noopener">Đối xứng: λ thực ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_21_eigenvalues_and_eigenvectors.md#node-1x01rp2" target="_blank" rel="noopener">Phản đối xứng ↗</a></div>
   <p>\(Q = \begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix}\) xoay mọi vector 90°: \(Qx = (-x_2, x_1)\) luôn vuông góc với \(x\). Vậy không vector thực nào giữ được hướng. Vết bằng 0 (tổng \(\lambda\) bằng 0) mà định thức bằng 1 (tích \(\lambda\) bằng 1): không có hai số thực nào làm được vậy.</p>
   <div class="eq">\[ \det(Q - \lambda I) = \begin{vmatrix} -\lambda & -1 \\ 1 & -\lambda \end{vmatrix} = \lambda^2 + 1 = 0 \;\Longrightarrow\; \lambda = i,\; -i. \]</div>
   <p>Ma trận toàn số thực vẫn có thể có eigenvalue phức. Strang chỉ ra hai thái cực: ma trận <strong>đối xứng</strong> (\(A^T = A\)) luôn có eigenvalue thực; ma trận <strong>phản đối xứng</strong> (\(A^T = -A\), như \(Q\)) có eigenvalue thuần ảo.</p>
-  <figure class="board solo"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/1qw1a2pnmiji.png" alt="Bảng: Q = [0 −1; 1 0], trace = 0 = λ1 + λ2, det = 1 = λ1λ2, det(Q − λI) = λ² + 1 = 0" width="640" height="483" loading="lazy"></div>
-    <figcaption><span class="who b">Bảng</span><span>Vết 0, định thức 1, \(\lambda^2 + 1 = 0\).</span></figcaption></figure>
+  <figure class="board solo"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/1qw1a2pnmiji.png" alt="Bảng: Q = [0 −1; 1 0], trace = 0 = λ1 + λ2, det = 1 = λ1λ2, det(Q − λI) = λ² + 1 = 0" width="640" height="483" loading="lazy"></div>
+    <figcaption><span class="who b">Bài giảng MIT</span><span>Vết 0, định thức 1, \(\lambda^2 + 1 = 0\).</span></figcaption></figure>
 
   <h2><span class="no">6</span>Ma trận tam giác: λ lặp, thiếu eigenvector</h2>
   <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_21_eigenvalues_and_eigenvectors.md#node-mw3qjhp" target="_blank" rel="noopener">λ nằm trên đường chéo ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_21_eigenvalues_and_eigenvectors.md#node-e2131l0" target="_blank" rel="noopener">Chứng minh ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_21_eigenvalues_and_eigenvectors.md#node-njg5q0s" target="_blank" rel="noopener">Tìm eigenvector ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_21_eigenvalues_and_eigenvectors.md#node-fh9dei1" target="_blank" rel="noopener">Chỉ có một hướng ↗</a></div>
@@ -288,15 +316,15 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <p>Nullspace của \(A - 3I\) chỉ có một chiều. Hai eigenvalue mà chỉ có một hướng eigenvector: ma trận này "thiếu" eigenvector. Đây là điều bài 22 phải tránh khi chéo hoá.</p>
   <div class="from n"><span class="tag">Nguyên văn ghi chú <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_21_eigenvalues_and_eigenvectors.md#node-fh9dei1" target="_blank" rel="noopener">mở ghi chú gốc ↗</a></span>
     <p>THÌ TUY CÓ 2 EIGENVALUE  NHƯNG KHÔNG CÓ HAI EIGENVECTOR ĐỘC LẬP.  Và đây sẽ là tiền đề để nói về bài sau</p></div>
-  <figure class="board solo"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/fc2bgftvvqj.png" alt="Bảng: λ1 = 3, λ2 = 3, (A − λI)x = [0 1; 0 0]x = 0, x1 = (1, 0), x2 = no independent x" width="640" height="499" loading="lazy"></div>
-    <figcaption><span class="who b">Bảng</span><span>"\(x_2\) = no indep \(x\)."</span></figcaption></figure>
+  <figure class="board solo"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/fc2bgftvvqj.png" alt="Bảng: λ1 = 3, λ2 = 3, (A − λI)x = [0 1; 0 0]x = 0, x1 = (1, 0), x2 = no independent x" width="640" height="499" loading="lazy"></div>
+    <figcaption><span class="who b">Bài giảng MIT</span><span>"\(x_2\) = no indep \(x\)."</span></figcaption></figure>
   <p class="hint">Bấm "Tam giác [3 1; 0 3]" ở hình tương tác mục 1: chỉ có một đường đứt xanh lá.</p>
 
   <footer>
     <h3>Bài này được làm thế nào</h3>
     <p>Chữ: viết lại từ <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_21_eigenvalues_and_eigenvectors.md" target="_blank" rel="noopener">ghi chú MIT 18.06 bài giảng 21</a> của tác giả. Khung xanh là nguyên văn ghi chú; phần chữ còn lại do Claude soạn theo ý ghi chú và cần tác giả viết lại. Bài này chưa có video giảng lại.</p>
     <p>Chỗ đã sửa so với ghi chú: ở <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_21_eigenvalues_and_eigenvectors.md#node-3r02crd" target="_blank" rel="noopener">node-3r02crd</a> ghi "scalar X chính là eigenvalue", đúng ra là hệ số \(\lambda\). Ở <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_21_eigenvalues_and_eigenvectors.md#node-1x01rp2" target="_blank" rel="noopener">node-1x01rp2</a>, ma trận phản đối xứng có eigenvalue <em>thuần ảo</em> (phần thực bằng 0), cụ thể hơn chữ "số phức".</p>
-    <p>Hình tương tác: Claude dựng. Trang viết tay: tác giả viết trong StudyBoard khi học. Ảnh chụp bảng: MIT OpenCourseWare 18.06 Linear Algebra, Spring 2010, Gilbert Strang, giấy phép CC BY-NC-SA 4.0.</p>
+    <p>Hình tương tác: Claude dựng. Ghi chú viết tay: tác giả viết trong StudyBoard khi học. Ảnh chụp bảng: MIT OpenCourseWare 18.06 Linear Algebra, Spring 2010, Gilbert Strang, giấy phép CC BY-NC-SA 4.0.</p>
     <h3>Trên bản đồ</h3>
     <p><a href="../../?bai=L.eig">Nền móng Machine Learning</a> · lộ trình MIT 18.06. Bài trước: <a href="../mit1806-20/">Quy tắc Cramer, ma trận nghịch đảo và thể tích</a>. Bài tiếp: <a href="../mit1806-22/">Chéo hoá và lũy thừa của A</a>.</p>
   </footer>
@@ -570,7 +598,7 @@ IX.colspace = (box) => {
     const b = ins.map(i => Number(i.value) || 0), aug = A.map((row, i) => [...row, b[i]]), { R, piv } = rref(aug), ok = !piv.includes(n);
     let sol = '';
     if (ok) { const x = Array(n).fill(0); piv.forEach((pc, i) => x[pc] = R[i][n]); sol = `\\[ x = ${vecTex(x)} :\\quad ${x.map((c, j) => `${frac(c)}\\,${vecTex(A.map(row => row[j]))}`).join(' + ')} = ${vecTex(b)} \\]`; }
-    out.innerHTML = `<div class="mxk">Kết quả, tự tính lại</div><div class="tagok ${ok ? 'yes' : 'no'}">${ok ? 'b nằm trong column space: Ax = b có nghiệm' : 'b nằm ngoài column space: Ax = b vô nghiệm'}</div>
+    out.innerHTML = `<div class="mxk">Kết quả (tính lại ngay khi đổi đầu vào)</div><div class="tagok ${ok ? 'yes' : 'no'}">${ok ? 'b nằm trong column space: Ax = b có nghiệm' : 'b nằm ngoài column space: Ax = b vô nghiệm'}</div>
       <div class="mxeq">${sol}</div><div class="facts2"><span>hạng của A: <b>${r}</b></span><span>C(A) là không gian ${r} chiều trong ℝ<sup>${m}</sup></span></div>
       <div class="mxeq">\\[ N(A) = \\left\\{ ${N.length ? N.map((x, i) => `${'cdef'[i]}\\,${vecTex(x)}`).join(' + ') : '0'} \\right\\} \\]</div>`;
     typeset(out);
@@ -701,7 +729,7 @@ IX.rank1 = (box) => {
     const u = [0, 1].map(i => Number(ins[i].value) || 0), v = [0, 1, 2].map(i => Number(ins[2 + i].value) || 0);
     let A = u.map(a => v.map(b => a * b)); if (chk.checked) A = A.map((r, i) => r.map((x, j) => x + U2[i] * V2[j]));
     const r = rank(A);
-    out.innerHTML = `<div class="mxk">Kết quả, tự tính lại</div><div class="mxeq">\\[ A = ${chk.checked ? `${vecTex(u)}\\begin{bmatrix}${v.map(frac).join(' & ')}\\end{bmatrix} + ${vecTex(U2)}\\begin{bmatrix}${V2.join(' & ')}\\end{bmatrix}` : `${vecTex(u)}\\begin{bmatrix}${v.map(frac).join(' & ')}\\end{bmatrix}`} = ${texM(A)} \\]</div>
+    out.innerHTML = `<div class="mxk">Kết quả (tính lại ngay khi đổi đầu vào)</div><div class="mxeq">\\[ A = ${chk.checked ? `${vecTex(u)}\\begin{bmatrix}${v.map(frac).join(' & ')}\\end{bmatrix} + ${vecTex(U2)}\\begin{bmatrix}${V2.join(' & ')}\\end{bmatrix}` : `${vecTex(u)}\\begin{bmatrix}${v.map(frac).join(' & ')}\\end{bmatrix}`} = ${texM(A)} \\]</div>
       <div class="facts2"><span>hạng của A: <b>${r}</b></span></div><div class="tagok ${r <= 1 ? 'yes' : 'no'}">${r === 1 ? 'Hạng 1: mọi hàng là bội của vᵀ, mọi cột là bội của u' : r === 0 ? 'A = 0' : 'Cộng hai ma trận hạng 1 ra hạng 2: tập ma trận hạng 1 không phải không gian con'}</div>`;
     typeset(out);
   }
@@ -822,7 +850,7 @@ IX.det2 = (box) => {
   box.querySelectorAll('[data-o]').forEach(bt => bt.onclick = () => { const o = bt.dataset.o, d0 = R[0][0] * R[1][1] - R[0][1] * R[1][0];
     if (o === 'swap') { R = [R[1], R[0]]; last = 'Đổi hai hàng: det đổi dấu (tính chất 2).'; }
     if (o === 'scale') { R[0] = R[0].map(v => v * 2); last = 'Nhân một hàng với 2: det nhân 2 (tính chất 3a).'; }
-    if (o === 'shear') { R[1] = [R[1][0] - R[0][0], R[1][1] - R[0][1]]; last = 'Trừ bội của hàng khác: hình bị xô nghiêng nhưng diện tích giữ nguyên (tính chất 5).'; }
+    if (o === 'shear') { R[1] = [R[1][0] - R[0][0], R[1][1] - R[0][1]]; last = 'Trừ bội của hàng khác: hình bị kéo xiên nhưng diện tích giữ nguyên (tính chất 5).'; }
     if (o === 'reset') { R = R0.map(r => r.slice()); last = ''; }
     draw(); });
   draw();
@@ -854,7 +882,7 @@ IX.det3 = (box) => {
       tex = D ? `x_j = \\frac{\\det B_j}{\\det A}: \\quad ${dj.map((d, j) => `x_${j + 1} = \\frac{${d}}{${D}} = ${frac(d / D)}`).join(',\;\; ')}` : '\\det A = 0: \\text{ Cramer không dùng được}';
       note = 'Bⱼ là A với cột j thay bằng b. Đúng nhưng tốn: phải tính n + 1 định thức.';
     }
-    out.innerHTML = `<div class="mxk">Kết quả, tự tính lại</div><div class="steplab" style="font-weight:400">${note}</div><div class="mxeq">\\[ \\begin{aligned} ${tex.replaceAll(' \\\\ = ', ' \\\\ &= ').replace(' \\\\ \\quad ', ' \\\\ &\\quad ').replace('\\det A = ', '\\det A &= ')} \\end{aligned} \\]</div><div class="tagok ${D ? 'yes' : 'no'}">${D ? `det A = ${D}: khả nghịch` : 'det A = 0: suy biến'}</div>`;
+    out.innerHTML = `<div class="mxk">Kết quả (tính lại ngay khi đổi đầu vào)</div><div class="steplab" style="font-weight:400">${note}</div><div class="mxeq">\\[ \\begin{aligned} ${tex.replaceAll(' \\\\ = ', ' \\\\ &= ').replace(' \\\\ \\quad ', ' \\\\ &\\quad ').replace('\\det A = ', '\\det A &= ')} \\end{aligned} \\]</div><div class="tagok ${D ? 'yes' : 'no'}">${D ? `det A = ${D}: khả nghịch` : 'det A = 0: suy biến'}</div>`;
     typeset(out);
   }
   [...ins, ...bins].forEach(i => i.addEventListener('input', calc));

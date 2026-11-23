@@ -112,7 +112,35 @@ footer { margin-top: 3.5rem; padding-top: 1.4rem; border-top: 1px solid var(--ru
 footer h3 { font: 700 .78rem/1 var(--sans); letter-spacing: .07em; text-transform: uppercase; color: var(--ink); margin: 1.2rem 0 .4rem; }
 a { color: var(--blue); text-underline-offset: .15em; }
 a:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 2px; }
+</style><style>
+/* layout 2 (trial): quieter top bar, collapsed note links, boxed interactives */
+.draft2 { font: 500 .82rem/1.5 var(--sans); color: var(--muted); border-bottom: 1px solid var(--rule); padding: .9rem 0; display: flex; flex-wrap: wrap; gap: .4rem 1rem; align-items: center; }
+.draft2 .back { font-weight: 700; text-decoration: none; color: var(--blue); }
+.draft2 .dtag { background: #eef0f3; color: var(--ink); font-weight: 600; padding: .1rem .5rem; border-radius: 5px; }
+.legend summary { cursor: pointer; list-style: none; } .legend summary::-webkit-details-marker { display: none; }
+.legend summary:hover { color: var(--ink); } .legend[open] { flex-basis: 100%; }
+.legendb { display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; margin-top: .6rem; padding: .7rem .9rem; background: #fff; border: 1px solid var(--rule); border-radius: 8px; }
+.legendb p { margin: .2rem 0 0; flex-basis: 100%; font-size: .82rem; }
+.src2 { margin: -.15rem 0 .9rem; font: 500 .8rem/1.4 var(--sans); }
+.src2 summary { display: inline-flex; align-items: center; gap: .35rem; cursor: pointer; list-style: none; color: var(--muted); padding: .18rem .6rem; border: 1px solid var(--rule); border-radius: 999px; background: #fff; }
+.src2 summary::-webkit-details-marker { display: none; } .src2 summary::before { content: '📝'; font-size: .75rem; }
+.src2 summary::after { content: '▾'; font-size: .7rem; } .src2[open] summary::after { content: '▴'; } .src2 summary:hover { color: var(--ink); border-color: #c9d1da; }
+.src2 summary:focus-visible, .legend summary:focus-visible, .ixmore summary:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.srcl { display: flex; flex-wrap: wrap; gap: .35rem 1rem; margin-top: .5rem; padding: .65rem .85rem; background: #fff; border: 1px solid var(--rule); border-radius: 8px; }
+.srcl a { text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--blue) 35%, transparent); }
+.ixbox { border: 1px solid var(--rule); border-radius: 14px; background: #fff; padding: 1.1rem 1.2rem 1rem; margin: 2rem 0; box-shadow: 0 1px 3px rgba(20, 30, 40, .05); }
+.ixhead { display: flex; align-items: center; gap: .6rem; font: 700 1.05rem/1.3 var(--sans); color: var(--ink); }
+.ixhead .who { font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; padding: .18rem .5rem; border-radius: 4px; }
+.ixhow { font: 500 .95rem/1.5 var(--sans); color: var(--ink); margin: .4rem 0 1rem; }
+.ixbox .presets::before { content: 'Ví dụ có sẵn:'; font: 600 .78rem/1 var(--sans); color: var(--muted); align-self: center; margin-right: .1rem; }
+.ixbox .presets .reset:not(.primary) { color: var(--ink); background: #f1f3f5; border-color: #e1e5ea; border-radius: 999px; padding: .4rem .8rem; }
+.ixbox .presets .reset:not(.primary):hover { background: #e6e9ed; }
+.ixbox .readout { margin-bottom: .8rem; } .ixbox .presets { margin-bottom: .8rem; }
+.ixmore summary { cursor: pointer; font: 600 .86rem/1.4 var(--sans); color: var(--blue); }
+.ixmore p { font: 400 .9rem/1.6 var(--sans); color: var(--muted); margin: .5rem 0 0; }
+@media (max-width: 640px) { .ixbox { padding: .9rem .8rem; margin: 1.6rem -.4rem; } }
 </style>
+
 <style>
 .sw.h { background: #fff7d6; }
 .who.h { background: #fff7d6; color: var(--ink); }
@@ -202,9 +230,9 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <div class="draft"><a class="back" href="../../?bai=L.eig">← Bản đồ</a><b>Bản nháp</b>
     <span class="chip"><span class="sw n"></span>nguyên văn ghi chú</span>
     <span class="chip"><span class="sw c"></span>hình tương tác</span>
-    <span class="chip"><span class="sw b"></span>ảnh bảng MIT OCW</span>
-    <span class="chip"><span class="sw h"></span>trang viết tay của tác giả</span>
-    <span class="chip">chữ thường: Claude viết lại theo ý ghi chú, tác giả sẽ duyệt lại; mỗi mục có link ghi chú gốc</span></div>
+    <span class="chip"><span class="sw b"></span>ảnh chụp bài giảng MIT</span>
+    <span class="chip"><span class="sw h"></span>ghi chú viết tay của tác giả</span>
+    <span class="chip">phần chữ còn lại: Claude viết từ ghi chú, tác giả sẽ duyệt lại</span></div>
 
   <header class="ch">
     <div class="crumb">Đại số tuyến tính · MIT 18.06 bài giảng 24</div>
@@ -212,8 +240,8 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
     <p class="lede">Hai ứng dụng. Ma trận Markov mô tả xác suất chuyển trạng thái; nó luôn có eigenvalue 1, và eigenvector đi kèm chính là trạng thái mà hệ dừng lại sau rất nhiều bước. Phần hai: khai triển một vector theo cơ sở trực chuẩn, và chuỗi Fourier chính là việc đó, chỉ khác là "vector" giờ là một hàm.</p>
     <dl class="facts">
       <div><dt>Cần biết trước</dt><dd>uₖ = Aᵏu₀ (bài 22) · Ma trận trực giao Q (bài 17) · det Aᵀ = det A (bài 18)</dd></div>
-      <div><dt>Mở ra</dt><dd>Xác suất, chuỗi Markov · Xử lý tín hiệu · Ma trận đối xứng (bài 25)</dd></div>
-      <div><dt>Bài giảng của tác giả</dt><dd>Chưa có video cho bài này</dd></div>
+      <div><dt>Học tiếp</dt><dd>Xác suất, chuỗi Markov · Xử lý tín hiệu · Ma trận đối xứng (bài 25)</dd></div>
+      <div><dt>Video giảng lại</dt><dd>Chưa có video cho bài này</dd></div>
     </dl>
   </header>
 
@@ -226,8 +254,8 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   </ol>
   <p>Bình phương lên vẫn giữ hai tính chất này, nên \(A^2\), \(A^3, \dots\) cũng là ma trận Markov. Ví dụ của Strang:</p>
   <div class="eq">\[ A = \begin{bmatrix} .1 & .01 & .3 \\ .2 & .99 & .3 \\ .7 & 0 & .4 \end{bmatrix}. \]</div>
-  <figure class="board solo"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/51o2jic582q.png" alt="Bảng: A = [.1 .01 .3; .2 .99 .3; .7 0 .4], 1. All entries ≥ 0, 2. All columns add to 1" width="640" height="487" loading="lazy"></div>
-    <figcaption><span class="who b">Bảng</span><span>"All entries \(\geq 0\). All columns add to 1."</span></figcaption></figure>
+  <figure class="board solo"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/51o2jic582q.png" alt="Bảng: A = [.1 .01 .3; .2 .99 .3; .7 0 .4], 1. All entries ≥ 0, 2. All columns add to 1" width="640" height="487" loading="lazy"></div>
+    <figcaption><span class="who b">Bài giảng MIT</span><span>"All entries \(\geq 0\). All columns add to 1."</span></figcaption></figure>
 
   <h2><span class="no">2</span>Trạng thái dừng là eigenvector của λ = 1</h2>
   <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_24_markow_matrices_fourier_series.md#node-6ie64kz" target="_blank" rel="noopener">Dừng: λ = 0 hay λ = 1 ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_24_markow_matrices_fourier_series.md#node-w059ddz" target="_blank" rel="noopener">Eigenvector của λ = 1 ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_24_markow_matrices_fourier_series.md#node-5kurnv5" target="_blank" rel="noopener">Các λ còn lại ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_24_markow_matrices_fourier_series.md#node-iqngcv5" target="_blank" rel="noopener">Nhắc lại uₖ ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_24_markow_matrices_fourier_series.md#node-wytahw3" target="_blank" rel="noopener">Cần đủ eigenvector ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_24_markow_matrices_fourier_series.md#node-z4ursfp" target="_blank" rel="noopener">uₖ → c₁x₁ ↗</a></div>
@@ -238,8 +266,8 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   </ol>
   <div class="eq">\[ u_k = A^ku_0 = c_1\,1^k\,x_1 + c_2\lambda_2^k x_2 + \cdots + c_n\lambda_n^k x_n \;\xrightarrow{\;k \to \infty\;}\; c_1x_1. \]</div>
   <p>Trạng thái dừng là \(c_1x_1\), phần ứng với \(\lambda = 1\). Như mọi lần, công thức này cần \(A\) có đủ \(n\) eigenvector độc lập.</p>
-  <figure class="board solo"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/36kaoaf5bky.png" alt="Bảng: 1. λ = 1 is an eigenvalue, 2. all other |λi| &lt; 1, uk = A^k u0 = c1 λ1^k x1 + c2 λ2^k x2 + …" width="640" height="488" loading="lazy"></div>
-    <figcaption><span class="who b">Bảng</span><span>\(u_k = c_1\lambda_1^kx_1 + c_2\lambda_2^kx_2 + \cdots\).</span></figcaption></figure>
+  <figure class="board solo"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/36kaoaf5bky.png" alt="Bảng: 1. λ = 1 is an eigenvalue, 2. all other |λi| &lt; 1, uk = A^k u0 = c1 λ1^k x1 + c2 λ2^k x2 + …" width="640" height="488" loading="lazy"></div>
+    <figcaption><span class="who b">Bài giảng MIT</span><span>\(u_k = c_1\lambda_1^kx_1 + c_2\lambda_2^kx_2 + \cdots\).</span></figcaption></figure>
 
   <h2><span class="no">3</span>Vì sao λ = 1 luôn là eigenvalue</h2>
   <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_24_markow_matrices_fourier_series.md#node-5vavlhi" target="_blank" rel="noopener">Câu hỏi ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_24_markow_matrices_fourier_series.md#node-mueh8k0" target="_blank" rel="noopener">Cần A − I suy biến ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_24_markow_matrices_fourier_series.md#node-nofrw61" target="_blank" rel="noopener">Tổng các hàng bằng 0 ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_24_markow_matrices_fourier_series.md#node-ueu3jed" target="_blank" rel="noopener">(1,1,1) và Aᵀ ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_24_markow_matrices_fourier_series.md#node-2b3cfls" target="_blank" rel="noopener">Cái gì trong N(A − I) ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_24_markow_matrices_fourier_series.md#node-m45m63b" target="_blank" rel="noopener">λ của A và Aᵀ ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_24_markow_matrices_fourier_series.md#node-206k1i3" target="_blank" rel="noopener">Chứng minh ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_24_markow_matrices_fourier_series.md#node-ulnm7rm" target="_blank" rel="noopener">Chú thích của tác giả ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_24_markow_matrices_fourier_series.md#node-fevdeo4" target="_blank" rel="noopener">x₁ = (.6, 33, .7) ↗</a></div>
@@ -253,10 +281,10 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
     <p>Chú thích (*): Chỗ này có vẻ hơi dư, bởi lẽ bằng việc chứng minh matrix A - 1 × I singular đã suy ra det (A-1 × I) = 0 ⇒ tồn tại x khiến (A -1 × I)x = 0 hay Ax = x</p></div>
   <p>Tác giả nói đúng: chỉ cần \(A - I\) suy biến là đã có \(\lambda = 1\) cho \(A\). Đoạn về \(A^T\) chỉ để thấy cụ thể vector \((1,1,1)\) ở đâu.</p>
   <div class="pair wide">
-    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/ntf5kid68s.png" alt="Bảng: A − 1I = [−.9 .01 .3; .2 −.01 .3; .7 0 −.6], all columns add to zero → A − I is singular" width="640" height="489" loading="lazy"></div>
-      <figcaption><span class="who b">Bảng</span><span>Cột của \(A - I\) cộng lại bằng 0, nên suy biến.</span></figcaption></figure>
-    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/s5ko3ud7sf.png" alt="Bảng: (A − I) nhân (.6, 33, .7) bằng 0" width="640" height="488" loading="lazy"></div>
-      <figcaption><span class="who b">Bảng</span><span>\(x_1 = (.6, 33, .7)\): thành phần lớn nằm ở vị trí có \(.99\).</span></figcaption></figure>
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/ntf5kid68s.png" alt="Bảng: A − 1I = [−.9 .01 .3; .2 −.01 .3; .7 0 −.6], all columns add to zero → A − I is singular" width="640" height="489" loading="lazy"></div>
+      <figcaption><span class="who b">Bài giảng MIT</span><span>Cột của \(A - I\) cộng lại bằng 0, nên suy biến.</span></figcaption></figure>
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/s5ko3ud7sf.png" alt="Bảng: (A − I) nhân (.6, 33, .7) bằng 0" width="640" height="488" loading="lazy"></div>
+      <figcaption><span class="who b">Bài giảng MIT</span><span>\(x_1 = (.6, 33, .7)\): thành phần lớn nằm ở vị trí có \(.99\).</span></figcaption></figure>
   </div>
 
   <h2><span class="no">4</span>Di cư giữa California và Massachusetts</h2>
@@ -267,14 +295,14 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <div class="eq">\[ u_k = \frac{1000}{3}\begin{bmatrix} 2 \\ 1 \end{bmatrix} + \frac{2000}{3}(0{,}7)^k\begin{bmatrix} -1 \\ 1 \end{bmatrix} \;\xrightarrow{\;k \to \infty\;}\; \begin{bmatrix} 667 \\ 333 \end{bmatrix}. \]</div>
   <p>Về lâu dài hai phần ba ở California, bất kể lúc đầu chia thế nào; \(u_0\) chỉ quyết định nó đến đó nhanh hay chậm (qua \(c_2\)). Tổng dân số luôn là 1000 vì mỗi cột cộng lại bằng 1. Một số sách viết ma trận Markov theo hàng (mỗi hàng cộng bằng 1) và nhân vector hàng từ bên trái; cùng một chuyện.</p>
   <div class="pair wide">
-    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/lz9o1v0nfo.png" alt="Bảng: u0 = (0, 1000) → u1 = (200, 800)" width="640" height="485" loading="lazy"></div>
-      <figcaption><span class="who b">Bảng</span><span>Năm đầu: \((0, 1000) \to (200, 800)\).</span></figcaption></figure>
-    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/5yfz7go5wpv.png" alt="Bảng: uk = c1 1^k (2,1) + c2 (.7)^k (−1,1), u0 = 1000/3 (2,1) + 2000/3 (−1,1)" width="640" height="497" loading="lazy"></div>
-      <figcaption><span class="who b">Bảng</span><span>\(u_0 = \tfrac{1000}{3}(2,1) + \tfrac{2000}{3}(-1,1)\).</span></figcaption></figure>
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/lz9o1v0nfo.png" alt="Bảng: u0 = (0, 1000) → u1 = (200, 800)" width="640" height="485" loading="lazy"></div>
+      <figcaption><span class="who b">Bài giảng MIT</span><span>Năm đầu: \((0, 1000) \to (200, 800)\).</span></figcaption></figure>
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/5yfz7go5wpv.png" alt="Bảng: uk = c1 1^k (2,1) + c2 (.7)^k (−1,1), u0 = 1000/3 (2,1) + 2000/3 (−1,1)" width="640" height="497" loading="lazy"></div>
+      <figcaption><span class="who b">Bài giảng MIT</span><span>\(u_0 = \tfrac{1000}{3}(2,1) + \tfrac{2000}{3}(-1,1)\).</span></figcaption></figure>
   </div>
 
   <div class="ix" data-ix="powers" data-kmax="40" data-presets="California–Massachusetts:0.9,0.2,0.1,0.8:0,1000|Bắt đầu ở California:0.9,0.2,0.1,0.8:1000,0|Di cư mạnh hơn:0.5,0.4,0.5,0.6:0,1000"></div>
-  <p class="ixcap"><span class="who c">Tương tác</span> <b>Đầu vào:</b> ma trận \(A\), dân số ban đầu \(u_0\), số năm \(k\). <b>Kết quả:</b> các điểm \(u_0, u_1, \dots, u_k\) trong mặt phẳng (Cal, Mass), đường đứt xanh lá là hướng \(x_1\) của \(\lambda = 1\); bên dưới là tổng dân số (giữ nguyên) và \(u_k\) tách theo hai eigenvector. Đổi \(u_0\) thì điểm cuối vẫn về \((667, 333)\).</p>
+  <p class="ixcap"><span class="who c">Hình tương tác</span> <b>Đầu vào:</b> ma trận \(A\), dân số ban đầu \(u_0\), số năm \(k\). <b>Kết quả:</b> các điểm \(u_0, u_1, \dots, u_k\) trong mặt phẳng (Cal, Mass), đường đứt xanh lá là hướng \(x_1\) của \(\lambda = 1\); bên dưới là tổng dân số (giữ nguyên) và \(u_k\) tách theo hai eigenvector. Đổi \(u_0\) thì điểm cuối vẫn về \((667, 333)\).</p>
 
   <h2><span class="no">5</span>Khai triển theo cơ sở trực chuẩn</h2>
   <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_24_markow_matrices_fourier_series.md#node-uqmqduv" target="_blank" rel="noopener">Cơ sở q₁ … qₙ ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_24_markow_matrices_fourier_series.md#node-fv5ig2v" target="_blank" rel="noopener">Nhân hai vế với q₁ᵀ ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_24_markow_matrices_fourier_series.md#node-9fklg3n" target="_blank" rel="noopener">x = Qᵀv ↗</a></div>
@@ -282,32 +310,32 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <div class="eq">\[ q_1^Tv = x_1 \qquad\text{và nói chung}\qquad Qx = v \;\Rightarrow\; x = Q^{-1}v = Q^Tv. \]</div>
   <p>Không cần giải hệ: mỗi hệ số là một tích vô hướng.</p>
   <figure class="hand solo"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ghi chú tay của tác giả"><img src="img/1qe93c39mon.png" alt="Nét vẽ màu của tác giả trên bảng: Qx = v, x = Q⁻¹v = Qᵀv, hàng q1ᵀ của Qᵀ nhân v ra x1" width="640" height="444" loading="lazy"></div>
-    <figcaption><span class="who h">Tay tác giả</span><span>Hàng \(q_1^T\) của \(Q^T\) nhân \(v\) ra đúng \(x_1\).</span></figcaption></figure>
+    <figcaption><span class="who h">Ghi chú tay</span><span>Hàng \(q_1^T\) của \(Q^T\) nhân \(v\) ra đúng \(x_1\).</span></figcaption></figure>
 
   <h2><span class="no">6</span>Chuỗi Fourier: cùng ý, nhưng vector là hàm</h2>
   <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_24_markow_matrices_fourier_series.md#node-atjbaiy" target="_blank" rel="noopener">Chuỗi Fourier ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_24_markow_matrices_fourier_series.md#node-8jcwpi3" target="_blank" rel="noopener">Tích vô hướng của hai hàm ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_24_markow_matrices_fourier_series.md#node-d2c1t8i" target="_blank" rel="noopener">sin và cos vuông góc ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_24_markow_matrices_fourier_series.md#node-0vrghum" target="_blank" rel="noopener">Tìm a₁ ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_24_markow_matrices_fourier_series.md#node-o1hvbtn" target="_blank" rel="noopener">Tóm lại ↗</a></div>
   <div class="eq">\[ f(x) = a_0 + a_1\cos x + b_1\sin x + a_2\cos 2x + b_2\sin 2x + \cdots \]</div>
   <p>Fourier nhận ra đây vẫn là khai triển theo một cơ sở vuông góc, chỉ là trong không gian hàm (vô hạn chiều). Cần một tích vô hướng cho hàm: "nhân từng thành phần rồi cộng" với \(x\) chạy liên tục thành tích phân, trên một chu kỳ \([0, 2\pi]\):</p>
   <div class="eq">\[ f^Tg = \int_0^{2\pi} f(x)\,g(x)\,dx, \qquad \int_0^{2\pi}\sin x\cos x\,dx = 0. \]</div>
-  <p>Các hàm \(1, \cos x, \sin x, \cos 2x, \dots\) vuông góc từng đôi theo tích vô hướng này. Muốn \(a_1\): nhân hai vế với \(\cos x\) rồi tích phân. Mọi số hạng chết, trừ \(a_1\int_0^{2\pi}\cos^2x\,dx = a_1\pi\):</p>
+  <p>Các hàm \(1, \cos x, \sin x, \cos 2x, \dots\) vuông góc từng đôi theo tích vô hướng này. Muốn \(a_1\): nhân hai vế với \(\cos x\) rồi tích phân. Mọi số hạng bằng 0, trừ \(a_1\int_0^{2\pi}\cos^2x\,dx = a_1\pi\):</p>
   <div class="eq">\[ a_1 = \frac{1}{\pi}\int_0^{2\pi} f(x)\cos x\,dx, \qquad a_0 = \frac{1}{2\pi}\int_0^{2\pi} f(x)\,dx \;\text{(giá trị trung bình)}. \]</div>
   <div class="from n"><span class="tag">Nguyên văn ghi chú <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_24_markow_matrices_fourier_series.md#node-o1hvbtn" target="_blank" rel="noopener">mở ghi chú gốc ↗</a></span>
     <p>tóm lại, Fourier expansion quả thật chính là việc projection expansion trong một ortho-normal basis</p></div>
   <div class="pair wide">
-    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/tnx5pcdyl6d.png" alt="Bảng: Fourier series f(x) = a0 + a1 cos x + b1 sin x + …, vectors vᵀw = v1w1 + … , functions fᵀg = ∫0^2π f(x)g(x)dx" width="640" height="488" loading="lazy"></div>
-      <figcaption><span class="who b">Bảng</span><span>Từ \(v^Tw\) của vector sang \(\int fg\) của hàm.</span></figcaption></figure>
-    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/3nub2jn233z.png" alt="Bảng: a1 ∫ cos²x dx = a1 π, a1 = 1/π ∫ f(x) cos x dx" width="640" height="483" loading="lazy"></div>
-      <figcaption><span class="who b">Bảng</span><span>\(a_1 = \tfrac{1}{\pi}\int_0^{2\pi} f(x)\cos x\,dx\).</span></figcaption></figure>
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/tnx5pcdyl6d.png" alt="Bảng: Fourier series f(x) = a0 + a1 cos x + b1 sin x + …, vectors vᵀw = v1w1 + … , functions fᵀg = ∫0^2π f(x)g(x)dx" width="640" height="488" loading="lazy"></div>
+      <figcaption><span class="who b">Bài giảng MIT</span><span>Từ \(v^Tw\) của vector sang \(\int fg\) của hàm.</span></figcaption></figure>
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/3nub2jn233z.png" alt="Bảng: a1 ∫ cos²x dx = a1 π, a1 = 1/π ∫ f(x) cos x dx" width="640" height="483" loading="lazy"></div>
+      <figcaption><span class="who b">Bài giảng MIT</span><span>\(a_1 = \tfrac{1}{\pi}\int_0^{2\pi} f(x)\cos x\,dx\).</span></figcaption></figure>
   </div>
 
   <div class="ix" data-ix="fourier"></div>
-  <p class="ixcap"><span class="who c">Tương tác</span> <b>Đầu vào:</b> chọn hàm \(f\) và số số hạng \(N\). <b>Kết quả:</b> tổng Fourier \(a_0 + \sum_{k \le N}(a_k\cos kx + b_k\sin kx)\) (cam) chồng lên \(f\) (xanh), các hệ số đầu tiên tính bằng đúng công thức chiếu ở trên, và sai số. Sóng vuông chỉ có \(b_k\) với \(k\) lẻ, \(b_k = \tfrac{4}{\pi k}\); gần chỗ nhảy luôn còn một gợn nhô lên dù \(N\) lớn (hiện tượng Gibbs).</p>
+  <p class="ixcap"><span class="who c">Hình tương tác</span> <b>Đầu vào:</b> chọn hàm \(f\) và số số hạng \(N\). <b>Kết quả:</b> tổng Fourier \(a_0 + \sum_{k \le N}(a_k\cos kx + b_k\sin kx)\) (cam) chồng lên \(f\) (xanh), các hệ số đầu tiên tính bằng đúng công thức chiếu ở trên, và sai số. Sóng vuông chỉ có \(b_k\) với \(k\) lẻ, \(b_k = \tfrac{4}{\pi k}\); gần chỗ nhảy luôn còn một gợn nhô lên dù \(N\) lớn (hiện tượng Gibbs).</p>
 
   <footer>
     <h3>Bài này được làm thế nào</h3>
     <p>Chữ: viết lại từ <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_24_markow_matrices_fourier_series.md" target="_blank" rel="noopener">ghi chú MIT 18.06 bài giảng 24</a> của tác giả. Khung xanh là nguyên văn ghi chú; phần chữ còn lại do Claude soạn theo ý ghi chú và cần tác giả viết lại. Bài này chưa có video giảng lại.</p>
     <p>Chỗ đã sửa so với ghi chú: ở <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_24_markow_matrices_fourier_series.md#node-5kurnv5" target="_blank" rel="noopener">node-5kurnv5</a> các eigenvalue còn lại thoả \(|\lambda| \le 1\) (trị tuyệt đối; chúng có thể âm). Ở <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_24_markow_matrices_fourier_series.md#node-o1hvbtn" target="_blank" rel="noopener">node-o1hvbtn</a>, cơ sở \(1, \cos x, \sin x, \dots\) chỉ <em>vuông góc</em>, chưa chuẩn hoá: \(\int_0^{2\pi}\cos^2x\,dx = \pi\) chứ không phải 1, nên công thức có thêm \(\tfrac1\pi\).</p>
-    <p>Hình tương tác: Claude dựng. Trang viết tay: tác giả viết trong StudyBoard khi học. Ảnh chụp bảng: MIT OpenCourseWare 18.06 Linear Algebra, Spring 2010, Gilbert Strang, giấy phép CC BY-NC-SA 4.0.</p>
+    <p>Hình tương tác: Claude dựng. Ghi chú viết tay: tác giả viết trong StudyBoard khi học. Ảnh chụp bảng: MIT OpenCourseWare 18.06 Linear Algebra, Spring 2010, Gilbert Strang, giấy phép CC BY-NC-SA 4.0.</p>
     <h3>Trên bản đồ</h3>
     <p><a href="../../?bai=L.eig">Nền móng Machine Learning</a> · lộ trình MIT 18.06. Bài trước: <a href="../mit1806-23/">Phương trình vi phân và eᴬᵗ</a>. Bài tiếp: <a href="../mit1806-25/">Ma trận đối xứng và xác định dương</a>.</p>
   </footer>
@@ -581,7 +609,7 @@ IX.colspace = (box) => {
     const b = ins.map(i => Number(i.value) || 0), aug = A.map((row, i) => [...row, b[i]]), { R, piv } = rref(aug), ok = !piv.includes(n);
     let sol = '';
     if (ok) { const x = Array(n).fill(0); piv.forEach((pc, i) => x[pc] = R[i][n]); sol = `\\[ x = ${vecTex(x)} :\\quad ${x.map((c, j) => `${frac(c)}\\,${vecTex(A.map(row => row[j]))}`).join(' + ')} = ${vecTex(b)} \\]`; }
-    out.innerHTML = `<div class="mxk">Kết quả, tự tính lại</div><div class="tagok ${ok ? 'yes' : 'no'}">${ok ? 'b nằm trong column space: Ax = b có nghiệm' : 'b nằm ngoài column space: Ax = b vô nghiệm'}</div>
+    out.innerHTML = `<div class="mxk">Kết quả (tính lại ngay khi đổi đầu vào)</div><div class="tagok ${ok ? 'yes' : 'no'}">${ok ? 'b nằm trong column space: Ax = b có nghiệm' : 'b nằm ngoài column space: Ax = b vô nghiệm'}</div>
       <div class="mxeq">${sol}</div><div class="facts2"><span>hạng của A: <b>${r}</b></span><span>C(A) là không gian ${r} chiều trong ℝ<sup>${m}</sup></span></div>
       <div class="mxeq">\\[ N(A) = \\left\\{ ${N.length ? N.map((x, i) => `${'cdef'[i]}\\,${vecTex(x)}`).join(' + ') : '0'} \\right\\} \\]</div>`;
     typeset(out);
@@ -712,7 +740,7 @@ IX.rank1 = (box) => {
     const u = [0, 1].map(i => Number(ins[i].value) || 0), v = [0, 1, 2].map(i => Number(ins[2 + i].value) || 0);
     let A = u.map(a => v.map(b => a * b)); if (chk.checked) A = A.map((r, i) => r.map((x, j) => x + U2[i] * V2[j]));
     const r = rank(A);
-    out.innerHTML = `<div class="mxk">Kết quả, tự tính lại</div><div class="mxeq">\\[ A = ${chk.checked ? `${vecTex(u)}\\begin{bmatrix}${v.map(frac).join(' & ')}\\end{bmatrix} + ${vecTex(U2)}\\begin{bmatrix}${V2.join(' & ')}\\end{bmatrix}` : `${vecTex(u)}\\begin{bmatrix}${v.map(frac).join(' & ')}\\end{bmatrix}`} = ${texM(A)} \\]</div>
+    out.innerHTML = `<div class="mxk">Kết quả (tính lại ngay khi đổi đầu vào)</div><div class="mxeq">\\[ A = ${chk.checked ? `${vecTex(u)}\\begin{bmatrix}${v.map(frac).join(' & ')}\\end{bmatrix} + ${vecTex(U2)}\\begin{bmatrix}${V2.join(' & ')}\\end{bmatrix}` : `${vecTex(u)}\\begin{bmatrix}${v.map(frac).join(' & ')}\\end{bmatrix}`} = ${texM(A)} \\]</div>
       <div class="facts2"><span>hạng của A: <b>${r}</b></span></div><div class="tagok ${r <= 1 ? 'yes' : 'no'}">${r === 1 ? 'Hạng 1: mọi hàng là bội của vᵀ, mọi cột là bội của u' : r === 0 ? 'A = 0' : 'Cộng hai ma trận hạng 1 ra hạng 2: tập ma trận hạng 1 không phải không gian con'}</div>`;
     typeset(out);
   }
@@ -833,7 +861,7 @@ IX.det2 = (box) => {
   box.querySelectorAll('[data-o]').forEach(bt => bt.onclick = () => { const o = bt.dataset.o, d0 = R[0][0] * R[1][1] - R[0][1] * R[1][0];
     if (o === 'swap') { R = [R[1], R[0]]; last = 'Đổi hai hàng: det đổi dấu (tính chất 2).'; }
     if (o === 'scale') { R[0] = R[0].map(v => v * 2); last = 'Nhân một hàng với 2: det nhân 2 (tính chất 3a).'; }
-    if (o === 'shear') { R[1] = [R[1][0] - R[0][0], R[1][1] - R[0][1]]; last = 'Trừ bội của hàng khác: hình bị xô nghiêng nhưng diện tích giữ nguyên (tính chất 5).'; }
+    if (o === 'shear') { R[1] = [R[1][0] - R[0][0], R[1][1] - R[0][1]]; last = 'Trừ bội của hàng khác: hình bị kéo xiên nhưng diện tích giữ nguyên (tính chất 5).'; }
     if (o === 'reset') { R = R0.map(r => r.slice()); last = ''; }
     draw(); });
   draw();
@@ -865,7 +893,7 @@ IX.det3 = (box) => {
       tex = D ? `x_j = \\frac{\\det B_j}{\\det A}: \\quad ${dj.map((d, j) => `x_${j + 1} = \\frac{${d}}{${D}} = ${frac(d / D)}`).join(',\;\; ')}` : '\\det A = 0: \\text{ Cramer không dùng được}';
       note = 'Bⱼ là A với cột j thay bằng b. Đúng nhưng tốn: phải tính n + 1 định thức.';
     }
-    out.innerHTML = `<div class="mxk">Kết quả, tự tính lại</div><div class="steplab" style="font-weight:400">${note}</div><div class="mxeq">\\[ \\begin{aligned} ${tex.replaceAll(' \\\\ = ', ' \\\\ &= ').replace(' \\\\ \\quad ', ' \\\\ &\\quad ').replace('\\det A = ', '\\det A &= ')} \\end{aligned} \\]</div><div class="tagok ${D ? 'yes' : 'no'}">${D ? `det A = ${D}: khả nghịch` : 'det A = 0: suy biến'}</div>`;
+    out.innerHTML = `<div class="mxk">Kết quả (tính lại ngay khi đổi đầu vào)</div><div class="steplab" style="font-weight:400">${note}</div><div class="mxeq">\\[ \\begin{aligned} ${tex.replaceAll(' \\\\ = ', ' \\\\ &= ').replace(' \\\\ \\quad ', ' \\\\ &\\quad ').replace('\\det A = ', '\\det A &= ')} \\end{aligned} \\]</div><div class="tagok ${D ? 'yes' : 'no'}">${D ? `det A = ${D}: khả nghịch` : 'det A = 0: suy biến'}</div>`;
     typeset(out);
   }
   [...ins, ...bins].forEach(i => i.addEventListener('input', calc));
