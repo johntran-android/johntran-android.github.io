@@ -741,6 +741,117 @@ IX.graph = (box) => {
   [...xs, ...ls].forEach(i => i.oninput = draw); draw();
 };
 
+
+// ---- projection onto a line, and Gram–Schmidt for two vectors (lectures 15, 17)
+// input: drag a and b  ·  result: p = (aᵀb/aᵀa) a, e = b − p ⟂ a, P = aaᵀ/aᵀa; with data-gs="1": A = a, B = e, q₁, q₂
+IX.proj2d = (box) => {
+  const GS = box.dataset.gs === '1';
+  box.innerHTML = `<div class="frame live"><svg viewBox="0 0 400 300"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout');
+  const S = 34, O = [170, 190], X = a => O[0] + a * S, Y = b => O[1] - b * S, iX = px => (px - O[0]) / S, iY = py => (O[1] - py) / S;
+  for (let i = -5; i <= 6; i++) el(svg, 'line', { x1: X(i), x2: X(i), y1: Y(-3.2), y2: Y(5.4), class: 'gr' });
+  for (let j = -3; j <= 5; j++) el(svg, 'line', { x1: X(-5.2), x2: X(6.6), y1: Y(j), y2: Y(j), class: 'gr' });
+  el(svg, 'line', { x1: X(-5.2), x2: X(6.6), y1: Y(0), y2: Y(0), class: 'ax' }); el(svg, 'line', { x1: X(0), x2: X(0), y1: Y(-3.2), y2: Y(5.4), class: 'ax' });
+  const id = 'p' + (++MID), defs = el(svg, 'defs'); [['b', '#1a73e8'], ['o', '#e37400'], ['g', '#0f8f7e'], ['r', '#c5221f'], ['v', '#8e24aa']].forEach(([k, c]) => marker(defs, id + k, c));
+  const layer = el(svg, 'g'), hs = el(svg, 'g'); const V = { a: [4, 1], b: [2, 3] };
+  const H = ['a', 'b'].map((n, i) => { const g = el(hs, 'g', { class: 'handle', tabindex: 0, role: 'slider', 'aria-label': `Vector ${n}` }); el(g, 'circle', { r: 14, fill: 'transparent' }); el(g, 'circle', { r: 6, fill: i ? '#e37400' : '#1a73e8', stroke: '#fff', 'stroke-width': 1.5 });
+    let drag = false; g.addEventListener('pointerdown', e => { drag = true; g.setPointerCapture(e.pointerId); });
+    g.addEventListener('pointermove', e => { if (!drag) return; const r = svg.getBoundingClientRect(), q = [Math.round(iX((e.clientX - r.left) * 400 / r.width)), Math.round(iY((e.clientY - r.top) * 300 / r.height))]; if (q[0] || q[1]) { V[n] = [Math.max(-5, Math.min(6, q[0])), Math.max(-3, Math.min(5, q[1]))]; draw(); } });
+    ['pointerup', 'pointercancel'].forEach(t => g.addEventListener(t, () => drag = false));
+    g.addEventListener('keydown', e => { const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1] }[e.key]; if (!d) return; e.preventDefault(); const q = [V[n][0] + d[0], V[n][1] + d[1]]; if (q[0] || q[1]) { V[n] = q; draw(); } });
+    return g; });
+  const arrow = (p, q, k, w = 2.8, dash) => el(layer, 'line', { x1: X(p[0]), y1: Y(p[1]), x2: X(q[0]), y2: Y(q[1]), stroke: { b: '#1a73e8', o: '#e37400', g: '#0f8f7e', r: '#c5221f', v: '#8e24aa' }[k], 'stroke-width': w, 'marker-end': `url(#${id + k})`, ...(dash ? { 'stroke-dasharray': '5 4' } : {}) });
+  const lab = (q, t, c, dx = 7, dy = -7) => { const e = el(layer, 'text', { x: X(q[0]) + dx, y: Y(q[1]) + dy, fill: c, style: 'font:700 12px var(--sans);paint-order:stroke;stroke:#fff;stroke-width:4px' }); e.textContent = t; };
+  function draw() {
+    layer.innerHTML = ''; const a = V.a, b = V.b, aa = a[0] * a[0] + a[1] * a[1], ab = a[0] * b[0] + a[1] * b[1], x = ab / aa, p = [x * a[0], x * a[1]], e = [b[0] - p[0], b[1] - p[1]];
+    const t = 6.5 / Math.sqrt(aa); el(layer, 'line', { x1: X(-a[0] * t), y1: Y(-a[1] * t), x2: X(a[0] * t), y2: Y(a[1] * t), stroke: 'rgba(26,115,232,.22)', 'stroke-width': 5 });
+    arrow([0, 0], a, 'b'); arrow([0, 0], b, 'o');
+    if (Math.hypot(...p) > 1e-9) arrow([0, 0], p, 'g', 3.2);
+    if (Math.hypot(...e) > 1e-9) { arrow(p, b, 'r', 2.2, true);
+      const u = [a[0] / Math.sqrt(aa), a[1] / Math.sqrt(aa)], w = [e[0] / Math.hypot(...e), e[1] / Math.hypot(...e)], k = 0.32, c1 = [p[0] - u[0] * k, p[1] - u[1] * k], c2 = [c1[0] + w[0] * k, c1[1] + w[1] * k], c3 = [p[0] + w[0] * k, p[1] + w[1] * k];
+      el(layer, 'path', { d: `M${X(c1[0])},${Y(c1[1])}L${X(c2[0])},${Y(c2[1])}L${X(c3[0])},${Y(c3[1])}`, fill: 'none', stroke: '#5d6670', 'stroke-width': 1.2 }); }
+    lab(a, GS ? 'a = A' : 'a', '#1a73e8'); lab(b, 'b', '#e37400'); lab(p, 'p', '#0f8f7e', 6, 16); lab([(p[0] + b[0]) / 2, (p[1] + b[1]) / 2], GS ? 'B = b − p' : 'e = b − p', '#c5221f', 8, 4);
+    if (GS && Math.hypot(...e) > 1e-9) { const q1 = [a[0] / Math.sqrt(aa), a[1] / Math.sqrt(aa)], q2 = [e[0] / Math.hypot(...e), e[1] / Math.hypot(...e)]; arrow([0, 0], q1, 'v', 3.4); arrow([0, 0], q2, 'v', 3.4); lab(q1, 'q₁', '#8e24aa', -4, 16); lab(q2, 'q₂', '#8e24aa', -18, -4); }
+    H[0].setAttribute('transform', `translate(${X(a[0])},${Y(a[1])})`); H[1].setAttribute('transform', `translate(${X(b[0])},${Y(b[1])})`);
+    const P = [[a[0] * a[0] / aa, a[0] * a[1] / aa], [a[1] * a[0] / aa, a[1] * a[1] / aa]];
+    out.innerHTML = GS
+      ? `<span>B = b − (aᵀb/aᵀa)·a = (${vn(b[0])}, ${vn(b[1])}) − ${vn(x)}·(${vn(a[0])}, ${vn(a[1])}) = <b>(${e.map(vn).join('; ')})</b></span><span>AᵀB = <b>${vn(a[0] * e[0] + a[1] * e[1])}</b></span><span>q₁ = A/‖A‖, q₂ = B/‖B‖: hai vector đơn vị vuông góc</span>${Math.hypot(...e) < 1e-9 ? '<span class="tagok no">a, b cùng phương: B = 0, Gram–Schmidt dừng</span>' : ''}`
+      : `<span>x = aᵀb / aᵀa = ${vn(ab)} / ${vn(aa)} = <b>${vn(x)}</b></span><span>p = x·a = <b>(${p.map(vn).join('; ')})</b></span><span>aᵀe = <b>${vn(a[0] * e[0] + a[1] * e[1])}</b></span><span>P = aaᵀ/aᵀa = [${P.map(r => r.map(vn).join(' ')).join('; ')}], hạng 1</span>`;
+  }
+  draw();
+};
+
+// ---- determinant as signed area (lectures 18, 20)  ·  input: drag the two rows, or apply a row operation  ·  result: the parallelogram and det
+IX.det2 = (box) => {
+  box.innerHTML = `<div class="ixbar"><button type="button" class="reset" data-o="swap">Đổi hai hàng</button><button type="button" class="reset" data-o="scale">Nhân hàng 1 với 2</button><button type="button" class="reset" data-o="shear">Hàng 2 − 1 × hàng 1</button><button type="button" class="reset" data-o="reset">Về ban đầu</button></div>
+    <div class="frame live"><svg viewBox="0 0 400 300"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout');
+  const S = 30, O = [160, 200], X = a => O[0] + a * S, Y = b => O[1] - b * S, iX = px => (px - O[0]) / S, iY = py => (O[1] - py) / S;
+  for (let i = -5; i <= 7; i++) el(svg, 'line', { x1: X(i), x2: X(i), y1: Y(-3.2), y2: Y(6.4), class: 'gr' });
+  for (let j = -3; j <= 6; j++) el(svg, 'line', { x1: X(-5.2), x2: X(7.6), y1: Y(j), y2: Y(j), class: 'gr' });
+  el(svg, 'line', { x1: X(-5.2), x2: X(7.6), y1: Y(0), y2: Y(0), class: 'ax' }); el(svg, 'line', { x1: X(0), x2: X(0), y1: Y(-3.2), y2: Y(6.4), class: 'ax' });
+  const id = 'd' + (++MID), defs = el(svg, 'defs'); marker(defs, id + 'b', '#1a73e8'); marker(defs, id + 'o', '#e37400');
+  const shape = el(svg, 'path', {}), layer = el(svg, 'g'), hs = el(svg, 'g');
+  const R0 = [[3, 1], [1, 2]]; let R = R0.map(r => r.slice()), last = '';
+  const H = [0, 1].map(i => { const g = el(hs, 'g', { class: 'handle', tabindex: 0, role: 'slider', 'aria-label': `Hàng ${i + 1}` }); el(g, 'circle', { r: 14, fill: 'transparent' }); el(g, 'circle', { r: 6, fill: i ? '#e37400' : '#1a73e8', stroke: '#fff', 'stroke-width': 1.5 });
+    let drag = false; g.addEventListener('pointerdown', e => { drag = true; g.setPointerCapture(e.pointerId); });
+    g.addEventListener('pointermove', e => { if (!drag) return; const r = svg.getBoundingClientRect(); R[i] = [Math.max(-5, Math.min(7, Math.round(iX((e.clientX - r.left) * 400 / r.width)))), Math.max(-3, Math.min(6, Math.round(iY((e.clientY - r.top) * 300 / r.height))))]; last = ''; draw(); });
+    ['pointerup', 'pointercancel'].forEach(t => g.addEventListener(t, () => drag = false));
+    g.addEventListener('keydown', e => { const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1] }[e.key]; if (!d) return; e.preventDefault(); R[i] = [R[i][0] + d[0], R[i][1] + d[1]]; last = ''; draw(); });
+    return g; });
+  function draw() {
+    const [u, v] = R, det = u[0] * v[1] - u[1] * v[0];
+    shape.setAttribute('d', `M${X(0)},${Y(0)}L${X(u[0])},${Y(u[1])}L${X(u[0] + v[0])},${Y(u[1] + v[1])}L${X(v[0])},${Y(v[1])}Z`);
+    shape.setAttribute('fill', det >= 0 ? 'rgba(15,143,126,.16)' : 'rgba(197,34,31,.14)'); shape.setAttribute('stroke', det >= 0 ? '#0f8f7e' : '#c5221f');
+    layer.innerHTML = '';
+    [[u, '#1a73e8', 'b', 'hàng 1'], [v, '#e37400', 'o', 'hàng 2']].forEach(([w, c, k, t]) => { el(layer, 'line', { x1: X(0), y1: Y(0), x2: X(w[0]), y2: Y(w[1]), stroke: c, 'stroke-width': 3, 'marker-end': `url(#${id + k})` });
+      const e = el(layer, 'text', { x: X(w[0]) + 8, y: Y(w[1]) - 8, fill: c, style: 'font:700 12px var(--sans);paint-order:stroke;stroke:#fff;stroke-width:4px' }); e.textContent = `${t} = (${vn(w[0])}, ${vn(w[1])})`; });
+    H.forEach((g, i) => g.setAttribute('transform', `translate(${X(R[i][0])},${Y(R[i][1])})`));
+    out.innerHTML = `<span>det = ${vn(u[0])}·${vn(v[1])} − ${vn(u[1])}·${vn(v[0])} = <b>${vn(det)}</b></span><span>diện tích hình bình hành = |det| = <b>${vn(Math.abs(det))}</b></span><span class="tagok ${det ? 'yes' : 'no'}">${det > 0 ? 'det > 0' : det < 0 ? 'det < 0: thứ tự hai hàng ngược chiều kim đồng hồ' : 'det = 0: hai hàng cùng phương, ma trận suy biến'}</span>${last ? `<span>${last}</span>` : ''}`;
+  }
+  box.querySelectorAll('[data-o]').forEach(bt => bt.onclick = () => { const o = bt.dataset.o, d0 = R[0][0] * R[1][1] - R[0][1] * R[1][0];
+    if (o === 'swap') { R = [R[1], R[0]]; last = 'Đổi hai hàng: det đổi dấu (tính chất 2).'; }
+    if (o === 'scale') { R[0] = R[0].map(v => v * 2); last = 'Nhân một hàng với 2: det nhân 2 (tính chất 3a).'; }
+    if (o === 'shear') { R[1] = [R[1][0] - R[0][0], R[1][1] - R[0][1]]; last = 'Trừ bội của hàng khác: hình bị xô nghiêng nhưng diện tích giữ nguyên (tính chất 5).'; }
+    if (o === 'reset') { R = R0.map(r => r.slice()); last = ''; }
+    draw(); });
+  draw();
+};
+
+// ---- 3 × 3 determinants: the big formula, the cofactor expansion, Cramer's rule (lectures 19, 20)
+IX.det3 = (box) => {
+  const M0 = box.dataset.m.split(';').map(r => r.split(',').map(Number)), B0 = box.dataset.b ? box.dataset.b.split(',').map(Number) : null;
+  box.innerHTML = `<div class="mx"><div class="mxin"><div class="mxk">Đầu vào: A${B0 ? ' và b' : ''}</div><div class="r1"><div class="grid" style="grid-template-columns:repeat(3,3.4rem)">${M0.flat().map((v, i) => `<input type="number" step="1" value="${v}" data-i="${i}" aria-label="a${Math.floor(i / 3) + 1}${i % 3 + 1}">`).join('')}</div>
+    ${B0 ? `<span class="times">|</span><div class="grid" style="grid-template-columns:3.4rem">${B0.map((v, i) => `<input type="number" step="1" value="${v}" data-b="${i}" aria-label="b${i + 1}">`).join('')}</div>` : ''}</div>
+    <div class="seg" role="group" aria-label="Chọn cách tính" style="margin-top:.8rem"><button type="button" data-v="big" class="on">Công thức lớn</button><button type="button" data-v="cof">Khai triển hàng 1</button>${B0 ? '<button type="button" data-v="cr">Cramer</button>' : ''}</div></div>
+    <div class="mxout" aria-live="polite"></div></div>`;
+  const out = box.querySelector('.mxout'), ins = [...box.querySelectorAll('[data-i]')], bins = [...box.querySelectorAll('[data-b]')]; let view = 'big';
+  const d3 = A => A[0][0] * (A[1][1] * A[2][2] - A[1][2] * A[2][1]) - A[0][1] * (A[1][0] * A[2][2] - A[1][2] * A[2][0]) + A[0][2] * (A[1][0] * A[2][1] - A[1][1] * A[2][0]);
+  const PERM = [[0, 1, 2, 1], [0, 2, 1, -1], [1, 0, 2, -1], [1, 2, 0, 1], [2, 0, 1, 1], [2, 1, 0, -1]];
+  function calc() {
+    const A = [0, 1, 2].map(i => [0, 1, 2].map(j => Number(ins[i * 3 + j].value) || 0)), D = d3(A); let tex = '', note = '';
+    if (view === 'big') {
+      const terms = PERM.map(([a, b, c, sg]) => ({ sg, val: sg * A[0][a] * A[1][b] * A[2][c], t: `a_{1${a + 1}}a_{2${b + 1}}a_{3${c + 1}}` }));
+      const sym = terms.map((t, i) => `${i ? (t.sg > 0 ? '+' : '-') : (t.sg > 0 ? '' : '-')}\\,${t.t}`);
+      tex = `\\det A = ${sym.slice(0, 3).join(' ')} \\\\ \\quad ${sym.slice(3).join(' ')} \\\\ = ${terms.map((t, i) => `${i && t.val >= 0 ? '+' : ''}${t.val}`).join(' ')} = ${D}`;
+      note = '6 = 3! số hạng, mỗi số hạng lấy đúng một số ở mỗi hàng và mỗi cột; dấu theo số lần đổi hàng (chẵn +, lẻ −).';
+    } else if (view === 'cof') {
+      const minor = j => [1, 2].map(i => [0, 1, 2].filter(k => k !== j).map(k => A[i][k])), m = [0, 1, 2].map(j => minor(j)), md = m.map(x => x[0][0] * x[1][1] - x[0][1] * x[1][0]);
+      tex = `\\det A = a_{11}C_{11} + a_{12}C_{12} + a_{13}C_{13} = ${A[0].map((a, j) => `${j ? '+' : ''}\\,${a}\\cdot(${j === 1 ? '-' : '+'})\\begin{vmatrix}${m[j].map(r => r.join(' & ')).join(' \\\\ ')}\\end{vmatrix}`).join(' ')} = ${D}`;
+      note = 'Cofactor Cᵢⱼ = (±) định thức của ma trận nhỏ khi bỏ hàng i, cột j; dấu xen kẽ như bàn cờ: + − +.';
+    } else {
+      const b = bins.map(i => Number(i.value) || 0), Bj = [0, 1, 2].map(j => A.map((r, i) => r.map((v, k) => k === j ? b[i] : v))), dj = Bj.map(d3);
+      tex = D ? `x_j = \\frac{\\det B_j}{\\det A}: \\quad ${dj.map((d, j) => `x_${j + 1} = \\frac{${d}}{${D}} = ${frac(d / D)}`).join(',\;\; ')}` : '\\det A = 0: \\text{ Cramer không dùng được}';
+      note = 'Bⱼ là A với cột j thay bằng b. Đúng nhưng tốn: phải tính n + 1 định thức.';
+    }
+    out.innerHTML = `<div class="mxk">Kết quả, tự tính lại</div><div class="steplab" style="font-weight:400">${note}</div><div class="mxeq">\\[ \\begin{aligned} ${tex.replaceAll(' \\\\ = ', ' \\\\ &= ').replace(' \\\\ \\quad ', ' \\\\ &\\quad ').replace('\\det A = ', '\\det A &= ')} \\end{aligned} \\]</div><div class="tagok ${D ? 'yes' : 'no'}">${D ? `det A = ${D}: khả nghịch` : 'det A = 0: suy biến'}</div>`;
+    typeset(out);
+  }
+  [...ins, ...bins].forEach(i => i.addEventListener('input', calc));
+  box.querySelectorAll('.seg button').forEach(bt => bt.onclick = () => { view = bt.dataset.v; box.querySelectorAll('.seg button').forEach(z => z.classList.toggle('on', z === bt)); calc(); });
+  calc();
+};
+
 document.querySelectorAll('.ix[data-ix]').forEach(b => { try { IX[b.dataset.ix](b); } catch (e) { console.error(e); b.textContent = 'Không dựng được hình này.'; } });
 
 </script>
