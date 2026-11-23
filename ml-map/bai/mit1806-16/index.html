@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bình phương tối thiểu · Nền móng Machine Learning</title>
+<meta name="description" content="Bình phương tối thiểu: ghi chú MIT 18.06 bài 16, hai bức tranh của cùng bài toán, phương trình chuẩn và hình tương tác.">
+<meta property="og:title" content="Bình phương tối thiểu">
+<meta property="og:description" content="Bình phương tối thiểu: ghi chú MIT 18.06 bài 16, hai bức tranh của cùng bài toán, phương trình chuẩn và hình tương tác.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://johntran-android.github.io/ml-map/bai/mit1806-16/">
+
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column like a book page; figures may run wider than the text; small margin notes sit in the flow on phones */
+:root {
+  --paper: #fbfbfa; --ink: #1d2126; --muted: #5d6670; --rule: #e3e6ea; --wash: #f1f4f7;
+  --blue: #1a73e8; --teal: #0f8f7e; --red: #c5221f; --amber: #b45309;
+  --note: #eef6f4; --claude: #f3f0fa; --board: #fdf4e7;
+  --serif: 'Literata', Georgia, 'Times New Roman', serif;
+  --sans: 'Be Vietnam Pro', 'Helvetica Neue', Arial, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+}
+/* one light look on purpose: a printed page */
+:root { color-scheme: light; }
+
+body { background: var(--paper); color: var(--ink); font: 400 1.04rem/1.8 var(--sans);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 4rem; }
+.page { max-width: 46rem; margin: 0 auto; }
+.wide { max-width: 58rem; margin-left: 50%; transform: translateX(-50%); width: min(58rem, calc(100vw - 32px)); }
+
+.draft { font: 500 .82rem/1.5 var(--sans); color: var(--muted); border-bottom: 1px solid var(--rule); padding: .9rem 0; display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; align-items: center; }
+.draft b { color: var(--ink); font-weight: 600; }
+.chip { display: inline-flex; align-items: center; gap: .35rem; }
+.sw { width: .8rem; height: .8rem; border-radius: 3px; display: inline-block; border: 1px solid var(--rule); }
+.sw.n { background: var(--note); } .sw.c { background: var(--claude); } .sw.b { background: var(--board); }
+
+header.ch { padding: 3.2rem 0 1.6rem; }
+.crumb { font: 600 .78rem/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--teal); }
+h1 { font: 700 clamp(2.2rem, 6vw, 3.3rem)/1.08 var(--sans); letter-spacing: -.02em; margin: .7rem 0 .9rem; text-wrap: balance; }
+.lede { font-size: 1.2rem; line-height: 1.6; color: var(--muted); margin: 0; max-width: 40rem; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: .8rem 1.6rem; margin-top: 1.6rem; padding-top: 1.2rem; border-top: 1px solid var(--rule); font: 400 .9rem/1.5 var(--sans); }
+.facts dt { font-weight: 600; font-size: .74rem; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+.facts dd { margin: .15rem 0 0; }
+
+h2 { font: 700 1.55rem/1.25 var(--sans); letter-spacing: -.01em; margin: 3rem 0 .4rem; text-wrap: balance; display: flex; gap: .7rem; align-items: baseline; }
+h2 .no { font: 500 .95rem/1 var(--mono); color: var(--teal); }
+p { margin: .9rem 0; }
+em { font-style: italic; }
+strong { font-weight: 600; }
+.m { font-weight: 500; color: #0b3a6e; white-space: nowrap; }
+.eq { background: var(--wash); border-radius: 8px; padding: .3rem 1rem; margin: 1.1rem 0; overflow-x: auto; overflow-y: hidden; }
+mjx-container { color: var(--ink); }
+mjx-container:not([display="true"]) { display: inline-block; max-width: 100%; overflow-x: auto; overflow-y: hidden; vertical-align: middle; }
+.check > span, .side p, p { min-width: 0; }
+.eq mjx-container[display="true"] { margin: .7rem 0 !important; }
+.hint { font: 400 .82rem/1.4 var(--sans); color: var(--muted); margin: -1rem 0 1.2rem; text-align: center; }
+.zoom { cursor: zoom-in; }
+.zoom:focus-visible, .reset:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.live { padding: 0; } .live svg { width: 100%; height: 100%; display: block; touch-action: none; user-select: none; }
+.live .ax { stroke: #c4cad1; stroke-width: 1; } .live .gr { stroke: #eef0f3; stroke-width: 1; }
+.live text { font: 500 11px var(--sans); fill: #5d6670; }
+.live .bt { fill: var(--amber); font-weight: 600; } .live .pt { fill: var(--blue); } .live .et { fill: var(--red); }
+.live .handle { cursor: ns-resize; outline: none; }
+.live .handle:focus-visible circle.ring { stroke: var(--blue); stroke-width: 2.5; }
+.reset { font: 500 .8rem/1 var(--sans); color: var(--blue); background: none; border: 1px solid #c9d7ee; border-radius: 6px; padding: .3rem .55rem; margin-left: .3rem; cursor: pointer; }
+.readout { font: 500 .92rem/1.5 var(--sans); background: var(--claude); border-radius: 8px; padding: .55rem .9rem; margin: .8rem 0 1.6rem; display: flex; flex-wrap: wrap; gap: .3rem 1.4rem; }
+.readout b { font-weight: 700; }
+.lb { position: fixed; inset: 0; z-index: 50; background: rgba(15, 18, 22, .88); display: flex; align-items: center; justify-content: center;
+  padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); cursor: zoom-out; }
+[hidden] { display: none !important; }
+.lb img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; background: #fff; border-radius: 8px; }
+.lb button { position: absolute; top: calc(12px + env(safe-area-inset-top, 0px)); right: calc(12px + env(safe-area-inset-right, 0px)); font: 600 .9rem/1 var(--sans); color: #fff; background: rgba(255,255,255,.14); border: 0; border-radius: 6px; padding: .5rem .8rem; cursor: pointer; }
+.eq .c { color: var(--muted); font-weight: 400; }
+
+/* who wrote what: the author's note, Claude's figure, the board */
+.from { border-radius: 10px; padding: 1rem 1.2rem; margin: 1.3rem 0; }
+.from.n { background: var(--note); }
+.from .tag { font: 600 .72rem/1 var(--sans); letter-spacing: .07em; text-transform: uppercase; color: var(--teal); display: flex; justify-content: space-between; gap: 1rem; margin-bottom: .45rem; }
+.from .tag a { text-transform: none; letter-spacing: 0; font-weight: 500; font-size: .82rem; }
+.from p { margin: .4rem 0; }
+.src { font: 500 .8rem/1.4 var(--sans); margin: -.1rem 0 .6rem; display: flex; flex-wrap: wrap; gap: .2rem .8rem; }
+.src span { color: var(--muted); }
+.src a { text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--blue) 35%, transparent); }
+.src a:hover { border-bottom-color: var(--blue); }
+.warn { border-left: 3px solid var(--red); padding: .2rem 0 .2rem 1rem; margin: 1.4rem 0; font-family: var(--sans); font-size: .98rem; line-height: 1.6; }
+.warn b { color: var(--red); }
+
+figure { margin: 1.8rem 0; }
+figure .frame { background: #fff; border-radius: 10px; padding: .4rem; border: 1px solid var(--rule); }
+figure img { display: block; width: 100%; height: auto; border-radius: 6px; }
+figcaption { font: 400 .86rem/1.5 var(--sans); color: var(--muted); margin-top: .55rem; display: flex; gap: .5rem; align-items: baseline; }
+figcaption .who { flex: none; font-weight: 600; font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; padding: .15rem .45rem; border-radius: 4px; }
+.who.c { background: var(--claude); color: var(--ink); } .who.b { background: var(--board); color: var(--ink); }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; align-items: start; }
+.pair > figure { margin: 0; min-width: 0; }
+.pair .frame { aspect-ratio: 4 / 3; display: flex; align-items: center; justify-content: center; }
+.pair .frame img { width: 100%; height: 100%; object-fit: contain; }
+.pair .board .frame { background: #1b1f1c; padding: 0; overflow: hidden; }
+.pair .board .frame img { object-fit: cover; border-radius: 9px; }
+@media (max-width: 720px) { .pair { grid-template-columns: 1fr; } }
+
+.side { font: 400 .93rem/1.6 var(--sans); background: var(--wash); border-radius: 10px; padding: 1rem 1.2rem; margin: 1.6rem 0; }
+.side h3 { font: 700 .82rem/1.2 var(--sans); letter-spacing: .06em; text-transform: uppercase; margin: 0 0 .4rem; color: var(--amber); }
+.side p { margin: .4rem 0; }
+
+ol.steps { padding-left: 1.3rem; } ol.steps li { margin: .4rem 0; }
+.check { display: grid; grid-template-columns: auto 1fr; gap: .35rem .9rem; font: 400 .98rem/1.55 var(--sans); margin: 1rem 0; }
+.check .k { font-family: var(--mono); color: var(--teal); }
+
+footer { margin-top: 3.5rem; padding-top: 1.4rem; border-top: 1px solid var(--rule); font: 400 .86rem/1.6 var(--sans); color: var(--muted); }
+footer h3 { font: 700 .78rem/1 var(--sans); letter-spacing: .07em; text-transform: uppercase; color: var(--ink); margin: 1.2rem 0 .4rem; }
+a { color: var(--blue); text-underline-offset: .15em; }
+a:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 2px; }
+</style>
+<style>[hidden]{display:none!important} img{max-width:100%} html{-webkit-text-size-adjust:100%} body{margin:0}
+.draft .back { font-weight: 700; text-decoration: none; color: var(--blue); margin-right: .4rem; }</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="draft"><a class="back" href="../../?bai=L.lsq">← Bản đồ</a><b>Bản nháp</b>
+    <span class="chip"><span class="sw n"></span>nguyên văn ghi chú</span>
+    <span class="chip">chữ thường: Claude viết lại theo ý ghi chú, tác giả sẽ duyệt lại; mỗi mục có link ghi chú gốc</span>
+    <span class="chip"><span class="sw c"></span>hình Claude vẽ lại / tương tác</span>
+    <span class="chip"><span class="sw b"></span>ảnh chụp bảng, MIT OCW</span></div>
+
+  <header class="ch">
+    <div class="crumb">Đại số tuyến tính · Bài 12</div>
+    <h1>Bình phương tối thiểu</h1>
+    <p class="lede">Ba điểm không thẳng hàng thì không có đường thẳng nào đi qua cả ba. Bài này tìm đường thẳng <em>gần nhất</em>, và cho thấy nó chính là một phép chiếu.</p>
+    <dl class="facts">
+      <div><dt>Cần biết trước</dt><dd>Phép chiếu · Ma trận nghịch đảo</dd></div>
+      <div><dt>Mở ra</dt><dd>Giả nghịch đảo · Hồi quy tuyến tính đơn (Casella 11.3) · Khớp đa thức (Bishop 1.1) · QR, SVD cho bình phương tối thiểu (Nocedal 10.2)</dd></div>
+      <div><dt>Học từ</dt><dd>MIT 18.06, bài giảng 16 (Gilbert Strang)</dd></div>
+    </dl>
+  </header>
+
+  <h2><span class="no">1</span>Bài toán: ba điểm không cùng nằm trên một đường</h2>
+  <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_16_projection_matrices_and_least_squares.md#node-4kbw1yf" target="_blank" rel="noopener">Nghiệm xấp xỉ tốt nhất ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_16_projection_matrices_and_least_squares.md#node-w9nkjfp" target="_blank" rel="noopener">Ứng dụng ma trận chiếu ↗</a></div>
+  <p>Có ba điểm \((1, 1)\), \((2, 2)\), \((3, 2)\). Ta muốn một đường thẳng \(y = C + Dt\) đi qua cả ba. Thay từng điểm vào được ba phương trình, hai ẩn:</p>
+  <div class="eq">\[
+  \begin{aligned} C + D &= 1 \\ C + 2D &= 2 \\ C + 3D &= 2 \end{aligned}
+  \qquad\Longleftrightarrow\qquad
+  \underbrace{\begin{bmatrix} 1 & 1 \\ 1 & 2 \\ 1 & 3 \end{bmatrix}}_{A}
+  \underbrace{\begin{bmatrix} C \\ D \end{bmatrix}}_{x}
+  = \underbrace{\begin{bmatrix} 1 \\ 2 \\ 2 \end{bmatrix}}_{b}
+  \]</div>
+  <p>Ma trận \(A\) "cao ốm": ba hàng, hai cột. Column space của nó chỉ là một mặt phẳng trong \(\mathbb{R}^3\), không phủ hết \(\mathbb{R}^3\). Và \(b\) lại không nằm trong mặt phẳng đó, nên hệ vô nghiệm: không có \(C, D\) nào làm đường thẳng đi qua cả ba điểm.</p>
+  <div class="from n"><span class="tag">Nguyên văn ghi chú <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_16_projection_matrices_and_least_squares.md#node-w9nkjfp" target="_blank" rel="noopener">mở ghi chú gốc ↗</a></span>
+    <p>Nhưng ta sẽ <strong>cố gắng làm tốt nhất có thể</strong>, bằng cách <strong>project b lên colums space của A</strong>, mang ý nghĩa là <strong>tìm điểm p nằm trong C(A) sao cho nó gần nhất với b</strong>.</p>
+    <p>Để rồi ta <strong>tìm solution của bài toán Ax̂ = p</strong> (vốn lúc này đã có thể <strong>solvable do p đã nằm trong C(A)</strong>) thì solution đó là một <strong>solution của bài toán gần nhất</strong> với bài toán đầu không thể giải.</p>
+  </div>
+
+  <h2><span class="no">2</span>Hai bức tranh của cùng một bài toán</h2>
+  <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_16_projection_matrices_and_least_squares.md#node-f0131ga" target="_blank" rel="noopener">Bản chất sai số bình phương ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_16_projection_matrices_and_least_squares.md#node-7674oyq" target="_blank" rel="noopener">Sai số trên đường thẳng ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_16_projection_matrices_and_least_squares.md#node-zgpgk6i" target="_blank" rel="noopener">Đường thẳng qua ba điểm ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_16_projection_matrices_and_least_squares.md#node-onzn0v0" target="_blank" rel="noopener">Phép chiếu không gian cột ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_16_projection_matrices_and_least_squares.md#node-9n4dt3v" target="_blank" rel="noopener">Hai picture ↗</a></div>
+  <p>Strang nhấn mạnh: phải nhớ là ta có <strong>hai</strong> bức tranh. Bức tranh thứ nhất nằm trong mặt phẳng \((t, y)\), nơi ta nhìn thấy đường thẳng và các sai số. Gọi \(p_1, p_2, p_3\) là ba điểm trên đường thẳng ứng với \(t = 1, 2, 3\); khoảng cách từ \(p_i\) đến \(b_i\) là sai số \(e_i\). Error của cả bài là \(e_1^2 + e_2^2 + e_3^2\), và ta chọn đường thẳng làm tổng đó nhỏ nhất.</p>
+
+  <div class="pair wide">
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/mgxiqjbn6l.png" alt="Strang vẽ ba điểm, đường thẳng y = C + Dt và các sai số e1, e2, e3 trên bảng" width="640" height="482" loading="lazy"></div>
+      <figcaption><span class="who b">Bảng</span><span>Bức tranh 1 trên lớp: ba điểm, đường thẳng và các sai số.</span></figcaption></figure>
+    <figure><div class="frame live" id="lsq"><svg viewBox="0 0 400 300" role="img" aria-label="Kéo ba điểm cam lên xuống, đường thẳng tốt nhất tính lại ngay"></svg></div>
+      <figcaption><span class="who c">Tương tác</span><span>Chấm cam là số liệu của bài, \(b = (1, 2, 2)\). <b>Thử kéo một chấm lên xuống</b> để hỏi: nếu số liệu khác đi thì sao? Đường thẳng tốt nhất, các điểm \(p\), các sai số và \(C, D\) là kết quả, tính lại ngay bằng phương trình chuẩn ở mục 3. <button type="button" class="reset" id="lsqReset">Về số liệu của bài</button></span></figcaption></figure>
+  </div>
+  <div class="readout" id="lsqOut" aria-live="polite"></div>
+
+  <p>Bức tranh thứ hai nằm trong \(\mathbb{R}^3\), nơi mỗi vector có ba thành phần (một thành phần cho mỗi điểm). Ở đây \(b = (1, 2, 2)\) nằm ngoài mặt phẳng \(C(A)\), mặt phẳng căng bởi hai cột \((1, 1, 1)\) và \((1, 2, 3)\). Vector \(p = (p_1, p_2, p_3)\) nằm trong mặt phẳng, và là vector gần \(b\) nhất trong đó.</p>
+
+  <div class="pair wide">
+    <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/f8bhrzisfx.png" alt="Strang chỉ vào b, p, e và N(Aᵀ) trên bảng" width="640" height="586" loading="lazy"></div>
+      <figcaption><span class="who b">Bảng</span><span>Bức tranh 2 trên lớp: \(b\), \(p\), \(e\) và \(N(A^T)\).</span></figcaption></figure>
+    <figure><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to hình vẽ lại"><img src="img/3-binh-phuong-toi-thieu-hinh-2.png" alt="Mặt phẳng C(A) nằm ngang, b phía trên, p là hình chiếu trong mặt phẳng, e dựng đứng theo hướng N(Aᵀ)" width="1632" height="1258" loading="lazy"></div>
+      <figcaption><span class="who c">Vẽ lại</span><span>Mặt phẳng \(C(A)\) được xoay cho nằm ngang, nên \(e\) dựng đứng: thấy ngay \(e\) vuông góc với cả mặt phẳng.</span></figcaption></figure>
+  </div>
+  <p class="hint">Bấm vào ảnh để xem to.</p>
+
+  <div class="from n"><span class="tag">Nguyên văn ghi chú <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_16_projection_matrices_and_least_squares.md#node-onzn0v0" target="_blank" rel="noopener">mở ghi chú gốc ↗</a></span>
+    <p>CHÚ Ý: ĐỪNG LÚ LẪN NHÉ, <strong>ĐƯỜNG THẰNG Y = C + Dt KHÔNG LIÊN QUAN GÌ ĐẾN COLS SPACE CỦA A</strong>, NÓ LÀ MỘT 2D PLANE TRONG R3)</p></div>
+  <p>Ý câu cuối: column space mới là mặt phẳng 2 chiều trong \(\mathbb{R}^3\), còn đường thẳng sống ở bức tranh 1. \(C\) và \(D\) cũng không hiện ra trong bức tranh vector: chúng là hệ số để kết hợp hai cột của \(A\) thành \(p\).</p>
+
+  <h2><span class="no">3</span>Phương trình chuẩn</h2>
+  <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_16_projection_matrices_and_least_squares.md#node-gpz01cc" target="_blank" rel="noopener">Normal Equations ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_16_projection_matrices_and_least_squares.md#node-rigclww" target="_blank" rel="noopener">Hệ phương trình chuẩn ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_16_projection_matrices_and_least_squares.md#node-rpxfd96" target="_blank" rel="noopener">Đạo hàm hàm sai số ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_16_projection_matrices_and_least_squares.md#node-jmdgmei" target="_blank" rel="noopener">Nghiệm bình phương cực tiểu ↗</a></div>
+  <p>Vì \(p\) là hình chiếu của \(b\) lên \(C(A)\), nên \(p\) là tổ hợp tuyến tính của các cột của \(A\): \(p = A\hat{x}\). Phần còn lại \(e = b - p\) vuông góc với \(C(A)\), tức vuông góc với mọi cột của \(A\), nên \(e\) thuộc left nullspace \(N(A^T)\):</p>
+  <div class="eq">\[ A^T e = 0 \;\Longleftrightarrow\; A^T(b - A\hat{x}) = 0 \;\Longleftrightarrow\; \boxed{A^T A\,\hat{x} = A^T b} \]</div>
+  <p>Đây là <strong>normal equation</strong>, mà Strang gọi có lẽ là phương trình quan trọng nhất của thống kê. Với ba điểm của ta:</p>
+  <div class="eq">\[
+  A^T A = \begin{bmatrix} 3 & 6 \\ 6 & 14 \end{bmatrix}, \qquad A^T b = \begin{bmatrix} 5 \\ 11 \end{bmatrix}
+  \qquad\Longrightarrow\qquad
+  \begin{aligned} 3\hat{C} + 6\hat{D} &= 5 \\ 6\hat{C} + 14\hat{D} &= 11 \end{aligned}
+  \qquad\Longrightarrow\qquad \hat{C} = \tfrac{2}{3},\; \hat{D} = \tfrac{1}{2}
+  \]</div>
+  <p>Đường thẳng tốt nhất là \(y = \tfrac{2}{3} + \tfrac{1}{2}t\). Thay lại được</p>
+  <div class="eq">\[ p = A\hat{x} = \begin{bmatrix} 7/6 \\ 5/3 \\ 13/6 \end{bmatrix}, \qquad e = b - p = \begin{bmatrix} -1/6 \\ 1/3 \\ -1/6 \end{bmatrix} \]</div>
+
+  <div class="side"><h3>Cùng kết quả, đi đường giải tích</h3>
+    <p>Gọi error là \(f(C, D) = (C + D - 1)^2 + (C + 2D - 2)^2 + (C + 3D - 2)^2\). Cho đạo hàm theo từng biến bằng 0:</p>
+    <p>\(\dfrac{\partial f}{\partial C} = 6C + 12D - 10 = 0 \Leftrightarrow 3C + 6D = 5\), và tương tự \(\dfrac{\partial f}{\partial D} = 0 \Leftrightarrow 6C + 14D = 11\).</p>
+    <p>Đúng hai phương trình ở trên. Nghĩa là: <strong>C, D làm tổng bình phương sai số nhỏ nhất cũng chính là C, D kết hợp các cột của A để ra p</strong>, hình chiếu của \(b\) lên \(C(A)\).</p></div>
+
+  <h2><span class="no">4</span>Kiểm tra lại kết quả</h2>
+  <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_16_projection_matrices_and_least_squares.md#node-6eofzkb" target="_blank" rel="noopener">Orthogonal Projection Vector Decomposition ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_16_projection_matrices_and_least_squares.md#node-qaulzr2" target="_blank" rel="noopener">C, D không có trong bức tranh vector ↗</a></div>
+  <p>Nhìn vào \(p\) và \(e\) vừa tính:</p>
+  <div class="check">
+    <span class="k">\(p + e = b\)</span><span>\(\left(\tfrac{7}{6} - \tfrac{1}{6},\; \tfrac{5}{3} + \tfrac{1}{3},\; \tfrac{13}{6} - \tfrac{1}{6}\right) = (1, 2, 2)\)</span>
+    <span class="k">\(p^T e = 0\)</span><span>\(-\tfrac{7}{36} + \tfrac{20}{36} - \tfrac{13}{36} = 0\): \(p\) và \(e\) vuông góc.</span>
+    <span class="k">\(e \perp\) cột 1</span><span>\(-\tfrac{1}{6}\cdot 1 + \tfrac{2}{6}\cdot 1 - \tfrac{1}{6}\cdot 1 = 0\)</span>
+    <span class="k">\(e \perp\) cột 2</span><span>\(-\tfrac{1}{6}\cdot 1 + \tfrac{2}{6}\cdot 2 - \tfrac{1}{6}\cdot 3 = 0\)</span>
+  </div>
+  <p>Điều này là đương nhiên: \(e\) vuông góc với cả mặt phẳng \(C(A)\), mà \(p\) nằm trong mặt phẳng đó.</p>
+
+  <h2><span class="no">5</span>Ma trận chiếu và phần bù của nó</h2>
+  <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_16_projection_matrices_and_least_squares.md#node-6a96qa7" target="_blank" rel="noopener">Hai trường hợp cực đoan ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_16_projection_matrices_and_least_squares.md#node-yg6paoj" target="_blank" rel="noopener">Projection Matrix Properties ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_16_projection_matrices_and_least_squares.md#node-kov66sh" target="_blank" rel="noopener">Orthogonal Projection onto Column Space ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_16_projection_matrices_and_least_squares.md#node-3b7wnzq" target="_blank" rel="noopener">Ma trận chiếu I − P ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_16_projection_matrices_and_least_squares.md#node-j2e9bro" target="_blank" rel="noopener">Ma trận chiếu bù ↗</a></div>
+  <p>Ma trận chiếu lên \(C(A)\) là \(P = A(A^TA)^{-1}A^T\). Thử hai trường hợp cực đoan:</p>
+  <ol class="steps">
+    <li><strong>b đã nằm trong C(A).</strong> Viết \(b = Ax\), thì \(Pb = A(A^TA)^{-1}(A^TA)x = Ax = b\). Chiếu một vector đã nằm sẵn trong mặt phẳng thì nó đứng yên.</li>
+    <li><strong>b vuông góc với C(A).</strong> Khi đó \(b \in N(A^T)\), nên \(A^Tb = 0\) và \(Pb = A(A^TA)^{-1}\cdot 0 = 0\).</li>
+  </ol>
+  <p>Vì \(C(A)\) và \(N(A^T)\) vuông góc và số chiều cộng lại bằng \(m\), mọi \(b\) tách được thành hai phần: \(b = p + e\). Từ đó \(e = b - Pb = (I - P)b\): \(I - P\) cũng là một ma trận chiếu, chiếu lên không gian vuông góc với \(C(A)\). Nó cũng thoả hai tính chất của ma trận chiếu: \((I - P)^T = I - P\) và \((I - P)^2 = I - P\).</p>
+
+  <h2><span class="no">6</span>Khi nào AᵀA khả nghịch?</h2>
+  <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_16_projection_matrices_and_least_squares.md#node-lsrpf0x" target="_blank" rel="noopener">Mệnh đề ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_16_projection_matrices_and_least_squares.md#node-m61e6dh" target="_blank" rel="noopener">Nhân xᵀ hai vế ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_16_projection_matrices_and_least_squares.md#node-54qkul5" target="_blank" rel="noopener">Invertibility of AᵀA ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_16_projection_matrices_and_least_squares.md#node-jpltfxn" target="_blank" rel="noopener">Chứng minh rút gọn ↗</a></div>
+  <p>Cả bài dựa vào việc giải được \(A^TA\hat{x} = A^Tb\), tức \(A^TA\) phải khả nghịch. Mệnh đề: <strong>nếu các cột của A độc lập tuyến tính thì AᵀA khả nghịch.</strong></p>
+  <p>Chứng minh. Giả sử \(A^TAx = 0\); cần chỉ ra \(x = 0\). Nhân \(x^T\) vào hai vế:</p>
+  <div class="eq">\[ x^TA^TAx = 0 \;\Longleftrightarrow\; (Ax)^T(Ax) = 0 \;\Longleftrightarrow\; \lVert Ax \rVert^2 = 0 \;\Longleftrightarrow\; Ax = 0 \]</div>
+  <p>Tổng bình phương các thành phần của \(Ax\) chỉ bằng 0 khi \(Ax\) là vector 0. Mà các cột của \(A\) độc lập, nên \(Ax = 0\) chỉ xảy ra khi \(x = 0\). Vậy nullspace của \(A^TA\) chỉ có vector 0; \(A^TA\) vuông nên nó full rank, tức khả nghịch.</p>
+
+  <div class="side"><h3>Trong thống kê</h3><div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_16_projection_matrices_and_least_squares.md#node-qybrvyy" target="_blank" rel="noopener">Hồi quy tuyến tính ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_16_projection_matrices_and_least_squares.md#node-eth529a" target="_blank" rel="noopener">Squared error và outlier ↗</a></div><p>Đây là bài toán <strong>hồi quy tuyến tính</strong>. Người làm thống kê rất để ý outlier: chỉ một điểm lệch xa cũng kéo đường thẳng đi đáng kể, vì sai số bị bình phương. Thử ở hình tương tác: kéo một chấm cam ra thật xa và xem đường thẳng bị lôi theo. Bài này giả sử không có outlier.</p></div>
+
+  <footer>
+    <h3>Bài này được làm thế nào</h3>
+    <p>Chữ: biên tập lại từ ghi chú của tác giả khi học <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_16_projection_matrices_and_least_squares.md" target="_blank" rel="noopener">MIT 18.06, bài giảng 16</a>, sắp lại theo mạch một bài đọc thay vì theo thứ tự bài giảng. Các ý và lời giải thích là của tác giả; phần nối câu do Claude soạn và cần tác giả viết lại.</p>
+    <p>Hình vẽ lại: Claude dựng bằng code, mọi con số được tính lại từ ví dụ trong ghi chú. Ảnh chụp bảng: MIT OpenCourseWare 18.06 Linear Algebra, Spring 2010, Gilbert Strang, giấy phép CC BY-NC-SA 4.0.</p>
+    <h3>Trên bản đồ</h3>
+    <p><a href="https://johntran-android.github.io/ml-map/" target="_blank" rel="noopener">Nền móng Machine Learning</a> · lộ trình MIT 18.06, bài 12.</p>
+  </footer>
+</div>
+
+<div class="lb" id="lb" hidden><img alt=""><button type="button" id="lbx">Đóng ✕</button></div>
+<script>
+window.MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] }, svg: { fontCache: 'global' }, options: { skipHtmlTags: ['script', 'style', 'textarea', 'svg'] } };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg-full.js" async></script>
+<script>
+// ---- bigger view of any picture
+(() => {
+  const lb = document.getElementById('lb'), im = lb.querySelector('img');
+  const open = f => { const src = f.querySelector('img'); im.src = src.src; im.alt = src.alt; lb.hidden = false; document.getElementById('lbx').focus(); };
+  const close = () => { lb.hidden = true; im.removeAttribute('src'); };
+  document.querySelectorAll('.zoom').forEach(f => { f.addEventListener('click', () => open(f)); f.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(f); } }); });
+  lb.addEventListener('click', close); addEventListener('keydown', e => { if (e.key === 'Escape' && !lb.hidden) close(); });
+})();
+// ---- picture 1, live: drag b1, b2, b3; the best line comes from the normal equations AᵀA x̂ = Aᵀb
+(() => {
+  const svg = document.querySelector('#lsq svg'), out = document.getElementById('lsqOut'), NS = 'http://www.w3.org/2000/svg';
+  const T = [1, 2, 3], B0 = [1, 2, 2], b = B0.slice();
+  const X = t => 42 + t * 85, Y = y => 262 - y * 78, Yinv = py => (262 - py) / 78;   // t in 0..4, y in 0..3
+  const el = (n, a, parent = svg) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); parent.appendChild(e); return e; };
+  for (let k = 0; k <= 3; k++) { el('line', { x1: X(0), x2: X(4), y1: Y(k), y2: Y(k), class: 'gr' }); el('text', { x: X(0) - 10, y: Y(k) + 4, 'text-anchor': 'end' }).textContent = k; }
+  for (let k = 0; k <= 4; k++) el('text', { x: X(k), y: Y(0) + 17, 'text-anchor': 'middle' }).textContent = k;
+  el('line', { x1: X(0), x2: X(4), y1: Y(0), y2: Y(0), class: 'ax' }); el('line', { x1: X(0), x2: X(0), y1: Y(0), y2: Y(3), class: 'ax' });
+  el('text', { x: X(4) - 4, y: Y(0) - 6, 'text-anchor': 'end' }).textContent = 't';
+  const line = el('line', { stroke: '#1a73e8', 'stroke-width': 3, 'stroke-linecap': 'round' });
+  const eq = el('text', { x: X(4) - 6, y: Y(3) + 14, 'text-anchor': 'end', class: 'pt', 'font-weight': 700 });
+  const segs = [], ps = [], hs = [], bl = [], el2 = [], pl = [];
+  const lg = el('g', { transform: `translate(${X(0) + 10},${Y(3) + 6})` });
+  el('circle', { cx: 5, cy: 0, r: 5, fill: '#e37400' }, lg); el('text', { x: 15, y: 4 }, lg).textContent = 'b: số liệu của bài, thử kéo để đổi';
+  el('circle', { cx: 5, cy: 17, r: 4, fill: '#fff', stroke: '#1a73e8', 'stroke-width': 2 }, lg); el('text', { x: 15, y: 21 }, lg).textContent = 'p: kết quả trên đường thẳng, tự tính lại';
+  T.forEach((t, i) => {
+    segs.push(el('line', { stroke: '#c5221f', 'stroke-width': 2.4 }));
+    ps.push(el('circle', { r: 5, fill: '#fff', stroke: '#1a73e8', 'stroke-width': 2.2 }));
+    el2.push(el('text', { class: 'et' }));
+    const g = el('g', { class: 'handle', tabindex: 0, role: 'slider', 'aria-label': `Điểm b${i + 1} tại t = ${t}`, 'aria-valuemin': 0, 'aria-valuemax': 3 });
+    el('circle', { r: 16, fill: 'transparent' }, g); el('circle', { r: 7, fill: '#e37400', class: 'ring', stroke: '#fff', 'stroke-width': 1.5 }, g);
+    hs.push(g); bl.push(el('text', { class: 'bt', 'text-anchor': 'end' })); pl.push(el('text', { class: 'pt' }));
+    let drag = false;
+    g.addEventListener('pointerdown', e => { drag = true; g.setPointerCapture(e.pointerId); });
+    g.addEventListener('pointermove', e => { if (!drag) return; const r = svg.getBoundingClientRect(), py = (e.clientY - r.top) * 300 / r.height; b[i] = Math.max(0, Math.min(3, Math.round(Yinv(py) * 10) / 10)); draw(); });
+    g.addEventListener('pointerup', () => drag = false); g.addEventListener('pointercancel', () => drag = false);
+    g.addEventListener('keydown', e => { const d = e.key === 'ArrowUp' ? .1 : e.key === 'ArrowDown' ? -.1 : 0; if (d) { e.preventDefault(); b[i] = Math.max(0, Math.min(3, Math.round((b[i] + d) * 10) / 10)); draw(); } });
+  });
+  const f = v => { const r = Math.round(v * 1000) / 1000; return (r < 0 ? '−' : '') + Math.abs(r).toString().replace('.', ','); };
+  function draw() {
+    const n = 3, st = 6, stt = 14, sb = b[0] + b[1] + b[2], stb = b[0] + 2 * b[1] + 3 * b[2];   // AᵀA = [3 6; 6 14], Aᵀb = (Σb, Σtb)
+    const det = n * stt - st * st, C = (stt * sb - st * stb) / det, D = (n * stb - st * sb) / det;
+    const y = t => C + D * t, t0 = .25, t1 = 3.75;
+    line.setAttribute('x1', X(t0)); line.setAttribute('y1', Y(y(t0))); line.setAttribute('x2', X(t1)); line.setAttribute('y2', Y(y(t1)));
+    let E = 0;
+    T.forEach((t, i) => { const p = y(t), e = b[i] - p; E += e * e;
+      segs[i].setAttribute('x1', X(t)); segs[i].setAttribute('x2', X(t)); segs[i].setAttribute('y1', Y(p)); segs[i].setAttribute('y2', Y(b[i]));
+      ps[i].setAttribute('cx', X(t)); ps[i].setAttribute('cy', Y(p));
+      hs[i].setAttribute('transform', `translate(${X(t)},${Y(b[i])})`); hs[i].setAttribute('aria-valuenow', b[i]);
+      bl[i].setAttribute('x', X(t) - 13); bl[i].setAttribute('y', Y(b[i]) + 4); bl[i].textContent = `b${i + 1} = ${f(b[i])}`;
+      pl[i].setAttribute('x', X(t) + 9); pl[i].setAttribute('y', Y(p) + (e >= 0 ? 15 : -8)); pl[i].textContent = `p${i + 1}`;
+      el2[i].setAttribute('x', X(t) + 9); el2[i].setAttribute('y', Y((p + b[i]) / 2) + 4); el2[i].textContent = Math.abs(e) > .25 ? `e${i + 1}` : '';
+    });
+    eq.textContent = `y = ${f(C)} + ${f(D)}t`;
+    out.innerHTML = `<span>Ĉ = <b>${f(C)}</b></span><span>D̂ = <b>${f(D)}</b></span><span>e₁² + e₂² + e₃² = <b>${f(E)}</b></span><span>b = (${b.map(f).join('; ')})</span>`;
+  }
+  document.getElementById('lsqReset').onclick = () => { B0.forEach((v, i) => b[i] = v); draw(); };
+  draw();
+})();
+</script>
+</body>
+</html>

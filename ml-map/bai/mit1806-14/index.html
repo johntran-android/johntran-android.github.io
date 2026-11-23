@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vector và không gian con trực giao · Nền móng Machine Learning</title>
+<meta name="description" content="Vector và không gian con trực giao: ghi chú MIT 18.06 bài 14, 3 video giảng lại, hình vẽ tay và hình tương tác.">
+<meta property="og:title" content="Vector và không gian con trực giao">
+<meta property="og:description" content="Vector và không gian con trực giao: ghi chú MIT 18.06 bài 14, 3 video giảng lại, hình vẽ tay và hình tương tác.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://johntran-android.github.io/ml-map/bai/mit1806-14/">
+
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column like a book page; figures may run wider than the text; small margin notes sit in the flow on phones */
+:root {
+  --paper: #fbfbfa; --ink: #1d2126; --muted: #5d6670; --rule: #e3e6ea; --wash: #f1f4f7;
+  --blue: #1a73e8; --teal: #0f8f7e; --red: #c5221f; --amber: #b45309;
+  --note: #eef6f4; --claude: #f3f0fa; --board: #fdf4e7;
+  --serif: 'Literata', Georgia, 'Times New Roman', serif;
+  --sans: 'Be Vietnam Pro', 'Helvetica Neue', Arial, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+}
+/* one light look on purpose: a printed page */
+:root { color-scheme: light; }
+
+body { background: var(--paper); color: var(--ink); font: 400 1.04rem/1.8 var(--sans);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 4rem; }
+.page { max-width: 46rem; margin: 0 auto; }
+.wide { max-width: 58rem; margin-left: 50%; transform: translateX(-50%); width: min(58rem, calc(100vw - 32px)); }
+
+.draft { font: 500 .82rem/1.5 var(--sans); color: var(--muted); border-bottom: 1px solid var(--rule); padding: .9rem 0; display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; align-items: center; }
+.draft b { color: var(--ink); font-weight: 600; }
+.chip { display: inline-flex; align-items: center; gap: .35rem; }
+.sw { width: .8rem; height: .8rem; border-radius: 3px; display: inline-block; border: 1px solid var(--rule); }
+.sw.n { background: var(--note); } .sw.c { background: var(--claude); } .sw.b { background: var(--board); }
+
+header.ch { padding: 3.2rem 0 1.6rem; }
+.crumb { font: 600 .78rem/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--teal); }
+h1 { font: 700 clamp(2.2rem, 6vw, 3.3rem)/1.08 var(--sans); letter-spacing: -.02em; margin: .7rem 0 .9rem; text-wrap: balance; }
+.lede { font-size: 1.2rem; line-height: 1.6; color: var(--muted); margin: 0; max-width: 40rem; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: .8rem 1.6rem; margin-top: 1.6rem; padding-top: 1.2rem; border-top: 1px solid var(--rule); font: 400 .9rem/1.5 var(--sans); }
+.facts dt { font-weight: 600; font-size: .74rem; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+.facts dd { margin: .15rem 0 0; }
+
+h2 { font: 700 1.55rem/1.25 var(--sans); letter-spacing: -.01em; margin: 3rem 0 .4rem; text-wrap: balance; display: flex; gap: .7rem; align-items: baseline; }
+h2 .no { font: 500 .95rem/1 var(--mono); color: var(--teal); }
+p { margin: .9rem 0; }
+em { font-style: italic; }
+strong { font-weight: 600; }
+.m { font-weight: 500; color: #0b3a6e; white-space: nowrap; }
+.eq { background: var(--wash); border-radius: 8px; padding: .3rem 1rem; margin: 1.1rem 0; overflow-x: auto; overflow-y: hidden; }
+mjx-container { color: var(--ink); }
+mjx-container:not([display="true"]) { display: inline-block; max-width: 100%; overflow-x: auto; overflow-y: hidden; vertical-align: middle; }
+.check > span, .side p, p { min-width: 0; }
+.eq mjx-container[display="true"] { margin: .7rem 0 !important; }
+.hint { font: 400 .82rem/1.4 var(--sans); color: var(--muted); margin: -1rem 0 1.2rem; text-align: center; }
+.zoom { cursor: zoom-in; }
+.zoom:focus-visible, .reset:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.live { padding: 0; } .live svg { width: 100%; height: 100%; display: block; touch-action: none; user-select: none; }
+.live .ax { stroke: #c4cad1; stroke-width: 1; } .live .gr { stroke: #eef0f3; stroke-width: 1; }
+.live text { font: 500 11px var(--sans); fill: #5d6670; }
+.live .bt { fill: var(--amber); font-weight: 600; } .live .pt { fill: var(--blue); } .live .et { fill: var(--red); }
+.live .handle { cursor: ns-resize; outline: none; }
+.live .handle:focus-visible circle.ring { stroke: var(--blue); stroke-width: 2.5; }
+.reset { font: 500 .8rem/1 var(--sans); color: var(--blue); background: none; border: 1px solid #c9d7ee; border-radius: 6px; padding: .3rem .55rem; margin-left: .3rem; cursor: pointer; }
+.readout { font: 500 .92rem/1.5 var(--sans); background: var(--claude); border-radius: 8px; padding: .55rem .9rem; margin: .8rem 0 1.6rem; display: flex; flex-wrap: wrap; gap: .3rem 1.4rem; }
+.readout b { font-weight: 700; }
+.lb { position: fixed; inset: 0; z-index: 50; background: rgba(15, 18, 22, .88); display: flex; align-items: center; justify-content: center;
+  padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); cursor: zoom-out; }
+[hidden] { display: none !important; }
+.lb img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; background: #fff; border-radius: 8px; }
+.lb button { position: absolute; top: calc(12px + env(safe-area-inset-top, 0px)); right: calc(12px + env(safe-area-inset-right, 0px)); font: 600 .9rem/1 var(--sans); color: #fff; background: rgba(255,255,255,.14); border: 0; border-radius: 6px; padding: .5rem .8rem; cursor: pointer; }
+.eq .c { color: var(--muted); font-weight: 400; }
+
+/* who wrote what: the author's note, Claude's figure, the board */
+.from { border-radius: 10px; padding: 1rem 1.2rem; margin: 1.3rem 0; }
+.from.n { background: var(--note); }
+.from .tag { font: 600 .72rem/1 var(--sans); letter-spacing: .07em; text-transform: uppercase; color: var(--teal); display: flex; justify-content: space-between; gap: 1rem; margin-bottom: .45rem; }
+.from .tag a { text-transform: none; letter-spacing: 0; font-weight: 500; font-size: .82rem; }
+.from p { margin: .4rem 0; }
+.src { font: 500 .8rem/1.4 var(--sans); margin: -.1rem 0 .6rem; display: flex; flex-wrap: wrap; gap: .2rem .8rem; }
+.src span { color: var(--muted); }
+.src a { text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--blue) 35%, transparent); }
+.src a:hover { border-bottom-color: var(--blue); }
+.warn { border-left: 3px solid var(--red); padding: .2rem 0 .2rem 1rem; margin: 1.4rem 0; font-family: var(--sans); font-size: .98rem; line-height: 1.6; }
+.warn b { color: var(--red); }
+
+figure { margin: 1.8rem 0; }
+figure .frame { background: #fff; border-radius: 10px; padding: .4rem; border: 1px solid var(--rule); }
+figure img { display: block; width: 100%; height: auto; border-radius: 6px; }
+figcaption { font: 400 .86rem/1.5 var(--sans); color: var(--muted); margin-top: .55rem; display: flex; gap: .5rem; align-items: baseline; }
+figcaption .who { flex: none; font-weight: 600; font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; padding: .15rem .45rem; border-radius: 4px; }
+.who.c { background: var(--claude); color: var(--ink); } .who.b { background: var(--board); color: var(--ink); }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; align-items: start; }
+.pair > figure { margin: 0; min-width: 0; }
+.pair .frame { aspect-ratio: 4 / 3; display: flex; align-items: center; justify-content: center; }
+.pair .frame img { width: 100%; height: 100%; object-fit: contain; }
+.pair .board .frame { background: #1b1f1c; padding: 0; overflow: hidden; }
+.pair .board .frame img { object-fit: cover; border-radius: 9px; }
+@media (max-width: 720px) { .pair { grid-template-columns: 1fr; } }
+
+.side { font: 400 .93rem/1.6 var(--sans); background: var(--wash); border-radius: 10px; padding: 1rem 1.2rem; margin: 1.6rem 0; }
+.side h3 { font: 700 .82rem/1.2 var(--sans); letter-spacing: .06em; text-transform: uppercase; margin: 0 0 .4rem; color: var(--amber); }
+.side p { margin: .4rem 0; }
+
+ol.steps { padding-left: 1.3rem; } ol.steps li { margin: .4rem 0; }
+.check { display: grid; grid-template-columns: auto 1fr; gap: .35rem .9rem; font: 400 .98rem/1.55 var(--sans); margin: 1rem 0; }
+.check .k { font-family: var(--mono); color: var(--teal); }
+
+footer { margin-top: 3.5rem; padding-top: 1.4rem; border-top: 1px solid var(--rule); font: 400 .86rem/1.6 var(--sans); color: var(--muted); }
+footer h3 { font: 700 .78rem/1 var(--sans); letter-spacing: .07em; text-transform: uppercase; color: var(--ink); margin: 1.2rem 0 .4rem; }
+a { color: var(--blue); text-underline-offset: .15em; }
+a:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 2px; }
+</style>
+<style>
+.sw.h { background: #fff7d6; }
+.who.h { background: #fff7d6; color: var(--ink); }
+.pair .hand .frame { background: #0b0b0b; padding: 0; overflow: hidden; } .pair .hand .frame img { object-fit: contain; }
+.toc { display: grid; gap: .35rem; margin-top: 1.4rem; font: 500 .95rem/1.4 var(--sans); }
+.toc a { display: flex; gap: .7rem; align-items: baseline; text-decoration: none; color: var(--ink); padding: .5rem .8rem; border: 1px solid var(--rule); border-radius: 8px; background: #fff; }
+.toc a:hover { border-color: var(--teal); } .toc .no { font: 600 .85rem/1 var(--mono); color: var(--teal); }
+.part { margin-top: 3.2rem; padding-top: 1.6rem; border-top: 2px solid var(--ink); }
+.partno { font: 700 .78rem/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--teal); }
+h2.parth { margin: .5rem 0 1.1rem; font-size: 1.8rem; display: block; }
+h3 { font: 700 1.22rem/1.3 var(--sans); margin: 2.4rem 0 .35rem; display: flex; gap: .6rem; align-items: baseline; text-wrap: balance; }
+h3 .no { font: 500 .9rem/1 var(--mono); color: var(--teal); }
+.vid { display: grid; grid-template-columns: minmax(0, 15rem) minmax(0, 1fr); gap: 1.1rem; background: #fff; border: 1px solid var(--rule); border-radius: 12px; padding: .9rem; margin: 0 0 1rem; }
+.vid .thumb { position: relative; display: block; border-radius: 8px; overflow: hidden; align-self: start; }
+.vid .thumb img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
+.vid .dur { position: absolute; right: .4rem; bottom: .4rem; background: rgba(0,0,0,.78); color: #fff; font: 600 .72rem/1 var(--sans); padding: .25rem .35rem; border-radius: 4px; }
+.vmeta { min-width: 0; font-family: var(--sans); }
+.vk { font: 600 .7rem/1 var(--sans); letter-spacing: .07em; text-transform: uppercase; color: var(--red); }
+.vt { display: block; font: 700 1.02rem/1.35 var(--sans); color: var(--ink); text-decoration: none; margin: .35rem 0 .45rem; }
+.vt:hover { color: var(--blue); }
+ol.ts { list-style: none; padding: 0; margin: 0; display: grid; gap: .1rem; font-size: .86rem; line-height: 1.45; }
+ol.ts a { color: var(--ink); text-decoration: none; display: flex; gap: .55rem; } ol.ts a:hover { color: var(--blue); }
+ol.ts .tt { flex: none; width: 2.6rem; font: 500 .8rem/1.45 var(--mono); color: var(--blue); }
+@media (max-width: 640px) { .vid { grid-template-columns: 1fr; } }
+.tagok { font-weight: 600; padding: .1rem .5rem; border-radius: 5px; }
+.tagok.yes { background: #e3f4ec; color: #146c43; } .tagok.no { background: #fdecea; color: #a32018; }
+.solo { margin-top: 1.4rem; }
+.live3 { aspect-ratio: 16 / 10; padding: 0; background: #fff; } .live3 svg { width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; user-select: none; }
+.live3 svg:active { cursor: grabbing; }
+.live3 .ax { stroke: #c4cad1; stroke-width: 1; }
+.live3 text { font: 600 12px var(--sans); }
+.live3 .axl { fill: #8a929b; font-weight: 500; }
+.live3 .bl { fill: #1a73e8; } .live3 .bl2 { fill: #1a73e8; font-size: 13px; } .live3 .rl { fill: #c5221f; font-weight: 500; } .live3 .rl2 { fill: #c5221f; font-size: 13px; } .live3 .xl { fill: #e37400; font-size: 15px; }
+.ctl { display: flex; flex-wrap: wrap; gap: .6rem 1.4rem; align-items: center; margin-top: .7rem; font: 500 .9rem/1 var(--sans); }
+.ctl label { display: flex; align-items: center; gap: .5rem; } .ctl input[type=range] { width: 9rem; accent-color: #e37400; } .ctl output { width: 2.4rem; font-variant-numeric: tabular-nums; }
+.mx { box-sizing: border-box; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 1rem; background: #fff; border: 1px solid var(--rule); border-radius: 12px; padding: 1rem 1.2rem; margin-top: 1.2rem; font-family: var(--sans); }
+@media (max-width: 640px) { .mx { grid-template-columns: 1fr; } }
+.mxk { font: 600 .72rem/1.3 var(--sans); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: .6rem; }
+.grid { display: grid; grid-template-columns: repeat(2, 4.2rem); gap: .4rem; padding: .4rem .7rem; border-left: 2px solid var(--ink); border-right: 2px solid var(--ink); border-radius: 6px; width: max-content; }
+.grid input { width: 4.2rem; font: 600 1.05rem/1 var(--sans); text-align: center; padding: .45rem .2rem; border: 1px solid #c9d1da; border-radius: 6px; background: var(--paper); color: var(--ink); }
+.grid input:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
+.presets { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .8rem; } .presets .reset { margin: 0; }
+.mxout { min-width: 0; } .mxeq { overflow-x: auto; }
+.facts2 { display: flex; flex-wrap: wrap; gap: .3rem 1.2rem; margin: .4rem 0 .7rem; font-size: .95rem; }
+.figcap { font: 400 .86rem/1.5 var(--sans); color: var(--muted); margin-top: .6rem; }
+.figcap .who { font-weight: 600; font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; padding: .15rem .45rem; border-radius: 4px; margin-right: .3rem; }
+.readout .tagok { font-size: .88rem; }
+</style>
+<style>[hidden]{display:none!important} img{max-width:100%} html{-webkit-text-size-adjust:100%} body{margin:0}
+.draft .back { font-weight: 700; text-decoration: none; color: var(--blue); margin-right: .4rem; }</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="draft"><a class="back" href="../../?bai=L.ortho">← Bản đồ</a><b>Bản nháp</b>
+    <span class="chip"><span class="sw n"></span>nguyên văn ghi chú</span>
+    <span class="chip"><span class="sw c"></span>hình Claude vẽ / tương tác</span>
+    <span class="chip"><span class="sw b"></span>ảnh bảng MIT OCW</span>
+    <span class="chip"><span class="sw h"></span>hình tay của tác giả</span>
+    <span class="chip">chữ thường: Claude viết lại theo ý ghi chú, tác giả sẽ duyệt lại; mỗi mục có link ghi chú gốc</span></div>
+
+  <header class="ch">
+    <div class="crumb">Đại số tuyến tính · MIT 18.06 bài giảng 14</div>
+    <h1>Vector và không gian con trực giao</h1>
+    <p class="lede">Hai vector vuông góc khi tích vô hướng bằng 0. Từ một ý đơn giản đó, bài này cho thấy bốn không gian con của một ma trận ghép thành hai cặp vuông góc, và dẫn tới ma trận \(A^TA\), chìa khoá của bài toán bình phương tối thiểu.</p>
+    <dl class="facts">
+      <div><dt>Cần biết trước</dt><dd>Bốn không gian con · Tích vô hướng & chuẩn</dd></div>
+      <div><dt>Mở ra</dt><dd>Phép chiếu · Gram–Schmidt & QR · Định lý phổ · Gradient liên hợp (Nocedal 5.1)</dd></div>
+      <div><dt>Bài giảng của tác giả</dt><dd>3 video ôn tập, tổng khoảng 91 phút</dd></div>
+    </dl>
+    <nav class="toc" aria-label="Ba phần của bài">
+      <a href="#phan-1"><span class="no">1</span>Vuông góc: từ vector đến không gian con</a>
+      <a href="#phan-2"><span class="no">2</span>Số chiều và phần bù trực giao</a>
+      <a href="#phan-3"><span class="no">3</span>Khi Ax = b vô nghiệm: ma trận AᵀA</a>
+    </nav>
+  </header>
+
+  <!-- ================= PHẦN 1 ================= -->
+  <section class="part" id="phan-1">
+    <div class="partno">Phần 1</div>
+    <h2 class="parth">Vuông góc: từ vector đến không gian con</h2>
+    <div class="vid">
+      <a class="thumb" href="https://www.youtube.com/watch?v=GomcsySSQCw" target="_blank" rel="noopener"><img src="img/yt-GomcsySSQCw.jpg" alt="Hình thu nhỏ video: Hai subspace trực giao chỉ giao nhau tại 0" width="480" height="360"><span class="dur">30:38</span></a>
+      <div class="vmeta"><div class="vk">Video tác giả giảng lại</div>
+        <a class="vt" href="https://www.youtube.com/watch?v=GomcsySSQCw" target="_blank" rel="noopener">Tại sao row space và null space luôn trực giao với nhau?</a>
+        <ol class="ts">
+          <li><a href="https://www.youtube.com/watch?v=GomcsySSQCw&amp;t=122s" target="_blank" rel="noopener"><span class="tt">2:02</span>Tích vô hướng bằng 0 nghĩa là vuông góc</a></li><li><a href="https://www.youtube.com/watch?v=GomcsySSQCw&amp;t=184s" target="_blank" rel="noopener"><span class="tt">3:04</span>Từ Pythagoras ra xᵀy = 0</a></li><li><a href="https://www.youtube.com/watch?v=GomcsySSQCw&amp;t=492s" target="_blank" rel="noopener"><span class="tt">8:12</span>Vector 0 vuông góc với mọi vector</a></li><li><a href="https://www.youtube.com/watch?v=GomcsySSQCw&amp;t=553s" target="_blank" rel="noopener"><span class="tt">9:13</span>Bức tường và mặt sàn</a></li><li><a href="https://www.youtube.com/watch?v=GomcsySSQCw&amp;t=1160s" target="_blank" rel="noopener"><span class="tt">19:20</span>Row space ⟂ nullspace</a></li><li><a href="https://www.youtube.com/watch?v=GomcsySSQCw&amp;t=1464s" target="_blank" rel="noopener"><span class="tt">24:24</span>Column space ⟂ left nullspace</a></li><li><a href="https://www.youtube.com/watch?v=GomcsySSQCw&amp;t=1585s" target="_blank" rel="noopener"><span class="tt">26:25</span>Phần bù: ghép hai cơ sở thành cơ sở của ℝ³</a></li>
+        </ol></div>
+    </div>
+
+    <h3><span class="no">1.1</span>Khi nào hai vector vuông góc?</h3>
+    <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-hhd9hzt" target="_blank" rel="noopener">Hai vector trực giao ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-h3x2z1w" target="_blank" rel="noopener">Vector vuông góc và Pythagoras ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-bre0ecl" target="_blank" rel="noopener">Pythagorean Theorem ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-v5cm2dp" target="_blank" rel="noopener">Pythagoras và tích vô hướng ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-drf45f3" target="_blank" rel="noopener">Trực giao của vector không ↗</a></div>
+    <p>Orthogonal, perpendicular, vuông góc, trực giao: cùng một nghĩa. Phép thử rất gọn: \(x\) và \(y\) vuông góc khi và chỉ khi tích vô hướng của chúng bằng 0,</p>
+    <div class="eq">\[ x \perp y \iff x^T y = 0. \]</div>
+    <p>Vì sao lại là tích vô hướng? Strang nối nó với định lý Pythagoras. Bình phương độ dài của một vector chính là \(x^Tx\): với \(x = (1, 2, 3)\) thì \(\lVert x\rVert^2 = 1^2 + 2^2 + 3^2 = 14 = x^Tx\). Tam giác tạo bởi \(x\), \(y\) và \(x + y\) vuông khi</p>
+    <div class="eq">\[ \lVert x\rVert^2 + \lVert y\rVert^2 = \lVert x + y\rVert^2 \iff x^Tx + y^Ty = x^Tx + x^Ty + y^Tx + y^Ty \iff 2\,x^Ty = 0. \]</div>
+    <p>Ví dụ trên bảng: \(x = (1, 2, 3)\), \(y = (2, -1, 0)\), \(x^Ty = 2 - 2 + 0 = 0\), và đúng là \(14 + 5 = 19 = \lVert (3, 1, 3)\rVert^2\).</p>
+
+    <div class="pair wide">
+      <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/1u957iq3xx7.png" alt="Bảng: x = (1,2,3), y = (2,-1,0), x+y = (3,1,3), ‖x‖² = 14, ‖y‖² = 5, ‖x+y‖² = 19" width="640" height="480" loading="lazy"></div>
+        <figcaption><span class="who b">Bảng</span><span>Ví dụ của Strang: \(14 + 5 = 19\).</span></figcaption></figure>
+      <figure><div class="frame live" id="pyth"><svg viewBox="0 0 400 300" role="img" aria-label="Kéo đầu mũi tên x và y; các bình phương độ dài và x mũ T y tính lại ngay"></svg></div>
+        <figcaption><span class="who c">Tương tác</span><span><b>Đầu vào:</b> kéo đầu mũi tên \(x\) (xanh) và \(y\) (cam). <b>Kết quả</b> tự tính lại: \(x + y\), ba bình phương độ dài và \(x^Ty\).</span></figcaption></figure>
+    </div>
+    <div class="readout" id="pythOut" aria-live="polite"></div>
+
+    <p>Một trường hợp đặc biệt: vector 0. Tích vô hướng của nó với bất kỳ vector nào cũng bằng 0, nên theo đúng luật, <strong>vector 0 vuông góc với mọi vector</strong>, kể cả chính nó. Chi tiết nhỏ này quay lại ngay ở mục sau.</p>
+
+    <h3><span class="no">1.2</span>Hai không gian con vuông góc</h3>
+    <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-vmuk5yp" target="_blank" rel="noopener">Không gian con trực giao ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-pvr3bqz" target="_blank" rel="noopener">Định nghĩa ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-cp4pwd5" target="_blank" rel="noopener">Bức tường và mặt sàn ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-9jgxsbm" target="_blank" rel="noopener">Orthogonal subspace trong ℝ² ↗</a></div>
+    <p>Định nghĩa: hai không gian con \(S\) và \(T\) trực giao khi <strong>mọi</strong> vector trong \(S\) vuông góc với <strong>mọi</strong> vector trong \(T\). Strang hỏi: bức tường và mặt sàn trong phòng, hai mặt phẳng qua gốc trong \(\mathbb{R}^3\), có trực giao không?</p>
+    <div class="pair wide">
+      <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/uzev4fctsm.png" alt="Strang trên lớp: Subspace S is orthogonal to subspace T" width="640" height="480" loading="lazy"></div>
+        <figcaption><span class="who b">Bảng</span><span>"Subspace S is orthogonal to subspace T": nghĩa là gì?</span></figcaption></figure>
+      <figure class="hand"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to hình tay của tác giả"><img src="img/j8eqhtt6alg.png" alt="Hình vẽ tay của tác giả: một mặt phẳng 2D và một đường thẳng 1D trong ℝ³, chỉ chung nhau vector 0" width="640" height="480" loading="lazy"></div>
+        <figcaption><span class="who h">Tay tác giả</span><span>Vẽ lúc học: không gian con 2D và 1D trong \(\mathbb{R}^3\), chỉ chung nhau \(\{0\}\).</span></figcaption></figure>
+    </div>
+    <div class="from n"><span class="tag">Nguyên văn ghi chú <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-cp4pwd5" target="_blank" rel="noopener">mở ghi chú gốc ↗</a></span>
+      <p>Và theo định nghĩa này thì <strong>hai subspace không orthogonal</strong> - vì dễ thấy không phải mọi vector nào của mặt tường cũng orthogonal với mặt sàn. Và điển hình là trên intersection line, vector không thể orthogonal với chính nó</p>
+      <p>Do đó, theo gs, <strong>hai subspace không nên intersect nhau bởi một line</strong> nếu muốn orthogonal. Hoặc đúng hơn là nếu muốn orthogonal thì chúng <strong>chỉ có thể intersect nhau tại ZERO vì chỉ có zero vector mới orthogonal với chính nó</strong></p></div>
+    <p>Trong \(\mathbb{R}^2\), các cặp không gian con trực giao chỉ có hai dạng: \(\{0\}\) với một đường thẳng qua gốc, hoặc hai đường thẳng qua gốc vuông góc nhau.</p>
+
+    <h3><span class="no">1.3</span>Row space vuông góc với nullspace</h3>
+    <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-p3x0mh4" target="_blank" rel="noopener">Trực giao Rowspace và Nullspace ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-jw7843g" target="_blank" rel="noopener">Row space trực giao Nullspace ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-h8zlxjg" target="_blank" rel="noopener">C(A) ⟂ N(Aᵀ) ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-sb1dwsz" target="_blank" rel="noopener">Bốn không gian con cơ bản ↗</a></div>
+    <p>Viết \(Ax = 0\) theo từng hàng là thấy ngay:</p>
+    <div class="eq">\[ \begin{bmatrix} \text{hàng } 1 \text{ của } A \\ \text{hàng } 2 \text{ của } A \\ \vdots \\ \text{hàng } m \text{ của } A \end{bmatrix} x = \begin{bmatrix} 0 \\ 0 \\ \vdots \\ 0 \end{bmatrix} \quad\Longrightarrow\quad (\text{hàng } i)^T x = 0 \text{ với mọi } i. \]</div>
+    <p>Mỗi phần tử của \(Ax\) là tích vô hướng của một hàng với \(x\). Với \(x\) trong nullspace, tất cả các tích đó bằng 0, nên \(x\) vuông góc với từng hàng. Và vuông góc với từng hàng thì vuông góc với mọi tổ hợp tuyến tính của các hàng:</p>
+    <div class="eq">\[ (c_1 r_1 + c_2 r_2)^T x = c_1\, r_1^T x + c_2\, r_2^T x = c_1 \cdot 0 + c_2 \cdot 0 = 0. \]</div>
+    <p>Vậy <strong>mọi vector trong row space vuông góc với mọi vector trong nullspace</strong>. Làm y như vậy với \(A^Ty = 0\): các hàng của \(A^T\) chính là các cột của \(A\), nên column space vuông góc với left nullspace.</p>
+    <div class="pair wide">
+      <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh bảng"><img src="img/2q1ghk2ud6z.png" alt="Strang vẽ bức tranh lớn: row space và nullspace trong ℝⁿ, column space và nullspace của Aᵀ trong ℝᵐ" width="640" height="480" loading="lazy"></div>
+        <figcaption><span class="who b">Bảng</span><span>Bức tranh lớn: hai cặp vuông góc, một cặp trong \(\mathbb{R}^n\), một cặp trong \(\mathbb{R}^m\).</span></figcaption></figure>
+      <figure class="hand"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to hình tay của tác giả"><img src="img/j4bnq0l2etm.png" alt="Hình vẽ tay của tác giả: ghép cơ sở u, w của mặt phẳng với v của đường thẳng thành cơ sở của ℝ³" width="640" height="480" loading="lazy"></div>
+        <figcaption><span class="who h">Tay tác giả</span><span>Ghép cơ sở \(\{u, w\}\) của mặt phẳng với \(\{v\}\) của đường thẳng thành cơ sở \(\{u, w, v\}\) của \(\mathbb{R}^3\).</span></figcaption></figure>
+    </div>
+    <p class="hint">Bấm vào ảnh để xem to.</p>
+  </section>
+
+  <!-- ================= PHẦN 2 ================= -->
+  <section class="part" id="phan-2">
+    <div class="partno">Phần 2</div>
+    <h2 class="parth">Số chiều và phần bù trực giao</h2>
+    <div class="vid">
+      <a class="thumb" href="https://www.youtube.com/watch?v=53VJU032wbM" target="_blank" rel="noopener"><img src="img/yt-53VJU032wbM.jpg" alt="Hình thu nhỏ video: Row space và null space có thể cùng là đường thẳng không?" width="480" height="360"><span class="dur">19:03</span></a>
+      <div class="vmeta"><div class="vk">Video tác giả giảng lại</div>
+        <a class="vt" href="https://www.youtube.com/watch?v=53VJU032wbM" target="_blank" rel="noopener">Row space và null space có thể cùng là đường thẳng không?</a>
+        <ol class="ts">
+          <li><a href="https://www.youtube.com/watch?v=53VJU032wbM&amp;t=0s" target="_blank" rel="noopener"><span class="tt">0:00</span>Câu hỏi: hai đường vuông góc trong ℝ³</a></li><li><a href="https://www.youtube.com/watch?v=53VJU032wbM&amp;t=123s" target="_blank" rel="noopener"><span class="tt">2:03</span>Không được: 1 + 1 ≠ 3</a></li><li><a href="https://www.youtube.com/watch?v=53VJU032wbM&amp;t=610s" target="_blank" rel="noopener"><span class="tt">10:10</span>Ví dụ của Strang: ma trận hạng 1</a></li><li><a href="https://www.youtube.com/watch?v=53VJU032wbM&amp;t=733s" target="_blank" rel="noopener"><span class="tt">12:13</span>Giải Ax = 0: hai nghiệm đặc biệt</a></li><li><a href="https://www.youtube.com/watch?v=53VJU032wbM&amp;t=916s" target="_blank" rel="noopener"><span class="tt">15:16</span>Vẽ trong ℝ²: row space (1, 2), nullspace (−2, 1)</a></li>
+        </ol></div>
+    </div>
+
+    <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-pojvq4a" target="_blank" rel="noopener">Số chiều Rowspace và Nullspace ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-wm23y80" target="_blank" rel="noopener">Ví dụ rank 1 ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-mp2yafb" target="_blank" rel="noopener">Nullspace là mặt phẳng nào ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-7q5uw9k" target="_blank" rel="noopener">Phần bù trực giao trong ℝⁿ ↗</a></div>
+    <p>Strang hỏi: trong \(\mathbb{R}^3\), lấy hai đường thẳng qua gốc vuông góc nhau. Có ma trận nào mà row space và nullspace chính là hai đường đó không?</p>
+    <p><strong>Không.</strong> Với \(A\) có \(n\) cột và hạng \(r\), row space có số chiều \(r\), nullspace có số chiều \(n - r\), cộng lại luôn bằng \(n\). Hai đường thẳng chỉ có \(1 + 1 = 2\) chiều, không đủ lấp đầy \(\mathbb{R}^3\). Row space và nullspace không chỉ vuông góc mà còn <strong>bù nhau</strong>: nullspace chứa <em>tất cả</em> các vector vuông góc với row space. Strang gọi chúng là <strong>phần bù trực giao</strong> (orthogonal complements) trong \(\mathbb{R}^n\).</p>
+    <p>Ví dụ của Strang:</p>
+    <div class="eq">\[ A = \begin{bmatrix} 1 & 2 & 5 \\ 2 & 4 & 10 \end{bmatrix}, \qquad n = 3,\; r = 1,\; \dim N(A) = 3 - 1 = 2. \]</div>
+    <p>Hàng 2 bằng 2 lần hàng 1, nên row space là đường thẳng qua \((1, 2, 5)\). Nullspace là tập nghiệm của \(x_1 + 2x_2 + 5x_3 = 0\), một mặt phẳng, với hai nghiệm đặc biệt \((-2, 1, 0)\) và \((-5, 0, 1)\).</p>
+    <div class="from n"><span class="tag">Nguyên văn ghi chú <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-mp2yafb" target="_blank" rel="noopener">mở ghi chú gốc ↗</a></span>
+      <p>Và liên hệ với 18.02 ta biết &lt;1, 2, 5&gt; chính là NORMAL VECTOR (vector pháp tuyến) của mặt phẳng, nó sẽ vuông góc với mọi vector trong mặt phẳng. Vậy từ đó trong trường hợp này bức tranh về rowspace C(Aᵀ) và nullspace N(A) rất rõ rằng, C(Aᵀ) chính là line đi qua normal vector và N(A) chính là plane.</p></div>
+
+    <figure class="wide solo"><div class="frame live3" id="ns3"><svg viewBox="0 0 640 400" role="img" aria-label="Hình 3D xoay được: đường thẳng row space qua (1,2,5) và mặt phẳng nullspace"></svg></div>
+      <div class="ctl">
+        <label for="al">\(\alpha\) <input type="range" id="al" min="-2" max="2" step="0.1" value="1.4"><output id="alv">1,4</output></label>
+        <label for="be">\(\beta\) <input type="range" id="be" min="-2" max="2" step="0.1" value="-0.3"><output id="bev">−0,3</output></label>
+        <button type="button" class="reset" id="nsReset">Về góc nhìn ban đầu</button>
+      </div>
+      <figcaption><span class="who c">Tương tác</span><span><b>Đầu vào:</b> kéo trên hình để xoay; hai thanh \(\alpha, \beta\) chọn một vector \(x = \alpha(-2, 1, 0) + \beta(-5, 0, 1)\) trong nullspace. <b>Kết quả:</b> mũi tên \(x\) luôn nằm trong mặt phẳng, và tích vô hướng với hàng \((1, 2, 5)\) luôn bằng 0.</span></figcaption></figure>
+    <div class="readout" id="nsOut" aria-live="polite"></div>
+  </section>
+
+  <!-- ================= PHẦN 3 ================= -->
+  <section class="part" id="phan-3">
+    <div class="partno">Phần 3</div>
+    <h2 class="parth">Khi Ax = b vô nghiệm: ma trận AᵀA</h2>
+    <div class="vid">
+      <a class="thumb" href="https://www.youtube.com/watch?v=gkxPk7hBGNE" target="_blank" rel="noopener"><img src="img/yt-gkxPk7hBGNE.jpg" alt="Hình thu nhỏ video: Khi Ax=b vô nghiệm, điều kiện nào để AᵀA khả nghịch?" width="480" height="360"><span class="dur">41:28</span></a>
+      <div class="vmeta"><div class="vk">Video tác giả giảng lại</div>
+        <a class="vt" href="https://www.youtube.com/watch?v=gkxPk7hBGNE" target="_blank" rel="noopener">Khi Ax=b vô nghiệm, điều kiện nào để AᵀA khả nghịch?</a>
+        <ol class="ts">
+          <li><a href="https://www.youtube.com/watch?v=gkxPk7hBGNE&amp;t=63s" target="_blank" rel="noopener"><span class="tt">1:03</span>Ax = b vô nghiệm ⇔ b không nằm trong C(A)</a></li><li><a href="https://www.youtube.com/watch?v=gkxPk7hBGNE&amp;t=489s" target="_blank" rel="noopener"><span class="tt">8:09</span>Ma trận cao ốm: C(A) chỉ là mặt phẳng trong ℝ³</a></li><li><a href="https://www.youtube.com/watch?v=gkxPk7hBGNE&amp;t=854s" target="_blank" rel="noopener"><span class="tt">14:14</span>Bỏ bớt phương trình? Vì sao không ổn</a></li><li><a href="https://www.youtube.com/watch?v=gkxPk7hBGNE&amp;t=1102s" target="_blank" rel="noopener"><span class="tt">18:22</span>AᵀA vuông và đối xứng</a></li><li><a href="https://www.youtube.com/watch?v=gkxPk7hBGNE&amp;t=1226s" target="_blank" rel="noopener"><span class="tt">20:26</span>Ôn lại: khả nghịch, full column rank</a></li><li><a href="https://www.youtube.com/watch?v=gkxPk7hBGNE&amp;t=1587s" target="_blank" rel="noopener"><span class="tt">26:27</span>Chứng minh AᵀAx = 0 ⇔ Ax = 0</a></li><li><a href="https://www.youtube.com/watch?v=gkxPk7hBGNE&amp;t=1898s" target="_blank" rel="noopener"><span class="tt">31:38</span>Ví dụ AᵀA không khả nghịch</a></li><li><a href="https://www.youtube.com/watch?v=gkxPk7hBGNE&amp;t=2082s" target="_blank" rel="noopener"><span class="tt">34:42</span>rank(AᵀA) = rank(A)</a></li>
+        </ol></div>
+    </div>
+
+    <h3><span class="no">3.1</span>Đặt vấn đề</h3>
+    <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-wrqltex" target="_blank" rel="noopener">Solving Ax=b With No Solution ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-eyrvns1" target="_blank" rel="noopener">Ý tưởng loại bỏ phương trình ↗</a></div>
+    <p>Xét ma trận "cao ốm": \(m > n\), nhiều phương trình hơn ẩn. Chỉ có \(n\) cột nên column space không thể phủ hết \(\mathbb{R}^m\), chắc chắn có những \(b\) làm \(Ax = b\) vô nghiệm. Đây là chuyện thường gặp chứ không phải ngoại lệ.</p>
+    <div class="from n"><span class="tag">Nguyên văn ghi chú <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-wrqltex" target="_blank" rel="noopener">mở ghi chú gốc ↗</a></span>
+      <p>Gs cho rằng ví dụ về matrix như này có rất nhiều, ví dụ như ta <strong>đo heart rate</strong>, chỉ có một variable, nhưng mỗi lần đo ta sẽ một giá trị khác, để rồi ta có rất nhiều equation, nhưng chỉ có 1 cols. Và <strong>giá trị khác nhau mỗi lần là do noise</strong>, tuy nhiên bên trong giá trị <strong>vẫn chứa thông tin</strong>. Và ta <strong>muốn tách những thông tin hữu ích ra khỏi noise</strong></p></div>
+    <p>Bỏ bớt phương trình cho tới khi giải được? Không hợp lý: chẳng có lý do gì để coi phương trình này tốt hơn phương trình kia, và dữ liệu bị bỏ đi có thể chứa thông tin quan trọng. Strang làm khác: nhân hai vế với \(A^T\),</p>
+    <div class="eq">\[ Ax = b \quad\longrightarrow\quad \boxed{A^TA\,\hat{x} = A^Tb}. \]</div>
+    <p>Phương trình mới, Strang gọi là "good equation", luôn giải được. Bài 15 và 16 sẽ cho thấy \(\hat{x}\) là gì; bài này chỉ hỏi: \(A^TA\) có khả nghịch không?</p>
+
+    <h3><span class="no">3.2</span>AᵀA là ma trận thế nào?</h3>
+    <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-kuaxxp9" target="_blank" rel="noopener">Matrix Multiplication AᵀA ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-yqftgl5" target="_blank" rel="noopener">Symmetric ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-wmm3bkn" target="_blank" rel="noopener">Ví dụ 3 hàng 2 cột ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-30t8kt0" target="_blank" rel="noopener">AᵀA khả nghịch ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-bvqfsbw" target="_blank" rel="noopener">Ma trận không khả nghịch ↗</a></div>
+    <p>\(A\) cỡ \(m \times n\) thì \(A^TA\) cỡ \(n \times n\): <strong>vuông</strong>. Và <strong>đối xứng</strong>, vì \((A^TA)^T = A^T(A^T)^T = A^TA\). Nhưng không phải lúc nào cũng khả nghịch. Hai ví dụ trên bảng:</p>
+    <div class="eq">\[ \begin{bmatrix} 1 & 1 \\ 1 & 2 \\ 1 & 5 \end{bmatrix} \to A^TA = \begin{bmatrix} 3 & 8 \\ 8 & 30 \end{bmatrix}\ \text{khả nghịch}, \qquad \begin{bmatrix} 1 & 3 \\ 1 & 3 \\ 1 & 3 \end{bmatrix} \to A^TA = \begin{bmatrix} 3 & 9 \\ 9 & 27 \end{bmatrix}\ \text{không khả nghịch}. \]</div>
+
+    <div class="mx wide">
+      <div class="mxin">
+        <div class="mxk">Đầu vào: ma trận \(A\) (3 × 2), sửa từng số</div>
+        <div class="grid" id="mxA"></div>
+        <div class="presets"><button type="button" class="reset" data-p="1,1,1,2,1,5">Ví dụ khả nghịch</button><button type="button" class="reset" data-p="1,3,1,3,1,3">Ví dụ không khả nghịch</button></div>
+      </div>
+      <div class="mxout" id="mxOut" aria-live="polite"></div>
+    </div>
+    <p class="figcap"><span class="who c">Tương tác</span> Sửa một số trong \(A\) và xem \(A^TA\), hạng của hai ma trận và kết luận thay đổi theo. Thử làm cột 2 thành bội của cột 1.</p>
+
+    <h3><span class="no">3.3</span>Vì sao rank(AᵀA) = rank(A)</h3>
+    <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-0jz8zbz" target="_blank" rel="noopener">Rank of AᵀA ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-35vs8p7" target="_blank" rel="noopener">Nullspace và Rank của AᵀA ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-3l4hkq3" target="_blank" rel="noopener">Invertibility of AᵀA ↗</a></div>
+    <p>Mấu chốt là nullspace. Hai ma trận có <strong>cùng nullspace</strong>: \(N(A^TA) = N(A)\).</p>
+    <ol class="steps">
+      <li>Nếu \(Ax = 0\) thì nhân \(A^T\) vào được \(A^TAx = 0\).</li>
+      <li>Ngược lại, nếu \(A^TAx = 0\), nhân \(x^T\) vào hai vế: \(x^TA^TAx = (Ax)^T(Ax) = \lVert Ax\rVert^2 = 0\). Độ dài chỉ bằng 0 khi vector bằng 0, nên \(Ax = 0\).</li>
+    </ol>
+    <p>Hai ma trận cùng có \(n\) cột và cùng nullspace, nên cùng số cột tự do \(n - r\), và cùng hạng:</p>
+    <div class="eq">\[ \operatorname{rank}(A^TA) = n - \dim N(A^TA) = n - \dim N(A) = \operatorname{rank}(A). \]</div>
+    <p>Kết luận của bài:</p>
+    <div class="eq">\[ A^TA \text{ khả nghịch} \iff N(A) = \{0\} \iff \text{các cột của } A \text{ độc lập (full column rank)}. \]</div>
+    <p>Bài sau, \(A^TA\) đóng vai trò then chốt trong phép chiếu và bình phương tối thiểu.</p>
+  </section>
+
+  <footer>
+    <h3>Bài này được làm thế nào</h3>
+    <p>Chữ: viết lại từ <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md" target="_blank" rel="noopener">ghi chú MIT 18.06 bài giảng 14</a> của tác giả, sắp theo mạch ba video ôn tập. Khung xanh là nguyên văn ghi chú. Phần chữ còn lại do Claude soạn theo ý ghi chú và cần tác giả viết lại. Mốc thời gian của video lấy từ phụ đề tự động của YouTube.</p>
+    <p>Sửa so với ghi chú: ở mục "Rank of Matrix Product AᵀA", câu "AᵀA có m − (n − r) cột độc lập" là gõ nhầm; \(A^TA\) có \(n\) cột nên đúng là \(n - (n - r) = r\), khớp với kết quả ghi chú viết ngay sau đó.</p>
+    <p>Hình tương tác: Claude dựng, mọi con số tính lại từ ví dụ trong ghi chú và trên bảng. Hình tay: vẽ trong StudyBoard lúc học. Ảnh chụp bảng: MIT OpenCourseWare 18.06 Linear Algebra, Spring 2010, Gilbert Strang, giấy phép CC BY-NC-SA 4.0.</p>
+    <h3>Trên bản đồ</h3>
+    <p><a href="https://johntran-android.github.io/ml-map/" target="_blank" rel="noopener">Nền móng Machine Learning</a> · lộ trình MIT 18.06: Tích vô hướng & chuẩn, Trực giao.</p>
+  </footer>
+</div>
+
+<div class="lb" id="lb" hidden><img alt=""><button type="button" id="lbx">Đóng ✕</button></div>
+<script>
+window.MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] }, svg: { fontCache: 'global' }, options: { skipHtmlTags: ['script', 'style', 'textarea', 'svg'] } };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg-full.js" async></script>
+<script>
+// ---- shared
+const NS = 'http://www.w3.org/2000/svg';
+const el = (parent, n, a = {}) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); parent.appendChild(e); return e; };
+const vn = v => { const r = Math.round(v * 100) / 100; return (r < 0 ? '−' : '') + Math.abs(r).toString().replace('.', ','); };
+const typeset = n => { try { window.MathJax && MathJax.typesetPromise && MathJax.typesetPromise([n]); } catch (e) {} };
+
+// ---- bigger view of any picture
+(() => {
+  const lb = document.getElementById('lb'), im = lb.querySelector('img');
+  const open = f => { const src = f.querySelector('img'); im.src = src.src; im.alt = src.alt; lb.hidden = false; document.getElementById('lbx').focus(); };
+  const close = () => { lb.hidden = true; im.removeAttribute('src'); };
+  document.querySelectorAll('.zoom').forEach(f => { f.addEventListener('click', () => open(f)); f.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(f); } }); });
+  lb.addEventListener('click', close); addEventListener('keydown', e => { if (e.key === 'Escape' && !lb.hidden) close(); });
+})();
+
+// ---- 1. Pythagoras in the plane: drag the tips of x and y (whole numbers), see when ‖x‖² + ‖y‖² = ‖x + y‖²
+(() => {
+  const svg = document.querySelector('#pyth svg'), out = document.getElementById('pythOut');
+  const S = 34, O = [150, 175], X = a => O[0] + a * S, Y = b => O[1] - b * S;            // grid −4..7 by −3..5
+  for (let i = -4; i <= 7; i++) el(svg, 'line', { x1: X(i), x2: X(i), y1: Y(-3.3), y2: Y(4.8), class: 'gr' });
+  for (let j = -3; j <= 4; j++) el(svg, 'line', { x1: X(-4.3), x2: X(7.3), y1: Y(j), y2: Y(j), class: 'gr' });
+  el(svg, 'line', { x1: X(-4.3), x2: X(7.3), y1: Y(0), y2: Y(0), class: 'ax' }); el(svg, 'line', { x1: X(0), x2: X(0), y1: Y(-3.3), y2: Y(4.8), class: 'ax' });
+  const defs = el(svg, 'defs');
+  const mk = (id, c) => { const m = el(defs, 'marker', { id, viewBox: '0 0 10 10', refX: 8.5, refY: 5, markerWidth: 6, markerHeight: 6, orient: 'auto-start-reverse' }); el(m, 'path', { d: 'M0,0 L10,5 L0,10 z', fill: c }); };
+  mk('ab', '#1a73e8'); mk('ao', '#e37400'); mk('ag', '#0f8f7e');
+  const tri = el(svg, 'path', { fill: 'rgba(15,143,126,.08)', stroke: 'none' });
+  const sq = el(svg, 'path', { fill: 'none', stroke: '#0f8f7e', 'stroke-width': 1.4 });
+  const vs = el(svg, 'line', { stroke: '#0f8f7e', 'stroke-width': 2.4, 'marker-end': 'url(#ag)', 'stroke-dasharray': '6 4' });
+  const vx = el(svg, 'line', { stroke: '#1a73e8', 'stroke-width': 3, 'marker-end': 'url(#ab)' });
+  const vy = el(svg, 'line', { stroke: '#e37400', 'stroke-width': 3, 'marker-end': 'url(#ao)' });
+  const lx = el(svg, 'text', { class: 'pt', 'font-weight': 700 }), ly = el(svg, 'text', { class: 'bt' }), ls = el(svg, 'text', { fill: '#0f8f7e', 'font-weight': 700 });
+  const v = { x: [3, 1], y: [-1, 3] };
+  const handle = (key, c) => {
+    const g = el(svg, 'g', { class: 'handle', tabindex: 0, role: 'slider', 'aria-label': `Đầu mũi tên ${key}` });
+    el(g, 'circle', { r: 15, fill: 'transparent' }); el(g, 'circle', { r: 6.5, fill: c, stroke: '#fff', 'stroke-width': 1.5, class: 'ring' });
+    let drag = false;
+    g.addEventListener('pointerdown', e => { drag = true; g.setPointerCapture(e.pointerId); });
+    g.addEventListener('pointermove', e => { if (!drag) return; const r = svg.getBoundingClientRect(), px = (e.clientX - r.left) * 400 / r.width, py = (e.clientY - r.top) * 300 / r.height;
+      const a = Math.max(-4, Math.min(4, Math.round((px - O[0]) / S))), b = Math.max(-3, Math.min(4, Math.round((O[1] - py) / S)));
+      if (a || b) { v[key] = [a, b]; draw(); } });
+    g.addEventListener('pointerup', () => drag = false); g.addEventListener('pointercancel', () => drag = false);
+    g.addEventListener('keydown', e => { const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1] }[e.key]; if (!d) return; e.preventDefault();
+      const n = [Math.max(-4, Math.min(4, v[key][0] + d[0])), Math.max(-3, Math.min(4, v[key][1] + d[1]))]; if (n[0] || n[1]) { v[key] = n; draw(); } });
+    return g;
+  };
+  const hx = handle('x', '#1a73e8'), hy = handle('y', '#e37400');
+  function draw() {
+    const [a, b] = v.x, [c, d] = v.y, s = [a + c, b + d], dot = a * c + b * d, nx = a * a + b * b, ny = c * c + d * d, ns = s[0] * s[0] + s[1] * s[1];
+    vx.setAttribute('x1', X(0)); vx.setAttribute('y1', Y(0)); vx.setAttribute('x2', X(a)); vx.setAttribute('y2', Y(b));
+    vy.setAttribute('x1', X(a)); vy.setAttribute('y1', Y(b)); vy.setAttribute('x2', X(s[0])); vy.setAttribute('y2', Y(s[1]));     // y drawn from the tip of x, so x, y, x + y close a triangle
+    vs.setAttribute('x1', X(0)); vs.setAttribute('y1', Y(0)); vs.setAttribute('x2', X(s[0])); vs.setAttribute('y2', Y(s[1]));
+    tri.setAttribute('d', `M${X(0)},${Y(0)}L${X(a)},${Y(b)}L${X(s[0])},${Y(s[1])}Z`);
+    if (dot === 0) { const L = 9, ux = [-a / Math.hypot(a, b), -b / Math.hypot(a, b)], uy = [c / Math.hypot(c, d), d / Math.hypot(c, d)], P = [X(a), Y(b)];
+      const p1 = [P[0] + ux[0] * L, P[1] - ux[1] * L], p2 = [P[0] + uy[0] * L, P[1] - uy[1] * L], p3 = [p1[0] + uy[0] * L, p1[1] - uy[1] * L];
+      sq.setAttribute('d', `M${p1}L${p3}L${p2}`); } else sq.setAttribute('d', '');
+    hx.setAttribute('transform', `translate(${X(a)},${Y(b)})`); hy.setAttribute('transform', `translate(${X(s[0])},${Y(s[1])})`);
+    { const L = Math.hypot(a, b) || 1, side = (a * d - b * c) > 0 ? 1 : -1; lx.setAttribute('x', X(a / 2) + side * b / L * 16); lx.setAttribute('y', Y(b / 2) + side * a / L * 16 + 4); lx.setAttribute('text-anchor', 'middle'); } lx.textContent = `x = (${vn(a)}, ${vn(b)})`;
+    ly.setAttribute('x', X(a + c / 2) + 8); ly.setAttribute('y', Y(b + d / 2) + 4); ly.textContent = `y = (${vn(c)}, ${vn(d)})`;
+    ls.setAttribute('x', X(s[0] / 2) - 10); ls.setAttribute('y', Y(s[1] / 2) + 16); ls.setAttribute('text-anchor', 'end'); ls.textContent = 'x + y';
+    const ok = dot === 0;
+    out.innerHTML = `<span>‖x‖² = <b>${nx}</b></span><span>‖y‖² = <b>${ny}</b></span><span>‖x‖² + ‖y‖² = <b>${nx + ny}</b></span><span>‖x + y‖² = <b>${ns}</b></span><span>xᵀy = <b>${vn(dot)}</b></span><span class="tagok ${ok ? 'yes' : 'no'}">${ok ? 'Vuông góc: hai vế bằng nhau' : `Không vuông góc: lệch đúng 2xᵀy = ${vn(2 * dot)}`}</span>`;
+  }
+  draw();
+})();
+
+// ---- 2. Row space line through (1, 2, 5) and nullspace plane x1 + 2x2 + 5x3 = 0, rotatable
+(() => {
+  const svg = document.querySelector('#ns3 svg'), out = document.getElementById('nsOut');
+  const r = [1, 2, 5], s1 = [-2, 1, 0], s2 = [-5, 0, 1];
+  const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2], add = (a, b) => a.map((x, i) => x + b[i]), mul = (a, k) => a.map(x => x * k), nrm = a => Math.hypot(...a);
+  const e1 = mul(s1, 1 / nrm(s1)), t = add(s2, mul(e1, -dot(s2, e1))), e2 = mul(t, 1 / nrm(t)), rn = mul(r, 1 / nrm(r));   // orthonormal frame of the plane
+  const V0 = { yaw: -0.75, pitch: 0.42 }; let V = { ...V0 };
+  const W = 640, H = 400, C = [W / 2, H / 2 + 10], SC = 46;
+  const proj = p => { const cy = Math.cos(V.yaw), sy = Math.sin(V.yaw), cp = Math.cos(V.pitch), sp = Math.sin(V.pitch);
+    // world: x1 right, x2 depth, x3 up
+    const x = p[0] * cy - p[1] * sy, z = p[0] * sy + p[1] * cy, y = p[2] * cp - z * sp, depth = p[2] * sp + z * cp;
+    return [C[0] + x * SC, C[1] - y * SC, depth]; };
+  const defs = el(svg, 'defs');
+  [['m1', '#1a73e8'], ['m2', '#c5221f'], ['m3', '#e37400']].forEach(([id, c]) => { const m = el(defs, 'marker', { id, viewBox: '0 0 10 10', refX: 8.5, refY: 5, markerWidth: 5.5, markerHeight: 5.5, orient: 'auto' }); el(m, 'path', { d: 'M0,0 L10,5 L0,10 z', fill: c }); });
+  const layer = el(svg, 'g');
+  const al = document.getElementById('al'), be = document.getElementById('be');
+  function line(p, q, a) { const P = proj(p), Q = proj(q); return el(layer, 'line', { x1: P[0], y1: P[1], x2: Q[0], y2: Q[1], ...a }); }
+  function label(p, txt, a) { const P = proj(p); const e = el(layer, 'text', { x: P[0], y: P[1], ...a }); e.textContent = txt; }
+  function draw() {
+    layer.innerHTML = '';
+    const R = 3.2, k = 1 / nrm(r) * 3.4;
+    for (const [i, a] of [[0, 'x₁'], [1, 'x₂'], [2, 'x₃']].map(([i, n]) => [i, n])) { const u = [0, 0, 0]; u[i] = 2.6; line(mul(u, -1), u, { class: 'ax' }); label(mul(u, 1.08), a, { class: 'axl' }); }
+    const back = proj(mul(rn, -1))[2] > proj(rn)[2];
+    const rowHalf = (sgn) => line([0, 0, 0], mul(rn, 3.4 * sgn), { stroke: '#1a73e8', 'stroke-width': 3 });
+    if (!back) rowHalf(-1); else rowHalf(1);
+    const corners = [add(mul(e1, R), mul(e2, R)), add(mul(e1, -R), mul(e2, R)), add(mul(e1, -R), mul(e2, -R)), add(mul(e1, R), mul(e2, -R))].map(proj);
+    el(layer, 'path', { d: 'M' + corners.map(c => c[0] + ',' + c[1]).join('L') + 'Z', fill: 'rgba(197,34,31,.09)', stroke: 'rgba(197,34,31,.45)', 'stroke-width': 1.2 });
+    for (let g = -2; g <= 2; g++) { line(add(mul(e1, g * R / 3), mul(e2, -R)), add(mul(e1, g * R / 3), mul(e2, R)), { stroke: 'rgba(197,34,31,.13)' }); line(add(mul(e2, g * R / 3), mul(e1, -R)), add(mul(e2, g * R / 3), mul(e1, R)), { stroke: 'rgba(197,34,31,.13)' }); }
+    line([0, 0, 0], mul(s1, .7), { stroke: '#c5221f', 'stroke-width': 1.8, 'marker-end': 'url(#m2)' }); label(add(mul(s1, .7), [-.2, 0, -.45]), '(−2, 1, 0)', { class: 'rl', 'text-anchor': 'end' });
+    line([0, 0, 0], mul(s2, .5), { stroke: '#c5221f', 'stroke-width': 1.8, 'marker-end': 'url(#m2)' }); label(add(mul(s2, .5), [-.3, 0, .2]), '(−5, 0, 1)', { class: 'rl', 'text-anchor': 'end' });
+    const a = +al.value, b = +be.value, x = add(mul(s1, a), mul(s2, b));
+    if (nrm(x) > 0.05) line([0, 0, 0], x, { stroke: '#e37400', 'stroke-width': 3, 'marker-end': 'url(#m3)' }), label(add(x, [0, 0, .3]), 'x', { class: 'xl' });
+    if (!back) rowHalf(1); else rowHalf(-1);
+    line([0, 0, 0], mul(r, .55), { stroke: '#1a73e8', 'stroke-width': 3.2, 'marker-end': 'url(#m1)' });
+    label(add(mul(r, .55), [.3, 0, -.1]), 'hàng (1, 2, 5)', { class: 'bl' });
+    const lg = el(layer, 'g', { transform: 'translate(18,26)' });
+    el(lg, 'line', { x1: 0, x2: 22, y1: 0, y2: 0, stroke: '#1a73e8', 'stroke-width': 3 }); el(lg, 'text', { x: 30, y: 4, class: 'bl2' }).textContent = 'row space: đường thẳng qua (1, 2, 5)';
+    el(lg, 'rect', { x: 0, y: 14, width: 22, height: 12, fill: 'rgba(197,34,31,.12)', stroke: 'rgba(197,34,31,.5)' }); el(lg, 'text', { x: 30, y: 24, class: 'rl2' }).textContent = 'nullspace: mặt phẳng x₁ + 2x₂ + 5x₃ = 0';
+    el(lg, 'line', { x1: 0, x2: 22, y1: 40, y2: 40, stroke: '#e37400', 'stroke-width': 3 }); el(lg, 'text', { x: 30, y: 44, class: 'xl', style: 'font-size:12px' }).textContent = 'x: vector bạn chọn bằng α, β';
+    document.getElementById('alv').textContent = vn(a); document.getElementById('bev').textContent = vn(b);
+    out.innerHTML = `<span>x = ${vn(a)}·(−2, 1, 0) + ${vn(b)}·(−5, 0, 1) = <b>(${x.map(vn).join('; ')})</b></span><span>(1, 2, 5)ᵀx = ${vn(x[0])} + 2·${vn(x[1])} + 5·${vn(x[2])} = <b>${vn(dot(r, x))}</b></span><span class="tagok yes">x luôn vuông góc với row space</span>`;
+  }
+  let drag = null;
+  svg.addEventListener('pointerdown', e => { drag = [e.clientX, e.clientY, V.yaw, V.pitch]; svg.setPointerCapture(e.pointerId); });
+  svg.addEventListener('pointermove', e => { if (!drag) return; V.yaw = drag[2] + (e.clientX - drag[0]) * 0.01; V.pitch = Math.max(-1.2, Math.min(1.35, drag[3] + (e.clientY - drag[1]) * 0.008)); draw(); });
+  ['pointerup', 'pointercancel'].forEach(n => svg.addEventListener(n, () => drag = null));
+  al.addEventListener('input', draw); be.addEventListener('input', draw);
+  document.getElementById('nsReset').onclick = () => { V = { ...V0 }; draw(); };
+  draw();
+})();
+
+// ---- 3. Is AᵀA invertible? edit a 3 × 2 matrix
+(() => {
+  const g = document.getElementById('mxA'), out = document.getElementById('mxOut');
+  const inputs = [];
+  for (let i = 0; i < 6; i++) { const inp = document.createElement('input'); inp.type = 'number'; inp.step = '1'; inp.id = 'a' + i; inp.setAttribute('aria-label', `A hàng ${Math.floor(i / 2) + 1} cột ${i % 2 + 1}`); g.appendChild(inp); inputs.push(inp); inp.addEventListener('input', calc); }
+  const set = arr => { arr.forEach((v, i) => inputs[i].value = v); calc(); };
+  document.querySelectorAll('.presets button').forEach(b => b.onclick = () => set(b.dataset.p.split(',').map(Number)));
+  const tex = M => `\\begin{bmatrix}${M.map(r => r.map(v => (Math.round(v * 100) / 100)).join(' & ')).join(' \\\\ ')}\\end{bmatrix}`;
+  const rank = M => { const A = M.map(r => r.slice()); let rk = 0; const rows = A.length, cols = A[0].length;
+    for (let c = 0; c < cols && rk < rows; c++) { let p = rk; for (let i = rk; i < rows; i++) if (Math.abs(A[i][c]) > Math.abs(A[p][c])) p = i; if (Math.abs(A[p][c]) < 1e-9) continue;
+      [A[rk], A[p]] = [A[p], A[rk]]; for (let i = rk + 1; i < rows; i++) { const f = A[i][c] / A[rk][c]; for (let j = c; j < cols; j++) A[i][j] -= f * A[rk][j]; } rk++; } return rk; };
+  function calc() {
+    const v = inputs.map(i => Number(i.value) || 0), A = [[v[0], v[1]], [v[2], v[3]], [v[4], v[5]]];
+    const AtA = [[0, 0], [0, 0]]; for (let i = 0; i < 2; i++) for (let j = 0; j < 2; j++) for (let k = 0; k < 3; k++) AtA[i][j] += A[k][i] * A[k][j];
+    const det = AtA[0][0] * AtA[1][1] - AtA[0][1] * AtA[1][0], rA = rank(A), rB = rank(AtA), inv = Math.abs(det) > 1e-9;
+    out.innerHTML = `<div class="mxk">Kết quả, tự tính lại</div>
+      <div class="mxeq">\\[ A^TA = ${tex(AtA)} \\]</div>
+      <div class="facts2"><span>rank(A) = <b>${rA}</b></span><span>rank(AᵀA) = <b>${rB}</b></span><span>det(AᵀA) = <b>${vn(det)}</b></span></div>
+      <div class="tagok ${inv ? 'yes' : 'no'}">${inv ? 'AᵀA khả nghịch: hai cột của A độc lập' : (rA === 0 ? 'A bằng 0: AᵀA cũng bằng 0' : 'AᵀA không khả nghịch: cột 2 là bội của cột 1')}</div>`;
+    typeset(out);
+  }
+  set([1, 1, 1, 2, 1, 5]);
+})();
+
+</script>
+</body>
+</html>

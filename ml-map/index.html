@@ -345,6 +345,10 @@ details.mr>.pills{display:contents}
 #labels b.fr::after{content:"";position:absolute;inset:-2.5px;border-radius:50%;border:2px solid var(--fr);animation:pulse 1.6s ease-out infinite}
 @media (prefers-reduced-motion: reduce){#labels b.fr::after,.frd{animation:none}}
 .new{display:inline-block;font-size:10px;font-weight:700;line-height:1;padding:2px 5px;border-radius:6px;background:var(--ink);color:var(--paper);vertical-align:1px}
+#card a.art { display: flex; gap: 10px; align-items: flex-start; margin: 10px 0 4px; padding: 10px 12px; border-radius: 10px; background: var(--acc-soft, rgba(26,115,232,.1)); border: 1px solid rgba(26,115,232,.35); color: inherit; text-decoration: none; }
+#card a.art:hover { border-color: rgba(26,115,232,.8); }
+#card a.art .ai { font-size: 18px; line-height: 1.2; } #card a.art b { display: block; font-size: 13.5px; } #card a.art small { display: block; opacity: .7; font-size: 12px; margin-top: 2px; }
+a.lart { display: inline-block; margin: 2px 0 4px; font-size: 13px; font-weight: 600; text-decoration: none; }
 </style>
 <style>html,body{height:100dvh}</style>
 </head>
@@ -474,6 +478,15 @@ const ST = { taught:'Có video', read:'Có ghi chú', ahead:'Chưa có tài li�
 const MK = { taught:'▶\uFE0E', read:'✎', ahead:'○' };
 const DI = { C:0, L:1, P:2, S:3, O:4, M:5 };
 const REPO = 'https://github.com/johntran-android/StudyBoard-Publish/blob/main/';
+// written chapters (notes + the author's videos + figures), served next to the map under bai/; keyed by level-2 topic
+const ART_BASE = window.NM_EMBED ? 'bai/' : 'https://johntran-android.github.io/ml-map/bai/';
+const ARTICLES = {
+  'L.dot': [{ u: 'mit1806-14/', t: 'Vector và không gian con trực giao', s: 'MIT 18.06 bài 14 · 3 video · hình tương tác' }],
+  'L.ortho': [{ u: 'mit1806-14/', t: 'Vector và không gian con trực giao', s: 'MIT 18.06 bài 14 · 3 video · hình tương tác' }],
+  'L.lsq': [{ u: 'mit1806-16/', t: 'Bình phương tối thiểu', s: 'MIT 18.06 bài 16 · hình tương tác' }],
+};
+const artOf = n => { const ids = DETAIL ? [n.sec || n.id] : SIMPLE ? (n.m || []) : [n.id], seen = new Set(), out = [];
+  ids.forEach(k => (ARTICLES[k] || []).forEach(a => { if (!seen.has(a.u)) { seen.add(a.u); out.push(a); } })); return out; };
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const store = { get(k, d) { try { return localStorage.getItem(k) ?? d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
@@ -801,6 +814,7 @@ function showCard(id, ups) {
   C.innerHTML = `<button class="x" id="cx" aria-label="Đóng">×</button><div class="scroll">
     <span class="stat"><span class="dot" style="background:var(--${n.d})"></span>Chặng ${sg.k} · ${esc(sg.name)} · bài ${n.no}/${N.length}</span>
     <h2>${esc(n.t)}</h2><div class="src">${esc(n.src)}</div>
+    ${artOf(n).map(a => `<a class="art" href="${ART_BASE}${a.u}" target="_blank" rel="noopener"><span class="ai">📖</span><span><b>Đọc bài viết: ${esc(a.t)}</b><small>${esc(a.s)}</small></span></a>`).join('')}
     ${vid.length ? `<div class="lab">Video (${vid.length})</div><div id="player" hidden></div><a class="src" id="ytl" target="_blank" rel="noopener" hidden>Mở trên YouTube ↗</a>${fold(vid, 'video')}` : ''}
     ${nts.length ? `<div class="lab">Ghi chú (${nts.length})</div>${fold(nts, 'ghi chú')}` : ''}
     ${!vid.length && !nts.length ? `<div class="src">Chưa có video hay ghi chú. Đọc trong sách: ${esc(n.src)}.</div>` : ''}
@@ -1030,7 +1044,7 @@ function drawList() {
   const row = n => { const ok = done.has(n.id), vs = n.v.map(i => D.vids[i]);
     return `<li style="--sel:var(--${S ? S.d : n.d})" id="li-${n.id}" class="${ok ? 'ok' : ''}${n.id === lsel ? ' on' : ''}${pre.has(n.id) ? ' pre' : ''}${nxt.has(n.id) ? ' nxt' : ''}"><button class="ck" type="button" data-done="${n.id}" aria-pressed="${ok}" aria-label="${ok ? 'Bỏ đánh dấu' : 'Đánh dấu đã hiểu'}: ${esc(n.t)}">${ok ? '✓' : C ? stepOf[n.id][0] : n.no}</button>
       <div><button class="tt" type="button" data-id="${n.id}" aria-expanded="${n.id === lsel}" title="Xem bài này nối với những gì">${esc(n.t)}</button>
-      <div class="sm">${C && !C.book ? esc(lecs(stepOf[n.id][1].lec) + ' · ' + n.src) : esc(n.src)}${n.nt.length ? ` · <a href="${REPO}${encodeURI(n.nt[0][1])}" target="_blank" rel="noopener">✎ ${n.nt.length} ghi chú</a>` : ''}</div>
+      ${artOf(n).map(a => `<a class="lart" href="${ART_BASE}${a.u}" target="_blank" rel="noopener">📖 Đọc bài viết: ${esc(a.t)}</a>`).join('')}<div class="sm">${C && !C.book ? esc(lecs(stepOf[n.id][1].lec) + ' · ' + n.src) : esc(n.src)}${n.nt.length ? ` · <a href="${REPO}${encodeURI(n.nt[0][1])}" target="_blank" rel="noopener">✎ ${n.nt.length} ghi chú</a>` : ''}</div>
       ${vs.length ? `<ul class="lv">${vs.map(v => `<li><a href="https://youtu.be/${esc(v.id)}" target="_blank" rel="noopener"><span class="vdot">${PLAY}</span><span>${esc(v.t)}</span></a></li>`).join('')}</ul>` : ''}${rel(n)}</div><button class="mp" type="button" data-map="${n.id}" title="Mở trên bản đồ" aria-label="Mở ${esc(n.t)} trên bản đồ"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M1.5 3.5 5.5 2l5 1.8 4-1.5v10.2l-4 1.5-5-1.8-4 1.5z"/><path d="M5.5 2v10.2M10.5 3.8V14"/></svg></button></li>`; };
   const body = C ? `<h2>Lộ trình ${esc(C.t)}: đi từ trên xuống</h2>${COCHIPS()}
     <p class="intro"><b>${total} ${UNIT}, đúng thứ tự ${C.book ? 'mục lục sách' : 'bài giảng của'} ${esc(C.full)}.</b> Đường dọc bên trái cho biết bài nào trong lộ trình là nền cho bài nào. Bấm tên bài để xem nó nối với đâu (kể cả bài nền ngoài lộ trình), bấm vòng tròn khi đã hiểu. <span class="vdot" style="background:var(--taught)">${PLAY}</span>có video · ✎ có ghi chú.</p>
@@ -1205,6 +1219,7 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', paint);
 let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (G) { G.width($('graph').clientWidth).height($('graph').clientHeight); dirty = true; } }, 150); });
 build(); paint(); frame();
 showList(/danh-sach/.test(location.hash));
+{ const qb = new URLSearchParams(location.search).get('bai'); const id = qb && (byId[qb] ? qb : nodeOf(qb)); if (id) setTimeout(() => { if (!$('list').hidden) showList(false); select(id); }, 900); }   // ?bai=L.ortho opens that topic (links back from a chapter)
 </script>
 </body>
 </html>
