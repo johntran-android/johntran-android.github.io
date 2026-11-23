@@ -181,6 +181,12 @@ ol.ts .tt { flex: none; width: 2.6rem; font: 500 .8rem/1.45 var(--mono); color: 
 .ixcap .who { font-weight: 600; font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; padding: .15rem .45rem; border-radius: 4px; margin-right: .3rem; }
 .vid .rng { font: 600 .78rem/1.3 var(--sans); color: var(--muted); margin: -.2rem 0 .4rem; }
 .vids2 { display: grid; gap: .8rem; margin-bottom: 1rem; } .vids2 .vid { margin: 0; }
+.vmini { display: flex; gap: .8rem; align-items: center; background: #fff; border: 1px solid var(--rule); border-radius: 10px; padding: .45rem .6rem; margin: .9rem 0; text-decoration: none; color: var(--ink); font-family: var(--sans); }
+.vmini:hover { border-color: var(--red); }
+.vmini img { width: 7.5rem; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 6px; flex: none; height: auto; }
+.vmini .vk { margin-bottom: .2rem; } .vmini b { display: block; font-size: .95rem; line-height: 1.35; } .vmini small { color: var(--muted); font-size: .8rem; }
+.pair .hand .frame { background: #000; }
+figcaption > span, .vmini > span, .ixcap { min-width: 0; }
 </style>
 
 <style>[hidden]{display:none!important} img{max-width:100%} html{-webkit-text-size-adjust:100%} body{margin:0}
@@ -591,6 +597,76 @@ IX.rankcases = (box) => {
       <div class="facts2"><span>Ax = b có: <b>${sols}</b></span><span>số biến tự do = dim N(A) = n − r = <b>${n - r}</b></span><span>số điều kiện trên b = m − r = <b>${m - r}</b></span></div>
       <div class="steplab" style="font-weight:400;color:var(--muted)">\\(\\ast\\) là phần F (cột tự do). Hàng 0 ở dưới đòi b phải thoả ${m - r} điều kiện thì mới có nghiệm${n - r ? '; cột tự do cho vô số nghiệm khi đã có nghiệm' : ''}.</div>`;
     typeset(sb);
+  }
+  [im, inn, ir].forEach(i => i.oninput = draw); draw();
+};
+
+
+// ---- independence and span in R² (lecture 9)  ·  input: drag v1, v2 (and v3), or pick a case  ·  result: independent or not, the span, a dependency
+IX.indep = (box) => {
+  const CASES = { two: [[2, 1], [-1, 2]], par: [[2, 1], [4, 2]], zero: [[2, 1], [0, 0]], three: [[2, 1], [-1, 2], [1, 3]] };
+  box.innerHTML = `<div class="ixbar"><div class="seg" role="group" aria-label="Chọn ví dụ"><button type="button" data-c="two" class="on">v₁, v₂ khác phương</button><button type="button" data-c="par">v₂ = 2v₁</button><button type="button" data-c="zero">v₂ = 0</button><button type="button" data-c="three">thêm v₃</button></div></div>
+    <div class="frame live"><svg viewBox="0 0 400 300"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout');
+  const S = 30, O = [200, 160], X = a => O[0] + a * S, Y = b => O[1] - b * S, iX = px => (px - O[0]) / S, iY = py => (O[1] - py) / S;
+  const shade = el(svg, 'g');
+  for (let i = -6; i <= 6; i++) el(svg, 'line', { x1: X(i), x2: X(i), y1: Y(-4.6), y2: Y(5.3), class: 'gr' });
+  for (let j = -4; j <= 5; j++) el(svg, 'line', { x1: X(-6.6), x2: X(6.6), y1: Y(j), y2: Y(j), class: 'gr' });
+  el(svg, 'line', { x1: X(-6.6), x2: X(6.6), y1: Y(0), y2: Y(0), class: 'ax' }); el(svg, 'line', { x1: X(0), x2: X(0), y1: Y(-4.6), y2: Y(5.3), class: 'ax' });
+  const id = 'm' + (++MID), defs = el(svg, 'defs'); const COL = ['#1a73e8', '#e37400', '#8e24aa']; COL.forEach((c, i) => marker(defs, id + i, c));
+  const layer = el(svg, 'g'), hs = el(svg, 'g'); let V = CASES.two.map(v => v.slice());
+  const handles = COL.map((c, i) => { const g = el(hs, 'g', { class: 'handle', tabindex: 0, role: 'slider', 'aria-label': `Vector v${i + 1}` }); el(g, 'circle', { r: 14, fill: 'transparent' }); el(g, 'circle', { r: 6, fill: c, stroke: '#fff', 'stroke-width': 1.5 });
+    let drag = false; g.addEventListener('pointerdown', e => { drag = true; g.setPointerCapture(e.pointerId); });
+    g.addEventListener('pointermove', e => { if (!drag) return; const r = svg.getBoundingClientRect(); V[i] = [Math.max(-6, Math.min(6, Math.round(iX((e.clientX - r.left) * 400 / r.width)))), Math.max(-4, Math.min(5, Math.round(iY((e.clientY - r.top) * 300 / r.height))))]; draw(); });
+    ['pointerup', 'pointercancel'].forEach(t => g.addEventListener(t, () => drag = false));
+    g.addEventListener('keydown', e => { const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1] }[e.key]; if (!d) return; e.preventDefault(); V[i] = [V[i][0] + d[0], V[i][1] + d[1]]; draw(); });
+    return g; });
+  function draw() {
+    layer.innerHTML = ''; shade.innerHTML = '';
+    const nz = V.filter(v => v[0] || v[1]), cross = (a, b) => a[0] * b[1] - a[1] * b[0];
+    const rank = nz.length === 0 ? 0 : nz.some(a => nz.some(b => cross(a, b) !== 0)) ? 2 : 1;
+    if (rank === 2) el(shade, 'rect', { x: X(-6.6), y: Y(5.3), width: 13.2 * S, height: 9.9 * S, fill: 'rgba(15,143,126,.08)' });
+    if (rank === 1) { const d = nz[0], t = 12 / Math.hypot(...d); el(shade, 'line', { x1: X(-d[0] * t), y1: Y(-d[1] * t), x2: X(d[0] * t), y2: Y(d[1] * t), stroke: 'rgba(15,143,126,.4)', 'stroke-width': 7, 'stroke-linecap': 'round' }); }
+    V.forEach((v, i) => { if (v[0] || v[1]) el(layer, 'line', { x1: X(0), y1: Y(0), x2: X(v[0]), y2: Y(v[1]), stroke: COL[i], 'stroke-width': 3, 'marker-end': `url(#${id + i})` });
+      const t = el(layer, 'text', { x: X(v[0]) + 8, y: Y(v[1]) - 8, fill: COL[i], style: 'font:700 12px var(--sans)' }); t.textContent = `v${'₁₂₃'[i]} = (${vn(v[0])}, ${vn(v[1])})`; });
+    handles.forEach((g, i) => { g.style.display = i < V.length ? '' : 'none'; if (i < V.length) g.setAttribute('transform', `translate(${X(V[i][0])},${Y(V[i][1])})`); });
+    const indep = rank === V.length;
+    let dep = '';
+    if (!indep) { const A = [[V.map(v => v[0])], [V.map(v => v[1])]].map(r => r[0]), N = nullBasis(A); if (N.length) { const c = N[0]; dep = `${c.map((x, i) => `${i && x >= 0 ? '+ ' : ''}${x < 0 ? '−' : ''}${vn(Math.abs(x))}·v${'₁₂₃'[i]}`).join(' ')} = 0`; } }
+    out.innerHTML = `<span class="tagok ${indep ? 'yes' : 'no'}">${indep ? 'Độc lập tuyến tính' : 'Phụ thuộc tuyến tính'}</span><span>span = ${rank === 2 ? '<b>cả mặt phẳng ℝ²</b>' : rank === 1 ? '<b>một đường thẳng</b>' : '<b>chỉ {0}</b>'} (chiều ${rank})</span>${dep ? `<span>tổ hợp ra 0: <b>${dep}</b></span>` : '<span>chỉ có tổ hợp với mọi hệ số bằng 0 mới ra 0</span>'}${V.length === 2 && indep ? '<span>v₁, v₂ là một cơ sở của ℝ²</span>' : ''}`;
+  }
+  box.querySelectorAll('.seg button').forEach(bt => bt.onclick = () => { V = CASES[bt.dataset.c].map(v => v.slice()); box.querySelectorAll('.seg button').forEach(z => z.classList.toggle('on', z === bt)); draw(); });
+  draw();
+};
+
+
+// ---- the big picture of the four subspaces (lecture 10)  ·  input: m, n, r  ·  result: their dimensions, drawn to size
+IX.bigpic = (box) => {
+  box.innerHTML = `<div class="ixbar"><span class="ixin"><label>m <input type="range" min="1" max="6" value="3"><output></output></label><label>n <input type="range" min="1" max="6" value="4"><output></output></label><label>r <input type="range" min="0" max="6" value="2"><output></output></label></span></div>
+    <div class="frame"><svg viewBox="0 0 640 300" style="width:100%;display:block"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const [im, inn, ir] = box.querySelectorAll('input'), outs = box.querySelectorAll('output'), svg = box.querySelector('svg'), out = box.querySelector('.readout');
+  const U = 26;   // pixels per dimension
+  const txt = (x, y, t, fill, w = 700, size = 13, anchor = 'middle') => { const e = el(svg, 'text', { x, y, 'text-anchor': anchor, fill, style: `font:${w} ${size}px var(--sans)` }); e.textContent = t; };
+  function draw() {
+    const m = +im.value, n = +inn.value; ir.max = Math.min(m, n); if (+ir.value > Math.min(m, n)) ir.value = Math.min(m, n); const r = +ir.value;
+    outs[0].textContent = m; outs[1].textContent = n; outs[2].textContent = r; svg.innerHTML = '';
+    const H = 46;
+    // one side: block a sits to the upper left of the corner P, block b hangs below it; they meet at a right angle
+    const side = (px, title, a, b, la, lb, ca, cb) => {
+      txt(px, 22, title, '#202124', 700, 15);
+      const P = [px + 20, 100], wa = a * U, wb = b * U;
+      if (a > 0) { el(svg, 'rect', { x: P[0] - wa, y: P[1] - H, width: wa, height: H, fill: ca + '2a', stroke: ca, 'stroke-width': 1.6, rx: 3 }); txt(P[0] - wa / 2, P[1] - H / 2 + 5, `chiều ${a}`, '#3c4043', 600, 12); }
+      else el(svg, 'circle', { cx: P[0] - 8, cy: P[1] - 8, r: 4, fill: ca });
+      txt(P[0] - Math.max(wa, 60) / 2, P[1] - H - 10, la, ca);
+      if (b > 0) { el(svg, 'rect', { x: P[0], y: P[1], width: H, height: wb, fill: cb + '2a', stroke: cb, 'stroke-width': 1.6, rx: 3 }); }
+      else el(svg, 'circle', { cx: P[0] + 8, cy: P[1] + 8, r: 4, fill: cb });
+      txt(P[0] + H / 2, P[1] + Math.max(wb, 14) + 20, lb, cb);
+      txt(P[0] + H / 2, P[1] + Math.max(wb, 14) + 36, b > 0 ? `chiều ${b}` : 'chỉ có {0}', '#3c4043', 600, 12);
+      el(svg, 'path', { d: `M${P[0] - 10},${P[1]} L${P[0] - 10},${P[1] + 10} L${P[0]},${P[1] + 10}`, fill: 'none', stroke: '#5d6670', 'stroke-width': 1.2 });
+    };
+    side(150, `ℝⁿ = ℝ${'⁰¹²³⁴⁵⁶'[n]}`, r, n - r, 'row space C(Aᵀ)', 'nullspace N(A)', '#1a73e8', '#c5221f');
+    side(470, `ℝᵐ = ℝ${'⁰¹²³⁴⁵⁶'[m]}`, r, m - r, 'column space C(A)', 'left nullspace N(Aᵀ)', '#0f8f7e', '#8e24aa');
+    out.innerHTML = `<span>dim C(Aᵀ) + dim N(A) = ${r} + ${n - r} = <b>${n}</b> = n</span><span>dim C(A) + dim N(Aᵀ) = ${r} + ${m - r} = <b>${m}</b> = m</span>`;
   }
   [im, inn, ir].forEach(i => i.oninput = draw); draw();
 };
