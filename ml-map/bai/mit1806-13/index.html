@@ -227,12 +227,13 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
 </head>
 <body>
 <div class="page">
-  <div class="draft"><a class="back" href="../../?bai=L.subsp">← Bản đồ</a><b>Bản nháp</b>
-    <span class="chip"><span class="sw n"></span>nguyên văn ghi chú</span>
-    <span class="chip"><span class="sw c"></span>hình tương tác</span>
-    <span class="chip"><span class="sw b"></span>ảnh chụp bài giảng MIT</span>
-    <span class="chip"><span class="sw h"></span>ghi chú viết tay của tác giả</span>
-    <span class="chip">phần chữ còn lại: Claude viết từ ghi chú, tác giả sẽ duyệt lại</span></div>
+  <div class="draft2"><a class="back" href="../../?bai=L.subsp">← Bản đồ</a><span class="dtag">Bản nháp</span>
+    <details class="legend"><summary>ⓘ Cách đọc trang này</summary><div class="legendb">
+      <span class="chip"><span class="sw n"></span>khung xanh: nguyên văn ghi chú của tác giả</span>
+      <span class="chip"><span class="sw c"></span>hình tương tác</span>
+      <span class="chip"><span class="sw b"></span>ảnh chụp bài giảng MIT</span>
+      <span class="chip"><span class="sw h"></span>ghi chú viết tay của tác giả</span>
+      <p>Phần chữ thường do Claude viết lại theo ý ghi chú, tác giả sẽ duyệt lại. Nút "Ghi chú gốc" dưới mỗi tiêu đề mở danh sách các đoạn ghi chú tương ứng.</p></div></details></div>
 
   <header class="ch">
     <div class="crumb">Đại số tuyến tính · MIT 18.06 bài giảng 13</div>
@@ -250,13 +251,13 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <div class="qa"><span class="qn">Câu 1</span>
     <p class="q">\(u, v, w\) là ba vector khác 0 trong \(\mathbb{R}^7\). Không gian chúng span có thể có số chiều bao nhiêu?</p>
     <details><summary>Xem lời giải</summary>
-      <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-4j8cjvb" target="_blank" rel="noopener">Subspaces and Dimension in ℝ⁷ ↗</a></div>
+      <details class="src2"><summary>Ghi chú gốc · 1 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-4j8cjvb" target="_blank" rel="noopener">Subspaces and Dimension in ℝ⁷ ↗</a></div></details>
       <p><strong>1, 2 hoặc 3.</strong> Ba vector thì span được nhiều nhất một không gian 3 chiều (khi chúng độc lập); nếu chúng cùng nằm trong một mặt phẳng thì 2; cùng phương thì 1. Không thể là 0 vì các vector khác 0, cũng không thể quá 3.</p></details></div>
 
   <div class="qa"><span class="qn">Câu 2</span>
     <p class="q">\(U\) là ma trận bậc thang \(5 \times 3\) có 3 pivot. Nullspace của \(U\) là gì?</p>
     <details><summary>Xem lời giải</summary>
-      <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-odvcq7l" target="_blank" rel="noopener">Null Space of Matrix U ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-2heql81" target="_blank" rel="noopener">Ghi chú của Strang ↗</a></div>
+      <details class="src2"><summary>Ghi chú gốc · 2 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-odvcq7l" target="_blank" rel="noopener">Null Space of Matrix U ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-2heql81" target="_blank" rel="noopener">Ghi chú của Strang ↗</a></div></details>
       <p>Ba cột đều là cột pivot, không có cột tự do, không có nghiệm đặc biệt nào: \(N(U) = \{0\}\), số chiều 0.</p>
       <div class="from n"><span class="tag">Nguyên văn ghi chú <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-2heql81" target="_blank" rel="noopener">mở ghi chú gốc ↗</a></span>
         <p>Nên câu trả lời là <strong>dimension của nullspace là 0 là đúng</strong>, <strong>nhưng nullspace vẫn chứa zero vector chứ không phải rỗng.</strong></p></div></details></div>
@@ -264,7 +265,7 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <div class="qa"><span class="qn">Câu 3</span>
     <p class="q">Với \(U\) như câu 2, cho \(B = \begin{bmatrix} U \\ 2U \end{bmatrix}\) (\(10 \times 3\)) và \(C = \begin{bmatrix} U & U \\ U & 0 \end{bmatrix}\) (\(10 \times 6\)). Dạng bậc thang và hạng của \(B\), \(C\)? Số chiều của \(N(C^T)\)?</p>
     <details><summary>Xem lời giải</summary>
-      <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-p1pd0ay" target="_blank" rel="noopener">Bậc thang của B ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-u17h6ac" target="_blank" rel="noopener">Đáp án ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-215zqef" target="_blank" rel="noopener">Khử ma trận khối C ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-xpal9an" target="_blank" rel="noopener">Tiếp tục khử ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-mhdamh8" target="_blank" rel="noopener">Hạng ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-nif3d4c" target="_blank" rel="noopener">N(Cᵀ) ↗</a></div>
+      <details class="src2"><summary>Ghi chú gốc · 6 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-p1pd0ay" target="_blank" rel="noopener">Bậc thang của B ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-u17h6ac" target="_blank" rel="noopener">Đáp án ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-215zqef" target="_blank" rel="noopener">Khử ma trận khối C ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-xpal9an" target="_blank" rel="noopener">Tiếp tục khử ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-mhdamh8" target="_blank" rel="noopener">Hạng ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-nif3d4c" target="_blank" rel="noopener">N(Cᵀ) ↗</a></div></details>
       <p>Năm hàng dưới của \(B\) là 2 lần năm hàng trên, nên bị khử hết: \(B \to \begin{bmatrix} U \\ 0 \end{bmatrix}\), hạng 3. Với \(C\): lấy khối dưới trừ khối trên được \(\begin{bmatrix} U & U \\ 0 & -U \end{bmatrix}\), cộng khối dưới vào khối trên rồi đổi dấu khối dưới, được \(\begin{bmatrix} U & 0 \\ 0 & U \end{bmatrix}\): hạng \(2 \times 3 = 6\). \(C\) có 10 hàng, hạng 6, nên \(\dim N(C^T) = 10 - 6 = 4\).</p>
       <div class="pair wide">
         <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/6daytim4y6n.png" alt="Bảng: B = [U; 2U] → [U; 0]; C = [U U; U 0] → [U 0; 0 U]" width="640" height="480" loading="lazy"></div>
@@ -278,7 +279,7 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <div class="qa"><span class="qn">Câu 4</span>
     <p class="q">Biết \(Ax = \begin{bmatrix} 2 \\ 4 \\ 2 \end{bmatrix}\) có nghiệm tổng quát \(x = \begin{bmatrix} 2 \\ 0 \\ 0 \end{bmatrix} + c\begin{bmatrix} 1 \\ 1 \\ 0 \end{bmatrix} + d\begin{bmatrix} 0 \\ 0 \\ 1 \end{bmatrix}\). Cỡ của \(A\)? Hạng? Số chiều row space? Tìm \(A\). Với \(b\) nào thì \(Ax = b\) giải được?</p>
     <details><summary>Xem lời giải</summary>
-      <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-k2tf2ug" target="_blank" rel="noopener">Cỡ của A ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-tex123q" target="_blank" rel="noopener">Hạng từ nullspace ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-q9kno8g" target="_blank" rel="noopener">Cột 1 ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-y8seenn" target="_blank" rel="noopener">Cột 2, 3 ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-6vl2lxf" target="_blank" rel="noopener">Điều kiện trên b ↗</a></div>
+      <details class="src2"><summary>Ghi chú gốc · 5 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-k2tf2ug" target="_blank" rel="noopener">Cỡ của A ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-tex123q" target="_blank" rel="noopener">Hạng từ nullspace ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-q9kno8g" target="_blank" rel="noopener">Cột 1 ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-y8seenn" target="_blank" rel="noopener">Cột 2, 3 ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-6vl2lxf" target="_blank" rel="noopener">Điều kiện trên b ↗</a></div></details>
       <p>\(x\) có 3 thành phần nên \(A\) có 3 cột; \(b\) có 3 thành phần nên \(A\) có 3 hàng: \(A\) cỡ \(3 \times 3\). Nullspace có cơ sở 2 vector, nên có 2 cột tự do và \(3 - 2 = 1\) cột pivot: hạng 1, row space chiều 1.</p>
       <p>Tìm \(A\) từng cột: \(x_p = (2, 0, 0)\) cho \(2\cdot\)cột 1 \(= b\), nên cột 1 \(= (1, 2, 1)\). Nghiệm \((1, 1, 0)\) của \(Ax = 0\) cho cột 1 + cột 2 = 0, nên cột 2 \(= (-1, -2, -1)\). Nghiệm \((0, 0, 1)\) cho cột 3 = 0.</p>
       <div class="eq">\[ A = \begin{bmatrix} 1 & -1 & 0 \\ 2 & -2 & 0 \\ 1 & -1 & 0 \end{bmatrix}. \]</div>
@@ -289,13 +290,13 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <div class="qa"><span class="qn">Câu 5</span>
     <p class="q">\(A\) vuông và \(N(A) = \{0\}\). Nullspace của \(A^T\) là gì?</p>
     <details><summary>Xem lời giải</summary>
-      <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-c2s0kvc" target="_blank" rel="noopener">Null Space of A Transpose ↗</a></div>
+      <details class="src2"><summary>Ghi chú gốc · 1 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-c2s0kvc" target="_blank" rel="noopener">Null Space of A Transpose ↗</a></div></details>
       <p>\(N(A) = \{0\}\) nghĩa là mọi cột đều là cột pivot, hạng bằng số cột \(n\). \(A\) vuông nên hạng cũng bằng số hàng: \(\dim N(A^T) = n - n = 0\), tức \(N(A^T) = \{0\}\).</p></details></div>
 
   <div class="qa"><span class="qn">Câu 6</span>
     <p class="q">\(A\) là \(n \times n\) với các cột độc lập. Có phải \(Ax = b\) luôn giải được?</p>
     <details><summary>Xem lời giải</summary>
-      <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-xop82on" target="_blank" rel="noopener">Solvability of Ax = b ↗</a></div>
+      <details class="src2"><summary>Ghi chú gốc · 1 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-xop82on" target="_blank" rel="noopener">Solvability of Ax = b ↗</a></div></details>
       <p><strong>Đúng.</strong> \(n\) cột độc lập trong \(\mathbb{R}^n\) là một cơ sở, nên \(C(A) = \mathbb{R}^n\) và \(b\) nào cũng nằm trong đó, với đúng một nghiệm.</p>
       <div class="from n"><span class="tag">Nguyên văn ghi chú <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-xop82on" target="_blank" rel="noopener">mở ghi chú gốc ↗</a></span>
         <p>Nếu theo góc nhìn hình học của 18.02, thì ta có 3 normal vector  chính là các rows của A. Và vì A full rank nên dĩ nhiên các rows  cũng độc lập. Vậy 3 normal vector có phương khác nhau. Điều này tương ứng với việc 3 plane chắc chắn cắt nhau tại 1 điểm. Đó chính là solution duy nhất nói ở trên.</p></div>
@@ -304,12 +305,11 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <div class="qa"><span class="qn">Câu 7</span>
     <p class="q">\(B = CD\) với \(C = \begin{bmatrix} 1 & 1 & 0 \\ 0 & 1 & 0 \\ 1 & 0 & 1 \end{bmatrix}\), \(D = \begin{bmatrix} 1 & 0 & -1 & 2 \\ 0 & 1 & 1 & -1 \\ 0 & 0 & 0 & 0 \end{bmatrix}\). Tìm cơ sở của \(N(B)\) và nghiệm tổng quát của \(Bx = (1, 0, 1)\).</p>
     <details><summary>Xem lời giải</summary>
-      <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-ilexr06" target="_blank" rel="noopener">Nullspace của tích ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-pl0qgd2" target="_blank" rel="noopener">Cách của Strang ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-088ce8a" target="_blank" rel="noopener">Cơ sở ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-1kyds2t" target="_blank" rel="noopener">Nghiệm riêng ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-nizfj45" target="_blank" rel="noopener">Nghiệm tổng quát ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-j9ujlvr" target="_blank" rel="noopener">Nghiệm riêng nào cũng được ↗</a></div>
+      <details class="src2"><summary>Ghi chú gốc · 6 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-ilexr06" target="_blank" rel="noopener">Nullspace của tích ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-pl0qgd2" target="_blank" rel="noopener">Cách của Strang ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-088ce8a" target="_blank" rel="noopener">Cơ sở ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-1kyds2t" target="_blank" rel="noopener">Nghiệm riêng ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-nizfj45" target="_blank" rel="noopener">Nghiệm tổng quát ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-j9ujlvr" target="_blank" rel="noopener">Nghiệm riêng nào cũng được ↗</a></div></details>
       <p>\(C\) khả nghịch, nên \(Bx = CDx = 0\) kéo theo \(Dx = 0\) (nhân \(C^{-1}\) vào hai vế): \(N(B) = N(D)\). \(D\) có cột pivot 1, 2 và cột tự do 3, 4; hai nghiệm đặc biệt \((1, -1, 1, 0)\) và \((-2, 1, 0, 1)\).</p>
       <p>Nghiệm riêng nhìn ra ngay: cột 1 của \(B\) là \(C\) nhân cột 1 của \(D\), tức cột 1 của \(C\) \(= (1, 0, 1)\), đúng bằng vế phải. Vậy \(x_p = (1, 0, 0, 0)\) và</p>
       <div class="eq">\[ x = \begin{bmatrix} 1 \\ 0 \\ 0 \\ 0 \end{bmatrix} + c\begin{bmatrix} 1 \\ -1 \\ 1 \\ 0 \end{bmatrix} + d\begin{bmatrix} -2 \\ 1 \\ 0 \\ 1 \end{bmatrix}. \]</div>
-      <div class="ix" data-ix="combo" data-a="1,1,0,1;0,1,1,-1;1,0,-1,2" data-xp="1,0,0,0" data-s="1,-1,1,0;-2,1,0,1"></div>
-      <p class="ixcap"><span class="who c">Hình tương tác</span> <b>Đầu vào:</b> kéo \(c\), \(d\). <b>Kết quả:</b> \(x\) và \(Bx\) với \(B = CD = \begin{bmatrix} 1 & 1 & 0 & 1 \\ 0 & 1 & 1 & -1 \\ 1 & 0 & -1 & 2 \end{bmatrix}\); lúc nào cũng ra \((1, 0, 1)\).</p>
+      <section class="ixbox"><div class="ixhead"><span class="who c">Hình tương tác</span><span>Mọi nghiệm của Bx = (1, 0, 1)</span></div><p class="ixhow">Kéo hai thanh c và d; Bx luôn ra (1, 0, 1).</p><div class="ix" data-title="Mọi nghiệm của Bx = (1, 0, 1)" data-how="Kéo hai thanh c và d; Bx luôn ra (1, 0, 1)." data-ix="combo" data-a="1,1,0,1;0,1,1,-1;1,0,-1,2" data-xp="1,0,0,0" data-s="1,-1,1,0;-2,1,0,1"></div><details class="ixmore"><summary>Hình này cho thấy gì?</summary><p><b>Đầu vào:</b> kéo \(c\), \(d\). <b>Kết quả:</b> \(x\) và \(Bx\) với \(B = CD = \begin{bmatrix} 1 & 1 & 0 & 1 \\ 0 & 1 & 1 & -1 \\ 1 & 0 & -1 & 2 \end{bmatrix}\); lúc nào cũng ra \((1, 0, 1)\).</p></details></section>
       <figure><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/pthl9phkmq9.png" alt="Bảng: basis for N(B), N(CD) = N(D) if C invertible" width="640" height="480" loading="lazy"></div>
         <figcaption><span class="who b">Bài giảng MIT</span><span>\(N(CD) = N(D)\) khi \(C\) khả nghịch.</span></figcaption></figure></details></div>
 
@@ -318,13 +318,13 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <div class="qa"><span class="qn">Câu 8</span>
     <p class="q">Các ma trận \(5 \times 5\) khả nghịch có làm thành một không gian con không?</p>
     <details><summary>Xem lời giải</summary>
-      <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-imhf1gg" target="_blank" rel="noopener">Do They Form a Subspace ↗</a></div>
+      <details class="src2"><summary>Ghi chú gốc · 1 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-imhf1gg" target="_blank" rel="noopener">Do They Form a Subspace ↗</a></div></details>
       <p><strong>Không.</strong> Ma trận 0 không khả nghịch, nên tập này không chứa vector 0. Cộng hai ma trận khả nghịch cũng có thể ra ma trận suy biến (ví dụ \(I + (-I) = 0\)).</p></details></div>
 
   <div class="qa"><span class="qn">Câu 9</span>
     <p class="q">\(B\) vuông. Nếu \(B^2 = 0\) thì \(B = 0\)?</p>
     <details><summary>Xem lời giải</summary>
-      <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-9nz47jb" target="_blank" rel="noopener">Ma trận lũy linh ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-fngpm3b" target="_blank" rel="noopener">Ví dụ ↗</a></div>
+      <details class="src2"><summary>Ghi chú gốc · 2 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-9nz47jb" target="_blank" rel="noopener">Ma trận lũy linh ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-fngpm3b" target="_blank" rel="noopener">Ví dụ ↗</a></div></details>
       <p><strong>Sai.</strong> Phản ví dụ:</p>
       <div class="eq">\[ B = \begin{bmatrix} 0 & 1 \\ 0 & 0 \end{bmatrix}, \qquad B^2 = \begin{bmatrix} 0 & 0 \\ 0 & 0 \end{bmatrix}. \]</div>
       <p>Theo góc nhìn cột: các cột của \(B^2\) là tổ hợp các cột của \(B\), nên \(B^2 = 0\) chỉ nói rằng các cột của \(B\) nằm trong nullspace của chính \(B\). Ma trận như vậy gọi là <strong>lũy linh</strong> (nilpotent).</p></details></div>
@@ -332,25 +332,25 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <div class="qa"><span class="qn">Câu 10</span>
     <p class="q">Nếu \(m = n\) thì ma trận khả nghịch?</p>
     <details><summary>Xem lời giải</summary>
-      <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-vbp8zq3" target="_blank" rel="noopener">Tính khả nghịch ↗</a></div>
+      <details class="src2"><summary>Ghi chú gốc · 1 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-vbp8zq3" target="_blank" rel="noopener">Tính khả nghịch ↗</a></div></details>
       <p><strong>Sai.</strong> Vuông chưa chắc full rank; ma trận 0 là vuông mà không khả nghịch.</p></details></div>
 
   <div class="qa"><span class="qn">Câu 11</span>
     <p class="q">\(A\) và \(-A\) có cùng bốn không gian con không? Ngược lại, nếu \(A\) và \(B\) có cùng bốn không gian con thì \(A\) có phải là bội của \(B\)?</p>
     <details><summary>Xem lời giải</summary>
-      <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-k7m88ey" target="_blank" rel="noopener">A và −A ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-iitaxne" target="_blank" rel="noopener">Chiều ngược lại ↗</a></div>
+      <details class="src2"><summary>Ghi chú gốc · 2 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-k7m88ey" target="_blank" rel="noopener">A và −A ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-iitaxne" target="_blank" rel="noopener">Chiều ngược lại ↗</a></div></details>
       <p>Câu đầu: <strong>đúng</strong>, nhân với \(-1\) không đổi gì trong phép khử, cột pivot và cột tự do giữ nguyên. Câu sau: <strong>sai</strong>. Hai ma trận khả nghịch \(2 \times 2\) bất kỳ đều có column space và row space là \(\mathbb{R}^2\), nullspace là \(\{0\}\), nhưng không cần là bội của nhau.</p></details></div>
 
   <div class="qa"><span class="qn">Câu 12</span>
     <p class="q">Đổi chỗ hai hàng của \(A\). Những không gian con nào không đổi?</p>
     <details><summary>Xem lời giải</summary>
-      <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-y6pf62i" target="_blank" rel="noopener">Subspace khi đổi hàng ↗</a></div>
+      <details class="src2"><summary>Ghi chú gốc · 1 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-y6pf62i" target="_blank" rel="noopener">Subspace khi đổi hàng ↗</a></div></details>
       <p><strong>Row space và nullspace.</strong> Tập các hàng vẫn vậy, chỉ đổi thứ tự, và nghiệm của \(Ax = 0\) không đổi. Column space thì có thể đổi (các thành phần của mỗi cột bị hoán vị).</p></details></div>
 
   <div class="qa"><span class="qn">Câu 13</span>
     <p class="q">Vì sao \(v = (1, 2, 3)\) không thể vừa là một hàng của \(A\) vừa nằm trong nullspace của \(A\)?</p>
     <details><summary>Xem lời giải</summary>
-      <div class="src"><span>Ghi chú gốc:</span><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-38pnijs" target="_blank" rel="noopener">Lời giải ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-wbomung" target="_blank" rel="noopener">Nhìn trước bài 14 ↗</a></div>
+      <details class="src2"><summary>Ghi chú gốc · 2 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-38pnijs" target="_blank" rel="noopener">Lời giải ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_13_quiz_review.md#node-wbomung" target="_blank" rel="noopener">Nhìn trước bài 14 ↗</a></div></details>
       <p>Nếu \(v\) nằm trong nullspace thì tích vô hướng của mọi hàng với \(v\) bằng 0, kể cả hàng \(v\): \(1\cdot 1 + 2\cdot 2 + 3\cdot 3 = 14 \neq 0\). Mâu thuẫn. Bài 14 sẽ cho thấy lý do sâu hơn: row space và nullspace vuông góc nhau, chỉ chung nhau vector 0.</p>
       <figure><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/ga9xjscd7eb.png" alt="Bảng: v = (1,2,3) can't be in nullspace and be a row of A. Why not?" width="640" height="480" loading="lazy"></div>
         <figcaption><span class="who b">Bài giảng MIT</span><span>"Can't be in nullspace and be a row of \(A\). Why not?"</span></figcaption></figure></details></div>
