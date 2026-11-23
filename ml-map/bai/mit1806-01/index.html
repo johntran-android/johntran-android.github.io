@@ -187,6 +187,11 @@ ol.ts .tt { flex: none; width: 2.6rem; font: 500 .8rem/1.45 var(--mono); color: 
 .vmini .vk { margin-bottom: .2rem; } .vmini b { display: block; font-size: .95rem; line-height: 1.35; } .vmini small { color: var(--muted); font-size: .8rem; }
 .pair .hand .frame { background: #000; }
 figcaption > span, .vmini > span, .ixcap { min-width: 0; }
+.r1 { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; } .r1 .times { font: 700 1.2rem/1 var(--sans); color: var(--muted); }
+.chk { display: flex; gap: .45rem; align-items: flex-start; font: 400 .88rem/1.45 var(--sans); margin-top: .8rem; } .chk input { margin-top: .2rem; }
+.qa { border: 1px solid var(--rule); border-radius: 10px; background: #fff; padding: .2rem 1rem .4rem; margin: 1rem 0; }
+.qa > .q { font-family: var(--sans); } .qa summary { cursor: pointer; font: 600 .9rem/1.4 var(--sans); color: var(--blue); margin: .4rem 0; }
+.qa .qn { font: 700 .72rem/1 var(--sans); letter-spacing: .07em; text-transform: uppercase; color: var(--teal); display: block; margin-top: .7rem; }
 </style>
 
 <style>[hidden]{display:none!important} img{max-width:100%} html{-webkit-text-size-adjust:100%} body{margin:0}
@@ -666,6 +671,71 @@ IX.bigpic = (box) => {
     out.innerHTML = `<span>dim C(Aᵀ) + dim N(A) = ${r} + ${n - r} = <b>${n}</b> = n</span><span>dim C(A) + dim N(Aᵀ) = ${r} + ${m - r} = <b>${m}</b> = m</span>`;
   }
   [im, inn, ir].forEach(i => i.oninput = draw); draw();
+};
+
+
+// ---- rank-one matrices (lecture 11)  ·  input: u, v (and a second pair)  ·  result: A = u vᵀ (+ u₂v₂ᵀ) and its rank
+IX.rank1 = (box) => {
+  const U0 = [1, 2], V0 = [1, 4, 5], U2 = [1, 0], V2 = [0, 1, 1];
+  const inp = (id, v) => `<input type="number" step="1" id="${id}" value="${v}" aria-label="${id}">`;
+  box.innerHTML = `<div class="mx"><div class="mxin"><div class="mxk">Đầu vào: u (cột) và vᵀ (hàng)</div>
+    <div class="r1"><div class="grid" style="grid-template-columns:3.4rem">${U0.map((v, i) => inp('u' + i, v)).join('')}</div><span class="times">×</span><div class="grid" style="grid-template-columns:repeat(3,3.4rem)">${V0.map((v, i) => inp('v' + i, v)).join('')}</div></div>
+    <label class="chk"><input type="checkbox" id="add2"><span>cộng thêm một ma trận hạng 1 nữa: u₂v₂ᵀ với u₂ = (1, 0), v₂ = (0, 1, 1)</span></label></div>
+    <div class="mxout" aria-live="polite"></div></div>`;
+  const out = box.querySelector('.mxout'), ins = [...box.querySelectorAll('input[type=number]')], chk = box.querySelector('#add2');
+  const rank = M => rref(M).piv.length;
+  function calc() {
+    const u = [0, 1].map(i => Number(ins[i].value) || 0), v = [0, 1, 2].map(i => Number(ins[2 + i].value) || 0);
+    let A = u.map(a => v.map(b => a * b)); if (chk.checked) A = A.map((r, i) => r.map((x, j) => x + U2[i] * V2[j]));
+    const r = rank(A);
+    out.innerHTML = `<div class="mxk">Kết quả, tự tính lại</div><div class="mxeq">\\[ A = ${chk.checked ? `${vecTex(u)}\\begin{bmatrix}${v.map(frac).join(' & ')}\\end{bmatrix} + ${vecTex(U2)}\\begin{bmatrix}${V2.join(' & ')}\\end{bmatrix}` : `${vecTex(u)}\\begin{bmatrix}${v.map(frac).join(' & ')}\\end{bmatrix}`} = ${texM(A)} \\]</div>
+      <div class="facts2"><span>hạng của A: <b>${r}</b></span></div><div class="tagok ${r <= 1 ? 'yes' : 'no'}">${r === 1 ? 'Hạng 1: mọi hàng là bội của vᵀ, mọi cột là bội của u' : r === 0 ? 'A = 0' : 'Cộng hai ma trận hạng 1 ra hạng 2: tập ma trận hạng 1 không phải không gian con'}</div>`;
+    typeset(out);
+  }
+  ins.forEach(i => i.addEventListener('input', calc)); chk.onchange = calc; calc();
+};
+
+// ---- a graph and its incidence matrix (lecture 12)  ·  modes: potentials x → differences Ax; loop currents y with Aᵀy = 0; pick edges, see loops
+IX.graph = (box) => {
+  const P = [[90, 60], [40, 210], [230, 230], [330, 90]], E = [[0, 1], [1, 2], [0, 2], [0, 3], [2, 3]];   // edge k goes from node E[k][0] to node E[k][1]
+  const L1 = [1, 1, -1, 0, 0], L2 = [0, 0, 1, -1, 1];
+  box.innerHTML = `<div class="ixbar"><div class="seg" role="group" aria-label="Chọn chế độ"><button type="button" data-m="pot" class="on">Điện thế x → Ax</button><button type="button" data-m="cur">Dòng y, Aᵀy = 0</button><button type="button" data-m="tree">Chọn cạnh: có vòng không?</button></div></div>
+    <div class="ixbar"><span class="ixin" data-show="pot">${[1, 2, 3, 4].map(i => `<label>x${'₁₂₃₄'[i - 1]} <input type="range" min="-3" max="3" step="1" value="${[2, 0, 1, 1][i - 1]}" data-x="${i - 1}"><output></output></label>`).join('')}</span>
+    <span class="ixin" data-show="cur"><label>vòng 1–2–3 <input type="range" min="-3" max="3" step="1" value="1" data-l="0"><output></output></label><label>vòng 1–3–4 <input type="range" min="-3" max="3" step="1" value="0" data-l="1"><output></output></label></span></div>
+    <div class="frame live" style="aspect-ratio:400/290"><svg viewBox="0 0 400 290"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), id = 'g' + (++MID), defs = el(svg, 'defs');
+  marker(defs, id + 'k', '#5d6670'); marker(defs, id + 'b', '#1a73e8'); marker(defs, id + 'o', '#e37400');
+  let mode = 'pot'; const picked = new Set([0, 1, 3]);
+  const xs = [...box.querySelectorAll('[data-x]')], ls = [...box.querySelectorAll('[data-l]')];
+  const layer = el(svg, 'g');
+  function draw() {
+    box.querySelectorAll('[data-show]').forEach(e => e.hidden = e.dataset.show !== mode);
+    [...xs, ...ls].forEach(i => i.nextElementSibling.textContent = vn(+i.value));
+    layer.innerHTML = '';
+    const x = xs.map(i => +i.value), a = +ls[0].value, b = +ls[1].value, y = L1.map((v, k) => a * v + b * L2[k]);
+    E.forEach(([s, t], k) => {
+      const [x1, y1] = P[s], [x2, y2] = P[t], d = Math.hypot(x2 - x1, y2 - y1), ux = (x2 - x1) / d, uy = (y2 - y1) / d, r = 17;
+      const on = mode === 'tree' && picked.has(k), val = mode === 'pot' ? x[t] - x[s] : mode === 'cur' ? y[k] : null;
+      const col = mode === 'tree' ? (on ? '#1a73e8' : '#c4cad1') : (val ? (mode === 'cur' ? '#e37400' : '#1a73e8') : '#c4cad1');
+      const line = el(layer, 'line', { x1: x1 + ux * r, y1: y1 + uy * r, x2: x2 - ux * r, y2: y2 - uy * r, stroke: col, 'stroke-width': on || (val && mode !== 'tree') ? 4 : 2.5, 'marker-end': `url(#${id + (col === '#c4cad1' ? 'k' : col === '#e37400' ? 'o' : 'b')})`, style: mode === 'tree' ? 'cursor:pointer' : '' });
+      const hit = el(layer, 'line', { x1, y1, x2, y2, stroke: 'transparent', 'stroke-width': 18, style: mode === 'tree' ? 'cursor:pointer' : '' });
+      if (mode === 'tree') hit.onclick = line.onclick = () => { picked.has(k) ? picked.delete(k) : picked.add(k); draw(); };
+      const mx = (x1 + x2) / 2 - uy * 14, my = (y1 + y2) / 2 + ux * 14;
+      const tx = el(layer, 'text', { x: mx, y: my + 4, 'text-anchor': 'middle', style: 'font:700 12px var(--sans);paint-order:stroke;stroke:#fff;stroke-width:4px', fill: '#202124' });
+      tx.textContent = mode === 'tree' ? `cạnh ${k + 1}` : `${mode === 'pot' ? 'e' : 'y'}${'₁₂₃₄₅'[k]} = ${vn(val)}`;
+    });
+    P.forEach(([px, py], i) => { el(layer, 'circle', { cx: px, cy: py, r: 16, fill: '#fff', stroke: '#202124', 'stroke-width': 2 });
+      const t = el(layer, 'text', { x: px, y: py + 5, 'text-anchor': 'middle', style: 'font:700 13px var(--sans)', fill: '#202124' }); t.textContent = i + 1;
+      if (mode === 'pot') { const s = el(layer, 'text', { x: px + (i === 2 ? 30 : 0), y: py + (i === 1 || i === 2 ? 34 : -22), 'text-anchor': 'middle', style: 'font:700 12px var(--sans);paint-order:stroke;stroke:#fff;stroke-width:4px', fill: '#0f8f7e' }); s.textContent = `x = ${vn(x[i])}`; } });
+    if (mode === 'pot') { const zero = x.every(v => v === x[0]);
+      out.innerHTML = `<span>Ax = (x₂−x₁, x₃−x₂, x₃−x₁, x₄−x₁, x₄−x₃) = <b>(${E.map(([s2, t2]) => vn(x[t2] - x[s2])).join('; ')})</b></span><span class="tagok ${zero ? 'yes' : 'no'}">${zero ? 'Mọi điện thế bằng nhau: Ax = 0, x nằm trong N(A) = mọi c(1, 1, 1, 1)' : 'Ax = 0 chỉ khi mọi điện thế bằng nhau'}</span>`; }
+    if (mode === 'cur') { const net = P.map((_, i) => E.reduce((s2, [u, w], k) => s2 + (w === i ? y[k] : 0) - (u === i ? y[k] : 0), 0));
+      out.innerHTML = `<span>y = ${vn(a)}·(1, 1, −1, 0, 0) + ${vn(b)}·(0, 0, 1, −1, 1) = <b>(${y.map(vn).join('; ')})</b></span><span>dòng vào trừ dòng ra ở nút 1–4: <b>${net.map(vn).join(', ')}</b></span><span class="tagok yes">Aᵀy = 0: định luật Kirchhoff về dòng điện</span>`; }
+    if (mode === 'tree') { const M = [...picked].sort().map(k => { const r2 = [0, 0, 0, 0]; r2[E[k][0]] = -1; r2[E[k][1]] = 1; return r2; }), rk = M.length ? rref(M).piv.length : 0, loop = rk < M.length;
+      out.innerHTML = `<span>${M.length} cạnh được chọn, hạng của các hàng tương ứng = <b>${rk}</b></span><span class="tagok ${loop ? 'no' : 'yes'}">${loop ? 'Có vòng: các hàng phụ thuộc tuyến tính' : 'Không có vòng (một cây): các hàng độc lập'}</span><span>bấm vào cạnh để chọn hoặc bỏ</span>`; }
+  }
+  box.querySelectorAll('.seg button').forEach(bt => bt.onclick = () => { mode = bt.dataset.m; box.querySelectorAll('.seg button').forEach(z => z.classList.toggle('on', z === bt)); draw(); });
+  [...xs, ...ls].forEach(i => i.oninput = draw); draw();
 };
 
 document.querySelectorAll('.ix[data-ix]').forEach(b => { try { IX[b.dataset.ix](b); } catch (e) { console.error(e); b.textContent = 'Không dựng được hình này.'; } });
