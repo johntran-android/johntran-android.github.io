@@ -247,6 +247,8 @@ details.mr>.pills{display:contents}
 .orow:has(>[hidden]),.listing .orow:has(#sM,#sL,#sC,#spinBtn){display:none}
 .mob,.bkpill,.btn .ic{display:none}
 .btn.opt{display:inline-flex;align-items:center;gap:6px}
+.btn.toc{display:inline-flex;align-items:center;gap:6px;text-decoration:none}.btn.toc svg{width:15px;height:15px}.btn.toc:hover{border-color:var(--ink)}
+@media (max-width:760px){.btn.toc{width:34px;height:32px;padding:0;justify-content:center}.btn.toc .tx{display:none}.btn.toc svg{width:17px;height:17px}}
 .fab[hidden]{display:none}
 .fab{display:inline-flex;align-items:center;gap:7px;position:absolute;top:10px;left:10px;z-index:4;font:inherit;font-size:13.5px;font-weight:700;background:var(--panel);color:var(--ink);border:1px solid var(--rule);border-radius:12px;padding:8px 13px;box-shadow:0 6px 18px rgba(5,10,15,.14);cursor:pointer}
 .fab:hover{border-color:var(--ink)}
@@ -366,6 +368,7 @@ a.lart { display: inline-block; margin: 2px 0 4px; font-size: 13px; font-weight:
   <div class="seg" id="sM" role="group" aria-label="Chế độ xem"><button id="m3" class="on" type="button">3D</button><button id="m2" type="button">2D</button></div>
   <div class="seg" id="sL" role="group" aria-label="Bố cục"><button id="lC" class="on" type="button" title="Mỗi môn tụ thành một cụm">Theo môn</button><button id="lT" type="button" title="Thứ cần học trước nằm dưới, thứ học sau nằm trên">Từ nền lên</button></div>
   <div class="seg" id="sC" role="group" aria-label="Tô màu theo"><span class="k">Màu</span><button id="cD" type="button" title="Mỗi môn một màu">Môn học</button><button id="cS" type="button" title="Bài nào đã có video, bài nào mới có ghi chú, bài nào chưa có gì">Video & ghi chú</button><button id="cM" type="button" title="Bài nào bạn đã hiểu, bài nào học được ngay">Tiến độ của tôi</button></div>
+  <a class="btn toc" id="tocBtn" href="https://johntran-android.github.io/ml-map/bai/" title="Mục lục các bài viết MIT 18.06"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M2 3.5c2-.8 4-.8 6 .6v9c-2-1.4-4-1.4-6-.6zM14 3.5c-2-.8-4-.8-6 .6v9c2-1.4 4-1.4 6-.6z"/></svg><span class="tx">Mục lục bài viết</span></a>
   <button class="btn sq" id="themeBtn" type="button"></button>
   <button class="btn" id="topBtn" type="button">Xem bài nào làm nền cho nhiều bài nhất</button>
   <button class="btn sq mob" id="qBtn" type="button" aria-label="Tìm bài"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3.5 3.5"/></svg></button>
