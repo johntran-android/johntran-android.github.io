@@ -447,7 +447,7 @@ const rref = M0 => { const M = M0.map(r => r.slice()), rows = M.length, cols = M
     for (let i = 0; i < rows; i++) if (i !== r) { const f = M[i][c]; M[i] = M[i].map((v, j) => v - f * M[r][j]); } piv.push(c); r++; }
   M.forEach(row => row.forEach((v, j) => { if (Math.abs(v) < 1e-9) row[j] = 0; })); return { R: M, piv }; };
 const nullBasis = A => { const { R, piv } = rref(A), n = A[0].length, free = [...Array(n).keys()].filter(j => !piv.includes(j));
-  return free.map(f => { const x = Array(n).fill(0); x[f] = 1; piv.forEach((pc, i) => x[pc] = -R[i][f]); const s0 = x.find(v => Math.abs(v) > 1e-9); return s0 < 0 ? x.map(v => -v || 0) : x; }); };
+  return free.map(f => { const x = Array(n).fill(0); x[f] = 1; piv.forEach((pc, i) => x[pc] = -R[i][f] || 0); return x; }); };   // special solutions: one free variable = 1, the others 0
 const vecTex = a => `\\begin{bmatrix}${a.map(frac).join(' \\\\ ')}\\end{bmatrix}`;
 
 // ---- A = LU step by step: the multipliers drop straight into L (lecture 4)
@@ -570,6 +570,42 @@ IX.colspace = (box) => {
   ins.forEach(i => i.addEventListener('input', calc));
   box.querySelectorAll('[data-p]').forEach(b => b.onclick = () => { presets[+b.dataset.p][1].forEach((v, i) => ins[i].value = v); calc(); });
   (presets[0] ? presets[0][1] : A.map(r => r[0])).forEach((v, i) => ins[i].value = v); calc();
+};
+
+
+// ---- walk the solution set x = x_p + c·s1 + d·s2 (lectures 7–8)  ·  input: the coefficients  ·  result: x and Ax (always b)
+IX.combo = (box) => {
+  const A = box.dataset.a.split(';').map(r => r.split(',').map(Number)), xp = box.dataset.xp.split(',').map(Number), S = box.dataset.s.split(';').map(r => r.split(',').map(Number));
+  const names = ['c', 'd', 'e', 'f'];
+  box.innerHTML = `<div class="ixbar"><span class="ixin">${S.map((_, i) => `<label>${names[i]} <input type="range" min="-2" max="2" step="0.5" value="${i ? 0 : 1}"><output></output></label>`).join('')}</span></div><div class="stepbox" aria-live="polite"></div>`;
+  const ins = [...box.querySelectorAll('input')], outs = [...box.querySelectorAll('output')], sb = box.querySelector('.stepbox');
+  const isZero = xp.every(v => v === 0);
+  function draw() {
+    const k = ins.map(i => +i.value); outs.forEach((o, i) => o.textContent = vn(k[i]));
+    const x = xp.map((v, j) => v + S.reduce((t, s, i) => t + k[i] * s[j], 0)), Ax = A.map(r => r.reduce((t, v, j) => t + v * x[j], 0));
+    sb.innerHTML = `<div class="steplab">${isZero ? 'Mọi tổ hợp các nghiệm đặc biệt đều là nghiệm của Ax = 0.' : 'x = nghiệm riêng + một vector trong nullspace: luôn giải được Ax = b.'}</div>
+      <div class="mxeq">\\[ x = ${isZero ? '' : vecTex(xp)}${S.map((s, i) => `${(i === 0 && isZero) ? (k[i] < 0 ? '-' : '') : (k[i] < 0 ? ' - ' : ' + ')}${frac(Math.abs(k[i]))}${vecTex(s)}`).join('')} = ${vecTex(x)}, \\qquad Ax = ${vecTex(Ax)} \\]</div>`;
+    typeset(sb);
+  }
+  ins.forEach(i => i.oninput = draw); draw();
+};
+
+// ---- the four cases of rank (lecture 8)  ·  input: m, n, r  ·  result: the shape of R, how many solutions Ax = b has
+IX.rankcases = (box) => {
+  box.innerHTML = `<div class="ixbar"><span class="ixin"><label>m (hàng) <input type="range" min="1" max="5" value="3"><output></output></label><label>n (cột) <input type="range" min="1" max="5" value="4"><output></output></label><label>r (hạng) <input type="range" min="0" max="5" value="2"><output></output></label></span></div><div class="stepbox" aria-live="polite"></div>`;
+  const [im, inn, ir] = box.querySelectorAll('input'), outs = box.querySelectorAll('output'), sb = box.querySelector('.stepbox');
+  function draw() {
+    const m = +im.value, n = +inn.value; ir.max = Math.min(m, n); if (+ir.value > Math.min(m, n)) ir.value = Math.min(m, n); const r = +ir.value;
+    outs[0].textContent = m; outs[1].textContent = n; outs[2].textContent = r;
+    const R = Array.from({ length: m }, (_, i) => Array.from({ length: n }, (_, j) => i < r ? (j < r ? (i === j ? '1' : '0') : '\\ast') : '0'));
+    const name = r === m && r === n ? 'r = m = n: full rank, ma trận vuông khả nghịch' : r === n ? 'r = n < m: full column rank (ma trận cao, gầy)' : r === m ? 'r = m < n: full row rank (ma trận thấp, béo)' : 'r < m và r < n: không full rank';
+    const sols = r === m && r === n ? 'đúng 1 nghiệm với mọi b' : r === n ? '0 hoặc 1 nghiệm' : r === m ? 'vô số nghiệm với mọi b' : '0 hoặc vô số nghiệm';
+    sb.innerHTML = `<div class="steplab">${name}</div><div class="mxeq">\\[ R = \\begin{bmatrix}${R.map(row => row.join(' & ')).join(' \\\\ ')}\\end{bmatrix} \\]</div>
+      <div class="facts2"><span>Ax = b có: <b>${sols}</b></span><span>số biến tự do = dim N(A) = n − r = <b>${n - r}</b></span><span>số điều kiện trên b = m − r = <b>${m - r}</b></span></div>
+      <div class="steplab" style="font-weight:400;color:var(--muted)">\\(\\ast\\) là phần F (cột tự do). Hàng 0 ở dưới đòi b phải thoả ${m - r} điều kiện thì mới có nghiệm${n - r ? '; cột tự do cho vô số nghiệm khi đã có nghiệm' : ''}.</div>`;
+    typeset(sb);
+  }
+  [im, inn, ir].forEach(i => i.oninput = draw); draw();
 };
 
 document.querySelectorAll('.ix[data-ix]').forEach(b => { try { IX[b.dataset.ix](b); } catch (e) { console.error(e); b.textContent = 'Không dựng được hình này.'; } });
