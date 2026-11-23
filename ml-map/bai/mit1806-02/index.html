@@ -435,6 +435,139 @@ IX.matmul = (box) => {
   sel.onchange = draw; options(); draw();
 };
 
+
+// ---- small exact-ish linear algebra helpers
+const rref = M0 => { const M = M0.map(r => r.slice()), rows = M.length, cols = M[0].length, piv = []; let r = 0;
+  for (let c = 0; c < cols && r < rows; c++) { let p = r; for (let i = r; i < rows; i++) if (Math.abs(M[i][c]) > Math.abs(M[p][c])) p = i; if (Math.abs(M[p][c]) < 1e-9) continue;
+    [M[r], M[p]] = [M[p], M[r]]; const d = M[r][c]; M[r] = M[r].map(v => v / d);
+    for (let i = 0; i < rows; i++) if (i !== r) { const f = M[i][c]; M[i] = M[i].map((v, j) => v - f * M[r][j]); } piv.push(c); r++; }
+  M.forEach(row => row.forEach((v, j) => { if (Math.abs(v) < 1e-9) row[j] = 0; })); return { R: M, piv }; };
+const nullBasis = A => { const { R, piv } = rref(A), n = A[0].length, free = [...Array(n).keys()].filter(j => !piv.includes(j));
+  return free.map(f => { const x = Array(n).fill(0); x[f] = 1; piv.forEach((pc, i) => x[pc] = -R[i][f]); const s0 = x.find(v => Math.abs(v) > 1e-9); return s0 < 0 ? x.map(v => -v || 0) : x; }); };
+const vecTex = a => `\\begin{bmatrix}${a.map(frac).join(' \\\\ ')}\\end{bmatrix}`;
+
+// ---- A = LU step by step: the multipliers drop straight into L (lecture 4)
+IX.lu = (box) => {
+  const A = box.dataset.m.split(';').map(r => r.split(',').map(Number)), n = A.length, steps = [];
+  let U = A.map(r => r.slice()); const L = Array.from({ length: n }, (_, i) => Array.from({ length: n }, (_, j) => i === j ? 1 : null));
+  const Us = [U.map(r => r.slice())], Ls = [L.map(r => r.slice())];
+  for (let j = 0; j < n; j++) for (let i = j + 1; i < n; i++) { const l = U[i][j] / U[j][j]; if (Math.abs(l) < 1e-12) { L[i][j] = 0; Ls[0][i][j] = 0; continue; } U = U.map((r, k) => k === i ? r.map((v, c) => v - l * U[j][c]) : r); L[i][j] = l; steps.push({ i, j, l }); Us.push(U.map(r => r.slice())); Ls.push(L.map(r => r.slice())); }
+  const E = (() => { let P = Array.from({ length: n }, (_, i) => Array.from({ length: n }, (_, j) => +(i === j)));
+    steps.forEach(({ i, j, l }) => { const Ek = Array.from({ length: n }, (_, a) => Array.from({ length: n }, (_, b) => +(a === b))); Ek[i][j] = -l;
+      P = Ek.map(r => P[0].map((_, c) => r.reduce((s, v, k) => s + v * P[k][c], 0))); }); return P; })();
+  const texL = (M, hi) => `\\begin{bmatrix}${M.map((r, a) => r.map((v, b) => v === null ? '\\color{#c4cad1}{?}' : (hi && hi[0] === a && hi[1] === b ? `\\color{#e37400}{\\mathbf{${frac(v)}}}` : frac(v))).join(' & ')).join(' \\\\ ')}\\end{bmatrix}`;
+  box.innerHTML = `<div class="ixbar"><button type="button" class="reset" data-d="-1">← Lùi</button><button type="button" class="reset primary" data-d="1">Bước tiếp →</button><span class="stepno"></span></div><div class="stepbox" aria-live="polite"></div>`;
+  let k = 0; const sb = box.querySelector('.stepbox'), no = box.querySelector('.stepno');
+  function draw() {
+    const st = steps[k - 1];
+    no.textContent = k === 0 ? `Bắt đầu · ${steps.length} bước khử` : `Bước ${k}/${steps.length}`;
+    const head = k === 0 ? 'Bắt đầu: U = A, còn L chỉ có đường chéo 1.' : `Khử vị trí (${st.i + 1},${st.j + 1}): hàng ${st.i + 1} trừ \\(${frac(st.l)}\\) × hàng ${st.j + 1}. Số \\(${frac(st.l)}\\) ghi thẳng vào L.`;
+    const tail = k === steps.length ? `<div class="steplab" style="margin-top:.6rem">Xong. So với \\(E\\) (ma trận làm cả quá trình \\(EA = U\\)): \\(E\\) có những số "lạ" vì các bước trộn vào nhau, còn \\(L = E^{-1}\\) chỉ đơn giản chứa đúng các hệ số khử.</div><div class="mxeq">\\[ E = ${texM(E)}, \\qquad L = ${texL(Ls[k])} \\]</div>` : '';
+    sb.innerHTML = `<div class="steplab">${head}</div><div class="mxeq">\\[ U = ${texM(Us[k])}, \\qquad L = ${texL(Ls[k], st ? [st.i, st.j] : null)} \\]</div>${tail}`;
+    box.querySelector('[data-d="-1"]').disabled = k === 0; box.querySelector('[data-d="1"]').disabled = k === steps.length; typeset(sb);
+  }
+  box.querySelectorAll('[data-d]').forEach(bt => bt.onclick = () => { k = Math.max(0, Math.min(steps.length, k + +bt.dataset.d)); draw(); });
+  draw();
+};
+
+// ---- how many operations does elimination take? (lecture 4)  ·  input: n  ·  result: n² + (n−1)² + … + 1² next to n³/3
+IX.opcount = (box) => {
+  box.innerHTML = `<div class="ixbar"><span class="ixin"><label>n <input type="range" min="2" max="60" step="1" value="10"><output>10</output></label></span>
+    <span class="seg"><button type="button" data-n="100">n = 100</button><button type="button" data-n="1000">n = 1000</button></span></div>
+    <div class="frame"><svg viewBox="0 0 400 170" style="width:100%;display:block"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const sl = box.querySelector('input'), o = box.querySelector('output'), svg = box.querySelector('svg'), out = box.querySelector('.readout');
+  function draw(n) {
+    o.textContent = n; svg.innerHTML = '';
+    const show = Math.min(n, 60), W = 360 / show, H = 118;
+    for (let k = 0; k < show; k++) { const c = n - k, h = (c * c) / (n * n) * H;      // column k+1 costs about (n−k)²
+      el(svg, 'rect', { x: 20 + k * W, y: 150 - h, width: Math.max(1, W - 1), height: h, fill: k === 0 ? '#1a73e8' : '#9ec2f5' }); }
+    const t = el(svg, 'text', { x: 24, y: 14, fill: '#3c4043', style: 'font:600 11px var(--sans)' }); t.textContent = `Khử cột 1 tốn ≈ ${n}², cột 2 ≈ ${n - 1}², … (mỗi cột một thanh)`;
+    const sum = n * (n + 1) * (2 * n + 1) / 6, ap = n ** 3 / 3, fmt = v => Math.round(v).toLocaleString('vi-VN');
+    out.innerHTML = `<span>n² + (n−1)² + … + 1² = <b>${fmt(sum)}</b></span><span>n³/3 = <b>${fmt(ap)}</b></span><span>tỉ lệ <b>${vn(sum / ap)}</b></span><span>vế phải b: n² = <b>${fmt(n * n)}</b></span>`;
+  }
+  sl.oninput = () => draw(+sl.value); box.querySelectorAll('[data-n]').forEach(b => b.onclick = () => draw(+b.dataset.n)); draw(10);
+};
+
+// ---- is this set a subspace of R²? (lecture 5)  ·  input: the set, u and v (drag), the number c  ·  result: u + v and c·u, inside or not
+IX.subspace = (box) => {
+  const SETS = { line0: 'Đường thẳng qua 0', line1: 'Đường thẳng không qua 0', quad: 'Góc phần tư x ≥ 0, y ≥ 0', plane: 'Cả mặt phẳng ℝ²', zero: 'Chỉ có vector 0' };
+  box.innerHTML = `<div class="ixbar"><label class="pick">Tập <select>${Object.entries(SETS).map(([k, t]) => `<option value="${k}">${t}</option>`).join('')}</select></label>
+    <span class="ixin"><label>c <input type="range" min="-2" max="2" step="0.5" value="-1"><output>−1</output></label></span></div>
+    <div class="frame live"><svg viewBox="0 0 400 300"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const sel = box.querySelector('select'), cs = box.querySelector('input'), co = box.querySelector('output'), svg = box.querySelector('svg'), out = box.querySelector('.readout');
+  const S = 30, O = [200, 160], X = a => O[0] + a * S, Y = b => O[1] - b * S, iX = px => (px - O[0]) / S, iY = py => (O[1] - py) / S;
+  for (let i = -6; i <= 6; i++) el(svg, 'line', { x1: X(i), x2: X(i), y1: Y(-4.6), y2: Y(5.3), class: 'gr' });
+  for (let j = -4; j <= 5; j++) el(svg, 'line', { x1: X(-6.6), x2: X(6.6), y1: Y(j), y2: Y(j), class: 'gr' });
+  el(svg, 'line', { x1: X(-6.6), x2: X(6.6), y1: Y(0), y2: Y(0), class: 'ax' }); el(svg, 'line', { x1: X(0), x2: X(0), y1: Y(-4.6), y2: Y(5.3), class: 'ax' });
+  const id = 'm' + (++MID), defs = el(svg, 'defs'); marker(defs, id + 'b', '#1a73e8'); marker(defs, id + 'o', '#e37400'); marker(defs, id + 'g', '#188038'); marker(defs, id + 'r', '#c5221f');
+  const shade = el(svg, 'g'), layer = el(svg, 'g');
+  const d = [2, 1], p0 = [0, 1.5];
+  const inside = (k, q) => k === 'plane' ? true : k === 'zero' ? Math.hypot(...q) < 1e-9 : k === 'quad' ? q[0] >= -1e-9 && q[1] >= -1e-9
+    : Math.abs((q[0] - (k === 'line1' ? p0[0] : 0)) * d[1] - (q[1] - (k === 'line1' ? p0[1] : 0)) * d[0]) < 1e-6;
+  const snap = (k, q) => { if (k === 'zero') return [0, 0]; if (k === 'plane') return q; if (k === 'quad') return [Math.max(0, q[0]), Math.max(0, q[1])];
+    const base = k === 'line1' ? p0 : [0, 0], t = ((q[0] - base[0]) * d[0] + (q[1] - base[1]) * d[1]) / (d[0] * d[0] + d[1] * d[1]); return [base[0] + t * d[0], base[1] + t * d[1]]; };
+  const start = { line0: [[2, 1], [-1, -0.5]], line1: [[2, 2.5], [-2, 0.5]], quad: [[1, 2], [3, 0.5]], plane: [[2, 1], [-1, 2]], zero: [[0, 0], [0, 0]] };
+  let k = 'line0', u = start.line0[0], v = start.line0[1];
+  function drawSet() {
+    shade.innerHTML = '';
+    if (k === 'plane') el(shade, 'rect', { x: X(-6.6), y: Y(5.3), width: 13.2 * S, height: 9.9 * S, fill: 'rgba(26,115,232,.07)' });
+    if (k === 'quad') el(shade, 'rect', { x: X(0), y: Y(5.3), width: 6.6 * S, height: 5.3 * S, fill: 'rgba(26,115,232,.12)' });
+    if (k === 'line0' || k === 'line1') { const b = k === 'line1' ? p0 : [0, 0]; el(shade, 'line', { x1: X(b[0] - 3.3 * d[0]), y1: Y(b[1] - 3.3 * d[1]), x2: X(b[0] + 3.3 * d[0]), y2: Y(b[1] + 3.3 * d[1]), stroke: 'rgba(26,115,232,.45)', 'stroke-width': 6, 'stroke-linecap': 'round' }); }
+    if (k === 'zero') el(shade, 'circle', { cx: X(0), cy: Y(0), r: 7, fill: 'rgba(26,115,232,.35)' });
+  }
+  const arrow = (q, c, w = 2.6) => el(layer, 'line', { x1: X(0), y1: Y(0), x2: X(q[0]), y2: Y(q[1]), stroke: { b: '#1a73e8', o: '#e37400', g: '#188038', r: '#c5221f' }[c], 'stroke-width': w, 'marker-end': `url(#${id + c})` });
+  const lab = (q, t, c) => { const e = el(layer, 'text', { x: X(q[0]) + 7, y: Y(q[1]) - 7, fill: c, style: 'font:700 12px var(--sans)' }); e.textContent = t; };
+  function draw() {
+    layer.innerHTML = ''; const c = +cs.value; co.textContent = vn(c);
+    const s = [u[0] + v[0], u[1] + v[1]], m = [c * u[0], c * u[1]], sIn = inside(k, s), mIn = inside(k, m);
+    if (Math.hypot(...u) > 1e-9) arrow(u, 'b'); if (Math.hypot(...v) > 1e-9) arrow(v, 'o');
+    if (Math.hypot(...s) > 1e-9) arrow(s, sIn ? 'g' : 'r', 2); lab(s, 'u + v', sIn ? '#188038' : '#c5221f');
+    if (Math.hypot(...m) > 1e-9) arrow(m, mIn ? 'g' : 'r', 2); lab(m, 'c·u', mIn ? '#188038' : '#c5221f');
+    lab(u, 'u', '#1a73e8'); lab(v, 'v', '#e37400');
+    hu.setAttribute('transform', `translate(${X(u[0])},${Y(u[1])})`); hv.setAttribute('transform', `translate(${X(v[0])},${Y(v[1])})`);
+    hu.style.display = hv.style.display = k === 'zero' ? 'none' : '';
+    const zero = inside(k, [0, 0]);
+    const verdict = { line0: 'Là không gian con: cộng và nhân với số nào cũng vẫn nằm trên đường.', line1: 'Không phải không gian con: không chứa 0, và c·u rời khỏi đường.', quad: 'Không phải không gian con: nhân với số âm là ra khỏi góc phần tư.', plane: 'Là không gian con (chính ℝ²).', zero: 'Là không gian con nhỏ nhất: 0 + 0 = 0, c·0 = 0.' }[k];
+    out.innerHTML = `<span class="tagok ${sIn ? 'yes' : 'no'}">u + v ${sIn ? 'vẫn trong tập' : 'ra ngoài tập'}</span><span class="tagok ${mIn ? 'yes' : 'no'}">c·u ${mIn ? 'vẫn trong tập' : 'ra ngoài tập'}</span><span class="tagok ${zero ? 'yes' : 'no'}">${zero ? 'chứa vector 0' : 'không chứa vector 0'}</span><span>${verdict}</span>`;
+  }
+  const handles = el(svg, 'g');
+  const mkH = (n, col) => { const g = el(handles, 'g', { class: 'handle', tabindex: 0, role: 'slider', 'aria-label': `Vector ${n}` });
+    el(g, 'circle', { r: 14, fill: 'transparent' }); el(g, 'circle', { r: 6, fill: col, stroke: '#fff', 'stroke-width': 1.5 });
+    let drag = false;
+    g.addEventListener('pointerdown', e => { drag = true; g.setPointerCapture(e.pointerId); });
+    g.addEventListener('pointermove', e => { if (!drag) return; const r = svg.getBoundingClientRect(); const q = snap(k, [Math.round(iX((e.clientX - r.left) * 400 / r.width) * 2) / 2, Math.round(iY((e.clientY - r.top) * 300 / r.height) * 2) / 2]);
+      if (n === 'u') u = q; else v = q; draw(); });
+    ['pointerup', 'pointercancel'].forEach(t => g.addEventListener(t, () => drag = false));
+    g.addEventListener('keydown', e => { const dd = { ArrowLeft: [-.5, 0], ArrowRight: [.5, 0], ArrowUp: [0, .5], ArrowDown: [0, -.5] }[e.key]; if (!dd) return; e.preventDefault();
+      const cur = n === 'u' ? u : v, q = snap(k, [cur[0] + dd[0] * (k.startsWith('line') ? 2 : 1), cur[1] + dd[1] * (k.startsWith('line') ? 1 : 1)]); if (n === 'u') u = q; else v = q; draw(); });
+    return g; };
+  const hu = mkH('u', '#1a73e8'), hv = mkH('v', '#e37400');
+  sel.onchange = () => { k = sel.value; [u, v] = start[k].map(q => q.slice()); drawSet(); draw(); };
+  cs.oninput = draw; drawSet(); draw();
+};
+
+// ---- column space and nullspace of a small matrix (lecture 6)  ·  input: b  ·  result: is b in C(A)? one solution; the nullspace
+IX.colspace = (box) => {
+  const A = box.dataset.a.split(';').map(r => r.split(',').map(Number)), m = A.length, n = A[0].length;
+  const presets = (box.dataset.presets || '').split('|').filter(Boolean).map(p => p.split(':')).map(([t, v]) => [t, v.split(',').map(Number)]);
+  box.innerHTML = `<div class="mx"><div class="mxin"><div class="mxk">Đầu vào: vế phải b (${m} số)</div><div class="grid" style="grid-template-columns:4.2rem">${A.map((_, i) => `<input type="number" step="1" aria-label="b${i + 1}">`).join('')}</div>
+    <div class="presets">${presets.map(([t], i) => `<button type="button" class="reset" data-p="${i}">${t}</button>`).join('')}</div></div><div class="mxout" aria-live="polite"></div></div>`;
+  const ins = [...box.querySelectorAll('.grid input')], out = box.querySelector('.mxout');
+  const N = nullBasis(A), r = rref(A).piv.length;
+  function calc() {
+    const b = ins.map(i => Number(i.value) || 0), aug = A.map((row, i) => [...row, b[i]]), { R, piv } = rref(aug), ok = !piv.includes(n);
+    let sol = '';
+    if (ok) { const x = Array(n).fill(0); piv.forEach((pc, i) => x[pc] = R[i][n]); sol = `\\[ x = ${vecTex(x)} :\\quad ${x.map((c, j) => `${frac(c)}\\,${vecTex(A.map(row => row[j]))}`).join(' + ')} = ${vecTex(b)} \\]`; }
+    out.innerHTML = `<div class="mxk">Kết quả, tự tính lại</div><div class="tagok ${ok ? 'yes' : 'no'}">${ok ? 'b nằm trong column space: Ax = b có nghiệm' : 'b nằm ngoài column space: Ax = b vô nghiệm'}</div>
+      <div class="mxeq">${sol}</div><div class="facts2"><span>hạng của A: <b>${r}</b></span><span>C(A) là không gian ${r} chiều trong ℝ<sup>${m}</sup></span></div>
+      <div class="mxeq">\\[ N(A) = \\left\\{ ${N.length ? N.map((x, i) => `${'cdef'[i]}\\,${vecTex(x)}`).join(' + ') : '0'} \\right\\} \\]</div>`;
+    typeset(out);
+  }
+  ins.forEach(i => i.addEventListener('input', calc));
+  box.querySelectorAll('[data-p]').forEach(b => b.onclick = () => { presets[+b.dataset.p][1].forEach((v, i) => ins[i].value = v); calc(); });
+  (presets[0] ? presets[0][1] : A.map(r => r[0])).forEach((v, i) => ins[i].value = v); calc();
+};
+
 document.querySelectorAll('.ix[data-ix]').forEach(b => { try { IX[b.dataset.ix](b); } catch (e) { console.error(e); b.textContent = 'Không dựng được hình này.'; } });
 
 </script>

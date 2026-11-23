@@ -483,9 +483,12 @@ const ART_BASE = window.NM_EMBED ? 'bai/' : 'https://johntran-android.github.io/
 const ART = (u, t, s) => ({ u, t, s });
 const A01 = ART('mit1806-01/', 'Hình học của hệ phương trình tuyến tính', 'MIT 18.06 bài 1 · video · hình tương tác'),
   A02 = ART('mit1806-02/', 'Khử Gauss bằng ma trận', 'MIT 18.06 bài 2 · video · hình tương tác'),
-  A03 = ART('mit1806-03/', 'Nhân ma trận và ma trận nghịch đảo', 'MIT 18.06 bài 3 · video · hình tương tác');
+  A03 = ART('mit1806-03/', 'Nhân ma trận và ma trận nghịch đảo', 'MIT 18.06 bài 3 · video · hình tương tác'),
+  A04 = ART('mit1806-04/', 'Phân rã A = LU', 'MIT 18.06 bài 4 · video · hình tương tác'),
+  A05 = ART('mit1806-05/', 'Chuyển vị, hoán vị và không gian vector', 'MIT 18.06 bài 5 · video · hình tương tác'),
+  A06 = ART('mit1806-06/', 'Column space và nullspace', 'MIT 18.06 bài 6 · video · hình tương tác');
 const ARTICLES = {
-  'L.vec': [A01], 'L.elim': [A02], 'L.matmul': [A03], 'L.inverse': [A03],
+  'L.vec': [A01], 'L.elim': [A02, A04], 'L.matmul': [A03], 'L.inverse': [A03, A04], 'L.transpose': [A05], 'L.subsp': [A06, A05],
   'L.dot': [{ u: 'mit1806-14/', t: 'Vector và không gian con trực giao', s: 'MIT 18.06 bài 14 · 3 video · hình tương tác' }],
   'L.ortho': [{ u: 'mit1806-14/', t: 'Vector và không gian con trực giao', s: 'MIT 18.06 bài 14 · 3 video · hình tương tác' }],
   'L.lsq': [{ u: 'mit1806-16/', t: 'Bình phương tối thiểu', s: 'MIT 18.06 bài 16 · hình tương tác' }],
