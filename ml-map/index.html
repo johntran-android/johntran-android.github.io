@@ -506,11 +506,16 @@ const A01 = ART('mit1806-01/', 'Hình học của hệ phương trình tuyến t
   A22 = ART('mit1806-22/', 'Chéo hoá và lũy thừa của A', 'MIT 18.06 bài 22 · trang viết tay · hình tương tác'),
   A23 = ART('mit1806-23/', 'Phương trình vi phân và eᴬᵗ', 'MIT 18.06 bài 23 · trang viết tay · hình tương tác'),
   A24 = ART('mit1806-24/', 'Ma trận Markov và chuỗi Fourier', 'MIT 18.06 bài 24 · 2 hình tương tác'),
-  A25 = ART('mit1806-25/', 'Ma trận đối xứng và xác định dương', 'MIT 18.06 bài 25 · trang viết tay · hình tương tác');
+  A25 = ART('mit1806-25/', 'Ma trận đối xứng và xác định dương', 'MIT 18.06 bài 25 · trang viết tay · hình tương tác'),
+  A26 = ART('mit1806-26/', 'Ma trận phức và biến đổi Fourier nhanh', 'MIT 18.06 bài 26 · ghi chú tay · hình tương tác'),
+  A27 = ART('mit1806-27/', 'Ma trận xác định dương và cực tiểu', 'MIT 18.06 bài 27 · ghi chú tay · hình tương tác'),
+  A28 = ART('mit1806-28/', 'Ma trận đồng dạng và dạng Jordan', 'MIT 18.06 bài 28 · ghi chú tay · hình tương tác'),
+  A29 = ART('mit1806-29/', 'Phân tích giá trị suy biến (SVD)', 'MIT 18.06 bài 29 · ghi chú tay · hình tương tác'),
+  A30 = ART('mit1806-30/', 'Phép biến đổi tuyến tính và ma trận của nó', 'MIT 18.06 bài 30 · ghi chú tay · hình tương tác');
 const ARTICLES = {
-  'L.vec': [A01], 'L.elim': [A02, A04], 'L.matmul': [A03], 'L.inverse': [A03, A04], 'L.transpose': [A05], 'L.subsp': [A10, A06, A05, A12, A13], 'L.rank': [A07, A08, A11], 'L.indep': [A09], 'L.proj': [A15], 'L.gs': [A17], 'L.det': [A18, A19, A20], 'L.eig': [A21, A22, A23, A24], 'L.sym': [A25], 'L.psd': [A25],
+  'L.vec': [A01], 'L.elim': [A02, A04], 'L.matmul': [A03], 'L.inverse': [A03, A04], 'L.transpose': [A05], 'L.subsp': [A10, A06, A05, A12, A13], 'L.rank': [A07, A08, A11], 'L.indep': [A09], 'L.proj': [A15], 'L.gs': [A17], 'L.det': [A18, A19, A20], 'L.eig': [A21, A22, A23, A24], 'L.sym': [A25], 'L.psd': [A27, A28, A25], 'L.svd': [A29], 'L.chbasis': [A30],
   'L.dot': [{ u: 'mit1806-14/', t: 'Vector và không gian con trực giao', s: 'MIT 18.06 bài 14 · 3 video · hình tương tác' }],
-  'L.ortho': [{ u: 'mit1806-14/', t: 'Vector và không gian con trực giao', s: 'MIT 18.06 bài 14 · 3 video · hình tương tác' }],
+  'L.ortho': [{ u: 'mit1806-14/', t: 'Vector và không gian con trực giao', s: 'MIT 18.06 bài 14 · 3 video · hình tương tác' }, A26],
   'L.lsq': [{ u: 'mit1806-16/', t: 'Bình phương tối thiểu', s: 'MIT 18.06 bài 16 · hình tương tác' }],
 };
 const artOf = n => { const ids = DETAIL ? [n.sec || n.id] : SIMPLE ? (n.m || []) : [n.id], seen = new Set(), out = [];

@@ -889,8 +889,8 @@ const eig2 = (a, b, c, d) => {
   return { tr, de, L, V: [vec(L[0]), vec(L[1])] };
 };
 const vtxt = v => `(${v.map(vk).join('; ')})`;
-const matBox = (host, A0, onChange, sym) => {
-  host.innerHTML = `<span class="mxk" style="margin:0">Đầu vào: A =</span><div class="grid" style="grid-template-columns:repeat(2,3.6rem)">${[0, 1, 2, 3].map(i => `<input type="number" step="0.1" value="${A0[i]}" aria-label="a${(i >> 1) + 1}${(i & 1) + 1}">`).join('')}</div>`;
+const matBox = (host, A0, onChange, sym, lab = 'Đầu vào: A =') => {
+  host.innerHTML = `<span class="mxk" style="margin:0">${lab}</span><div class="grid" style="grid-template-columns:repeat(2,3.6rem)">${[0, 1, 2, 3].map(i => `<input type="number" step="0.1" value="${A0[i]}" aria-label="a${(i >> 1) + 1}${(i & 1) + 1}">`).join('')}</div>`;
   const ins = [...host.querySelectorAll('input')];
   ins.forEach((inp, i) => inp.addEventListener('input', () => { if (sym && (i === 1 || i === 2)) ins[3 - i].value = inp.value; onChange(); }));
   return { get: () => ins.map(i => Number(i.value) || 0), set: m => { m.forEach((v, i) => ins[i].value = v); onChange(); } };
@@ -1095,6 +1095,195 @@ IX.spectral = (box) => {
       <span>định thức con: ${vk(a)} và ${vk(de)} · tích pivot = det = λ₁λ₂ = ${vk(de)}</span><span class="tagok ${pd ? 'yes' : 'no'}">${pd ? 'Xác định dương: λ, pivot, định thức con đều dương' : 'Không xác định dương'}</span>`;
   }
   rescale(); draw();
+};
+
+// ==== lectures 26–30 ====
+const sub = k => String(k).split('').map(ch => '₀₁₂₃₄₅₆₇₈₉'[ch] || ch).join('');
+const sup = k => String(k).split('').map(ch => '⁰¹²³⁴⁵⁶⁷⁸⁹'[ch] || ch).join('');
+const svgArrows = (svg, id) => { const defs = el(svg, 'defs'); Object.entries(COL).forEach(([k, c]) => marker(defs, id + k, c)); };
+const drawArrow = (layer, id, X, Y, p, q, k, w = 2.8, dash) => el(layer, 'line', { x1: X(p[0]), y1: Y(p[1]), x2: X(q[0]), y2: Y(q[1]), stroke: COL[k], 'stroke-width': w, 'marker-end': `url(#${id + k})`, ...(dash ? { 'stroke-dasharray': '5 4' } : {}) });
+
+// ---- roots of unity and the Fourier matrix (lecture 26)  ·  input: n, column j  ·  result: entries w^(ij) of column j on the unit circle, orthogonality, FFT cost
+IX.roots = (box) => {
+  box.innerHTML = `<div class="ixbar"><span class="ixin"><label>n <input type="range" min="2" max="16" step="1" value="${box.dataset.n || 8}"><output></output></label><label>cột j <input type="range" min="0" max="15" step="1" value="1"><output></output></label></span></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Các căn bậc n của 1 trên vòng tròn đơn vị và các phần tử của một cột của ma trận Fourier"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), [rn, rj] = box.querySelectorAll('input'), [on, oj] = box.querySelectorAll('output');
+  const C = [140, 150], R = 105, P = k => [C[0] + R * Math.cos(k), C[1] - R * Math.sin(k)];
+  el(svg, 'line', { x1: C[0] - 128, x2: C[0] + 128, y1: C[1], y2: C[1], class: 'ax' }); el(svg, 'line', { x1: C[0], x2: C[0], y1: 20, y2: 280, class: 'ax' });
+  svgText(svg, C[0] + 120, C[1] - 6, 'Re', '#5d6670', 11); svgText(svg, C[0] - 24, 26, 'Im', '#5d6670', 11);
+  el(svg, 'circle', { cx: C[0], cy: C[1], r: R, fill: 'none', stroke: '#c9d1da', 'stroke-width': 1.5 });
+  const layer = el(svg, 'g');
+  [rn, rj].forEach(i => i.addEventListener('input', draw));
+  function draw() {
+    const n = +rn.value; rj.max = n - 1; if (+rj.value > n - 1) rj.value = n - 1; const j = +rj.value; on.textContent = n; oj.textContent = j;
+    layer.innerHTML = ''; const a = 2 * Math.PI / n;
+    for (let k = 0; k < n; k++) { const p = P(k * a); el(layer, 'circle', { cx: p[0], cy: p[1], r: 4, fill: '#aab3bd' }); const q = [C[0] + (R + 16) * Math.cos(k * a), C[1] - (R + 16) * Math.sin(k * a)]; svgText(layer, q[0] - 9, q[1] + 4, k ? (k === 1 ? 'w' : `w${sup(k)}`) : '1', '#5d6670', 10); }
+    const pts = []; for (let i = 0; i < n; i++) pts.push(P(i * j * a));
+    el(layer, 'polyline', { points: pts.map(p => p.join(',')).join(' '), fill: 'none', stroke: 'rgba(26,115,232,.55)', 'stroke-width': 2 });
+    const seen = {}; pts.forEach((p, i) => { const key = p.map(v => Math.round(v)).join(','); seen[key] = (seen[key] || 0) + 1; el(layer, 'circle', { cx: p[0], cy: p[1], r: 6.5, fill: COL.b, stroke: '#fff', 'stroke-width': 1.5 }); });
+    const w = P(a); el(layer, 'circle', { cx: w[0], cy: w[1], r: 7, fill: 'none', stroke: COL.o, 'stroke-width': 2.5 });
+    // FFT cost bars
+    const n2 = n * n, nf = n / 2 * Math.log2(n), H = 200, X0 = 300, sc = H / n2;
+    el(layer, 'rect', { x: X0, y: 250 - n2 * sc, width: 30, height: n2 * sc, fill: 'rgba(197,34,31,.25)', stroke: COL.r });
+    el(layer, 'rect', { x: X0 + 45, y: 250 - nf * sc, width: 30, height: Math.max(1, nf * sc), fill: 'rgba(15,143,126,.25)', stroke: COL.g });
+    svgText(layer, X0 - 2, 268, 'n²', COL.r, 11); svgText(layer, X0 + 38, 268, '½n log₂n', COL.g, 11); svgText(layer, X0 - 2, 284, `${n2}`, COL.r, 11); svgText(layer, X0 + 45, 284, `${vk(nf)}`, COL.g, 11);
+    let re = 0, im = 0; for (let i = 0; i < n; i++) { const t = i * a; re += Math.cos(t); im += Math.sin(t); } // column j+1 against column j: sum of w^(i)
+    const col = [...Array(Math.min(n, 6)).keys()].map(i => { const t = (i * j) % n; return t === 0 ? '1' : t === 1 ? 'w' : `w${sup(t)}`; }).join(', ') + (n > 6 ? ', …' : '');
+    out.innerHTML = `<span>w = e<sup>2πi/${n}</sup> = cos(2π/${n}) + i·sin(2π/${n}) ≈ <b>${vk(Math.cos(a))} + ${vk(Math.sin(a))}i</b>, và w<sup>${n}</sup> = 1</span>
+      <span>cột ${j} của F${sub(n)}: (${col}) · mỗi số có độ dài 1, nên ‖cột‖² = ${n}</span>
+      <span>cột ${j}ᴴ · cột ${(j + 1) % n} = 1 + w + w² + … + w${sup(n - 1)} = <b>${vk(Math.abs(re) < 1e-9 ? 0 : re)}</b>: hai cột vuông góc</span>
+      <span>nhân F${sub(n)} với một vector: n² = ${n2} phép nhân; FFT chỉ cần cỡ ½n·log₂n ≈ ${vk(nf)}. Với n = 1024: 1 048 576 so với 5 120.</span>`;
+  }
+  draw();
+};
+
+// ---- the quadratic form f = xᵀAx for symmetric 2 × 2 A (lecture 27)  ·  input: a, b, c; drag a point  ·  result: level curves (bowl or saddle), pivots, completing the square
+IX.quad = (box) => {
+  const P = parseP(box.dataset.presets);
+  box.innerHTML = `<div class="ixbar"><div class="r1 mi"></div></div><div class="presets">${P.map((p, i) => `<button type="button" class="reset" data-p="${i}">${p.l}</button>`).join('')}</div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Các đường mức của f(x, y) = xᵀAx"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout');
+  const S = 46, O = [200, 150], X = a => O[0] + a * S, Y = b => O[1] - b * S, iX = px => (px - O[0]) / S, iY = py => (O[1] - py) / S;
+  plane(svg, S, O, 4.4, 3.3); const id = 'f' + (++MID); svgArrows(svg, id);
+  const layer = el(svg, 'g'), hs = el(svg, 'g'); let pt = [1, 0.5];
+  const mb = matBox(box.querySelector('.mi'), P[0].m, () => draw(), true);
+  box.querySelectorAll('[data-p]').forEach(bt => bt.onclick = () => mb.set(P[+bt.dataset.p].m));
+  const H = el(hs, 'g', { class: 'handle', tabindex: 0, role: 'slider', 'aria-label': 'Điểm (x, y)' }); el(H, 'circle', { r: 16, fill: 'transparent' }); el(H, 'circle', { r: 6.5, fill: COL.b, stroke: '#fff', 'stroke-width': 1.5 });
+  let drag = false; H.addEventListener('pointerdown', e => { drag = true; H.setPointerCapture(e.pointerId); });
+  H.addEventListener('pointermove', e => { if (!drag) return; const r = svg.getBoundingClientRect(); pt = [Math.max(-4.2, Math.min(4.2, Math.round(iX((e.clientX - r.left) * 400 / r.width) * 10) / 10)), Math.max(-3.1, Math.min(3.1, Math.round(iY((e.clientY - r.top) * 300 / r.height) * 10) / 10))]; draw(); });
+  ['pointerup', 'pointercancel'].forEach(t => H.addEventListener(t, () => drag = false));
+  H.addEventListener('keydown', e => { const d = { ArrowLeft: [-.1, 0], ArrowRight: [.1, 0], ArrowUp: [0, .1], ArrowDown: [0, -.1] }[e.key]; if (!d) return; e.preventDefault(); pt = [pt[0] + d[0], pt[1] + d[1]]; draw(); });
+  function draw() {
+    const [a, b, , c] = mb.get(), E = eig2(a, b, b, c); layer.innerHTML = '';
+    let Q = E.all ? [[1, 0], [0, 1]] : [E.V[0], E.V[1] || [-E.V[0][1], E.V[0][0]]]; Q = Q.map(v => { const n = Math.hypot(...v); return v.map(z => z / n); });
+    const L = E.L, toXY = (u, v) => [u * Q[0][0] + v * Q[1][0], u * Q[0][1] + v * Q[1][1]];
+    Q.forEach((q, i) => el(layer, 'line', { x1: X(-q[0] * 9), y1: Y(-q[1] * 9), x2: X(q[0] * 9), y2: Y(q[1] * 9), stroke: i ? 'rgba(142,36,170,.35)' : 'rgba(15,143,126,.4)', 'stroke-width': 1.5, 'stroke-dasharray': '6 5' }));
+    const path = ps => ps.map((p, i) => `${i ? 'L' : 'M'}${X(p[0])},${Y(p[1])}`).join('');
+    const curve = (k, strong) => { const col = k > 0 ? (strong ? COL.g : 'rgba(15,143,126,.45)') : 'rgba(197,34,31,.5)', w = strong ? 2.6 : 1.4, l1 = L[0], l2 = L[1], eps = 1e-9;
+      if (l1 > eps && l2 > eps) { if (k <= 0) return; const ps = []; for (let t = 0; t <= 96; t++) { const s = t * Math.PI / 48; ps.push(toXY(Math.sqrt(k / l1) * Math.cos(s), Math.sqrt(k / l2) * Math.sin(s))); } el(layer, 'path', { d: path(ps), fill: 'none', stroke: col, 'stroke-width': w }); return; }
+      if (l1 < -eps && l2 < -eps) { if (k >= 0) return; const ps = []; for (let t = 0; t <= 96; t++) { const s = t * Math.PI / 48; ps.push(toXY(Math.sqrt(k / l1) * Math.cos(s), Math.sqrt(k / l2) * Math.sin(s))); } el(layer, 'path', { d: path(ps), fill: 'none', stroke: col, 'stroke-width': w }); return; }
+      if (Math.abs(l2) <= eps || Math.abs(l1) <= eps) { const [lp, i] = Math.abs(l2) <= eps ? [l1, 0] : [l2, 1]; if (k / lp <= 0) return; const u = Math.sqrt(k / lp); [u, -u].forEach(v => { const A1 = i ? toXY(-9, v) : toXY(v, -9), B1 = i ? toXY(9, v) : toXY(v, 9); el(layer, 'path', { d: path([A1, B1]), fill: 'none', stroke: col, 'stroke-width': w }); }); return; }
+      const [lp, ln, pos] = l1 > 0 ? [l1, l2, 0] : [l2, l1, 1];
+      [1, -1].forEach(sg => { const ps = []; for (let t = -40; t <= 40; t++) { const s = t / 10, big = k > 0 ? Math.sqrt(k / lp) : Math.sqrt(-k / -ln), u = k > 0 ? sg * big * Math.cosh(s) : Math.sqrt(-k / lp) * Math.sinh(s), v = k > 0 ? Math.sqrt(k / -ln) * Math.sinh(s) : sg * big * Math.cosh(s); ps.push(pos ? toXY(v, u) : toXY(u, v)); } el(layer, 'path', { d: path(ps), fill: 'none', stroke: col, 'stroke-width': w }); }); };
+    [0.25, 1, 4, 16].forEach(k => { curve(k, k === 1); curve(-k, false); });
+    const f = a * pt[0] ** 2 + 2 * b * pt[0] * pt[1] + c * pt[1] ** 2;
+    H.setAttribute('transform', `translate(${X(pt[0])},${Y(pt[1])})`); svgText(layer, X(pt[0]) + 9, Y(pt[1]) - 9, `f = ${vk(f)}`, f > 1e-9 ? COL.g : f < -1e-9 ? COL.r : '#5d6670');
+    const de = a * c - b * b, kind = L[1] > 1e-9 ? ['yes', 'Xác định dương: cái tô, đáy ở (0, 0)'] : L[1] > -1e-9 && L[0] > 1e-9 ? ['no', 'Nửa xác định dương: máng, f = 0 trên cả một đường thẳng'] : L[0] < -1e-9 ? ['no', 'Xác định âm: cái tô úp ngược'] : ['no', 'Không xác định: yên ngựa, có hướng f âm'];
+    const sq = Math.abs(a) > 1e-9 ? `${vk(a)}(x ${b / a < 0 ? '−' : '+'} ${vk(Math.abs(b / a))}y)² ${de / a < 0 ? '−' : '+'} ${vk(Math.abs(de / a))}y²` : 'a = 0: không hoàn thành bình phương theo x được';
+    out.innerHTML = `<span>f(x, y) = ${vk(a)}x² + ${vk(2 * b)}xy + ${vk(c)}y² = <b>${sq}</b></span>
+      <span>pivot: ${Math.abs(a) > 1e-9 ? `${vk(a)} và ${vk(de / a)}` : '—'} · định thức con: ${vk(a)} và ${vk(de)} · λ = ${vk(L[0])}, ${vk(L[1])}</span>
+      <span>tại điểm xanh (${vk(pt[0])}; ${vk(pt[1])}): f = <b>${vk(f)}</b></span><span class="tagok ${kind[0]}">${kind[1]}</span>`;
+  }
+  draw();
+};
+
+// ---- similar matrices B = M⁻¹AM (lecture 28)  ·  input: A and M  ·  result: B, the same eigenvalues, eigenvectors moved from x to M⁻¹x
+IX.similar = (box) => {
+  const P = parseP(box.dataset.presets);
+  box.innerHTML = `<div class="ixbar"><div class="r1 ma"></div><div class="r1 mm"></div></div><div class="presets">${P.map((p, i) => `<button type="button" class="reset" data-p="${i}">${p.l}</button>`).join('')}</div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Hướng eigenvector của A và của B = M⁻¹AM"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout');
+  const S = 42, O = [200, 150], X = a => O[0] + a * S, Y = b => O[1] - b * S;
+  plane(svg, S, O, 5, 3.6); const id = 'm' + (++MID); svgArrows(svg, id); const layer = el(svg, 'g');
+  const ma = matBox(box.querySelector('.ma'), P[0].m, () => draw()), mm = matBox(box.querySelector('.mm'), P[0].u, () => draw(), false, 'M =');
+  box.querySelectorAll('[data-p]').forEach(bt => bt.onclick = () => { const p = P[+bt.dataset.p]; mm.set(p.u); ma.set(p.m); });
+  const mul = (A, B) => [A[0] * B[0] + A[1] * B[2], A[0] * B[1] + A[1] * B[3], A[2] * B[0] + A[3] * B[2], A[2] * B[1] + A[3] * B[3]];
+  const mtxt = M => `[${vk(M[0])} ${vk(M[1])}; ${vk(M[2])} ${vk(M[3])}]`;
+  function draw() {
+    const A = ma.get(), M = mm.get(), dM = M[0] * M[3] - M[1] * M[2]; layer.innerHTML = '';
+    if (Math.abs(dM) < 1e-9) { out.innerHTML = '<span class="tagok no">det M = 0: M không khả nghịch, chọn M khác</span>'; return; }
+    const Mi = [M[3] / dM, -M[1] / dM, -M[2] / dM, M[0] / dM], B = mul(mul(Mi, A), M), EA = eig2(...A), EB = eig2(...B);
+    const lines = (E, col, lab) => { if (E.cx || !E.V) return; E.V.forEach(v => { const n = Math.hypot(...v), u = v.map(z => z / n * 9); el(layer, 'line', { x1: X(-u[0]), y1: Y(-u[1]), x2: X(u[0]), y2: Y(u[1]), stroke: col, 'stroke-width': 2, 'stroke-dasharray': '7 5' }); }); };
+    lines(EA, 'rgba(15,143,126,.55)'); lines(EB, 'rgba(142,36,170,.5)');
+    if (!EA.cx && EA.V) EA.V.forEach((x, i) => { const n = Math.hypot(...x), xs = x.map(z => z / n * 2), y = [Mi[0] * xs[0] + Mi[1] * xs[1], Mi[2] * xs[0] + Mi[3] * xs[1]], ny = Math.hypot(...y), ys = y.map(z => z / ny * 2);
+      drawArrow(layer, id, X, Y, [0, 0], xs, 'g', 3); drawArrow(layer, id, X, Y, [0, 0], ys, 'v', 3);
+      svgText(layer, X(xs[0]) + (xs[0] < 0 ? -22 : 6), Y(xs[1]) - 6, `x${sub(i + 1)}`, COL.g); svgText(layer, X(ys[0]) + (ys[0] < 0 ? -62 : 6), Y(ys[1]) + (ys[1] < 0 ? 16 : -8), `M⁻¹x${sub(i + 1)}`, COL.v); });
+    const ev = E => E.cx ? `${vk(E.re)} ± ${vk(E.im)}i` : `${vk(E.L[0])} và ${vk(E.L[1])}`, nv = E => E.cx ? 'phức' : E.all ? 'mọi vector' : E.V.length;
+    out.innerHTML = `<span>B = M⁻¹AM = <b>${mtxt(B)}</b></span><span>λ của A: <b>${ev(EA)}</b> · λ của B: <b>${ev(EB)}</b></span><span>vết ${vk(EA.tr)} = ${vk(EB.tr)}, det ${vk(EA.de)} = ${vk(EB.de)}</span>
+      <span>số hướng eigenvector: A có ${nv(EA)}, B có ${nv(EB)}</span><span class="tagok yes">Cùng eigenvalue; eigenvector của B là M⁻¹ nhân eigenvector của A</span>`;
+  }
+  draw();
+};
+
+// ---- SVD of a 2 × 2 matrix (lecture 29)  ·  input: A, and x on the unit circle  ·  result: the ellipse Ax, v₁, v₂ → σ₁u₁, σ₂u₂
+IX.svd2 = (box) => {
+  const P = parseP(box.dataset.presets);
+  box.innerHTML = `<div class="ixbar"><div class="r1 mi"></div></div><div class="presets">${P.map((p, i) => `<button type="button" class="reset" data-p="${i}">${p.l}</button>`).join('')}<button type="button" class="reset primary" data-go>▶ Cho x quay một vòng</button></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Bên trái: vòng tròn đơn vị và v1, v2. Bên phải: elip Ax và σ1u1, σ2u2"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout');
+  const id = 'v' + (++MID); svgArrows(svg, id);
+  const OL = [100, 155], SL = 70, OR = [300, 155]; let SR = 30, th = 0.6, anim = null;
+  const XL = a => OL[0] + a * SL, YL = b => OL[1] - b * SL, XR = a => OR[0] + a * SR, YR = b => OR[1] - b * SR;
+  el(svg, 'line', { x1: 200, x2: 200, y1: 10, y2: 290, stroke: '#e3e6ea', 'stroke-width': 1.5 });
+  svgText(svg, 12, 22, 'đầu vào: x trên vòng tròn', '#5d6670', 11); svgText(svg, 212, 22, 'kết quả: Ax', '#5d6670', 11);
+  [[OL, 90], [OR, 90]].forEach(([o, r]) => { el(svg, 'line', { x1: o[0] - r, x2: o[0] + r, y1: o[1], y2: o[1], class: 'ax' }); el(svg, 'line', { x1: o[0], x2: o[0], y1: o[1] - 125, y2: o[1] + 125, class: 'ax' }); });
+  const layer = el(svg, 'g'), hs = el(svg, 'g');
+  const mb = matBox(box.querySelector('.mi'), P[0].m, () => draw());
+  box.querySelectorAll('[data-p]').forEach(bt => bt.onclick = () => { stop(); mb.set(P[+bt.dataset.p].m); });
+  const H = el(hs, 'g', { class: 'handle', tabindex: 0, role: 'slider', 'aria-label': 'Hướng của x' }); el(H, 'circle', { r: 16, fill: 'transparent' }); el(H, 'circle', { r: 6.5, fill: COL.b, stroke: '#fff', 'stroke-width': 1.5 });
+  let drag = false; const pick = e => { const r = svg.getBoundingClientRect(), px = (e.clientX - r.left) * 400 / r.width, py = (e.clientY - r.top) * 300 / r.height; if (px > 200 || Math.hypot(px - OL[0], py - OL[1]) < 4) return; th = Math.atan2(OL[1] - py, px - OL[0]); draw(); };
+  svg.addEventListener('pointerdown', e => { drag = true; svg.setPointerCapture(e.pointerId); stop(); pick(e); }); svg.addEventListener('pointermove', e => drag && pick(e)); ['pointerup', 'pointercancel'].forEach(t => svg.addEventListener(t, () => drag = false)); svg.style.touchAction = 'none';
+  H.addEventListener('keydown', e => { const d = { ArrowLeft: 1, ArrowUp: 1, ArrowRight: -1, ArrowDown: -1 }[e.key]; if (!d) return; e.preventDefault(); stop(); th += d * Math.PI / 90; draw(); });
+  const stop = () => { if (anim) { cancelAnimationFrame(anim); anim = null; } };
+  box.querySelector('[data-go]').onclick = () => { stop(); const t0 = performance.now(), th0 = th; const f = now => { const k = (now - t0) / 6000; th = th0 + k * 2 * Math.PI; draw(); anim = k < 1 ? requestAnimationFrame(f) : null; }; anim = requestAnimationFrame(f); };
+  function svd(a, b, c, d) { // AᵀA = [a²+c², ab+cd; ab+cd, b²+d²]
+    const p = a * a + c * c, q = a * b + c * d, r = b * b + d * d, E = eig2(p, q, q, r);
+    let V = E.all ? [[1, 0], [0, 1]] : [E.V[0], E.V[1] || [-E.V[0][1], E.V[0][0]]]; V = V.map(v => { const n = Math.hypot(...v); return v.map(z => z / n); });
+    const sg = E.L.map(l => Math.sqrt(Math.max(0, l)));
+    const U = V.map((v, i) => { const w = [a * v[0] + b * v[1], c * v[0] + d * v[1]]; return sg[i] > 1e-9 ? w.map(z => z / sg[i]) : null; });
+    if (!U[1]) U[1] = U[0] ? [-U[0][1], U[0][0]] : [0, 1]; if (!U[0]) U[0] = [1, 0];
+    return { V, U, sg, E };
+  }
+  function draw() {
+    const [a, b, c, d] = mb.get(), D = svd(a, b, c, d); SR = Math.min(60, 82 / Math.max(1e-6, D.sg[0] || 1));
+    layer.innerHTML = '';
+    el(layer, 'circle', { cx: OL[0], cy: OL[1], r: SL, fill: 'rgba(26,115,232,.05)', stroke: 'rgba(26,115,232,.45)', 'stroke-width': 1.5 });
+    let pth = ''; for (let i = 0; i <= 120; i++) { const t = i * Math.PI / 60, v = [a * Math.cos(t) + b * Math.sin(t), c * Math.cos(t) + d * Math.sin(t)]; pth += `${i ? 'L' : 'M'}${XR(v[0])},${YR(v[1])}`; }
+    el(layer, 'path', { d: pth, fill: 'rgba(227,116,0,.06)', stroke: 'rgba(227,116,0,.6)', 'stroke-width': 1.8 });
+    D.V.forEach((v, i) => { drawArrow(layer, id, XL, YL, [0, 0], v, i ? 'v' : 'g', 3); svgText(layer, XL(v[0] * 1.12) - 6, YL(v[1] * 1.12) + 4, `v${sub(i + 1)}`, i ? COL.v : COL.g, 12); });
+    D.U.forEach((u, i) => { const s = D.sg[i], w = u.map(z => z * s); if (s > 1e-9) { drawArrow(layer, id, XR, YR, [0, 0], w, i ? 'v' : 'g', 3); { const px = XR(w[0]), lx = px > 345 ? px - 44 : px < 255 ? px - 4 : px + (w[0] >= 0 ? 6 : -46); svgText(layer, lx, YR(w[1]) + (w[1] < 0 ? 16 : -10), `σ${sub(i + 1)}u${sub(i + 1)}`, i ? COL.v : COL.g, 12); } } });
+    const x = [Math.cos(th), Math.sin(th)], Ax = [a * x[0] + b * x[1], c * x[0] + d * x[1]];
+    drawArrow(layer, id, XL, YL, [0, 0], x, 'b', 2.4); if (Math.hypot(...Ax) > 1e-9) drawArrow(layer, id, XR, YR, [0, 0], Ax, 'o', 2.4);
+    H.setAttribute('transform', `translate(${XL(x[0])},${YL(x[1])})`);
+    const nA = Math.hypot(...Ax), at = D.sg[0] - nA < 1e-3 * Math.max(1, D.sg[0]) ? 'max' : nA - D.sg[1] < 1e-3 * Math.max(1, D.sg[0]) ? 'min' : '';
+    const v2t = v => `(${vk(v[0])}; ${vk(v[1])})`;
+    out.innerHTML = `<span>AᵀA = [${vk(a * a + c * c)} ${vk(a * b + c * d)}; ${vk(a * b + c * d)} ${vk(b * b + d * d)}] · eigenvalue ${vk(D.E.L[0])}, ${vk(D.E.L[1])} → σ₁ = <b>${vk(D.sg[0])}</b>, σ₂ = <b>${vk(D.sg[1])}</b></span>
+      <span>v₁ = ${v2t(D.V[0])}, v₂ = ${v2t(D.V[1])} (vuông góc) · u₁ = ${v2t(D.U[0])}, u₂ = ${v2t(D.U[1])} (vuông góc)</span>
+      <span>‖Ax‖ = <b>${vk(nA)}</b>${at === 'max' ? ' = σ₁: x đang ở v₁, Ax dài nhất' : at === 'min' ? ' = σ₂: x đang ở v₂, Ax ngắn nhất' : `, luôn nằm giữa σ₂ và σ₁`}</span>
+      ${D.sg[1] < 1e-9 ? '<span class="tagok no">σ₂ = 0: hạng 1, elip dẹt thành một đoạn thẳng; v₂ nằm trong nullspace</span>' : ''}`;
+  }
+  draw();
+};
+
+// ---- a linear transformation acting on a house (lecture 30)  ·  input: the matrix, optional shift b  ·  result: the moved house and grid; columns of A are T(e₁), T(e₂)
+IX.lintrans = (box) => {
+  const P = parseP(box.dataset.presets);
+  box.innerHTML = `<div class="ixbar"><div class="r1 mi"></div><label class="chk" style="margin:0"><input type="checkbox"> cộng thêm b = (1; 0,5): T(v) = Av + b</label></div><div class="presets">${P.map((p, i) => `<button type="button" class="reset" data-p="${i}">${p.l}</button>`).join('')}</div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Ngôi nhà trước và sau phép biến đổi"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), cb = box.querySelector('input[type=checkbox]');
+  const S = 48, O = [200, 175], X = a => O[0] + a * S, Y = b => O[1] - b * S; plane(svg, S, O, 4.3, 3.7);
+  const id = 'h' + (++MID); svgArrows(svg, id); const layer = el(svg, 'g');
+  const mb = matBox(box.querySelector('.mi'), P[0].m, () => draw()); cb.addEventListener('change', draw);
+  box.querySelectorAll('[data-p]').forEach(bt => bt.onclick = () => mb.set(P[+bt.dataset.p].m));
+  const house = [[0, 0], [2, 0], [2, 1.5], [1, 2.5], [0, 1.5], [0, 0]], door = [[0.8, 0], [0.8, 0.9], [1.2, 0.9], [1.2, 0]], win = [[0.25, 0.8], [0.6, 0.8], [0.6, 1.15], [0.25, 1.15], [0.25, 0.8]];
+  function draw() {
+    const [a, b, c, d] = mb.get(), sh = cb.checked ? [1, 0.5] : [0, 0], T = p => [a * p[0] + b * p[1] + sh[0], c * p[0] + d * p[1] + sh[1]], pth = ps => ps.map((p, i) => `${i ? 'L' : 'M'}${X(p[0])},${Y(p[1])}`).join('');
+    layer.innerHTML = '';
+    for (let k = -6; k <= 6; k++) { el(layer, 'path', { d: pth([T([k, -6]), T([k, 6])]), stroke: 'rgba(227,116,0,.16)', 'stroke-width': 1, fill: 'none' }); el(layer, 'path', { d: pth([T([-6, k]), T([6, k])]), stroke: 'rgba(227,116,0,.16)', 'stroke-width': 1, fill: 'none' }); }
+    [house, door, win].forEach((ps, i) => el(layer, 'path', { d: pth(ps), fill: i ? 'none' : 'rgba(93,102,112,.06)', stroke: '#9aa4ae', 'stroke-width': 1.6, 'stroke-dasharray': '5 4' }));
+    [house, door, win].forEach((ps, i) => el(layer, 'path', { d: pth(ps.map(T)), fill: i ? 'none' : 'rgba(227,116,0,.12)', stroke: COL.o, 'stroke-width': 2.2 }));
+    drawArrow(layer, id, X, Y, [0, 0], [1, 0], 'b', 2.6); drawArrow(layer, id, X, Y, [0, 0], [0, 1], 'b', 2.6);
+    const t0 = T([0, 0]), t1 = T([1, 0]), t2 = T([0, 1]);
+    drawArrow(layer, id, X, Y, t0, t1, 'g', 3); drawArrow(layer, id, X, Y, t0, t2, 'v', 3);
+    svgText(layer, X(1) + 2, Y(0) + 15, 'e₁', COL.b, 11); svgText(layer, X(0) + 5, Y(1) - 4, 'e₂', COL.b, 11);
+    svgText(layer, X(t1[0]) + 6, Y(t1[1]) - 6, 'T(e₁)', COL.g, 11); svgText(layer, X(t2[0]) + 6, Y(t2[1]) - 6, 'T(e₂)', COL.v, 11);
+    if (cb.checked) el(layer, 'circle', { cx: X(t0[0]), cy: Y(t0[1]), r: 5, fill: COL.r });
+    const lin = !cb.checked;
+    out.innerHTML = `<span>T(e₁) = (${vk(t1[0] - sh[0])}; ${vk(t1[1] - sh[1])}) = cột 1 của A · T(e₂) = (${vk(t2[0] - sh[0])}; ${vk(t2[1] - sh[1])}) = cột 2 của A</span>
+      <span>T(0) = (${vk(t0[0])}; ${vk(t0[1])}) · det A = ${vk(a * d - b * c)}: diện tích ngôi nhà nhân ${vk(Math.abs(a * d - b * c))}</span>
+      <span class="tagok ${lin ? 'yes' : 'no'}">${lin ? 'Tuyến tính: gốc đứng yên, đường thẳng vẫn thẳng, lưới vẫn cách đều' : 'Không tuyến tính (affine): T(0) = b ≠ 0, gốc bị dời đi'}</span>`;
+  }
+  draw();
 };
 
 document.querySelectorAll('.ix[data-ix]').forEach(b => { try { IX[b.dataset.ix](b); } catch (e) { console.error(e); b.textContent = 'Không dựng được hình này.'; } });
