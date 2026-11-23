@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Chéo hoá và lũy thừa của A · Nền móng Machine Learning</title>
-<meta name="description" content="MIT 18.06 bài 22: A = SΛS⁻¹, Aᵏ = SΛᵏS⁻¹, khi nào chéo hoá được, phương trình sai phân u_{k+1} = Au_k và số Fibonacci thứ 100.">
+<meta name="description" content="MIT 18.06 bài 22: A = SΛS⁻¹, Aᵏ = SΛᵏS⁻¹, khi nào chéo hoá được, phương trình sai phân uₖ₊₁ = Auₖ và số Fibonacci thứ 100.">
 <meta property="og:title" content="Chéo hoá và lũy thừa của A">
-<meta property="og:description" content="MIT 18.06 bài 22: A = SΛS⁻¹, Aᵏ = SΛᵏS⁻¹, khi nào chéo hoá được, phương trình sai phân u_{k+1} = Au_k và số Fibonacci thứ 100.">
+<meta property="og:description" content="MIT 18.06 bài 22: A = SΛS⁻¹, Aᵏ = SΛᵏS⁻¹, khi nào chéo hoá được, phương trình sai phân uₖ₊₁ = Auₖ và số Fibonacci thứ 100.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://johntran-android.github.io/ml-map/bai/mit1806-22/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -115,7 +115,7 @@ a:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-ra
 </style><style>
 /* layout 2 (trial): quieter top bar, collapsed note links, boxed interactives */
 .draft2 { font: 500 .82rem/1.5 var(--sans); color: var(--muted); border-bottom: 1px solid var(--rule); padding: .9rem 0; display: flex; flex-wrap: wrap; gap: .4rem 1rem; align-items: center; }
-.draft2 .back { font-weight: 700; text-decoration: none; color: var(--blue); }
+.draft2 .back { font-weight: 700; text-decoration: none; color: var(--blue); } .draft2 .toc2 { font-weight: 600; text-decoration: none; color: var(--blue); } .draft2 .toc2:hover, .draft2 .back:hover { text-decoration: underline; }
 .draft2 .dtag { background: #eef0f3; color: var(--ink); font-weight: 600; padding: .1rem .5rem; border-radius: 5px; }
 .legend summary { cursor: pointer; list-style: none; } .legend summary::-webkit-details-marker { display: none; }
 .legend summary:hover { color: var(--ink); } .legend[open] { flex-basis: 100%; }
@@ -227,7 +227,7 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
 </head>
 <body>
 <div class="page">
-  <div class="draft2"><a class="back" href="../../?bai=L.eig">← Bản đồ</a><span class="dtag">Bản nháp</span>
+  <div class="draft2"><a class="back" href="../../?bai=L.eig">← Bản đồ</a><a class="toc2" href="../">Mục lục</a><span class="dtag">Bản nháp</span>
     <details class="legend"><summary>ⓘ Cách đọc trang này</summary><div class="legendb">
       <span class="chip"><span class="sw n"></span>khung xanh: nguyên văn ghi chú của tác giả</span>
       <span class="chip"><span class="sw c"></span>hình tương tác</span>

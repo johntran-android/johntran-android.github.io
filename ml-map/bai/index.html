@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mục lục bài viết · Nền móng Machine Learning</title>
+<meta name="description" content="25 bài viết theo ghi chú MIT 18.06 Đại số tuyến tính: ảnh bài giảng, ghi chú viết tay, hình tương tác và video giảng lại.">
+<meta property="og:title" content="Mục lục bài viết MIT 18.06">
+<meta property="og:url" content="https://johntran-android.github.io/ml-map/bai/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one reading column like a book page; figures may run wider than the text; small margin notes sit in the flow on phones */
+:root {
+  --paper: #fbfbfa; --ink: #1d2126; --muted: #5d6670; --rule: #e3e6ea; --wash: #f1f4f7;
+  --blue: #1a73e8; --teal: #0f8f7e; --red: #c5221f; --amber: #b45309;
+  --note: #eef6f4; --claude: #f3f0fa; --board: #fdf4e7;
+  --serif: 'Literata', Georgia, 'Times New Roman', serif;
+  --sans: 'Be Vietnam Pro', 'Helvetica Neue', Arial, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+}
+/* one light look on purpose: a printed page */
+:root { color-scheme: light; }
+
+body { background: var(--paper); color: var(--ink); font: 400 1.04rem/1.8 var(--sans);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 4rem; }
+.page { max-width: 46rem; margin: 0 auto; }
+.wide { max-width: 58rem; margin-left: 50%; transform: translateX(-50%); width: min(58rem, calc(100vw - 32px)); }
+
+.draft { font: 500 .82rem/1.5 var(--sans); color: var(--muted); border-bottom: 1px solid var(--rule); padding: .9rem 0; display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; align-items: center; }
+.draft b { color: var(--ink); font-weight: 600; }
+.chip { display: inline-flex; align-items: center; gap: .35rem; }
+.sw { width: .8rem; height: .8rem; border-radius: 3px; display: inline-block; border: 1px solid var(--rule); }
+.sw.n { background: var(--note); } .sw.c { background: var(--claude); } .sw.b { background: var(--board); }
+
+header.ch { padding: 3.2rem 0 1.6rem; }
+.crumb { font: 600 .78rem/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--teal); }
+h1 { font: 700 clamp(2.2rem, 6vw, 3.3rem)/1.08 var(--sans); letter-spacing: -.02em; margin: .7rem 0 .9rem; text-wrap: balance; }
+.lede { font-size: 1.2rem; line-height: 1.6; color: var(--muted); margin: 0; max-width: 40rem; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: .8rem 1.6rem; margin-top: 1.6rem; padding-top: 1.2rem; border-top: 1px solid var(--rule); font: 400 .9rem/1.5 var(--sans); }
+.facts dt { font-weight: 600; font-size: .74rem; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+.facts dd { margin: .15rem 0 0; }
+
+h2 { font: 700 1.55rem/1.25 var(--sans); letter-spacing: -.01em; margin: 3rem 0 .4rem; text-wrap: balance; display: flex; gap: .7rem; align-items: baseline; }
+h2 .no { font: 500 .95rem/1 var(--mono); color: var(--teal); }
+p { margin: .9rem 0; }
+em { font-style: italic; }
+strong { font-weight: 600; }
+.m { font-weight: 500; color: #0b3a6e; white-space: nowrap; }
+.eq { background: var(--wash); border-radius: 8px; padding: .3rem 1rem; margin: 1.1rem 0; overflow-x: auto; overflow-y: hidden; }
+mjx-container { color: var(--ink); }
+mjx-container:not([display="true"]) { display: inline-block; max-width: 100%; overflow-x: auto; overflow-y: hidden; vertical-align: middle; }
+.check > span, .side p, p { min-width: 0; }
+.eq mjx-container[display="true"] { margin: .7rem 0 !important; }
+.hint { font: 400 .82rem/1.4 var(--sans); color: var(--muted); margin: -1rem 0 1.2rem; text-align: center; }
+.zoom { cursor: zoom-in; }
+.zoom:focus-visible, .reset:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.live { padding: 0; } .live svg { width: 100%; height: 100%; display: block; touch-action: none; user-select: none; }
+.live .ax { stroke: #c4cad1; stroke-width: 1; } .live .gr { stroke: #eef0f3; stroke-width: 1; }
+.live text { font: 500 11px var(--sans); fill: #5d6670; }
+.live .bt { fill: var(--amber); font-weight: 600; } .live .pt { fill: var(--blue); } .live .et { fill: var(--red); }
+.live .handle { cursor: ns-resize; outline: none; }
+.live .handle:focus-visible circle.ring { stroke: var(--blue); stroke-width: 2.5; }
+.reset { font: 500 .8rem/1 var(--sans); color: var(--blue); background: none; border: 1px solid #c9d7ee; border-radius: 6px; padding: .3rem .55rem; margin-left: .3rem; cursor: pointer; }
+.readout { font: 500 .92rem/1.5 var(--sans); background: var(--claude); border-radius: 8px; padding: .55rem .9rem; margin: .8rem 0 1.6rem; display: flex; flex-wrap: wrap; gap: .3rem 1.4rem; }
+.readout b { font-weight: 700; }
+.lb { position: fixed; inset: 0; z-index: 50; background: rgba(15, 18, 22, .88); display: flex; align-items: center; justify-content: center;
+  padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); cursor: zoom-out; }
+[hidden] { display: none !important; }
+.lb img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; background: #fff; border-radius: 8px; }
+.lb button { position: absolute; top: calc(12px + env(safe-area-inset-top, 0px)); right: calc(12px + env(safe-area-inset-right, 0px)); font: 600 .9rem/1 var(--sans); color: #fff; background: rgba(255,255,255,.14); border: 0; border-radius: 6px; padding: .5rem .8rem; cursor: pointer; }
+.eq .c { color: var(--muted); font-weight: 400; }
+
+/* who wrote what: the author's note, Claude's figure, the board */
+.from { border-radius: 10px; padding: 1rem 1.2rem; margin: 1.3rem 0; }
+.from.n { background: var(--note); }
+.from .tag { font: 600 .72rem/1 var(--sans); letter-spacing: .07em; text-transform: uppercase; color: var(--teal); display: flex; justify-content: space-between; gap: 1rem; margin-bottom: .45rem; }
+.from .tag a { text-transform: none; letter-spacing: 0; font-weight: 500; font-size: .82rem; }
+.from p { margin: .4rem 0; }
+.src { font: 500 .8rem/1.4 var(--sans); margin: -.1rem 0 .6rem; display: flex; flex-wrap: wrap; gap: .2rem .8rem; }
+.src span { color: var(--muted); }
+.src a { text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--blue) 35%, transparent); }
+.src a:hover { border-bottom-color: var(--blue); }
+.warn { border-left: 3px solid var(--red); padding: .2rem 0 .2rem 1rem; margin: 1.4rem 0; font-family: var(--sans); font-size: .98rem; line-height: 1.6; }
+.warn b { color: var(--red); }
+
+figure { margin: 1.8rem 0; }
+figure .frame { background: #fff; border-radius: 10px; padding: .4rem; border: 1px solid var(--rule); }
+figure img { display: block; width: 100%; height: auto; border-radius: 6px; }
+figcaption { font: 400 .86rem/1.5 var(--sans); color: var(--muted); margin-top: .55rem; display: flex; gap: .5rem; align-items: baseline; }
+figcaption .who { flex: none; font-weight: 600; font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; padding: .15rem .45rem; border-radius: 4px; }
+.who.c { background: var(--claude); color: var(--ink); } .who.b { background: var(--board); color: var(--ink); }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; align-items: start; }
+.pair > figure { margin: 0; min-width: 0; }
+.pair .frame { aspect-ratio: 4 / 3; display: flex; align-items: center; justify-content: center; }
+.pair .frame img { width: 100%; height: 100%; object-fit: contain; }
+.pair .board .frame { background: #1b1f1c; padding: 0; overflow: hidden; }
+.pair .board .frame img { object-fit: cover; border-radius: 9px; }
+@media (max-width: 720px) { .pair { grid-template-columns: 1fr; } }
+
+.side { font: 400 .93rem/1.6 var(--sans); background: var(--wash); border-radius: 10px; padding: 1rem 1.2rem; margin: 1.6rem 0; }
+.side h3 { font: 700 .82rem/1.2 var(--sans); letter-spacing: .06em; text-transform: uppercase; margin: 0 0 .4rem; color: var(--amber); }
+.side p { margin: .4rem 0; }
+
+ol.steps { padding-left: 1.3rem; } ol.steps li { margin: .4rem 0; }
+.check { display: grid; grid-template-columns: auto 1fr; gap: .35rem .9rem; font: 400 .98rem/1.55 var(--sans); margin: 1rem 0; }
+.check .k { font-family: var(--mono); color: var(--teal); }
+
+footer { margin-top: 3.5rem; padding-top: 1.4rem; border-top: 1px solid var(--rule); font: 400 .86rem/1.6 var(--sans); color: var(--muted); }
+footer h3 { font: 700 .78rem/1 var(--sans); letter-spacing: .07em; text-transform: uppercase; color: var(--ink); margin: 1.2rem 0 .4rem; }
+a { color: var(--blue); text-underline-offset: .15em; }
+a:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 2px; }
+</style><style>
+/* layout 2 (trial): quieter top bar, collapsed note links, boxed interactives */
+.draft2 { font: 500 .82rem/1.5 var(--sans); color: var(--muted); border-bottom: 1px solid var(--rule); padding: .9rem 0; display: flex; flex-wrap: wrap; gap: .4rem 1rem; align-items: center; }
+.draft2 .back { font-weight: 700; text-decoration: none; color: var(--blue); } .draft2 .toc2 { font-weight: 600; text-decoration: none; color: var(--blue); } .draft2 .toc2:hover, .draft2 .back:hover { text-decoration: underline; }
+.draft2 .dtag { background: #eef0f3; color: var(--ink); font-weight: 600; padding: .1rem .5rem; border-radius: 5px; }
+.legend summary { cursor: pointer; list-style: none; } .legend summary::-webkit-details-marker { display: none; }
+.legend summary:hover { color: var(--ink); } .legend[open] { flex-basis: 100%; }
+.legendb { display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; margin-top: .6rem; padding: .7rem .9rem; background: #fff; border: 1px solid var(--rule); border-radius: 8px; }
+.legendb p { margin: .2rem 0 0; flex-basis: 100%; font-size: .82rem; }
+.src2 { margin: -.15rem 0 .9rem; font: 500 .8rem/1.4 var(--sans); }
+.src2 summary { display: inline-flex; align-items: center; gap: .35rem; cursor: pointer; list-style: none; color: var(--muted); padding: .18rem .6rem; border: 1px solid var(--rule); border-radius: 999px; background: #fff; }
+.src2 summary::-webkit-details-marker { display: none; } .src2 summary::before { content: '📝'; font-size: .75rem; }
+.src2 summary::after { content: '▾'; font-size: .7rem; } .src2[open] summary::after { content: '▴'; } .src2 summary:hover { color: var(--ink); border-color: #c9d1da; }
+.src2 summary:focus-visible, .legend summary:focus-visible, .ixmore summary:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.srcl { display: flex; flex-wrap: wrap; gap: .35rem 1rem; margin-top: .5rem; padding: .65rem .85rem; background: #fff; border: 1px solid var(--rule); border-radius: 8px; }
+.srcl a { text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--blue) 35%, transparent); }
+.ixbox { border: 1px solid var(--rule); border-radius: 14px; background: #fff; padding: 1.1rem 1.2rem 1rem; margin: 2rem 0; box-shadow: 0 1px 3px rgba(20, 30, 40, .05); }
+.ixhead { display: flex; align-items: center; gap: .6rem; font: 700 1.05rem/1.3 var(--sans); color: var(--ink); }
+.ixhead .who { font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; padding: .18rem .5rem; border-radius: 4px; }
+.ixhow { font: 500 .95rem/1.5 var(--sans); color: var(--ink); margin: .4rem 0 1rem; }
+.ixbox .presets::before { content: 'Ví dụ có sẵn:'; font: 600 .78rem/1 var(--sans); color: var(--muted); align-self: center; margin-right: .1rem; }
+.ixbox .presets .reset:not(.primary) { color: var(--ink); background: #f1f3f5; border-color: #e1e5ea; border-radius: 999px; padding: .4rem .8rem; }
+.ixbox .presets .reset:not(.primary):hover { background: #e6e9ed; }
+.ixbox .readout { margin-bottom: .8rem; } .ixbox .presets { margin-bottom: .8rem; }
+.ixmore summary { cursor: pointer; font: 600 .86rem/1.4 var(--sans); color: var(--blue); }
+.ixmore p { font: 400 .9rem/1.6 var(--sans); color: var(--muted); margin: .5rem 0 0; }
+@media (max-width: 640px) { .ixbox { padding: .9rem .8rem; margin: 1.6rem -.4rem; } }
+</style>
+
+<style>
+.sw.h { background: #fff7d6; }
+.who.h { background: #fff7d6; color: var(--ink); }
+.pair .hand .frame { background: #0b0b0b; padding: 0; overflow: hidden; } .pair .hand .frame img { object-fit: contain; }
+.toc { display: grid; gap: .35rem; margin-top: 1.4rem; font: 500 .95rem/1.4 var(--sans); }
+.toc a { display: flex; gap: .7rem; align-items: baseline; text-decoration: none; color: var(--ink); padding: .5rem .8rem; border: 1px solid var(--rule); border-radius: 8px; background: #fff; }
+.toc a:hover { border-color: var(--teal); } .toc .no { font: 600 .85rem/1 var(--mono); color: var(--teal); }
+.part { margin-top: 3.2rem; padding-top: 1.6rem; border-top: 2px solid var(--ink); }
+.partno { font: 700 .78rem/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--teal); }
+h2.parth { margin: .5rem 0 1.1rem; font-size: 1.8rem; display: block; }
+h3 { font: 700 1.22rem/1.3 var(--sans); margin: 2.4rem 0 .35rem; display: flex; gap: .6rem; align-items: baseline; text-wrap: balance; }
+h3 .no { font: 500 .9rem/1 var(--mono); color: var(--teal); }
+.vid { display: grid; grid-template-columns: minmax(0, 15rem) minmax(0, 1fr); gap: 1.1rem; background: #fff; border: 1px solid var(--rule); border-radius: 12px; padding: .9rem; margin: 0 0 1rem; }
+.vid .thumb { position: relative; display: block; border-radius: 8px; overflow: hidden; align-self: start; }
+.vid .thumb img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
+.vid .dur { position: absolute; right: .4rem; bottom: .4rem; background: rgba(0,0,0,.78); color: #fff; font: 600 .72rem/1 var(--sans); padding: .25rem .35rem; border-radius: 4px; }
+.vmeta { min-width: 0; font-family: var(--sans); }
+.vk { font: 600 .7rem/1 var(--sans); letter-spacing: .07em; text-transform: uppercase; color: var(--red); }
+.vt { display: block; font: 700 1.02rem/1.35 var(--sans); color: var(--ink); text-decoration: none; margin: .35rem 0 .45rem; }
+.vt:hover { color: var(--blue); }
+ol.ts { list-style: none; padding: 0; margin: 0; display: grid; gap: .1rem; font-size: .86rem; line-height: 1.45; }
+ol.ts a { color: var(--ink); text-decoration: none; display: flex; gap: .55rem; } ol.ts a:hover { color: var(--blue); }
+ol.ts .tt { flex: none; width: 2.6rem; font: 500 .8rem/1.45 var(--mono); color: var(--blue); }
+@media (max-width: 640px) { .vid { grid-template-columns: 1fr; } }
+.tagok { font-weight: 600; padding: .1rem .5rem; border-radius: 5px; }
+.tagok.yes { background: #e3f4ec; color: #146c43; } .tagok.no { background: #fdecea; color: #a32018; }
+.solo { margin-top: 1.4rem; }
+.live3 { aspect-ratio: 16 / 10; padding: 0; background: #fff; } .live3 svg { width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; user-select: none; }
+.live3 svg:active { cursor: grabbing; }
+.live3 .ax { stroke: #c4cad1; stroke-width: 1; }
+.live3 text { font: 600 12px var(--sans); }
+.live3 .axl { fill: #8a929b; font-weight: 500; }
+.live3 .bl { fill: #1a73e8; } .live3 .bl2 { fill: #1a73e8; font-size: 13px; } .live3 .rl { fill: #c5221f; font-weight: 500; } .live3 .rl2 { fill: #c5221f; font-size: 13px; } .live3 .xl { fill: #e37400; font-size: 15px; }
+.ctl { display: flex; flex-wrap: wrap; gap: .6rem 1.4rem; align-items: center; margin-top: .7rem; font: 500 .9rem/1 var(--sans); }
+.ctl label { display: flex; align-items: center; gap: .5rem; } .ctl input[type=range] { width: 9rem; accent-color: #e37400; } .ctl output { width: 2.4rem; font-variant-numeric: tabular-nums; }
+.mx { box-sizing: border-box; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 1rem; background: #fff; border: 1px solid var(--rule); border-radius: 12px; padding: 1rem 1.2rem; margin-top: 1.2rem; font-family: var(--sans); }
+@media (max-width: 640px) { .mx { grid-template-columns: 1fr; } }
+.mxk { font: 600 .72rem/1.3 var(--sans); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: .6rem; }
+.grid { display: grid; grid-template-columns: repeat(2, 4.2rem); gap: .4rem; padding: .4rem .7rem; border-left: 2px solid var(--ink); border-right: 2px solid var(--ink); border-radius: 6px; width: max-content; }
+.grid input { width: 4.2rem; font: 600 1.05rem/1 var(--sans); text-align: center; padding: .45rem .2rem; border: 1px solid #c9d1da; border-radius: 6px; background: var(--paper); color: var(--ink); }
+.grid input:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
+.presets { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .8rem; } .presets .reset { margin: 0; }
+.mxout { min-width: 0; } .mxeq { overflow-x: auto; }
+.facts2 { display: flex; flex-wrap: wrap; gap: .3rem 1.2rem; margin: .4rem 0 .7rem; font-size: .95rem; }
+.figcap { font: 400 .86rem/1.5 var(--sans); color: var(--muted); margin-top: .6rem; }
+.figcap .who { font-weight: 600; font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; padding: .15rem .45rem; border-radius: 4px; margin-right: .3rem; }
+.readout .tagok { font-size: .88rem; }
+.ix { margin: 1.4rem 0; }
+.ixbar { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center; margin-bottom: .6rem; font: 500 .9rem/1.2 var(--sans); }
+.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid #c9d1da; border-radius: 8px; overflow: hidden; }
+.seg button { font: 600 .82rem/1 var(--sans); padding: .5rem .75rem; border: 0; background: #fff; color: var(--ink); cursor: pointer; border-right: 1px solid #e3e6ea; }
+.seg button:last-child { border-right: 0; } .seg button.on { background: var(--ink); color: #fff; }
+.seg button:focus-visible, .ixbar select:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
+.ixin { display: inline-flex; flex-wrap: wrap; gap: .4rem 1rem; } .ixin label { display: inline-flex; align-items: center; gap: .4rem; } .ixin input[type=range] { width: 8rem; accent-color: #1a73e8; } .ixin output { width: 2.2rem; font-variant-numeric: tabular-nums; font-weight: 700; }
+.ix .frame { background: #fff; border-radius: 10px; border: 1px solid var(--rule); }
+.ix .live { aspect-ratio: 4 / 3; max-width: 34rem; } .ix .live svg { width: 100%; height: 100%; display: block; }
+.ix .live .gr { stroke: #eef0f3; } .ix .live .ax { stroke: #c4cad1; }
+.ix .live text { font: 600 12px var(--sans); } .ix .live .kt { fill: #3c4043; } .ix .live .gt { fill: #0f8f7e; }
+.reset.primary { background: var(--ink); color: #fff; border-color: var(--ink); } .reset:disabled { opacity: .35; cursor: default; }
+.stepno { font: 600 .8rem/1 var(--sans); color: var(--muted); }
+.stepbox { background: #fff; border: 1px solid var(--rule); border-radius: 10px; padding: .7rem 1rem; min-height: 7.5rem; }
+.steplab { font: 600 .92rem/1.45 var(--sans); color: var(--ink); }
+.stepbox .mxeq { overflow-x: auto; overflow-y: hidden; }
+.pick { display: inline-flex; gap: .4rem; align-items: center; } .pick select { font: 500 .88rem/1 var(--sans); padding: .35rem .5rem; border-radius: 6px; border: 1px solid #c9d1da; background: #fff; color: var(--ink); }
+.ixcap { font: 400 .86rem/1.5 var(--sans); color: var(--muted); margin-top: .5rem; }
+.ixcap .who { font-weight: 600; font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; padding: .15rem .45rem; border-radius: 4px; margin-right: .3rem; }
+.vid .rng { font: 600 .78rem/1.3 var(--sans); color: var(--muted); margin: -.2rem 0 .4rem; }
+.vids2 { display: grid; gap: .8rem; margin-bottom: 1rem; } .vids2 .vid { margin: 0; }
+.vmini { display: flex; gap: .8rem; align-items: center; background: #fff; border: 1px solid var(--rule); border-radius: 10px; padding: .45rem .6rem; margin: .9rem 0; text-decoration: none; color: var(--ink); font-family: var(--sans); }
+.vmini:hover { border-color: var(--red); }
+.vmini img { width: 7.5rem; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 6px; flex: none; height: auto; }
+.vmini .vk { margin-bottom: .2rem; } .vmini b { display: block; font-size: .95rem; line-height: 1.35; } .vmini small { color: var(--muted); font-size: .8rem; }
+.pair .hand .frame { background: #000; }
+figcaption > span, .vmini > span, .ixcap { min-width: 0; }
+.r1 { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; } .r1 .times { font: 700 1.2rem/1 var(--sans); color: var(--muted); }
+.chk { display: flex; gap: .45rem; align-items: flex-start; font: 400 .88rem/1.45 var(--sans); margin-top: .8rem; } .chk input { margin-top: .2rem; }
+.qa { border: 1px solid var(--rule); border-radius: 10px; background: #fff; padding: .2rem 1rem .4rem; margin: 1rem 0; }
+.qa > .q { font-family: var(--sans); } .qa summary { cursor: pointer; font: 600 .9rem/1.4 var(--sans); color: var(--blue); margin: .4rem 0; }
+.qa .qn { font: 700 .72rem/1 var(--sans); letter-spacing: .07em; text-transform: uppercase; color: var(--teal); display: block; margin-top: .7rem; }
+</style>
+
+<style>
+html { -webkit-text-size-adjust: 100%; } body { margin: 0; }
+.cards { display: grid; gap: .8rem; margin: 1rem 0 2.4rem; }
+.card { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 1rem; align-items: start; padding: .8rem; background: #fff; border: 1px solid var(--rule); border-radius: 12px; text-decoration: none; color: var(--ink); transition: border-color .15s, box-shadow .15s; }
+.card:hover { border-color: #b9c4d0; box-shadow: 0 2px 8px rgba(20, 30, 40, .07); }
+.card:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.th { aspect-ratio: 4 / 3; border-radius: 8px; overflow: hidden; background: #e9ecef; } .th img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.tx { display: flex; flex-direction: column; gap: .25rem; min-width: 0; }
+.tx .no { font: 700 .72rem/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--teal); }
+.tt { font: 700 1.08rem/1.3 var(--sans); }
+.ds { font: 400 .9rem/1.5 var(--sans); color: var(--muted); }
+.bds { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .3rem; }
+.bd { font: 600 .74rem/1 var(--sans); padding: .3rem .5rem; border-radius: 999px; background: #f1f3f5; color: var(--muted); }
+.bd.v { background: #fdecea; color: #a32018; } .bd.s { background: #fff4e0; color: #8a5300; }
+h2 .rng { font: 500 .85rem/1 var(--sans); color: var(--muted); margin-left: .4rem; }
+.stats { font: 500 .9rem/1.5 var(--sans); color: var(--muted); }
+@media (max-width: 560px) { .card { grid-template-columns: 92px minmax(0, 1fr); gap: .75rem; padding: .65rem; } .rng { display: none; } .ds { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="draft2"><a class="back" href="../">← Bản đồ</a><span class="dtag">Mục lục</span></div>
+  <header class="ch">
+    <div class="crumb">Nền móng Machine Learning · Đại số tuyến tính</div>
+    <h1>MIT 18.06: 25 bài viết</h1>
+    <p class="lede">Mỗi bài dựng từ ghi chú của tác giả khi học khoá MIT 18.06 của Gilbert Strang: ảnh chụp bài giảng, ghi chú viết tay, công thức gõ lại chuẩn và hình tương tác để tự thử. Đọc theo thứ tự từ bài 1, hoặc nhảy thẳng vào bài cần.</p>
+    <p class="stats">25 bài · 35 hình tương tác · 11 bài có video giảng lại</p>
+  </header>
+<h2><span class="no">1</span>Hệ phương trình và bốn không gian con <span class="rng">bài 1–13</span></h2>
+<div class="cards"><a class="card" href="mit1806-01/"><span class="th"><img src="mit1806-01/img/wpailtv1n2.png" alt="" loading="lazy"></span><span class="tx"><span class="no">Bài 1</span><span class="tt">Hình học của hệ phương trình tuyến tính</span><span class="ds">Row picture và column picture của Ax = b, tổ hợp tuyến tính các cột.</span><span class="bds"><span class="bd v">▶ Có video giảng lại</span><span class="bd">1 hình tương tác</span></span></span></a>
+<a class="card" href="mit1806-02/"><span class="th"><img src="mit1806-02/img/bgwi7kgmsie.png" alt="" loading="lazy"></span><span class="tx"><span class="no">Bài 2</span><span class="tt">Khử Gauss bằng ma trận</span><span class="ds">Khử Gauss, pivot, thế ngược, ma trận khử E21, E32, ma trận hoán vị và nghịch đảo của E.</span><span class="bds"><span class="bd v">▶ Có video giảng lại</span><span class="bd">1 hình tương tác</span></span></span></a>
+<a class="card" href="mit1806-03/"><span class="th"><img src="mit1806-03/img/j41xwjzqsk.png" alt="" loading="lazy"></span><span class="tx"><span class="no">Bài 3</span><span class="tt">Nhân ma trận và ma trận nghịch đảo</span><span class="ds">Bốn cách nhìn phép nhân ma trận, ma trận hạng 1, khi nào có nghịch đảo và phép khử Gauss–Jordan.</span><span class="bds"><span class="bd v">▶ Có video giảng lại</span><span class="bd">2 hình tương tác</span></span></span></a>
+<a class="card" href="mit1806-04/"><span class="th"><img src="mit1806-04/img/3ipiy9tti9b.png" alt="" loading="lazy"></span><span class="tx"><span class="no">Bài 4</span><span class="tt">Phân rã A = LU</span><span class="ds">Nghịch đảo của AB và Aᵀ, phân rã A = LU, vì sao L gọn hơn E, chi phí khử Gauss cỡ n³/3 và ma trận hoán vị.</span><span class="bds"><span class="bd v">▶ Có video giảng lại</span><span class="bd">2 hình tương tác</span></span></span></a>
+<a class="card" href="mit1806-05/"><span class="th"><img src="mit1806-05/img/0vqvduxl8nl.png" alt="" loading="lazy"></span><span class="tx"><span class="no">Bài 5</span><span class="tt">Chuyển vị, hoán vị và không gian vector</span><span class="ds">PA = LU, ma trận hoán vị, chuyển vị và ma trận đối xứng RᵀR, không gian vector ℝⁿ, không gian con và column space.</span><span class="bds"><span class="bd v">▶ Có video giảng lại</span><span class="bd">1 hình tương tác</span></span></span></a>
+<a class="card" href="mit1806-06/"><span class="th"><img src="mit1806-06/img/9cwxgza221r.png" alt="" loading="lazy"></span><span class="tx"><span class="no">Bài 6</span><span class="tt">Column space và nullspace</span><span class="ds">Hợp và giao của không gian con, column space và điều kiện để Ax = b có nghiệm, nullspace là không gian con.</span><span class="bds"><span class="bd v">▶ Có video giảng lại</span><span class="bd">1 hình tương tác</span></span></span></a>
+<a class="card" href="mit1806-07/"><span class="th"><img src="mit1806-07/img/7jci7ow07u2.png" alt="" loading="lazy"></span><span class="tx"><span class="no">Bài 7</span><span class="tt">Giải Ax = 0: pivot và nghiệm đặc biệt</span><span class="ds">Khử Gauss với ma trận chữ nhật, cột pivot và cột tự do, hạng, nghiệm đặc biệt, dạng bậc thang rút gọn R = rref(A) và ma trận nullspace N.</span><span class="bds"><span class="bd v">▶ Có video giảng lại</span><span class="bd">2 hình tương tác</span></span></span></a>
+<a class="card" href="mit1806-08/"><span class="th"><img src="mit1806-08/img/6jrie8568eh.png" alt="" loading="lazy"></span><span class="tx"><span class="no">Bài 8</span><span class="tt">Giải Ax = b: nghiệm tổng quát và hạng</span><span class="ds">Điều kiện có nghiệm của Ax = b, nghiệm riêng cộng nullspace, và bốn trường hợp của hạng quyết định số nghiệm.</span><span class="bds"><span class="bd v">▶ Có video giảng lại</span><span class="bd">3 hình tương tác</span></span></span></a>
+<a class="card" href="mit1806-09/"><span class="th"><img src="mit1806-09/img/iawkwz23y7j.png" alt="" loading="lazy"></span><span class="tx"><span class="no">Bài 9</span><span class="tt">Độc lập tuyến tính, cơ sở và chiều</span><span class="ds">Vì sao Ax = 0 có nghiệm khác 0 khi m &lt; n, độc lập tuyến tính, span, cơ sở và số chiều; hạng là số chiều của column space.</span><span class="bds"><span class="bd v">▶ Có video giảng lại</span><span class="bd">2 hình tương tác</span></span></span></a>
+<a class="card" href="mit1806-10/"><span class="th"><img src="mit1806-10/img/1-bon-khong-gian-con.png" alt="" loading="lazy"></span><span class="tx"><span class="no">Bài 10</span><span class="tt">Bốn không gian con cơ bản</span><span class="ds">Column space, nullspace, row space và left nullspace: cơ sở và số chiều của từng cái, và cách đọc chúng từ phép khử.</span><span class="bds"><span class="bd v">▶ Có video giảng lại</span><span class="bd">2 hình tương tác</span></span></span></a>
+<a class="card" href="mit1806-11/"><span class="th"><img src="mit1806-11/img/zgk5hd3um6q.png" alt="" loading="lazy"></span><span class="tx"><span class="no">Bài 11</span><span class="tt">Không gian ma trận và ma trận hạng 1</span><span class="ds">Không gian vector của các ma trận, công thức số chiều dim S + dim U = dim(S ∩ U) + dim(S + U), ma trận hạng 1 A = uvᵀ và bốn không gian con của [1 1 1 1].</span><span class="bds"><span class="bd">2 hình tương tác</span></span></span></a>
+<a class="card" href="mit1806-12/"><span class="th"><img src="mit1806-12/img/o4616h87jhr.png" alt="" loading="lazy"></span><span class="tx"><span class="no">Bài 12</span><span class="tt">Đồ thị, mạng lưới và ma trận liên thuộc</span><span class="ds">Ma trận liên thuộc của đồ thị, điện thế và hiệu điện thế, định luật Kirchhoff là Aᵀy = 0, vòng và cây, công thức Euler từ hạng.</span><span class="bds"><span class="bd">1 hình tương tác</span></span></span></a>
+<a class="card" href="mit1806-13/"><span class="th"><img src="mit1806-13/img/6daytim4y6n.png" alt="" loading="lazy"></span><span class="tx"><span class="no">Bài 13</span><span class="tt">Ôn tập giữa kỳ: tự kiểm tra</span><span class="ds">Các câu hỏi ôn thi giữa kỳ của Strang về không gian con, hạng, nullspace và nghiệm của Ax = b, mỗi câu có lời giải từ ghi chú để tự kiểm tra.</span><span class="bds"><span class="bd">1 hình tương tác</span></span></span></a></div>
+<h2><span class="no">2</span>Trực giao, phép chiếu và định thức <span class="rng">bài 14–20</span></h2>
+<div class="cards"><a class="card" href="mit1806-14/"><span class="th"><img src="mit1806-14/img/1u957iq3xx7.png" alt="" loading="lazy"></span><span class="tx"><span class="no">Bài 14</span><span class="tt">Vector và không gian con trực giao</span><span class="ds">Vector và không gian con vuông góc: row space vuông góc với nullspace, phần bù trực giao, và ma trận AᵀA.</span><span class="bds"><span class="bd v">▶ Có video giảng lại</span><span class="bd">1 hình tương tác</span></span></span></a>
+<a class="card" href="mit1806-15/"><span class="th"><img src="mit1806-15/img/14zb0qucscl.png" alt="" loading="lazy"></span><span class="tx"><span class="no">Bài 15</span><span class="tt">Phép chiếu lên không gian con</span><span class="ds">Chiếu b lên một đường thẳng, ma trận chiếu P, chiếu lên column space và phương trình chuẩn AᵀAx̂ = Aᵀb.</span><span class="bds"><span class="bd s">Video đang làm</span><span class="bd">1 hình tương tác</span></span></span></a>
+<a class="card" href="mit1806-16/"><span class="th"><img src="mit1806-16/img/mgxiqjbn6l.png" alt="" loading="lazy"></span><span class="tx"><span class="no">Bài 16</span><span class="tt">Bình phương tối thiểu</span><span class="ds">Hai bức tranh của cùng bài toán, phương trình chuẩn AᵀAx̂ = Aᵀb và đường thẳng khớp nhất với ba điểm.</span><span class="bds"><span class="bd">1 hình tương tác</span></span></span></a>
+<a class="card" href="mit1806-17/"><span class="th"><img src="mit1806-17/img/2rn3ezoqnch.png" alt="" loading="lazy"></span><span class="tx"><span class="no">Bài 17</span><span class="tt">Ma trận trực giao và Gram–Schmidt</span><span class="ds">Vector trực chuẩn, ma trận trực giao Q với QᵀQ = I, phép chiếu P = QQᵀ, Gram–Schmidt và A = QR.</span><span class="bds"><span class="bd s">Video đang làm</span><span class="bd">1 hình tương tác</span></span></span></a>
+<a class="card" href="mit1806-18/"><span class="th"><img src="mit1806-18/img/eqfgtno290v.png" alt="" loading="lazy"></span><span class="tx"><span class="no">Bài 18</span><span class="tt">Các tính chất của định thức</span><span class="ds">Ba tính chất định nghĩa định thức và bảy tính chất suy ra từ chúng, det = tích các pivot, det AB = det A det B, det Aᵀ = det A.</span><span class="bds"><span class="bd s">Video đang làm</span><span class="bd">1 hình tương tác</span></span></span></a>
+<a class="card" href="mit1806-19/"><span class="th"><img src="mit1806-19/img/19r7k02bwy0h.png" alt="" loading="lazy"></span><span class="tx"><span class="no">Bài 19</span><span class="tt">Công thức định thức và cofactor</span><span class="ds">Công thức lớn n! số hạng, cofactor và khai triển theo hàng, ma trận ba đường chéo.</span><span class="bds"><span class="bd s">Video đang làm</span><span class="bd">1 hình tương tác</span></span></span></a>
+<a class="card" href="mit1806-20/"><span class="th"><img src="mit1806-20/img/3hjafy8fdaq.png" alt="" loading="lazy"></span><span class="tx"><span class="no">Bài 20</span><span class="tt">Quy tắc Cramer, ma trận nghịch đảo và thể tích</span><span class="ds">Công thức A⁻¹ = Cᵀ/det A, quy tắc Cramer và định thức là thể tích của hình hộp.</span><span class="bds"><span class="bd s">Video đang làm</span><span class="bd">2 hình tương tác</span></span></span></a></div>
+<h2><span class="no">3</span>Eigenvalue và eigenvector <span class="rng">bài 21–25</span></h2>
+<div class="cards"><a class="card" href="mit1806-21/"><span class="th"><img src="mit1806-21/img/goktu7dy0op.png" alt="" loading="lazy"></span><span class="tx"><span class="no">Bài 21</span><span class="tt">Eigenvalue và eigenvector</span><span class="ds">Ax = λx, phương trình đặc trưng det(A − λI) = 0, vết và định thức, ma trận xoay có λ phức, λ lặp mà thiếu eigenvector.</span><span class="bds"><span class="bd">1 hình tương tác</span></span></span></a>
+<a class="card" href="mit1806-22/"><span class="th"><img src="mit1806-22/img/yvz1vmvsf1.png" alt="" loading="lazy"></span><span class="tx"><span class="no">Bài 22</span><span class="tt">Chéo hoá và lũy thừa của A</span><span class="ds">A = SΛS⁻¹, Aᵏ = SΛᵏS⁻¹, khi nào chéo hoá được, phương trình sai phân uₖ₊₁ = Auₖ và số Fibonacci thứ 100.</span><span class="bds"><span class="bd">1 hình tương tác</span></span></span></a>
+<a class="card" href="mit1806-23/"><span class="th"><img src="mit1806-23/img/u4317aouiq9.png" alt="" loading="lazy"></span><span class="tx"><span class="no">Bài 23</span><span class="tt">Phương trình vi phân và eᴬᵗ</span><span class="ds">Giải du/dt = Au bằng eigenvalue; ổn định, trạng thái dừng hay nổ tung; ma trận mũ eᴬᵗ; đưa phương trình bậc hai về hệ bậc một.</span><span class="bds"><span class="bd">1 hình tương tác</span></span></span></a>
+<a class="card" href="mit1806-24/"><span class="th"><img src="mit1806-24/img/51o2jic582q.png" alt="" loading="lazy"></span><span class="tx"><span class="no">Bài 24</span><span class="tt">Ma trận Markov và chuỗi Fourier</span><span class="ds">Ma trận Markov luôn có λ = 1 và trạng thái dừng, bài toán di cư California–Massachusetts, chiếu lên cơ sở trực chuẩn và chuỗi Fourier.</span><span class="bds"><span class="bd">2 hình tương tác</span></span></span></a>
+<a class="card" href="mit1806-25/"><span class="th"><img src="mit1806-25/img/tnqddu2sa7.png" alt="" loading="lazy"></span><span class="tx"><span class="no">Bài 25</span><span class="tt">Ma trận đối xứng và xác định dương</span><span class="ds">Ma trận đối xứng có λ thực và eigenvector vuông góc, A = QΛQᵀ, định lý phổ, dấu pivot = dấu λ, ma trận xác định dương.</span><span class="bds"><span class="bd">1 hình tương tác</span></span></span></a></div>
+
+  <footer><p>Phần chữ do Claude viết lại từ ghi chú, tác giả sẽ duyệt lại. Ảnh chụp bài giảng: MIT OpenCourseWare 18.06 Linear Algebra, Spring 2010, Gilbert Strang, giấy phép CC BY-NC-SA 4.0.</p></footer>
+</div>
+</body>
+</html>
