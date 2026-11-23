@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Bản đồ 233 chủ đề nền móng Machine Learning, theo mục lục Bishop, Casella &amp; Berger, Nocedal &amp; Wright: lộ trình học 7 chặng, kèm video và ghi chú cho từng chủ đề.">
-<meta property="og:title" content="Nền móng Machine Learning">
+<meta property="og:title" content="Toán nền tảng cho ML/AI">
 <meta property="og:description" content="Bản đồ 233 chủ đề nền móng Machine Learning, theo mục lục Bishop, Casella &amp; Berger, Nocedal &amp; Wright: lộ trình học 7 chặng, kèm video và ghi chú cho từng chủ đề.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://johntran-android.github.io/ml-map/">
 <script>window.NM_EMBED=1</script>
-<title>Nền móng Machine Learning</title>
+<title>Toán nền tảng cho ML/AI</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Unbounded:wght@500;700&display=swap">
@@ -357,9 +357,9 @@ a.lart { display: inline-block; margin: 2px 0 4px; font-size: 13px; font-weight:
 <body>
 
 <header>
-  <h1>Nền móng Machine Learning</h1>
+  <h1>Toán nền tảng cho ML/AI</h1>
   <div class="seg" id="sV" role="group" aria-label="Độ chi tiết"><span class="k">Chi tiết</span><button id="vS" type="button" title="Ít chi tiết nhất: mỗi chấm là một chương sách">Chương</button><button id="vF" type="button" title="Mỗi chấm là một mục x.y của sách (mặc định)">Mục</button><button id="vD" type="button" title="Chi tiết nhất: mỗi chấm là một mục con x.y.z, một bài học nhỏ">Mục con</button></div>
-  <div class="seg" id="sW" role="group" aria-label="Cách xem"><button id="vM" type="button" title="Xem dạng bản đồ" aria-label="Bản đồ"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><circle cx="4" cy="4" r="2"/><circle cx="12" cy="6" r="2"/><circle cx="6" cy="12.5" r="2"/><path d="M5.6 5.2 10.2 5.6M4.6 6 5.6 10.5M10.6 7.4 7.4 11.3"/></svg><span class="tx">Bản đồ</span></button><button id="vL" type="button" title="Xếp thành một danh sách, học từ trên xuống" aria-label="Danh sách"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M5.5 4h8M5.5 8h8M5.5 12h8"/><circle cx="2.5" cy="4" r=".6"/><circle cx="2.5" cy="8" r=".6"/><circle cx="2.5" cy="12" r=".6"/></svg><span class="tx">Danh sách</span></button></div>
+  <div class="seg" id="sW" role="group" aria-label="Cách xem"><button id="vM" type="button" title="Xem dạng bản đồ" aria-label="Bản đồ"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><circle cx="4" cy="4" r="2"/><circle cx="12" cy="6" r="2"/><circle cx="6" cy="12.5" r="2"/><path d="M5.6 5.2 10.2 5.6M4.6 6 5.6 10.5M10.6 7.4 7.4 11.3"/></svg><span class="tx">Bản đồ</span></button><button id="vL" type="button" title="Xếp thành một danh sách theo thứ tự" aria-label="Danh sách"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M5.5 4h8M5.5 8h8M5.5 12h8"/><circle cx="2.5" cy="4" r=".6"/><circle cx="2.5" cy="8" r=".6"/><circle cx="2.5" cy="12" r=".6"/></svg><span class="tx">Danh sách</span></button></div>
   <div class="seg" id="sB" role="group" aria-label="Lọc theo sách"></div>
   <span class="sub" id="sub"></span>
   <span class="spacer"></span>
@@ -367,7 +367,7 @@ a.lart { display: inline-block; margin: 2px 0 4px; font-size: 13px; font-weight:
   <datalist id="names"></datalist>
   <div class="seg" id="sM" role="group" aria-label="Chế độ xem"><button id="m3" class="on" type="button">3D</button><button id="m2" type="button">2D</button></div>
   <div class="seg" id="sL" role="group" aria-label="Bố cục"><button id="lC" class="on" type="button" title="Mỗi môn tụ thành một cụm">Theo môn</button><button id="lT" type="button" title="Thứ cần học trước nằm dưới, thứ học sau nằm trên">Từ nền lên</button></div>
-  <div class="seg" id="sC" role="group" aria-label="Tô màu theo"><span class="k">Màu</span><button id="cD" type="button" title="Mỗi môn một màu">Môn học</button><button id="cS" type="button" title="Bài nào đã có video, bài nào mới có ghi chú, bài nào chưa có gì">Video & ghi chú</button><button id="cM" type="button" title="Bài nào bạn đã hiểu, bài nào học được ngay">Tiến độ của tôi</button></div>
+  <div class="seg" id="sC" role="group" aria-label="Tô màu theo"><span class="k">Màu</span><button id="cD" type="button" title="Mỗi môn một màu">Môn học</button><button id="cS" type="button" title="Bài nào đã có video, bài nào mới có ghi chú, bài nào chưa có gì">Video & ghi chú</button></div>
   <a class="btn toc" id="tocBtn" href="https://johntran-android.github.io/ml-map/bai/" title="Mục lục các bài viết MIT 18.06"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M2 3.5c2-.8 4-.8 6 .6v9c-2-1.4-4-1.4-6-.6zM14 3.5c-2-.8-4-.8-6 .6v9c2-1.4 4-1.4 6-.6z"/></svg><span class="tx">Mục lục bài viết</span></a>
   <button class="btn sq" id="themeBtn" type="button"></button>
   <button class="btn" id="topBtn" type="button">Xem bài nào làm nền cho nhiều bài nhất</button>
@@ -583,9 +583,9 @@ const COV = `<div class="cov"><div class="covt"><b>Video đã phủ ${withVid}/$
 const LV = D.leaves || Object.fromEntries(D.nodes.map(n => [n.id, [n.id]]));
 const TOPICS = new Set(Object.values(LV).flat());
 const mem = n => DETAIL ? [n.id] : SIMPLE ? n.m.flatMap(s => LV[s] || [s]) : LV[n.id] || [n.id];
-const doneT = new Set((() => { try { return JSON.parse(store.get('nm-done', '[]')).flatMap(x => LV[x] || [x]).filter(x => TOPICS.has(x)); } catch (e) { return []; } })());   // older saves hold section ids
+const doneT = new Set();   // marking topics as understood was removed (2026-11-23): this site is a roadmap, not a course
 const done = new Set();                      // nodes of this map whose every topic is understood
-const syncDone = () => { done.clear(); N.forEach(n => { if (mem(n).every(x => doneT.has(x))) done.add(n.id); }); };
+const syncDone = () => { done.clear(); };
 syncDone();
 const canLearn = n => !done.has(n.id) && n.pre.every(p => done.has(p));     // everything it needs is understood
 let autoProg = false;
@@ -596,7 +596,7 @@ function setDone(ids, on) {
 }
 
 // ---- state
-let mode = '3d', layout = 'cum', colorBy = ['domain', 'status', 'progress'].includes(store.get('nm-color', '')) ? store.get('nm-color', '') : 'domain', spin = !calm;
+let mode = '3d', layout = 'cum', colorBy = ['domain', 'status'].includes(store.get('nm-color', '')) ? store.get('nm-color', '') : 'domain', spin = !calm;
 let sel = null, lit = null, litDown = null, near = null, G = null, running = false, dirty = true, needFit = true, built = false, first3 = true, lastSig = '';
 const K = {};
 const mix = (a, b, t) => '#' + [1, 3, 5].map(i => Math.round(parseInt(a.slice(i, i + 2), 16) * t + parseInt(b.slice(i, i + 2), 16) * (1 - t)).toString(16).padStart(2, '0')).join('');
@@ -851,10 +851,10 @@ function showCard(id, ups) {
     ${vid.length ? `<div class="lab">Video (${vid.length})</div><div id="player" hidden></div><a class="src" id="ytl" target="_blank" rel="noopener" hidden>Mở trên YouTube ↗</a>${fold(vid, 'video')}` : ''}
     ${nts.length ? `<div class="lab">Ghi chú (${nts.length})</div>${fold(nts, 'ghi chú')}` : ''}
     ${!vid.length && !nts.length ? `<div class="src">Chưa có video hay ghi chú. Đọc trong sách: ${esc(n.src)}.</div>` : ''}
-    <div class="lab">Học trước bài này</div>
+    <div class="lab">Cần biết trước</div>
     ${n.pre.length ? `<div class="pills">${more(n.pre.map(p => byId[p]), 4)}</div>` : `<div class="src">Bài mở đầu: không cần học gì trước.</div>`}
     ${path.length ? `<button class="lnk" id="go" type="button">Bay dọc đường học từ đầu tới đây (${path.length} bài)</button>` : ''}
-    ${next.length ? `<div class="lab">Học xong thì học tiếp</div><div class="pills">${more(next, 4)}</div>` : `<div class="src">Bài cuối của nhánh này: chưa bài nào trên bản đồ cần nó.</div>`}
+    ${next.length ? `<div class="lab">Các bài dựa trên bài này</div><div class="pills">${more(next, 4)}</div>` : `<div class="src">Bài cuối của nhánh này: chưa bài nào trên bản đồ cần nó.</div>`}
     <div class="me" id="me"></div>
     ${dn.size ? `<div class="src">Là nền cho <b>${dn.size}</b> bài phía sau.</div>` : ''}</div>`;
   C.hidden = false;
@@ -877,13 +877,7 @@ function showCard(id, ups) {
 }
 // the "I understand this" line of the card; redrawn alone so a playing video is not interrupted
 function drawMe(id) {
-  const on = done.has(id), ups = up(id), miss = [...ups].filter(x => !done.has(x));
-  $('me').innerHTML = `<button class="btn" id="dn" type="button" aria-pressed="${on}">${on ? '✓ Đã hiểu' : 'Đánh dấu đã hiểu'}</button>${
-    on && miss.length ? `<button class="lnk" id="dnAll" type="button">Đánh dấu luôn ${miss.length} bài nền</button>` : !on && done.size && !miss.length ? '<span class="src">Đủ nền rồi: học được ngay.</span>' : ''}`;
-  $('dn').onclick = () => setDone([id], !on);
-  if ($('dnAll')) $('dnAll').onclick = () => setDone(miss, true);
-  $('card').querySelectorAll('button[data-id]').forEach(b => b.classList.toggle('ok', done.has(b.dataset.id)));
-  if (false) $('upSum').textContent = `Tính từ đầu: ${ups.size} bài cần học trước` + (done.size ? `, bạn đã hiểu ${ups.size - miss.length}` : '');
+  $('me').innerHTML = '';
 }
 
 // ---- roadmap panel: the whole map as one learnable order, cut into stages where the subject changes
@@ -921,9 +915,7 @@ const BKNOTE = { P: { ST: 'cửa vào dễ nhất: trực giác, nhiều ví d�
 const byBook = (ns, d) => { const many = new Set(ns.map(bkOf)).size > 1; let last = null;
   return ns.map(n => { const b = bkOf(n), note = (BKNOTE[d] || {})[b], h = many && b !== last ? `<li class="bkh">${BKL[b]}${note ? `<small>${note}</small>` : ''}</li>` : ''; last = b; return h + item(n, n.no, '', false); }).join(''); };
 // ---- the panel's fixed parts: a plain welcome, the book chips, the author's video statistics (folded)
-const WELCOME = `<div class="welcome"><b>Lộ trình học nền tảng toán cho Machine Learning.</b> ${N.length} ${UNIT} lấy từ mục lục sách kinh điển (Casella &amp; Berger, Bishop, Nocedal &amp; Wright), bài giảng Stat 110 và MIT. Mỗi chấm trên bản đồ là một ${UNIT}; mũi tên A → B nghĩa là học A trước B. ${withVid} ${UNIT} đã có video giảng.
-  <ol><li>Bấm <b>Bắt đầu</b> ở trên, hoặc chọn một cuốn sách để chỉ xem cuốn đó.</li><li>Xem video, đọc ghi chú. Hiểu rồi thì bấm <b>Đánh dấu đã hiểu</b>.</li><li>Tab <b>Nên học tiếp</b> luôn cho biết ${UNIT} kế tiếp.</li></ol>
-  <small>Tiến độ lưu ngay trên trình duyệt này, không cần tài khoản.</small></div>`;
+const WELCOME = `<div class="welcome"><b>Bản đồ toán nền tảng cho Machine Learning và AI.</b> ${N.length} ${UNIT} lấy từ mục lục sách kinh điển (Casella &amp; Berger, Bishop, Nocedal &amp; Wright), bài giảng Stat 110 và MIT. Mũi tên chỉ bài nào làm nền cho bài nào; bắt đầu từ bài nào cũng được.</div>`;
 const VIDBOX = `<details class="vbox"><summary>Video bài giảng: <b>${nVid}</b> video${liveWeek ? ` · <b>+${liveWeek}</b> trong 7 ngày qua` : ''}</summary>${COV}</details>`;
 const CHIPS = [['', 'Tất cả'], ['ST', 'Stat 110'], ['CB', 'Casella'], ['PR', 'Bishop'], ['NW', 'Nocedal'], ['MIT', 'MIT']];
 const BKCHIPS = () => `<div class="bks" role="group" aria-label="Chỉ xem một cuốn sách"><span class="k">Sách</span>${CHIPS.map(([k, t]) => `<button type="button" data-bk="${k}" class="${BK === k ? 'on' : ''}">${t}</button>`).join('')}</div>`;
@@ -937,13 +929,12 @@ function drawCourse(R, top, follow, FOLD) {
     return `<li><button data-id="${n.id}" class="${n.id === sel ? 'cur' : ''}${i === k ? ' nx' : ''}"><span class="n${ok ? ' ok' : ''}">${ok ? '✓' : i + 1}</span><span style="min-width:0">${esc(n.t)}${fresh.has(n.id) ? ' <span class="new">mới</span>' : ''}<small class="lc">${C.book && DETAIL ? 'Mục ' + s.id.slice(2) : lecs(s.lec)}${out.length ? ` · cần biết trước: ${out.map(p => esc(byId[p].t)).join(', ')}` : ''}</small></span><span class="m mk ${n.st}" title="${ST[n.st]}">${n.st === 'ahead' ? '' : MK[n.st]}</span></button></li>`; }).join('');
   R.innerHTML = `${FOLD}<div class="lab">Lộ trình ${esc(C.t)}<span class="pg">${dn ? `Đã hiểu ${dn}/${ss.length}` : `${ss.length} ${UNIT}`}</span></div>
     ${dn ? `<div class="prog"><i style="width:${dn / ss.length * 100}%"></i></div>` : ''}
-    ${nx ? `<button class="btn start" id="startBtn" type="button">${dn ? 'Học tiếp' : 'Bắt đầu'}: ${k + 1} · ${esc(nx.t)}</button>` : `<div class="src">Bạn đã hiểu hết ${ss.length} ${UNIT} của ${esc(C.t)}.</div>`}
     ${COCHIPS()}
     <div class="scroll"><p class="intro">Đúng thứ tự ${C.book ? 'mục lục sách' : 'bài giảng của'} ${esc(C.full)}. Trên bản đồ, đường đậm nối các chấm theo số thứ tự.</p>
-    <div class="keys"><span class="mk taught">${MK.taught}</span> có video · <span class="mk read">${MK.read}</span> có ghi chú · ✓ đã hiểu</div>
+    <div class="keys"><span class="mk taught">${MK.taught}</span> có video · <span class="mk read">${MK.read}</span> có ghi chú</div>
     <ol class="rlist">${rows}</ol>
     <button class="lnk" id="coTour" type="button">Bay dọc cả lộ trình trên bản đồ</button>
-    <p class="src">${ss.some(s => byId[s.id].pre.some(p => !C.set.has(p))) ? '<i>Cần biết trước</i>: bài nền nằm ngoài khoá mà bạn chưa đánh dấu hiểu. ' : ''}${esc(C.note)}</p></div>
+    <p class="src">${ss.some(s => byId[s.id].pre.some(p => !C.set.has(p))) ? '<i>Cần biết trước</i>: có bài nền nằm ngoài lộ trình này. ' : ''}${esc(C.note)}</p></div>
     <button class="lnk" id="coAll" type="button">← Về lộ trình cả bản đồ</button>`;
   const sc = R.querySelector('.scroll'); sc.scrollTop = top;
   if (follow) { const cur = sc.querySelector('.cur'); if (cur) { const a = cur.getBoundingClientRect(), b = sc.getBoundingClientRect(); if (a.top < b.top || a.bottom > b.bottom) sc.scrollTop += a.top - b.top - b.height / 3; } }
@@ -1008,15 +999,14 @@ function drawRank(follow) {
     const body = STAGES.map((s, k) => { const dn = s.ns.filter(n => done.has(n.id)).length, nv = s.ns.filter(n => n.v.length).length;
       return `<details class="stg${nx && stageOf[nx.id] === k ? ' now' : ''}" data-k="${k}"${openStg.has(k) ? ' open' : ''}><summary><span class="no" style="border-color:var(--${s.d})">${s.k}</span><span class="nm">${esc(s.name)}<small>${esc(s.from)}</small></span><span class="ct">${dn ? `${dn}/${s.ns.length} đã hiểu` : `${s.ns.length} ${UNIT}`}<small>${nv ? `<span class="mk taught">${MK.taught}</span> ${nv}/${s.ns.length} có video` : ''}</small></span></summary>
         <ol class="rlist">${byBook(s.ns, s.d)}</ol></details>`; }).join('');
-    const hi = !done.size && store.get('nm-hi', '') !== '1'
-      ? `<div class="welcome hi">${N.length} ${UNIT} toán nền cho Machine Learning, chia ${STAGES.length} chặng: học từ trên xuống. Hiểu bài nào thì đánh dấu; tiến độ lưu trên trình duyệt này.<button class="x" id="hiX" type="button" aria-label="Ẩn">×</button></div>` : '';
+    const hi = store.get('nm-hi', '') !== '1'
+      ? `<div class="welcome hi">${N.length} ${UNIT} toán nền cho Machine Learning và AI, chia ${STAGES.length} chặng theo thứ tự nền trước, bài sau. Đây là bản đồ để tra: bấm bài nào cũng được.<button class="x" id="hiX" type="button" aria-label="Ẩn">×</button></div>` : '';
     const reset = !done.size ? '' : askReset ? `<div class="me"><span class="src">Xoá cả ${done.size} bài đã đánh dấu?</span><button class="btn" id="rsY" type="button">Xoá</button><button class="btn" id="rsN" type="button">Giữ lại</button></div>`
       : `<button class="lnk" id="rs" type="button">Xoá tiến độ của tôi</button>`;
     R.innerHTML = `${FOLD}<div class="lab">Lộ trình học${done.size ? `<span class="pg">Đã hiểu ${done.size}/${N.length}</span>` : ''}</div>
       ${done.size ? `<div class="prog"><i style="width:${done.size / N.length * 100}%"></i></div>` : ''}
-      ${nx ? `<button class="btn start" id="startBtn" type="button">${done.size ? 'Học tiếp' : 'Bắt đầu'}: bài ${nx.no} · ${esc(nx.t)}</button>` : `<div class="src">Bạn đã đánh dấu hiểu hết ${N.length} ${UNIT}.</div>`}
       ${COCHIPS()}${BKCHIPS()}
-      <div class="scroll">${hi}<div class="keys"><span class="mk taught">${MK.taught}</span> có video · <span class="mk read">${MK.read}</span> có ghi chú · ✓ đã hiểu</div>
+      <div class="scroll">${hi}<div class="keys"><span class="mk taught">${MK.taught}</span> có video · <span class="mk read">${MK.read}</span> có ghi chú</div>
       <div>${body}</div>${reset}</div>`;
   }
   const sc = R.querySelector('.scroll'); sc.scrollTop = top;
@@ -1075,22 +1065,22 @@ function drawList() {
       ${(kids[n.id] || []).length ? `<div class="lab">Học xong mở ra</div><div class="pills">${kids[n.id].map(pill).join('')}</div>` : ''}
 </div>`;
   const row = n => { const ok = done.has(n.id), vs = n.v.map(i => D.vids[i]);
-    return `<li style="--sel:var(--${S ? S.d : n.d})" id="li-${n.id}" class="${ok ? 'ok' : ''}${n.id === lsel ? ' on' : ''}${pre.has(n.id) ? ' pre' : ''}${nxt.has(n.id) ? ' nxt' : ''}"><button class="ck" type="button" data-done="${n.id}" aria-pressed="${ok}" aria-label="${ok ? 'Bỏ đánh dấu' : 'Đánh dấu đã hiểu'}: ${esc(n.t)}">${ok ? '✓' : C ? stepOf[n.id][0] : n.no}</button>
+    return `<li style="--sel:var(--${S ? S.d : n.d})" id="li-${n.id}" class="${ok ? 'ok' : ''}${n.id === lsel ? ' on' : ''}${pre.has(n.id) ? ' pre' : ''}${nxt.has(n.id) ? ' nxt' : ''}"><button class="ck" type="button" data-done="${n.id}" aria-pressed="${ok}" aria-label="Mở bài: ${esc(n.t)}">${ok ? '✓' : C ? stepOf[n.id][0] : n.no}</button>
       <div><button class="tt" type="button" data-id="${n.id}" aria-expanded="${n.id === lsel}" title="Xem bài này nối với những gì">${esc(n.t)}</button>
       ${artOf(n).map(a => `<a class="lart" href="${ART_BASE}${a.u}" target="_blank" rel="noopener">📖 Đọc bài viết: ${esc(a.t)}</a>`).join('')}<div class="sm">${C && !C.book ? esc(lecs(stepOf[n.id][1].lec) + ' · ' + n.src) : esc(n.src)}${n.nt.length ? ` · <a href="${REPO}${encodeURI(n.nt[0][1])}" target="_blank" rel="noopener">✎ ${n.nt.length} ghi chú</a>` : ''}</div>
       ${vs.length ? `<ul class="lv">${vs.map(v => `<li><a href="https://youtu.be/${esc(v.id)}" target="_blank" rel="noopener"><span class="vdot">${PLAY}</span><span>${esc(v.t)}</span></a></li>`).join('')}</ul>` : ''}${rel(n)}</div><button class="mp" type="button" data-map="${n.id}" title="Mở trên bản đồ" aria-label="Mở ${esc(n.t)} trên bản đồ"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M1.5 3.5 5.5 2l5 1.8 4-1.5v10.2l-4 1.5-5-1.8-4 1.5z"/><path d="M5.5 2v10.2M10.5 3.8V14"/></svg></button></li>`; };
   const body = C ? `<h2>Lộ trình ${esc(C.t)}: đi từ trên xuống</h2>${COCHIPS()}
-    <p class="intro"><b>${total} ${UNIT}, đúng thứ tự ${C.book ? 'mục lục sách' : 'bài giảng của'} ${esc(C.full)}.</b> Đường dọc bên trái cho biết bài nào trong lộ trình là nền cho bài nào. Bấm tên bài để xem nó nối với đâu (kể cả bài nền ngoài lộ trình), bấm vòng tròn khi đã hiểu. <span class="vdot" style="background:var(--taught)">${PLAY}</span>có video · ✎ có ghi chú.</p>
+    <p class="intro"><b>${total} ${UNIT}, đúng thứ tự ${C.book ? 'mục lục sách' : 'bài giảng của'} ${esc(C.full)}.</b> Đường dọc bên trái cho biết bài nào trong lộ trình là nền cho bài nào. Bấm tên bài để xem nó nối với đâu (kể cả bài nền ngoài lộ trình). <span class="vdot" style="background:var(--taught)">${PLAY}</span>có video · ✎ có ghi chú.</p>
     ${dc ? `<div class="prog"><i style="width:${dc / total * 100}%"></i></div><div class="pgt">Đã hiểu ${dc}/${total}</div>` : ''}
     <section class="ls"><ol class="ll">${C.steps.map(s => row(byId[s.id])).join('')}</ol></section><p class="src">${esc(C.note)}</p>` : null;
   L.innerHTML = body ? `<div class="lw" style="padding-left:${gutter()}px">${body}</div>` : `<div class="lw" style="padding-left:${gutter()}px"><h2>${BK ? `${esc(BOOKN[BK])}: ` : ''}Học theo thứ tự, từ trên xuống</h2>
-    <p class="intro"><b>${total} ${UNIT}${BK ? ` lấy từ ${esc(BOOKN[BK])}` : `, ${STAGES.length} chặng`}, học từ trên xuống.</b> Đường dọc bên trái cho biết bài nào là nền cho bài nào. Bấm tên bài để xem nó nối với đâu, bấm vòng tròn khi đã hiểu, bấm biểu tượng bản đồ để xem trên bản đồ. <span class="vdot" style="background:var(--taught)">${PLAY}</span>có video · ✎ có ghi chú.</p>${COCHIPS()}
+    <p class="intro"><b>${total} ${UNIT}${BK ? ` lấy từ ${esc(BOOKN[BK])}` : `, ${STAGES.length} chặng`}.</b> Đường dọc bên trái cho biết bài nào là nền cho bài nào. Bấm tên bài để xem nó nối với đâu, bấm biểu tượng bản đồ để xem trên bản đồ. <span class="vdot" style="background:var(--taught)">${PLAY}</span>có video · ✎ có ghi chú.</p>${COCHIPS()}
     ${dc ? `<div class="prog"><i style="width:${dc / total * 100}%"></i></div><div class="pgt">Đã hiểu ${dc}/${total}</div>` : ''}
     ${STAGES.map(s0 => ({ ...s0, ns: s0.ns.filter(vis) })).filter(s => s.ns.length).map((s, k) => { const dn = s.ns.filter(n => done.has(n.id)).length;
       return `<section class="ls"><h3><span class="no" style="border-color:var(--${s.d})">${s.k}</span><span>${esc(s.name)}<small>${esc(s.from)} · ${s.ns.length} ${UNIT}${dn ? ` · đã hiểu ${dn}` : ''}</small></span></h3>
         <ol class="ll">${(() => { const many = new Set(s.ns.map(bkOf)).size > 1; let last = null; return s.ns.map(n => { const b = bkOf(n), h = many && b !== last ? `<li class="bkh">${BKL[b]}</li>` : ''; last = b; return h + row(n); }).join(''); })()}</ol></section>`; }).join('')}</div>`;
   L.scrollTop = top; wireChips(L);
-  L.querySelectorAll('[data-done]').forEach(b => b.onclick = () => setDone([b.dataset.done], !done.has(b.dataset.done)));
+  L.querySelectorAll('[data-done]').forEach(b => b.onclick = () => b.parentElement.querySelector('.tt').click());
   L.querySelectorAll('.tt').forEach(b => b.onclick = () => { lsel = lsel === b.dataset.id ? null : b.dataset.id; drawList(); });
   L.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { lsel = b.dataset.go; drawList(); const r = $('li-' + lsel); if (r) L.scrollTop += r.getBoundingClientRect().top - L.getBoundingClientRect().top - L.clientHeight / 3; });
   L.querySelectorAll('[data-map]').forEach(b => b.onclick = () => { showList(false); select(b.dataset.map); });
@@ -1217,7 +1207,7 @@ function drawLegend() {
     + (freshV.length ? `<button data-v="1" title="Xem các video mới"><span class="frd"></span>video mới 7 ngày <b>${freshV.length}</b></button>` : '');
   $('legend').querySelectorAll('button').forEach(b => b.onclick = () => b.dataset.v ? openVids(true) : focusDomain(b.dataset.d));
 }
-const CB = { cD: 'domain', cS: 'status', cM: 'progress' };
+const CB = { cD: 'domain', cS: 'status' };
 function setColor(c) { colorBy = c; Object.entries(CB).forEach(([b, k]) => $(b).classList.toggle('on', k === c)); drawLegend(); refresh(); }
 Object.entries(CB).forEach(([b, k]) => $(b).onclick = () => { store.set('nm-color', k); setColor(k); });
 setColor(colorBy);
