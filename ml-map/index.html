@@ -552,7 +552,39 @@ const ART1802 = (n, t, s) => ART(`mit1802-${String(n).padStart(2, '0')}/`, t, `M
   D20 = ART1802(20, 'Độc lập đường đi và trường bảo toàn', 'hình tương tác'),
   D21 = ART1802(21, 'Trường gradient, hàm thế và curl', 'ảnh bảng và ghi chú'),
   D22 = ART1802(22, 'Định lý Green', 'hình tương tác');
+const ART110 = (n, t) => ART(`stat110-${String(n).padStart(2, '0')}/`, t, `Stat 110 bài ${n} · hình tương tác`),
+  E01 = ART110(1, 'Xác suất và phép đếm'),
+  E02 = ART110(2, 'Chứng minh bằng câu chuyện và các tiên đề'),
+  E03 = ART110(3, 'Bài toán ngày sinh và bao hàm loại trừ'),
+  E04 = ART110(4, 'Xác suất có điều kiện'),
+  E05 = ART110(5, 'Luật xác suất toàn phần và định lý Bayes'),
+  E06 = ART110(6, 'Monty Hall và nghịch lý Simpson'),
+  E07 = ART110(7, 'Gambler’s ruin và biến ngẫu nhiên'),
+  E08 = ART110(8, 'Biến ngẫu nhiên và phân phối'),
+  E09 = ART110(9, 'Kỳ vọng, biến chỉ báo và tính tuyến tính'),
+  E10 = ART110(10, 'Kỳ vọng (tiếp): hình học và nhị thức âm'),
+  E11 = ART110(11, 'Phân phối Poisson'),
+  E12 = ART110(12, 'Rời rạc và liên tục, phân phối đều'),
+  E13 = ART110(13, 'Phân phối chuẩn'),
+  E14 = ART110(14, 'Vị trí, tỉ lệ và LOTUS'),
+  E15 = ART110(15, 'Ôn tập giữa kỳ'),
+  E16 = ART110(16, 'Phân phối mũ và tính không nhớ'),
+  E17 = ART110(17, 'Hàm sinh moment'),
+  E18 = ART110(18, 'Hàm sinh moment (tiếp)'),
+  E19 = ART110(19, 'Phân phối đồng thời, biên và có điều kiện'),
+  E20 = ART110(20, 'Phân phối đa thức và Cauchy'),
+  E21 = ART110(21, 'Hiệp phương sai và tương quan'),
+  E22 = ART110(22, 'Phép biến đổi và tích chập'),
+  E23 = ART110(23, 'Phân phối Beta'),
+  E24 = ART110(24, 'Phân phối Gamma và quá trình Poisson'),
+  E25 = ART110(25, 'Thống kê thứ tự và kỳ vọng có điều kiện'),
+  E26 = ART110(26, 'Kỳ vọng có điều kiện'),
+  E27 = ART110(27, 'Kỳ vọng có điều kiện theo một biến ngẫu nhiên'),
+  E28 = ART110(28, 'Các bất đẳng thức'),
+  E29 = ART110(29, 'Luật số lớn và định lý giới hạn trung tâm'),
+  E30 = ART110(30, 'Khi bình phương, Student t và Gauss nhiều chiều');
 const ARTICLES = {
+  'ST1': [E01], 'ST2': [E02], 'ST3': [E03], 'ST4': [E04], 'ST5': [E05], 'ST6': [E06], 'ST7': [E07], 'ST8': [E08], 'ST9': [E09], 'ST10': [E10], 'ST11': [E11], 'ST12': [E12], 'ST13': [E13], 'ST14': [E14, E15], 'ST16': [E16], 'ST17': [E17], 'ST18': [E18], 'ST19': [E19], 'ST20': [E20], 'ST21': [E21], 'ST22': [E22], 'ST23': [E23], 'ST24': [E24], 'ST25': [E25], 'ST26': [E26], 'ST27': [E27], 'ST28': [E28], 'ST29': [E29], 'ST30': [E30],
   'C.cross': [D02], 'C.plane': [D03, D04, D07], 'C.param': [D05, D06], 'C.multi': [D08, D12, D15], 'C.mvmax': [D09, D10], 'C.hessian': [D10], 'C.mvchain': [D11, D14], 'C.lagrange': [D13],
   'C.multint': [D16, D17], 'C.jacobian': [D18], 'C.lineint': [D19], 'C.conserv': [D20, D21], 'C.green': [D22],
   'C.deriv': [B01], 'C.lim': [B02], 'C.rules': [B03], 'C.chain': [B04], 'C.implicit': [B05], 'C.explog': [B06], 'C.approx': [B09, B10], 'C.taylor': [B09, B14],
@@ -612,7 +644,7 @@ const COURSE = {
     C.set = new Set(C.steps.map(s => s.id)); C.num = Object.fromEntries(C.steps.map((s, i) => [s.id, i + 1]));
     C.steps.slice(1).forEach((s, i) => links.push({ source: C.steps[i].id, target: s.id, c: k })); } }
 let CO = COURSE[store.get('nm-course', '')] ? store.get('nm-course', '') : '';
-const tocHash = () => { const a = $('tocBtn'); if (a) a.href = a.href.split('#')[0] + ({ M01: '#mit1801', M02: '#mit1802', MIT: '#mit1806' }[CO] || ''); };
+const tocHash = () => { const a = $('tocBtn'); if (a) a.href = a.href.split('#')[0] + ({ M01: '#mit1801', M02: '#mit1802', MIT: '#mit1806', ST: '#stat110' }[CO] || ''); };
 const baseLit = () => bookSet || (CO ? COURSE[CO].set : null);
 const counts = { taught: 0, read: 0, ahead: 0 }; N.forEach(n => counts[n.st]++);
 const domStat = {}; N.forEach(n => { const s = domStat[n.d] = domStat[n.d] || { n: 0, t: 0 }; s.n++; if (n.st === 'taught') s.t++; });

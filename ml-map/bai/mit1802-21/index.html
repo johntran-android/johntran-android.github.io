@@ -1274,7 +1274,7 @@ IX.lintrans = (box) => {
 const fgraph = (svg, xa, xb, ya, yb, pad = [30, 10, 10, 22]) => {
   const [L, T, R, B] = pad, W = 400 - L - R, H = 300 - T - B;
   const X = x => L + (x - xa) / (xb - xa) * W, Y = y => T + (yb - y) / (yb - ya) * H, iX = px => xa + (px - L) / W * (xb - xa), iY = py => yb - (py - T) / H * (yb - ya);
-  const step = r => r > 24 ? 5 : r > 9 ? 2 : r > 4.5 ? 1 : r > 2 ? 0.5 : r > 0.9 ? 0.25 : 0.1;
+  const step = r => { const raw = r / 7, p = 10 ** Math.floor(Math.log10(raw)), m = raw / p; return (m < 1.5 ? 1 : m < 3.5 ? 2 : m < 7.5 ? 5 : 10) * p; };
   const bg = el(svg, 'g'), sx = step(xb - xa), sy = step(yb - ya), y0 = Math.min(300 - B, Math.max(T, Y(0))), x0 = Math.min(400 - R, Math.max(L, X(0)));
   for (let i = Math.ceil(xa / sx - 1e-9) * sx; i <= xb + 1e-9; i += sx) { el(bg, 'line', { x1: X(i), x2: X(i), y1: T, y2: 300 - B, class: 'gr' }); if (Math.abs(i) > 1e-9) svgText(bg, X(i) - 3 * vk(i).length, Math.min(300 - B + 13, y0 + 13), vk(i), '#8a939c', 9.5); }
   for (let j = Math.ceil(ya / sy - 1e-9) * sy; j <= yb + 1e-9; j += sy) { el(bg, 'line', { x1: L, x2: 400 - R, y1: Y(j), y2: Y(j), class: 'gr' }); if (Math.abs(j) > 1e-9) svgText(bg, Math.max(1, x0 - 5 - 5.6 * vk(j).length), Y(j) + 4, vk(j), '#8a939c', 9.5); }
@@ -1855,6 +1855,189 @@ IX.field = (box) => {
       more += `<span>đường kín: ${fl.pot ? 'F là trường gradient nên công trên đường kín bằng 0 (bảo toàn)' : 'F không phải trường gradient, công trên đường kín có thể khác 0'}</span>`;
       if (GREEN) more += `<span>Green: ∬<sub>R</sub> (N<sub>x</sub> − M<sub>y</sub>) dA = <b>${vk(C)}</b>${fl.curl !== null ? ` (curl F = ${fl.curl}, diện tích R = ${vk(P.area)})` : ''}</span>`; }
     out.innerHTML = `<span>F = ${fl.l}, C: ${P.l}</span><span>công ∫<sub>C</sub> F · dr = ∫ M dx + N dy ≈ <b>${vk(W)}</b></span>${more}`;
+  }
+  draw();
+};
+
+// ======== Stat 110, probability ========
+const lgam = z => { if (z < 0.5) return Math.log(Math.PI / Math.abs(Math.sin(Math.PI * z))) - lgam(1 - z); z -= 1; const g = 7, c = [0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313, -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7]; let x = c[0]; for (let i = 1; i < 9; i++) x += c[i] / (z + i); const t = z + g + 0.5; return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(x); };
+const lchoose = (n, k) => lgam(n + 1) - lgam(k + 1) - lgam(n - k + 1);
+const erf = x => { const s = Math.sign(x); x = Math.abs(x); const t = 1 / (1 + 0.3275911 * x), y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x); return s * y; };
+const Phi = z => 0.5 * (1 + erf(z / Math.SQRT2));
+const pct = v => (v * 100).toLocaleString('vi-VN', { maximumFractionDigits: 1 }) + '%';
+const rnorm = () => { let u = 0, v = 0; while (!u) u = Math.random(); while (!v) v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
+const rgamma = a => { if (a < 1) return rgamma(a + 1) * Math.pow(Math.random(), 1 / a); const d = a - 1 / 3, c = 1 / Math.sqrt(9 * d); for (;;) { let x, v; do { x = rnorm(); v = 1 + c * x; } while (v <= 0); v = v * v * v; const u = Math.random(); if (Math.log(u) < 0.5 * x * x + d - d * v + d * Math.log(v)) return d * v; } };
+// bar / curve chart helper on a fgraph
+const bars = (G, xs, ps, col, w = 0.8) => xs.forEach((x, i) => { if (ps[i] <= 0) return; el(G.layer, 'rect', { x: G.X(x - w / 2), y: G.Y(ps[i]), width: Math.max(1, G.X(x + w / 2) - G.X(x - w / 2)), height: Math.max(0, G.Y(0) - G.Y(ps[i])), fill: col, opacity: 0.85 }); });
+
+// ---- distribution explorer (lectures 8–30)  ·  input: family and parameters, PMF/PDF or CDF, a point x  ·  result: the plot, mean, variance, P(X ≤ x)
+const DIST = {
+  bern: { l: 'Bernoulli', d: 1, ps: [['p', 0.01, 0.99, 0.3]], sup: () => [0, 1], pmf: (k, [p]) => k === 1 ? p : k === 0 ? 1 - p : 0, m: ([p]) => p, v: ([p]) => p * (1 - p), f: 'P(X = 1) = p' },
+  bin: { l: 'Nhị thức', d: 1, ps: [['n', 1, 40, 10, 1], ['p', 0.01, 0.99, 0.3]], sup: ([n]) => [0, n], pmf: (k, [n, p]) => k < 0 || k > n ? 0 : Math.exp(lchoose(n, k) + k * Math.log(p) + (n - k) * Math.log(1 - p)), m: ([n, p]) => n * p, v: ([n, p]) => n * p * (1 - p), f: 'P(X = k) = C(n, k) pᵏ (1 − p)ⁿ⁻ᵏ' },
+  hyp: { l: 'Siêu bội', d: 1, ps: [['w', 1, 30, 10, 1], ['b', 1, 30, 15, 1], ['n', 1, 30, 8, 1]], sup: ([w, b, n]) => [Math.max(0, n - b), Math.min(w, n)], pmf: (k, [w, b, n]) => k < Math.max(0, n - b) || k > Math.min(w, n) || n > w + b ? 0 : Math.exp(lchoose(w, k) + lchoose(b, n - k) - lchoose(w + b, n)), m: ([w, b, n]) => n * w / (w + b), v: ([w, b, n]) => { const N = w + b, p = w / N; return n * p * (1 - p) * (N - n) / (N - 1); }, f: 'P(X = k) = C(w, k) C(b, n − k) / C(w + b, n)' },
+  geo: { l: 'Hình học', d: 1, ps: [['p', 0.03, 0.99, 0.3]], sup: ([p]) => [0, Math.ceil(Math.log(0.002) / Math.log(1 - p))], pmf: (k, [p]) => k < 0 ? 0 : p * Math.pow(1 - p, k), m: ([p]) => (1 - p) / p, v: ([p]) => (1 - p) / (p * p), f: 'số lần thất bại trước thành công đầu: P(X = k) = (1 − p)ᵏ p' },
+  nb: { l: 'Nhị thức âm', d: 1, ps: [['r', 1, 15, 3, 1], ['p', 0.05, 0.95, 0.4]], sup: ([r, p]) => [0, Math.ceil(r * (1 - p) / p + 5 * Math.sqrt(r * (1 - p)) / p + 3)], pmf: (k, [r, p]) => k < 0 ? 0 : Math.exp(lchoose(r + k - 1, k) + r * Math.log(p) + k * Math.log(1 - p)), m: ([r, p]) => r * (1 - p) / p, v: ([r, p]) => r * (1 - p) / (p * p), f: 'số thất bại trước thành công thứ r' },
+  pois: { l: 'Poisson', d: 1, ps: [['λ', 0.2, 20, 3]], sup: ([l]) => [0, Math.ceil(l + 5 * Math.sqrt(l) + 3)], pmf: (k, [l]) => k < 0 ? 0 : Math.exp(-l + k * Math.log(l) - lgam(k + 1)), m: ([l]) => l, v: ([l]) => l, f: 'P(X = k) = e⁻ᵡ λᵏ / k!'.replace('ᵡ', 'λ') },
+  unif: { l: 'Đều', d: 0, ps: [['a', -3, 2, 0], ['b', -1, 5, 1]], rg: ([a, b]) => [Math.min(a, b) - 0.5, Math.max(a, b) + 0.5], pdf: (x, [a, b]) => b > a && x >= a && x <= b ? 1 / (b - a) : 0, cdf: (x, [a, b]) => b <= a ? 0 : Math.max(0, Math.min(1, (x - a) / (b - a))), m: ([a, b]) => (a + b) / 2, v: ([a, b]) => (b - a) ** 2 / 12, f: 'f(x) = 1/(b − a) trên [a, b]' },
+  norm: { l: 'Chuẩn', d: 0, ps: [['μ', -3, 3, 0], ['σ', 0.3, 3, 1]], rg: ([m, s]) => [m - 4 * s, m + 4 * s], pdf: (x, [m, s]) => Math.exp(-((x - m) ** 2) / (2 * s * s)) / (s * Math.sqrt(2 * Math.PI)), cdf: (x, [m, s]) => Phi((x - m) / s), m: ([m]) => m, v: ([, s]) => s * s, f: 'f(x) = e^(−(x − μ)²/(2σ²)) / (σ√(2π))' },
+  expo: { l: 'Mũ', d: 0, ps: [['λ', 0.2, 4, 1]], rg: ([l]) => [-0.2 / l, 5 / l], pdf: (x, [l]) => x < 0 ? 0 : l * Math.exp(-l * x), cdf: (x, [l]) => x < 0 ? 0 : 1 - Math.exp(-l * x), m: ([l]) => 1 / l, v: ([l]) => 1 / (l * l), f: 'f(x) = λe^(−λx), x > 0' },
+  gam: { l: 'Gamma', d: 0, ps: [['a', 0.5, 12, 3], ['λ', 0.2, 4, 1]], rg: ([a, l]) => [0, (a + 5 * Math.sqrt(a) + 1) / l], pdf: (x, [a, l]) => x <= 0 ? 0 : Math.exp(a * Math.log(l) + (a - 1) * Math.log(x) - l * x - lgam(a)), m: ([a, l]) => a / l, v: ([a, l]) => a / (l * l), f: 'f(x) = λᵃ xᵃ⁻¹ e^(−λx) / Γ(a)' },
+  beta: { l: 'Beta', d: 0, ps: [['a', 0.3, 12, 2], ['b', 0.3, 12, 5]], rg: () => [0, 1], pdf: (x, [a, b]) => x <= 0 || x >= 1 ? 0 : Math.exp((a - 1) * Math.log(x) + (b - 1) * Math.log(1 - x) + lgam(a + b) - lgam(a) - lgam(b)), m: ([a, b]) => a / (a + b), v: ([a, b]) => a * b / ((a + b) ** 2 * (a + b + 1)), f: 'f(x) ∝ xᵃ⁻¹ (1 − x)ᵇ⁻¹ trên (0, 1)' },
+  chi: { l: 'Khi bình phương', d: 0, ps: [['n', 1, 20, 4, 1]], rg: ([n]) => [0, n + 5 * Math.sqrt(2 * n) + 1], pdf: (x, [n]) => x <= 0 ? 0 : Math.exp((n / 2 - 1) * Math.log(x) - x / 2 - (n / 2) * Math.log(2) - lgam(n / 2)), m: ([n]) => n, v: ([n]) => 2 * n, f: 'tổng bình phương của n biến chuẩn tắc độc lập = Gamma(n/2, 1/2)' },
+  t: { l: 'Student t', d: 0, ps: [['n', 1, 30, 3, 1]], rg: () => [-5, 5], pdf: (x, [n]) => Math.exp(lgam((n + 1) / 2) - lgam(n / 2) - 0.5 * Math.log(n * Math.PI) - (n + 1) / 2 * Math.log(1 + x * x / n)), m: ([n]) => n > 1 ? 0 : NaN, v: ([n]) => n > 2 ? n / (n - 2) : NaN, f: 'Z / √(V/n), Z chuẩn tắc, V ~ χ²(n); n lớn thì gần chuẩn' },
+  cauchy: { l: 'Cauchy', d: 0, ps: [], rg: () => [-6, 6], pdf: x => 1 / (Math.PI * (1 + x * x)), cdf: x => 0.5 + Math.atan(x) / Math.PI, m: () => NaN, v: () => NaN, f: 'f(x) = 1/(π(1 + x²)): không có kỳ vọng' } };
+IX.dist = (box) => {
+  const fams = (box.dataset.fams || Object.keys(DIST).join(',')).split(',').filter(k => DIST[k]), F = Object.fromEntries(fams.map(k => [k, DIST[k]]));
+  let k = F[box.dataset.f0] ? box.dataset.f0 : fams[0], P = [];
+  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Phân phối:</span>${segHTML(F, k, 'Chọn phân phối')}</div><div class="ixbar ps"></div>
+    <div class="ixbar"><label class="chk" style="margin:0"><input type="checkbox"> hàm phân phối tích luỹ (CDF)</label><span class="ixin"><label>x <input type="range" class="xr" min="0" max="1" step="0.001" value="0.5"><output class="xo"></output></label></span></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Đồ thị phân phối xác suất"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), pbar = box.querySelector('.ps'), cb = box.querySelector('input[type=checkbox]'), xr = box.querySelector('.xr'), xo = box.querySelector('.xo');
+  const pre = (box.dataset.p || '').split(',').filter(Boolean).map(Number);
+  function setup(first) { const c = F[k]; P = c.ps.map((p, i) => first && pre[i] !== undefined ? pre[i] : p[3]);
+    pbar.innerHTML = c.ps.length ? c.ps.map((p, i) => `<span class="ixin"><label>${p[0]} <input type="range" data-i="${i}" min="${p[1]}" max="${p[2]}" step="${p[4] || 0.01}" value="${P[i]}"><output></output></label></span>`).join('') : '<span class="mxk" style="margin:0">không có tham số</span>';
+    pbar.querySelectorAll('input').forEach(r => r.addEventListener('input', () => { P[+r.dataset.i] = +r.value; draw(); })); draw(); }
+  segOn(box, f => { k = f; setup(); }); cb.addEventListener('change', draw); xr.addEventListener('input', draw);
+  function draw() {
+    const c = F[k]; pbar.querySelectorAll('input').forEach((r, i) => r.nextElementSibling.textContent = vk(P[i]));
+    svg.innerHTML = ''; const C = cb.checked; let G, cdfAt, xs, xv;
+    if (c.d) { const [lo, hi] = c.sup(P); xs = []; for (let i = lo; i <= hi; i++) xs.push(i); const ps = xs.map(i => c.pmf(i, P)); let acc = 0; const cs = ps.map(p => acc += p);
+      const top = C ? 1.05 : Math.max(...ps) * 1.15; G = fgraph(svg, lo - 0.8, hi + 0.8, 0, top); xv = Math.round(lo + (hi - lo) * +xr.value); xo.textContent = xv;
+      if (C) { xs.forEach((x, i) => G.seg(G.layer, [x, cs[i]], [x + 1, cs[i]], COL.b, 2.4)); } else bars(G, xs, ps.map((p, i) => xs[i] > xv ? p : 0), COL.b, 0.8);
+      xs.forEach((x, i) => { if (x <= xv && !C && ps[i] > 0) el(G.layer, 'rect', { x: G.X(x - 0.4), y: G.Y(ps[i]), width: G.X(x + 0.4) - G.X(x - 0.4), height: G.Y(0) - G.Y(ps[i]), fill: COL.o, opacity: 0.85 }); });
+      cdfAt = cs[xs.indexOf(xv)] ?? (xv < lo ? 0 : 1); out.innerHTML = `<span>${c.f}</span><span>P(X = ${xv}) = <b>${vk(c.pmf(xv, P))}</b></span>`; }
+    else { const [lo, hi] = c.rg(P); const N = 400, ys = []; for (let i = 0; i <= N; i++) ys.push(c.pdf(lo + (hi - lo) * i / N, P)); const mx = Math.min(Math.max(...ys.filter(isFinite)), 6);
+      const num = x => { if (c.cdf) return c.cdf(x, P); let s = 0; const h = (x - lo) / 600; for (let i = 0; i < 600; i++) s += c.pdf(lo + (i + 0.5) * h, P) * h; return s; };
+      G = fgraph(svg, lo, hi, 0, C ? 1.05 : mx * 1.15); xv = lo + (hi - lo) * +xr.value; xo.textContent = vk(xv);
+      if (C) G.curve(G.layer, x => num(x), COL.b, 2.6, null, lo, hi, 200);
+      else { let d = `M${G.X(lo)},${G.Y(0)}`; for (let i = 0; i <= 200; i++) { const x = lo + (xv - lo) * i / 200; d += `L${G.X(x)},${G.Y(Math.min(c.pdf(x, P), mx * 1.3))}`; } el(G.layer, 'path', { d: d + `L${G.X(xv)},${G.Y(0)}Z`, fill: 'rgba(227,116,0,.3)' }); G.curve(G.layer, x => Math.min(c.pdf(x, P), mx * 1.3), COL.b, 2.6, null, lo, hi); }
+      cdfAt = num(xv); out.innerHTML = `<span>${c.f}</span><span>f(${vk(xv)}) = ${vk(c.pdf(xv, P))}</span>`; }
+    G.seg(G.layer, [xv, 0], [xv, C ? cdfAt : G.yb], COL.o, 1.4, '4 3');
+    const m = c.m(P), v = c.v(P);
+    out.innerHTML += `<span>P(X ≤ ${c.d ? xv : vk(xv)}) = <b style="color:${COL.o}">${vk(cdfAt)}</b>${C ? '' : ' (phần tô cam)'}</span><span>E(X) = <b>${isFinite(m) ? vk(m) : 'không tồn tại'}</b>, Var(X) = <b>${isFinite(v) ? vk(v) : 'không tồn tại'}</b>${isFinite(v) ? `, SD = ${vk(Math.sqrt(v))}` : ''}</span>`;
+  }
+  setup(true);
+};
+
+// ---- Monte Carlo of the classic problems (lectures 1–9, 20, 22, 25)  ·  input: the problem, its parameter, number of runs  ·  result: running estimate next to the exact answer
+const SIM = {
+  bday: { l: 'Trùng ngày sinh', p: ['số người k', 2, 80, 23, 1], run: k => { const s = new Set(); for (let i = 0; i < k; i++) { const d = Math.floor(Math.random() * 365); if (s.has(d)) return 1; s.add(d); } return 0; }, ex: k => { let q = 1; for (let i = 0; i < k; i++) q *= (365 - i) / 365; return 1 - q; }, q: 'P(có ít nhất hai người trùng ngày sinh)', ext: k => '1 − (365·364·…·(365 − k + 1))/365ᵏ' },
+  monty: { l: 'Monty Hall: đổi cửa', p: ['số cửa', 3, 10, 3, 1], run: n => { const car = Math.floor(Math.random() * n), pick = Math.floor(Math.random() * n); return pick === car ? 0 : Math.random() < 1 / (n - 2) ? 1 : 0; }, ex: n => (n - 1) / n / (n - 2), q: 'P(thắng khi đổi sang một cửa còn đóng khác)', ext: n => n === 3 ? '2/3 (giữ nguyên chỉ được 1/3)' : `(n − 1)/(n(n − 2))` },
+  match: { l: 'Ghép thư (de Montmort)', p: ['số thư n', 2, 50, 10, 1], run: n => { const a = [...Array(n).keys()]; for (let i = n - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a.some((v, i) => v === i) ? 1 : 0; }, ex: n => { let s = 0, f = 1; for (let k = 1; k <= n; k++) { f *= k; s += (k % 2 ? 1 : -1) / f; } return s; }, q: 'P(có ít nhất một thư vào đúng phong bì)', ext: () => '1 − 1/2! + 1/3! − … → 1 − 1/e ≈ 0,632' },
+  ruin: { l: 'Gambler’s ruin', p: ['tiền ban đầu i (tổng N = 20)', 1, 19, 10, 1], p2: ['p thắng mỗi ván', 0.3, 0.7, 0.49, 0.01], run: (i, p) => { let x = i; while (x > 0 && x < 20) x += Math.random() < p ? 1 : -1; return x === 20 ? 1 : 0; }, ex: (i, p) => { if (Math.abs(p - 0.5) < 1e-9) return i / 20; const r = (1 - p) / p; return (1 - r ** i) / (1 - r ** 20); }, q: 'P(A thắng hết tiền của B)', ext: () => '(1 − (q/p)ⁱ)/(1 − (q/p)ᴺ), hoặc i/N khi p = 1/2' },
+  wht: { l: 'Chờ tới HT', p: ['(không có tham số)', 0, 0, 0, 1], avg: 1, run: () => { let a = '', t = 0; for (;;) { const c = Math.random() < 0.5 ? 'H' : 'T'; t++; if (a === 'H' && c === 'T') return t; a = c; } }, ex: () => 4, q: 'E(số lần tung tới khi xuất hiện HT)', ext: () => '4 = 2 + 2 (chờ H, rồi chờ T)' },
+  whh: { l: 'Chờ tới HH', p: ['(không có tham số)', 0, 0, 0, 1], avg: 1, run: () => { let a = '', t = 0; for (;;) { const c = Math.random() < 0.5 ? 'H' : 'T'; t++; if (a === 'H' && c === 'H') return t; a = c; } }, ex: () => 6, q: 'E(số lần tung tới khi xuất hiện HH)', ext: () => '6: hụt một T sau H là phải làm lại từ đầu' },
+  coupon: { l: 'Sưu tập phiếu', p: ['số loại phiếu n', 2, 50, 10, 1], avg: 1, run: n => { const s = new Set(); let t = 0; while (s.size < n) { s.add(Math.floor(Math.random() * n)); t++; } return t; }, ex: n => { let s = 0; for (let k = 1; k <= n; k++) s += n / k; return s; }, q: 'E(số lần mua để đủ n loại)', ext: () => 'n(1 + 1/2 + … + 1/n)' } };
+IX.sim = (box) => {
+  const keys = (box.dataset.sims || Object.keys(SIM).join(',')).split(',').filter(k => SIM[k]), F = Object.fromEntries(keys.map(k => [k, SIM[k]]));
+  let k = F[box.dataset.f0] ? box.dataset.f0 : keys[0], tot = 0, n = 0, hist = [], timer = null;
+  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Bài toán:</span>${segHTML(F, k, 'Chọn bài toán')}</div><div class="ixbar ps"></div>
+    <div class="ixbar"><button type="button" class="reset primary" data-go>▶ Chạy 2000 lần</button><button type="button" class="reset" data-one>Chạy 1 lần</button><button type="button" class="reset" data-clr>Xoá</button></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Ước lượng qua nhiều lần mô phỏng"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), pbar = box.querySelector('.ps'); let a = 0, b = 0;
+  const clr = () => { tot = 0; n = 0; hist = []; draw(); };
+  function setup() { const c = F[k]; a = c.p[3]; b = c.p2 ? c.p2[3] : 0;
+    pbar.innerHTML = [c.p, c.p2].filter(p => p && p[1] !== p[2]).map((p, i) => `<span class="ixin"><label>${p[0]} <input type="range" data-i="${i}" min="${p[1]}" max="${p[2]}" step="${p[4]}" value="${p[3]}"><output>${vk(p[3])}</output></label></span>`).join('');
+    pbar.querySelectorAll('input').forEach(r => r.addEventListener('input', () => { if (r.dataset.i === '0') a = +r.value; else b = +r.value; r.nextElementSibling.textContent = vk(+r.value); clr(); })); clr(); }
+  segOn(box, f => { k = f; setup(); });
+  const step = m => { const c = F[k]; for (let i = 0; i < m; i++) { tot += c.run(a, b); n++; if (n % Math.max(1, Math.floor(n / 150)) === 0 || n < 50) hist.push([n, tot / n]); } };
+  box.querySelector('[data-one]').onclick = () => { step(1); draw(); }; box.querySelector('[data-clr]').onclick = clr;
+  box.querySelector('[data-go]').onclick = () => { if (timer) return; let left = 2000; timer = setInterval(() => { step(Math.min(80, left)); left -= 80; draw(); if (left <= 0) { clearInterval(timer); timer = null; } }, 30); };
+  function draw() {
+    const c = F[k], ex = c.ex(a, b); svg.innerHTML = '';
+    const ymax = c.avg ? Math.max(ex * 1.6, ...hist.map(h => h[1])) : 1, G = fgraph(svg, 0, Math.max(100, n), 0, ymax, [38, 10, 12, 22]);
+    G.seg(G.layer, [0, ex], [G.xb, ex], COL.o, 2, '6 4'); svgText(G.ann, 300, G.Y(ex) - 6, 'giá trị đúng', COL.o, 10.5);
+    if (hist.length) { el(G.layer, 'path', { d: hist.map(([x, y], i) => `${i ? 'L' : 'M'}${G.X(x)},${G.Y(y)}`).join(''), fill: 'none', stroke: COL.b, 'stroke-width': 2.2 }); }
+    svgText(G.ann, 44, 22, 'ước lượng sau n lần chạy', COL.b, 10.5);
+    out.innerHTML = `<span>${c.q}</span><span>sau <b>${n}</b> lần: ước lượng <b style="color:${COL.b}">${n ? (c.avg ? vk(tot / n) : pct(tot / n)) : '—'}</b></span><span>giá trị đúng <b style="color:${COL.o}">${c.avg ? vk(ex) : pct(ex)}</b> = ${c.ext(a, b)}</span>`;
+  }
+  setup();
+};
+
+// ---- Bayes with natural frequencies (lectures 4–6)  ·  input: prevalence, sensitivity, specificity  ·  result: 10 000 people split into four groups, P(D | +)
+IX.bayes = (box) => {
+  const S = [['tỉ lệ mắc bệnh P(D)', 0.001, 0.3, 0.01, 0.001], ['độ nhạy P(+ | D)', 0.5, 1, 0.95, 0.01], ['độ đặc hiệu P(− | không D)', 0.5, 1, 0.95, 0.01]];
+  box.innerHTML = `<div class="ixbar">${S.map((p, i) => `<span class="ixin"><label>${p[0]} <input type="range" data-i="${i}" min="${p[1]}" max="${p[2]}" step="${p[4]}" value="${p[3]}"><output></output></label></span>`).join('')}</div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="10 000 người chia theo bệnh và kết quả xét nghiệm"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), rs = [...box.querySelectorAll('input')];
+  rs.forEach(r => r.addEventListener('input', draw));
+  function draw() {
+    const [p, se, sp] = rs.map(r => +r.value); rs.forEach(r => r.nextElementSibling.textContent = vk(+r.value)); svg.innerHTML = '';
+    const N = 10000, D = N * p, ND = N - D, TP = D * se, FN = D - TP, FP = ND * (1 - sp), TN = ND - FP, post = TP / (TP + FP);
+    const box2 = (x, y, w, h, c, t1, t2) => { el(svg, 'rect', { x, y, width: w, height: h, rx: 6, fill: c, stroke: '#fff', 'stroke-width': 2 }); svgText(svg, x + 8, y + 18, t1, '#3c4043', 11); svgText(svg, x + 8, y + 34, t2, '#3c4043', 11); };
+    const n = v => Math.round(v).toLocaleString('vi-VN');
+    box2(130, 8, 140, 44, '#eef1f4', '10 000 người', '');
+    box2(20, 92, 160, 44, '#fde7e4', `${n(D)} có bệnh`, `P(D) = ${pct(p)}`); box2(220, 92, 160, 44, '#e6f0fb', `${n(ND)} không bệnh`, `1 − P(D)`);
+    box2(8, 190, 90, 44, 'rgba(197,34,31,.25)', `${n(TP)}`, 'dương tính'); box2(104, 190, 90, 44, '#f6f6f6', `${n(FN)}`, 'âm tính');
+    box2(206, 190, 90, 44, 'rgba(227,116,0,.25)', `${n(FP)}`, 'dương tính'); box2(302, 190, 90, 44, '#f6f6f6', `${n(TN)}`, 'âm tính');
+    [[200, 52, 100, 92], [200, 52, 300, 92], [100, 136, 53, 190], [100, 136, 149, 190], [300, 136, 251, 190], [300, 136, 347, 190]].forEach(([a, b, c, d]) => el(svg, 'line', { x1: a, y1: b, x2: c, y2: d, stroke: '#9aa4ae', 'stroke-width': 1.3 }));
+    svgText(svg, 8, 262, `Trong ${n(TP + FP)} người dương tính, chỉ ${n(TP)} người thật sự có bệnh.`, '#3c4043', 11.5);
+    out.innerHTML = `<span>P(D | +) = P(+ | D) P(D) / P(+) = ${n(TP)} / (${n(TP)} + ${n(FP)}) = <b>${pct(post)}</b></span><span>P(+) = ${pct((TP + FP) / N)} (luật xác suất toàn phần: cộng hai nhánh dương tính)</span><span class="tagok ${post > 0.5 ? 'yes' : 'no'}">${post > 0.5 ? 'Dương tính thì nhiều khả năng có bệnh' : 'Dù xét nghiệm chính xác, dương tính vẫn nhiều khả năng là báo nhầm, vì bệnh hiếm'}</span>`;
+  }
+  draw();
+};
+
+// ---- law of large numbers and central limit theorem (lecture 29)  ·  input: the distribution of one draw, sample size n  ·  result: histogram of many sample means against the normal curve
+IX.clt = (box) => {
+  const F = { unif: { l: 'Đều(0, 1)', r: () => Math.random(), m: 0.5, s: Math.sqrt(1 / 12) }, expo: { l: 'Mũ(1)', r: () => -Math.log(1 - Math.random()), m: 1, s: 1 },
+              bern: { l: 'Bernoulli(0,2)', r: () => Math.random() < 0.2 ? 1 : 0, m: 0.2, s: Math.sqrt(0.16) }, die: { l: 'Xúc xắc', r: () => 1 + Math.floor(Math.random() * 6), m: 3.5, s: Math.sqrt(35 / 12) } };
+  let k = 'expo';
+  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Một lần rút:</span>${segHTML(F, k, 'Chọn phân phối')}<span class="ixin"><label>cỡ mẫu n <input type="range" min="1" max="100" step="1" value="5"><output></output></label></span></div>
+    <div class="ixbar"><button type="button" class="reset primary" data-go>▶ Lấy lại 3000 trung bình mẫu</button></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Histogram của trung bình mẫu và đường cong chuẩn"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), rn = box.querySelector('input[type=range]'), on = box.querySelector('output');
+  segOn(box, f => { k = f; draw(); }); rn.addEventListener('input', draw); box.querySelector('[data-go]').onclick = draw;
+  function draw() {
+    const c = F[k], n = +rn.value, M = 3000, xs = []; on.textContent = n;
+    for (let j = 0; j < M; j++) { let s = 0; for (let i = 0; i < n; i++) s += c.r(); xs.push(s / n); }
+    const se = c.s / Math.sqrt(n), lo = Math.min(c.m - 4 * se, ...xs), hi = Math.max(c.m + 4 * se, ...xs), B = 40, w = (hi - lo) / B, h = Array(B).fill(0);
+    xs.forEach(x => h[Math.min(B - 1, Math.floor((x - lo) / w))]++); const dens = h.map(v => v / (M * w)), top = Math.max(...dens, 1 / (se * Math.sqrt(2 * Math.PI))) * 1.12;
+    svg.innerHTML = ''; const G = fgraph(svg, lo, hi, 0, top);
+    dens.forEach((d, i) => { if (d > 0) el(G.layer, 'rect', { x: G.X(lo + i * w), y: G.Y(d), width: Math.max(0.5, G.X(lo + (i + 1) * w) - G.X(lo + i * w) - 0.6), height: G.Y(0) - G.Y(d), fill: COL.b, opacity: 0.55 }); });
+    G.curve(G.layer, x => Math.exp(-((x - c.m) ** 2) / (2 * se * se)) / (se * Math.sqrt(2 * Math.PI)), COL.o, 2.4, null, lo, hi);
+    G.seg(G.layer, [c.m, 0], [c.m, top], '#3c4043', 1.2, '4 3');
+    const mean = xs.reduce((a, b) => a + b, 0) / M, sd = Math.sqrt(xs.reduce((a, b) => a + (b - mean) ** 2, 0) / M);
+    svgText(G.ann, 38, 22, `${M} trung bình của n = ${n} lần rút`, COL.b, 10.5); svgText(G.ann, 38, 37, 'đường chuẩn N(μ, σ²/n)', COL.o, 10.5);
+    out.innerHTML = `<span>μ = ${vk(c.m)}, σ = ${vk(c.s)}</span><span>các trung bình mẫu: trung bình ${vk(mean)}, độ lệch chuẩn <b>${vk(sd)}</b> (lý thuyết σ/√n = ${vk(se)})</span><span>luật số lớn: n tăng thì các trung bình dồn về μ; định lý giới hạn trung tâm: hình dạng tiến về đường chuẩn, dù một lần rút trông không hề giống chuẩn</span>`;
+  }
+  draw();
+};
+
+// ---- two correlated normals (lectures 19, 21, 30)  ·  input: correlation ρ, a value of X for the conditional slice  ·  result: scatter, sample covariance and correlation, X + Y spread, E(Y | X = x)
+IX.scatter = (box) => {
+  box.innerHTML = `<div class="ixbar"><span class="ixin"><label>tương quan ρ <input type="range" min="-0.99" max="0.99" step="0.01" value="0.6"><output></output></label></span><span class="ixin"><label>lát cắt X = x <input type="range" min="-2" max="2" step="0.05" value="1"><output></output></label></span><button type="button" class="reset" data-go>Rút lại</button></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Đám điểm của hai biến chuẩn có tương quan"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), [rr, rx] = box.querySelectorAll('input[type=range]'), [or, ox] = box.querySelectorAll('output');
+  let Z = []; const gen = () => { Z = []; for (let i = 0; i < 700; i++) Z.push([rnorm(), rnorm()]); };
+  gen(); rr.addEventListener('input', draw); rx.addEventListener('input', draw); box.querySelector('[data-go]').onclick = () => { gen(); draw(); };
+  const G0 = () => { svg.innerHTML = ''; return fgraph(svg, -3.6 * 360 / 268, 3.6 * 360 / 268, -3.6, 3.6); };
+  function draw() {
+    const r = +rr.value, x0 = +rx.value; or.textContent = vk(r); ox.textContent = vk(x0); const G = G0(), L = G.layer;
+    const P = Z.map(([a, b]) => [a, r * a + Math.sqrt(1 - r * r) * b]);
+    P.forEach(([x, y]) => el(L, 'circle', { cx: G.X(x), cy: G.Y(y), r: 2.1, fill: Math.abs(x - x0) < 0.12 ? COL.o : 'rgba(26,115,232,.45)' }));
+    G.line(L, 0, 0, r, COL.v, 2, '6 4'); G.seg(L, [x0, -3.6], [x0, 3.6], COL.o, 1.2, '3 3'); G.dot(L, x0, r * x0, COL.o, false, 5);
+    const n = P.length, mx = P.reduce((s, p) => s + p[0], 0) / n, my = P.reduce((s, p) => s + p[1], 0) / n, cov = P.reduce((s, p) => s + (p[0] - mx) * (p[1] - my), 0) / n, sx = Math.sqrt(P.reduce((s, p) => s + (p[0] - mx) ** 2, 0) / n), sy = Math.sqrt(P.reduce((s, p) => s + (p[1] - my) ** 2, 0) / n);
+    svgText(G.ann, 38, 22, 'đường y = ρx: E(Y | X = x)', COL.v, 10.5);
+    out.innerHTML = `<span>X, Y đều chuẩn tắc; Y = ρX + √(1 − ρ²) Z</span><span>mẫu: Cov(X, Y) ≈ <b>${vk(cov)}</b>, Corr ≈ <b>${vk(cov / (sx * sy))}</b> (đúng: ${vk(r)})</span><span>Var(X + Y) = 1 + 1 + 2ρ = <b>${vk(2 + 2 * r)}</b></span><span>lát cắt X = ${vk(x0)} (chấm cam): Y | X = x ~ N(ρx, 1 − ρ²), trung bình ${vk(r * x0)}, độ lệch chuẩn ${vk(Math.sqrt(1 - r * r))}</span>`;
+  }
+  draw();
+};
+
+// ---- choosing k out of n: the four sampling cases (lectures 1–2)  ·  input: n, k  ·  result: the 2 × 2 table of counts, with the formulas
+IX.count = (box) => {
+  box.innerHTML = `<div class="ixbar"><span class="ixin"><label>n <input type="range" min="1" max="20" step="1" value="4"><output></output></label></span><span class="ixin"><label>k <input type="range" min="0" max="20" step="1" value="2"><output></output></label></span></div>
+    <div class="tbl"></div><div class="readout" aria-live="polite"></div>`;
+  const [rn, rk] = box.querySelectorAll('input'), [on, ok] = box.querySelectorAll('output'), tb = box.querySelector('.tbl'), out = box.querySelector('.readout');
+  const C = (n, k) => k < 0 || k > n ? 0 : Math.round(Math.exp(lchoose(n, k))), fmt = v => v > 1e15 ? v.toExponential(3).replace('.', ',') : v.toLocaleString('vi-VN');
+  [rn, rk].forEach(r => r.addEventListener('input', draw));
+  function draw() {
+    const n = +rn.value, k = +rk.value; on.textContent = n; ok.textContent = k;
+    let perm = 1; for (let i = 0; i < k; i++) perm *= (n - i);
+    const cell = (v, f) => `<td><b>${fmt(v)}</b><br><span style="color:var(--muted);font-size:.85em">${f}</span></td>`;
+    tb.innerHTML = `<table style="width:100%;border-collapse:collapse;font:500 .95rem/1.4 var(--sans);text-align:center" border="1" cellpadding="8"><tr><th></th><th>có thứ tự</th><th>không thứ tự</th></tr>
+      <tr><th>có hoàn lại</th>${cell(n ** k, 'nᵏ')}${cell(C(n + k - 1, k), 'C(n + k − 1, k)')}</tr>
+      <tr><th>không hoàn lại</th>${cell(k > n ? 0 : perm, 'n(n − 1)⋯(n − k + 1)')}${cell(C(n, k), 'C(n, k)')}</tr></table>`;
+    out.innerHTML = `<span>chọn k = ${k} từ n = ${n}</span><span>ô khó nhất là có hoàn lại, không thứ tự: xếp k viên bi giống nhau vào n hộp, tức sắp k bi và n − 1 vách ngăn, C(n + k − 1, k)</span>`;
   }
   draw();
 };
