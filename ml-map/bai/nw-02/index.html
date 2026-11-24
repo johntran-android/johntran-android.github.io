@@ -2837,7 +2837,7 @@ const runOpt = (F, alg, x0, k, opt = {}) => {
       const pB = lo > 1e-9 ? sol2(B, [-gx[0], -gx[1]]) : null;
       if (pB && nrm2(pB) <= Dl) p = pB; else if (!pU || nrm2(pU) >= Dl) p = [-Dl * gx[0] / nrm2(gx), -Dl * gx[1] / nrm2(gx)]; else if (pB) { const dd = [pB[0] - pU[0], pB[1] - pU[1]], A = dot2(dd, dd), Bq = 2 * dot2(pU, dd), C = dot2(pU, pU) - Dl * Dl, t = (-Bq + Math.sqrt(Bq * Bq - 4 * A * C)) / (2 * A); p = [pU[0] + t * dd[0], pU[1] + t * dd[1]]; } else p = [-Dl * gx[0] / nrm2(gx), -Dl * gx[1] / nrm2(gx)];
       const xn = [x[0] + p[0], x[1] + p[1]], ared = f(x) - f(xn), pred = -(dot2(gx, p) + 0.5 * dot2(p, mv2(B, p))), rho = ared / pred; nf++;
-      if (rho < 0.25) Dl *= 0.25; else if (rho > 0.75 && Math.abs(nrm2(p) - Dl) < 1e-9) Dl = Math.min(2 * Dl, 5);
+      if (rho < 0.25) Dl *= 0.25; else if (rho > 0.75 && Math.abs(nrm2(p) - Dl) < 1e-9) Dl = Math.min(2 * Dl, 2);
       if (rho > 0.1) { x = xn; P.push(x.slice()); } else P.push(x.slice()); continue; }
     const xn = [x[0] + a * d[0], x[1] + a * d[1]];
     if (alg === 'bfgs') { const sv = [xn[0] - x[0], xn[1] - x[1]], gn = g(xn), yv = [gn[0] - gx[0], gn[1] - gx[1]], ys = dot2(yv, sv);
@@ -2905,19 +2905,50 @@ IX.wolfe = (box) => {
 
 // ---- Newton's method with Hessian modification (Nocedal 3.4)  ·  input: second eigenvalue of the Hessian, gradient angle
 IX.hessmod = (box) => {
-  box.innerHTML = `<div class="ixbar"><span class="ixin"><label>trị riêng λ₂ của Hessian <input type="range" min="-2" max="2" step="0.05" value="-0.6"><output></output></label></span><span class="ixin"><label>góc của gradient <input type="range" min="0" max="180" step="1" value="35"><output></output></label></span></div>
+  box.innerHTML = `<div class="ixbar"><span class="ixin"><label>trị riêng λ₂ của Hessian <input type="range" min="-2" max="2" step="0.05" value="-0.6"><output></output></label></span><span class="ixin"><label>góc của gradient <input type="range" min="0" max="180" step="1" value="60"><output></output></label></span></div>
     <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Hướng Newton và hướng Newton có hiệu chỉnh"></svg></div><div class="readout" aria-live="polite"></div>`;
   const svg = box.querySelector('svg'), out = box.querySelector('.readout'), [rl, rg] = box.querySelectorAll('input'), [ol, og] = box.querySelectorAll('output'); [rl, rg].forEach(r => r.addEventListener('input', draw));
   function draw() {
     const l2 = +rl.value, th = +rg.value * Math.PI / 180, H = [[1, 0], [0, l2]], g = [Math.cos(th), Math.sin(th)].map(v => 0.8 * v); ol.textContent = vk(l2); og.textContent = rg.value + '°'; svg.innerHTML = '';
     const G = fgraph(svg, -2.6 * 4 / 3, 2.6 * 4 / 3, -2.6, 2.6), Ly = G.layer, m = p => dot2(g, p) + 0.5 * dot2(p, mv2(H, p));
-    const nx = 60, ny = 45; for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) { const x = G.xa + (G.xb - G.xa) * (i + 0.5) / nx, y = G.ya + (G.yb - G.ya) * (j + 0.5) / ny, v = m([x, y]), q = Math.max(-1, Math.min(1, v / 2)); el(Ly, 'rect', { x: G.X(G.xa + (G.xb - G.xa) * i / nx), y: G.Y(G.ya + (G.yb - G.ya) * (j + 1) / ny), width: (G.X(G.xb) - G.X(G.xa)) / nx + 0.5, height: (G.Y(G.ya) - G.Y(G.yb)) / ny + 0.5, fill: q < 0 ? `rgba(15,143,126,${-q * 0.35})` : `rgba(197,34,31,${q * 0.25})` }); }
+    const nx = 60, ny = 45, bgG = el(svg, 'g'); svg.insertBefore(bgG, svg.firstChild); for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) { const x = G.xa + (G.xb - G.xa) * (i + 0.5) / nx, y = G.ya + (G.yb - G.ya) * (j + 0.5) / ny, v = m([x, y]), q = Math.max(-1, Math.min(1, v / 2)); el(bgG, 'rect', { x: G.X(G.xa + (G.xb - G.xa) * i / nx), y: G.Y(G.ya + (G.yb - G.ya) * (j + 1) / ny), width: (G.X(G.xb) - G.X(G.xa)) / nx + 0.5, height: (G.Y(G.ya) - G.Y(G.yb)) / ny + 0.5, fill: q < 0 ? `rgba(15,143,126,${-q * 0.35})` : `rgba(197,34,31,${q * 0.25})` }); }
     const id = 'hm' + (++MID); svgArrows(svg, id); const pn = Math.abs(l2) > 1e-3 ? sol2(H, [-g[0], -g[1]]) : null, tau = Math.max(0, 0.1 - Math.min(1, l2)), Hm = [[1 + tau, 0], [0, l2 + tau]], pm = sol2(Hm, [-g[0], -g[1]]);
     const cap = p => { const n = nrm2(p); return n > 2.4 ? p.map(v => v * 2.4 / n) : p; };
     drawArrow(Ly, id, G.X, G.Y, [0, 0], cap([-g[0], -g[1]]), 'r', 2.4); if (pn) drawArrow(Ly, id, G.X, G.Y, [0, 0], cap(pn), 'v', 2.6); drawArrow(Ly, id, G.X, G.Y, [0, 0], cap(pm), 'g', 2.6);
     svgText(G.ann, 40, 22, 'đỏ: −∇f · tím: Newton −H⁻¹∇f · xanh lục: −(H + τI)⁻¹∇f', COL.k, 10.5); svgText(G.ann, 40, 36, 'nền: mô hình bậc hai m(p) (xanh lục = giảm, đỏ = tăng)', '#5d6670', 10);
     const dn = pn ? dot2(g, pn) : null, dm = dot2(g, pm);
     out.innerHTML = `<span>Hessian có trị riêng 1 và ${vk(l2)}${l2 > 0 ? ': xác định dương' : l2 === 0 ? ': suy biến' : ': không xác định'}</span><span>hướng Newton: ${pn ? `∇fᵀp = <b>${vk(dn)}</b> ${dn < 0 ? '(hướng giảm)' : '(<b>không</b> phải hướng giảm)'}` : 'không tồn tại (H suy biến)'} · hiệu chỉnh τ = ${vk(tau)}: ∇fᵀp = <b>${vk(dm)}</b> (luôn là hướng giảm)</span>`;
+  }
+  draw();
+};
+
+// ---- the trust-region subproblem (Nocedal 4.0–4.3)  ·  input: radius Δ, second eigenvalue of B  ·  result: Cauchy point, dogleg, exact solution, ‖p(λ)‖
+IX.trustreg = (box) => {
+  box.innerHTML = `${segHTML({ sub: { l: 'Bài toán con' }, lam: { l: 'Đồ thị ‖p(λ)‖' } }, box.dataset.v || 'sub', 'Chọn cách xem')}<div class="ixbar"><span class="ixin"><label>bán kính Δ <input type="range" min="0.1" max="3" step="0.02" value="${box.dataset.d || 1}"><output></output></label></span><span class="ixin"><label>trị riêng λ₂ của B <input type="range" min="-1" max="3" step="0.05" value="${box.dataset.l2 || 0.4}"><output></output></label></span></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Bài toán con của trust region"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), [rd, rl] = box.querySelectorAll('input'), [od, ol] = box.querySelectorAll('output'); let view = box.dataset.v || 'sub';
+  segOn(box, v => { view = v; draw(); }); [rd, rl].forEach(r => r.addEventListener('input', draw));
+  const th = 0.5, c = Math.cos(th), sn = Math.sin(th), g = [-0.408, -0.802];
+  const exact = (B, l1, D) => { const pl = lam => sol2([[B[0][0] + lam, B[0][1]], [B[1][0], B[1][1] + lam]], [-g[0], -g[1]]); if (l1 > 0) { const pb = pl(0); if (nrm2(pb) <= D) return { p: pb, lam: 0 }; } let lo = Math.max(0, -l1) + 1e-9, hi = lo + 1; while (nrm2(pl(hi)) > D) hi *= 2; for (let k = 0; k < 80; k++) { const m = (lo + hi) / 2; nrm2(pl(m)) > D ? lo = m : hi = m; } return { p: pl(hi), lam: hi }; };
+  function draw() {
+    const D = +rd.value, l2 = +rl.value, l1 = 1.2; od.textContent = vk(D); ol.textContent = vk(l2); svg.innerHTML = '';
+    const B = [[l1 * c * c + l2 * sn * sn, (l1 - l2) * c * sn], [(l1 - l2) * c * sn, l1 * sn * sn + l2 * c * c]], m = p => dot2(g, p) + 0.5 * dot2(p, mv2(B, p)), lmin = Math.min(l1, l2);
+    if (view === 'lam') { const lo = -l1 - 1, G = fgraph(svg, -2.6, 3, 0, 4), Ly = G.layer, q1 = [c, sn], q2 = [-sn, c], a1 = dot2(q1, g), a2 = dot2(q2, g), pn = lam => Math.sqrt(a1 * a1 / (l1 + lam) ** 2 + a2 * a2 / (l2 + lam) ** 2);
+      G.curve(Ly, pn, COL.b, 2.4, null, -2.6, 3, 1400); G.line(Ly, 0, D, 0, COL.o, 1.4, '5 4'); [l1, l2].forEach(v => G.seg(Ly, [-v, 0], [-v, 4], '#8a939c', 1, '2 3')); G.seg(Ly, [Math.max(0, -lmin), 0], [Math.max(0, -lmin), 4], COL.r, 1.2);
+      const ex = exact(B, lmin, D); G.dot(Ly, ex.lam, Math.min(nrm2(ex.p), 4), COL.g, false, 5.5);
+      svgText(G.ann, 40, 22, '‖p(λ)‖ = ‖(B + λI)⁻¹g‖ theo λ; cam: mức Δ', COL.b, 10.5); svgText(G.ann, 40, 36, 'xám: λ = −λⱼ (cực) · đỏ: biên λ ≥ max(0, −λ₁)', '#5d6670', 10);
+      out.innerHTML = `<span>‖p(λ)‖² = Σⱼ (qⱼᵀg)²/(λⱼ + λ)²: giảm dần khi λ vượt qua −λ_min, tiến về 0 khi λ → ∞</span><span>nghiệm: λ* = <b>${vk(ex.lam)}</b> là chỗ ‖p(λ)‖ cắt mức Δ (chấm xanh lục)${ex.lam === 0 ? ', ở đây λ* = 0 vì bước Newton đã nằm trong vùng' : ''}; giải bằng Newton trên 1/Δ − 1/‖p(λ)‖ (thuật toán 4.3)</span>`; return; }
+    const G = fgraph(svg, -2.4 * 4 / 3 + 0.6, 2.4 * 4 / 3 + 0.6, -1.4, 3.4), Ly = G.layer, nx = 60, ny = 45, V = [];
+    for (let j = 0; j < ny; j++) for (let ii = 0; ii < nx; ii++) V.push(m([G.xa + (G.xb - G.xa) * (ii + 0.5) / nx, G.ya + (G.yb - G.ya) * (j + 0.5) / ny])); const vmin = Math.min(...V), vmax = Math.max(...V);
+    const bgG = el(svg, 'g'); svg.insertBefore(bgG, svg.firstChild); V.forEach((v, n) => { const ii = n % nx, j = Math.floor(n / nx), q = Math.floor(8 * (v - vmin) / (vmax - vmin + 1e-9)) / 8; el(bgG, 'rect', { x: G.X(G.xa + (G.xb - G.xa) * ii / nx), y: G.Y(G.ya + (G.yb - G.ya) * (j + 1) / ny), width: (G.X(G.xb) - G.X(G.xa)) / nx + 0.5, height: (G.Y(G.ya) - G.Y(G.yb)) / ny + 0.5, fill: `hsl(${200 - 150 * q},50%,${93 - 25 * q}%)` }); });
+    el(Ly, 'circle', { cx: G.X(0), cy: G.Y(0), r: G.X(D) - G.X(0), fill: 'none', stroke: COL.k, 'stroke-width': 1.8, 'stroke-dasharray': '6 4' });
+    const tr = Array.from({ length: 120 }, (_, k) => exact(B, lmin, 0.02 + 3.2 * k / 119).p); el(Ly, 'path', { d: tr.map((p, k) => `${k ? 'L' : 'M'}${G.X(p[0]).toFixed(1)},${G.Y(p[1]).toFixed(1)}`).join(''), fill: 'none', stroke: COL.g, 'stroke-width': 1.4, 'stroke-dasharray': '3 3' });
+    const gBg = dot2(g, mv2(B, g)), gn = nrm2(g), tau = gBg <= 0 ? 1 : Math.min(1, gn ** 3 / (D * gBg)), pC = g.map(v => -tau * D / gn * v); let pD = null, pB = null, pU = null;
+    if (lmin > 0) { pB = sol2(B, [-g[0], -g[1]]); pU = g.map(v => -dot2(g, g) / gBg * v); el(Ly, 'path', { d: `M${G.X(0)},${G.Y(0)}L${G.X(pU[0])},${G.Y(pU[1])}L${G.X(pB[0])},${G.Y(pB[1])}`, fill: 'none', stroke: COL.v, 'stroke-width': 2 }); G.dot(Ly, pB[0], pB[1], COL.v, true, 4.5);
+      if (nrm2(pB) <= D) pD = pB; else if (nrm2(pU) >= D) pD = pU.map(v => v * D / nrm2(pU)); else { const dd = [pB[0] - pU[0], pB[1] - pU[1]], A = dot2(dd, dd), Bq = 2 * dot2(pU, dd), C = dot2(pU, pU) - D * D, t = (-Bq + Math.sqrt(Bq * Bq - 4 * A * C)) / (2 * A); pD = [pU[0] + t * dd[0], pU[1] + t * dd[1]]; } G.dot(Ly, pD[0], pD[1], COL.v, false, 5.5); }
+    const ex = exact(B, lmin, D); G.dot(Ly, pC[0], pC[1], COL.r, false, 5.5); G.dot(Ly, ex.p[0], ex.p[1], COL.g, false, 6); G.dot(Ly, 0, 0, COL.k, false, 3.5);
+    svgText(G.ann, 40, 22, 'đỏ: điểm Cauchy · tím: đường dogleg và điểm dogleg · xanh lục: nghiệm chính xác', COL.k, 10); svgText(G.ann, 40, 36, 'xanh lục nét đứt: nghiệm chính xác khi Δ đổi · vòng đen: ‖p‖ = Δ', '#5d6670', 10);
+    out.innerHTML = `<span>B có trị riêng 1,2 và ${vk(l2)}${lmin > 0 ? '' : ' (không xác định dương: không có bước Newton, dogleg không dùng được)'}</span><span>m(p): Cauchy <b>${vk(m(pC))}</b>${pD ? ` · dogleg <b>${vk(m(pD))}</b>` : ''} · chính xác <b>${vk(m(ex.p))}</b> (λ* = ${vk(ex.lam)})</span><span>${pB && nrm2(pB) <= D ? 'Δ lớn: bước Newton −B⁻¹g nằm trong vùng, cả dogleg và nghiệm chính xác đều là nó' : 'Δ nhỏ: nghiệm nằm trên biên; khi Δ → 0 nó quay về hướng −g'}</span>`;
   }
   draw();
 };
