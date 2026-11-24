@@ -926,7 +926,7 @@ const plane = (svg, S, O, xr, yr) => { const g = el(svg, 'g'); const X = a => O[
   for (let j = Math.ceil(-yr / step) * step; j <= yr; j += step) el(g, 'line', { x1: 0, x2: 400, y1: Y(j), y2: Y(j), class: 'gr' });
   el(g, 'line', { x1: 0, x2: 400, y1: Y(0), y2: Y(0), class: 'ax' }); el(g, 'line', { x1: X(0), x2: X(0), y1: 0, y2: 300, class: 'ax' }); return g; };
 const COL = { b: '#1a73e8', o: '#e37400', g: '#0f8f7e', r: '#c5221f', v: '#8e24aa', k: '#5d6670' };
-const svgText = (p, x, y, t, c, size = 12) => { const e = el(p, 'text', { x, y, fill: c, style: `font:700 ${size}px var(--sans);paint-order:stroke;stroke:#fff;stroke-width:4px` }); e.textContent = t; return e; };
+const svgText = (p, x, y, t, c, size = 12) => { const e = el(p, 'text', { x, y, fill: c, style: `fill:${c};font:700 ${size}px var(--sans);paint-order:stroke;stroke:#fff;stroke-width:4px` }); e.textContent = t; return e; };
 
 // ---- eigshow (lectures 21, 25)  ·  input: the matrix, and the unit vector x (drag, arrow keys, or let it turn)  ·  result: Ax; when Ax lines up with x, x is an eigenvector
 IX.eigshow = (box) => {
@@ -1309,6 +1309,423 @@ IX.lintrans = (box) => {
       <span class="tagok ${lin ? 'yes' : 'no'}">${lin ? 'Tuyến tính: gốc đứng yên, đường thẳng vẫn thẳng, lưới vẫn cách đều' : 'Không tuyến tính (affine): T(0) = b ≠ 0, gốc bị dời đi'}</span>`;
   }
   draw();
+};
+
+// ======== MIT 18.01, single-variable calculus ========
+// a graph of y = f(x) on [xa, xb] × [ya, yb] inside the 400 × 300 picture; pad = [left, top, right, bottom]
+const fgraph = (svg, xa, xb, ya, yb, pad = [30, 10, 10, 22]) => {
+  const [L, T, R, B] = pad, W = 400 - L - R, H = 300 - T - B;
+  const X = x => L + (x - xa) / (xb - xa) * W, Y = y => T + (yb - y) / (yb - ya) * H, iX = px => xa + (px - L) / W * (xb - xa), iY = py => yb - (py - T) / H * (yb - ya);
+  const step = r => r > 24 ? 5 : r > 9 ? 2 : r > 4.5 ? 1 : r > 2 ? 0.5 : r > 0.9 ? 0.25 : 0.1;
+  const bg = el(svg, 'g'), sx = step(xb - xa), sy = step(yb - ya), y0 = Math.min(300 - B, Math.max(T, Y(0))), x0 = Math.min(400 - R, Math.max(L, X(0)));
+  for (let i = Math.ceil(xa / sx - 1e-9) * sx; i <= xb + 1e-9; i += sx) { el(bg, 'line', { x1: X(i), x2: X(i), y1: T, y2: 300 - B, class: 'gr' }); if (Math.abs(i) > 1e-9) svgText(bg, X(i) - 3 * vk(i).length, Math.min(300 - B + 13, y0 + 13), vk(i), '#8a939c', 9.5); }
+  for (let j = Math.ceil(ya / sy - 1e-9) * sy; j <= yb + 1e-9; j += sy) { el(bg, 'line', { x1: L, x2: 400 - R, y1: Y(j), y2: Y(j), class: 'gr' }); if (Math.abs(j) > 1e-9) svgText(bg, Math.max(1, x0 - 5 - 5.6 * vk(j).length), Y(j) + 4, vk(j), '#8a939c', 9.5); }
+  if (ya <= 0 && yb >= 0) el(bg, 'line', { x1: L, x2: 400 - R, y1: Y(0), y2: Y(0), class: 'ax' });
+  if (xa <= 0 && xb >= 0) el(bg, 'line', { x1: X(0), x2: X(0), y1: T, y2: 300 - B, class: 'ax' });
+  const cid = 'c' + (++MID), cp = el(el(svg, 'defs'), 'clipPath', { id: cid }); el(cp, 'rect', { x: L, y: T, width: W, height: H });
+  const layer = el(svg, 'g', { 'clip-path': `url(#${cid})` }), ann = el(svg, 'g'), top = el(svg, 'g');
+  const curve = (p, f, c = COL.b, w = 2.4, dash, a = xa, b = xb, n = 700) => { let d = '', pen = false, prev; const span = yb - ya;
+    for (let i = 0; i <= n; i++) { const x = a + (b - a) * i / n, y = f(x);
+      if (!isFinite(y) || (prev !== undefined && Math.abs(y - prev) > span * 1.2)) { pen = false; prev = isFinite(y) ? y : undefined; continue; }
+      d += `${pen ? 'L' : 'M'}${X(x).toFixed(1)},${Y(Math.max(ya - span, Math.min(yb + span, y))).toFixed(1)}`; pen = true; prev = y; }
+    return el(p, 'path', { d, fill: 'none', stroke: c, 'stroke-width': w, 'stroke-linejoin': 'round', ...(dash ? { 'stroke-dasharray': dash } : {}) }); };
+  const line = (p, x0, y0, m, c, w = 2, dash) => el(p, 'line', { x1: X(xa), y1: Y(y0 + m * (xa - x0)), x2: X(xb), y2: Y(y0 + m * (xb - x0)), stroke: c, 'stroke-width': w, ...(dash ? { 'stroke-dasharray': dash } : {}) });
+  const seg = (p, a, b, c, w = 2, dash) => el(p, 'line', { x1: X(a[0]), y1: Y(a[1]), x2: X(b[0]), y2: Y(b[1]), stroke: c, 'stroke-width': w, ...(dash ? { 'stroke-dasharray': dash } : {}) });
+  const dot = (p, x, y, c, open, r = 5) => el(p, 'circle', { cx: X(x), cy: Y(y), r, fill: open ? '#fff' : c, stroke: open ? c : '#fff', 'stroke-width': open ? 2 : 1.5 });
+  const inside = (x, y) => x >= xa && x <= xb && y >= ya && y <= yb;
+  return { X, Y, iX, iY, layer, ann, top, curve, line, seg, dot, inside, xa, xb, ya, yb };
+};
+const handle = (G, label) => { const H = el(G.top, 'g', { class: 'handle', tabindex: 0, role: 'slider', 'aria-label': label, style: 'cursor:grab' }); el(H, 'circle', { r: 16, fill: 'transparent' }); el(H, 'circle', { r: 6.5, fill: COL.b, stroke: '#fff', 'stroke-width': 1.5 }); return H; };
+const dragOn = (svg, H, onXY, onKey) => { let on = false;
+  H.addEventListener('pointerdown', e => { on = true; H.setPointerCapture(e.pointerId); e.preventDefault(); });
+  H.addEventListener('pointermove', e => { if (!on) return; const r = svg.getBoundingClientRect(); onXY((e.clientX - r.left) * 400 / r.width, (e.clientY - r.top) * 300 / r.height); });
+  ['pointerup', 'pointercancel'].forEach(t => H.addEventListener(t, () => on = false));
+  H.addEventListener('keydown', e => { const d = { ArrowLeft: -1, ArrowDown: -1, ArrowRight: 1, ArrowUp: 1 }[e.key]; if (d) { e.preventDefault(); onKey(d); } }); };
+const segHTML = (F, k0, lab = 'Chọn hàm') => `<div class="seg" role="group" aria-label="${lab}">${Object.entries(F).map(([k, v]) => `<button type="button" data-f="${k}"${k === k0 ? ' class="on"' : ''}>${v.l}</button>`).join('')}</div>`;
+const segOn = (box, cb) => box.querySelectorAll('[data-f]').forEach(bt => bt.onclick = () => { box.querySelectorAll('[data-f]').forEach(z => z.classList.toggle('on', z === bt)); cb(bt.dataset.f); });
+const tween = (from, to, ms, step, done) => { const t0 = performance.now(); const go = now => { const s = Math.min(1, (now - t0) / ms), e = 1 - (1 - s) ** 3; step(from + (to - from) * e); if (s < 1) requestAnimationFrame(go); else if (done) done(); }; requestAnimationFrame(go); };
+
+// ---- secant line PQ → tangent line at P (lecture 1)  ·  input: the function, P (drag), Δx  ·  result: Δf/Δx next to f′(x₀); for 1/x the triangle under the tangent (area 2)
+IX.secant = (box) => {
+  const F = { inv: { l: 'f(x) = 1/x', f: x => 1 / x, d: x => -1 / (x * x), r: [-0.5, 5, -0.6, 4.4], x0: 1, lo: 0.3, fx: '−1/x₀²' },
+              sq: { l: 'f(x) = x²', f: x => x * x, d: x => 2 * x, r: [-2.5, 2.5, -1, 5], x0: 0.8, lo: -2.2, fx: '2x₀' },
+              cu: { l: 'f(x) = x³ − 2x', f: x => x ** 3 - 2 * x, d: x => 3 * x * x - 2, r: [-2.4, 2.4, -3.2, 3.2], x0: -0.6, lo: -2.1, fx: '3x₀² − 2' } };
+  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Đầu vào:</span>${segHTML(F, 'inv')}<span class="ixin"><label>Δx <input type="range" min="-1.5" max="1.5" step="0.01" value="1.2"><output></output></label></span></div>
+    <div class="ixbar"><button type="button" class="reset primary" data-go>▶ Cho Δx → 0</button><label class="chk" style="margin:0"><input type="checkbox"> tô tam giác dưới tiếp tuyến (với 1/x)</label></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Cát tuyến PQ và tiếp tuyến tại P"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), rd = box.querySelector('input[type=range]'), ro = box.querySelector('output'), cb = box.querySelector('input[type=checkbox]');
+  let k = 'inv', G, x0, H;
+  const hi = () => F[k].r[1] - 0.25;
+  function setup() { svg.innerHTML = ''; const c = F[k]; G = fgraph(svg, ...c.r); x0 = c.x0; H = handle(G, 'Điểm P, kéo dọc đường cong');
+    dragOn(svg, H, px => { x0 = Math.max(c.lo, Math.min(hi(), Math.round(G.iX(px) * 20) / 20)); draw(); }, d => { x0 = Math.max(c.lo, Math.min(hi(), x0 + d * 0.05)); draw(); }); draw(); }
+  segOn(box, f => { k = f; setup(); }); rd.addEventListener('input', draw); cb.addEventListener('change', draw);
+  box.querySelector('[data-go]').onclick = () => { const s = Math.sign(+rd.value) || 1; tween(+rd.value, s * 0.01, 1600, v => { rd.value = v; draw(); }); };
+  function draw() {
+    const c = F[k], f = c.f; let dx = +rd.value; if (Math.abs(dx) < 0.005) dx = 0.005; ro.textContent = vn(dx);
+    let x1 = x0 + dx; if (k === 'inv' && x1 < 0.12) x1 = 0.12; dx = x1 - x0;
+    const y0 = f(x0), y1 = f(x1), ms = (y1 - y0) / dx, mt = c.d(x0), L = G.layer, A = G.ann; L.innerHTML = ''; A.innerHTML = '';
+    if (k === 'inv' && cb.checked) el(L, 'path', { d: `M${G.X(0)},${G.Y(0)}L${G.X(2 * x0)},${G.Y(0)}L${G.X(0)},${G.Y(2 * y0)}Z`, fill: 'rgba(227,116,0,.16)', stroke: 'none' });
+    G.curve(L, f, COL.b, 2.6, null, k === 'inv' ? 0.05 : c.r[0], c.r[1]);
+    G.line(L, x0, y0, mt, COL.g, 2.2, '7 5'); G.line(L, x0, y0, ms, COL.o, 2.4);
+    G.seg(L, [x0, y0], [x1, y0], '#8a939c', 1.4, '3 3'); G.seg(L, [x1, y0], [x1, y1], '#8a939c', 1.4, '3 3');
+    G.dot(L, x1, y1, COL.o);
+    svgText(A, G.X((x0 + x1) / 2) - 8, G.Y(y0) + (y1 > y0 ? 15 : -6), 'Δx', '#5d6670', 11); svgText(A, G.X(x1) + 5, G.Y((y0 + y1) / 2) + 4, 'Δf', '#5d6670', 11);
+    svgText(A, G.X(x0) - 16, G.Y(y0) - 9, 'P', COL.b); svgText(A, G.X(x1) + 7, G.Y(y1) - 7, 'Q', COL.o);
+    svgText(A, 38, 24, 'cát tuyến PQ', COL.o, 11); svgText(A, 38, 39, 'tiếp tuyến tại P', COL.g, 11);
+    H.setAttribute('transform', `translate(${G.X(x0)},${G.Y(y0)})`);
+    out.innerHTML = `<span>P = (${vk(x0)}; ${vk(y0)}), Q = (${vk(x1)}; ${vk(y1)})</span><span>độ dốc cát tuyến Δf/Δx = <b>${vk(ms)}</b></span><span>độ dốc tiếp tuyến f′(x₀) = ${c.fx} = <b>${vk(mt)}</b></span><span>còn lệch ${vk(ms - mt)}${Math.abs(ms - mt) < 0.05 ? ': Q gần như trùng P, cát tuyến gần như là tiếp tuyến' : ''}</span>`
+      + (k === 'inv' && cb.checked ? `<span>tam giác: đáy 2x₀ = ${vk(2 * x0)}, cao 2y₀ = ${vk(2 * y0)}, diện tích ½·2x₀·2y₀ = 2x₀y₀ = <b>${vk(2 * x0 * y0)}</b> với mọi P</span>` : '');
+  }
+  setup();
+};
+
+// ---- one-sided limits and the kinds of discontinuity (lecture 2)  ·  input: the function, how close x is to 0 (h)  ·  result: f(−h), f(h), the two one-sided limits and f(0)
+IX.limits = (box) => {
+  const F = { ok: { l: 'Liên tục', f: x => x * x / 2 + 1, r: [-3, 3, -1, 4], L: '1', R: '1', v: '1', kind: ['yes', 'Liên tục: giới hạn trái = giới hạn phải = f(0)'] },
+              jump: { l: 'Nhảy', f: x => x >= 0 ? x + 1 : -x + 2, r: [-3, 3, -1, 4], L: '2', R: '1', v: '1', kind: ['no', 'Gián đoạn nhảy: hai giới hạn một phía đều có nhưng khác nhau'], marks: [[0, 1, 0], [0, 2, 1]] },
+              hole: { l: 'Lỗ: sin x / x', f: x => Math.abs(x) < 1e-12 ? NaN : Math.sin(x) / x, r: [-7, 7, -0.6, 1.4], L: '1', R: '1', v: 'không xác định', kind: ['no', 'Gián đoạn bỏ được: hai phía cùng tiến về 1, chỉ thiếu đúng một điểm. Đặt f(0) = 1 là liền'], marks: [[0, 1, 1]] },
+              hole2: { l: 'Lỗ: (1 − cos x) / x', f: x => Math.abs(x) < 1e-12 ? NaN : (1 - Math.cos(x)) / x, r: [-7, 7, -1, 1], L: '0', R: '0', v: 'không xác định', kind: ['no', 'Gián đoạn bỏ được: hai phía cùng tiến về 0'], marks: [[0, 0, 1]] },
+              inf: { l: 'Vô cực: 1/x', f: x => 1 / x, r: [-3, 3, -5, 5], L: '−∞', R: '+∞', v: 'không xác định', kind: ['no', 'Gián đoạn vô cực: bên phải vọt lên +∞, bên trái cắm xuống −∞'] },
+              osc: { l: 'Dao động: sin(1/x)', f: x => Math.sin(1 / x), r: [-1, 1, -1.6, 1.6], L: 'không có', R: 'không có', v: 'không xác định', kind: ['no', 'Không có giới hạn phía nào: càng gần 0, f càng dao động nhanh giữa −1 và 1'] } };
+  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Đầu vào:</span>${segHTML(F, 'jump')}</div>
+    <div class="ixbar"><span class="ixin"><label>x cách 0 một khoảng h <input type="range" min="0" max="100" step="1" value="10"><output></output></label></span><button type="button" class="reset primary" data-go>▶ Cho h → 0</button></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Đồ thị hàm số gần x = 0, với hai điểm x = −h và x = h"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), rd = box.querySelector('input[type=range]'), ro = box.querySelector('output');
+  let k = 'jump', G; const hOf = v => (F[k].r[1] * 0.75) * Math.pow(10, -v / 25);
+  function setup() { svg.innerHTML = ''; G = fgraph(svg, ...F[k].r); draw(); }
+  segOn(box, f => { k = f; setup(); }); rd.addEventListener('input', draw);
+  box.querySelector('[data-go]').onclick = () => tween(10, 100, 2200, v => { rd.value = v; draw(); });
+  function draw() {
+    const c = F[k], f = c.f, h = hOf(+rd.value), L = G.layer, A = G.ann; L.innerHTML = ''; A.innerHTML = ''; ro.textContent = h < 0.01 ? h.toExponential(1).replace('.', ',') : vn(h);
+    if (k === 'jump') { G.curve(L, f, COL.b, 2.6, null, c.r[0], -1e-9); G.curve(L, f, COL.b, 2.6, null, 0, c.r[1]); }
+    else if (k === 'inf') { G.curve(L, f, COL.b, 2.6, null, c.r[0], -0.01); G.curve(L, f, COL.b, 2.6, null, 0.01, c.r[1]); }
+    else G.curve(L, f, COL.b, k === 'osc' ? 1.4 : 2.6, null, c.r[0], c.r[1], k === 'osc' ? 6000 : 700);
+    (c.marks || []).forEach(([x, y, open]) => G.dot(L, x, y, COL.b, open, 4.5));
+    [[-h, COL.v, 'x = −h'], [h, COL.g, 'x = h']].forEach(([x, col, lab], i) => { const y = f(x), yc = Math.max(c.r[2], Math.min(c.r[3], y));
+      G.seg(L, [x, 0], [x, yc], col, 1.6, '4 3'); G.dot(L, x, yc, col, false, 5.5); if (G.X(x) > 50 && G.X(x) < 360) svgText(A, G.X(x) + (i ? 8 : -46), Math.max(24, Math.min(262, G.Y(yc) + (yc > (c.r[2] + c.r[3]) / 2 ? 18 : -10))), lab, col, 10.5); });
+    const fv = x => { const y = f(x); return !isFinite(y) ? (y > 0 ? '+∞' : '−∞') : vk(y); };
+    out.innerHTML = `<span>bên trái: f(−h) = <b style="color:${COL.v}">${fv(-h)}</b></span><span>bên phải: f(h) = <b style="color:${COL.g}">${fv(h)}</b></span>
+      <span>giới hạn trái = ${c.L} · giới hạn phải = ${c.R} · f(0) = ${c.v}</span><span class="tagok ${c.kind[0]}">${c.kind[1]}</span>`;
+  }
+  setup();
+};
+
+// ---- sin θ / θ → 1, (1 − cos θ) / θ → 0, and d(sin θ)/dθ = cos θ on the unit circle (lecture 3)  ·  input: θ, Δθ  ·  result: arc PQ (length Δθ), Δy = PR, the ratios
+IX.unitcircle = (box) => {
+  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Đầu vào:</span><span class="ixin"><label>θ (độ) <input type="range" min="0" max="360" step="1" value="0" data-k="t"><output></output></label></span><span class="ixin"><label>Δθ (radian) <input type="range" min="0.01" max="1.5" step="0.01" value="1" data-k="d"><output></output></label></span></div>
+    <div class="ixbar"><button type="button" class="reset primary" data-go>▶ Cho Δθ → 0</button><button type="button" class="reset" data-t="0">θ = 0 (hai tính chất A, B)</button><button type="button" class="reset" data-t="40">θ = 40°</button><button type="button" class="reset" data-t="120">θ = 120°</button></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Đường tròn đơn vị với cung PQ và đoạn PR"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), [rt, rdl] = box.querySelectorAll('input[type=range]'), [ot, od] = box.querySelectorAll('output');
+  const O = [150, 150], S = 118, X = x => O[0] + x * S, Y = y => O[1] - y * S;
+  el(svg, 'line', { x1: 10, x2: 300, y1: O[1], y2: O[1], class: 'ax' }); el(svg, 'line', { x1: O[0], x2: O[0], y1: 10, y2: 290, class: 'ax' });
+  el(svg, 'circle', { cx: O[0], cy: O[1], r: S, fill: 'none', stroke: '#c3cad2', 'stroke-width': 1.6 });
+  const L = el(svg, 'g');
+  [rt, rdl].forEach(r => r.addEventListener('input', draw));
+  box.querySelectorAll('[data-t]').forEach(b => b.onclick = () => { rt.value = b.dataset.t; draw(); });
+  box.querySelector('[data-go]').onclick = () => tween(+rdl.value, 0.01, 1800, v => { rdl.value = v; draw(); });
+  const arc = (a, b, r) => { const n = 60; let d = ''; for (let i = 0; i <= n; i++) { const t = a + (b - a) * i / n; d += `${i ? 'L' : 'M'}${X(r * Math.cos(t))},${Y(r * Math.sin(t))}`; } return d; };
+  function draw() {
+    const th = +rt.value * Math.PI / 180, dt = +rdl.value; ot.textContent = rt.value + '°'; od.textContent = vn(dt); L.innerHTML = '';
+    const P = [Math.cos(th), Math.sin(th)], Q = [Math.cos(th + dt), Math.sin(th + dt)], R = [P[0], Q[1]], dy = Q[1] - P[1];
+    el(L, 'line', { x1: X(0), y1: Y(0), x2: X(P[0]), y2: Y(P[1]), stroke: '#8a939c', 'stroke-width': 1.4 }); el(L, 'line', { x1: X(0), y1: Y(0), x2: X(Q[0]), y2: Y(Q[1]), stroke: '#8a939c', 'stroke-width': 1.4 });
+    el(L, 'path', { d: arc(th, th + dt, 0.18), fill: 'none', stroke: '#5d6670', 'stroke-width': 1.2 });
+    el(L, 'path', { d: arc(th, th + dt, 1), fill: 'none', stroke: COL.o, 'stroke-width': 4.5, 'stroke-linecap': 'round' });
+    el(L, 'line', { x1: X(P[0]), y1: Y(P[1]), x2: X(Q[0]), y2: Y(Q[1]), stroke: COL.g, 'stroke-width': 1.6, 'stroke-dasharray': '4 3' });
+    el(L, 'line', { x1: X(Q[0]), y1: Y(Q[1]), x2: X(R[0]), y2: Y(R[1]), stroke: '#8a939c', 'stroke-width': 1.3, 'stroke-dasharray': '3 3' });
+    el(L, 'line', { x1: X(P[0]), y1: Y(P[1]), x2: X(R[0]), y2: Y(R[1]), stroke: COL.b, 'stroke-width': 3.2 });
+    if (th === 0) { el(L, 'line', { x1: X(Math.cos(dt)), y1: Y(0), x2: X(1), y2: Y(0), stroke: COL.v, 'stroke-width': 4 }); }
+    [[P, 'P', COL.k], [Q, 'Q', COL.o], [R, 'R', COL.k]].forEach(([p, t, c]) => { el(L, 'circle', { cx: X(p[0]), cy: Y(p[1]), r: 3.5, fill: c }); svgText(L, X(p[0]) + (p[0] >= 0 ? 6 : -16), Y(p[1]) + (t === 'P' ? 14 : -6), t, c, 12); });
+    const sx = 305; svgText(L, sx, 40, 'cung PQ = Δθ', COL.o, 11); svgText(L, sx, 58, 'PR = Δy', COL.b, 11); if (th === 0) svgText(L, sx, 76, '1 − cos Δθ', COL.v, 11);
+    const ratio = dy / dt;
+    out.innerHTML = (th === 0 ? `<span>θ = 0 nên Δy = sin Δθ: <b>(B)</b> sin Δθ / Δθ = <b>${vk(Math.sin(dt) / dt)}</b> → 1</span><span><b>(A)</b> (1 − cos Δθ) / Δθ = <b>${vk((1 - Math.cos(dt)) / dt)}</b> → 0 (khe tím teo nhanh hơn cung cam)</span>` : '')
+      + `<span>Δy / Δθ = (sin(θ + Δθ) − sin θ) / Δθ = <b>${vk(ratio)}</b></span><span>cos θ = <b>${vk(Math.cos(th))}</b></span><span>còn lệch ${vk(ratio - Math.cos(th))}${Math.abs(ratio - Math.cos(th)) < 0.01 ? ': Δθ đủ nhỏ, Δy/Δθ ≈ cos θ' : ''}</span>`;
+  }
+  draw();
+};
+
+// ---- chain rule as two stretch factors in a row (lecture 4)  ·  input: the composition, t, Δt  ·  result: Δx = g′(t)Δt, Δy = f′(x)Δx, so dy/dt = f′(x)·g′(t)
+IX.chain = (box) => {
+  const F = { s10: { l: 'y = sin(10t)', g: t => 10 * t, gp: t => 10, f: x => Math.sin(x), fp: x => Math.cos(x), r: [0, 1.2, -1.3, 1.3], gx: 'x = 10t', fx: 'y = sin x', gpx: '10', fpx: 'cos x', t0: 0.3 },
+              p10: { l: 'y = (sin t)¹⁰', g: t => Math.sin(t), gp: t => Math.cos(t), f: x => x ** 10, fp: x => 10 * x ** 9, r: [0, 3.2, -0.2, 1.2], gx: 'x = sin t', fx: 'y = x¹⁰', gpx: 'cos t', fpx: '10x⁹', t0: 1.2 },
+              sq: { l: 'y = sin(t²)', g: t => t * t, gp: t => 2 * t, f: x => Math.sin(x), fp: x => Math.cos(x), r: [0, 3, -1.3, 1.3], gx: 'x = t²', fx: 'y = sin x', gpx: '2t', fpx: 'cos x', t0: 1 } };
+  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Đầu vào:</span>${segHTML(F, 's10')}<span class="ixin"><label>Δt <input type="range" min="0.002" max="0.3" step="0.002" value="0.08"><output></output></label></span></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Đồ thị y theo t, và ba đoạn Δt, Δx, Δy"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), rd = box.querySelector('input[type=range]'), ro = box.querySelector('output');
+  let k = 's10', G, t0, H, bars;
+  function setup() { svg.innerHTML = ''; const c = F[k]; G = fgraph(svg, ...c.r, [30, 8, 10, 132]); bars = el(svg, 'g'); t0 = c.t0; H = handle(G, 'Thời điểm t, kéo dọc đường cong');
+    dragOn(svg, H, px => { t0 = Math.max(c.r[0] + 0.02, Math.min(c.r[1] - 0.05, Math.round(G.iX(px) * 100) / 100)); draw(); }, d => { t0 = Math.max(c.r[0] + 0.02, Math.min(c.r[1] - 0.05, t0 + d * 0.01)); draw(); }); draw(); }
+  segOn(box, f => { k = f; setup(); }); rd.addEventListener('input', draw);
+  function draw() {
+    const c = F[k], dt = +rd.value, y = t => c.f(c.g(t)); ro.textContent = vn(dt);
+    const x0 = c.g(t0), x1 = c.g(t0 + dt), y0 = c.f(x0), y1 = c.f(x1), dx = x1 - x0, dy = y1 - y0, gp = c.gp(t0), fp = c.fp(x0);
+    const L = G.layer, A = G.ann; L.innerHTML = ''; A.innerHTML = ''; bars.innerHTML = '';
+    G.curve(L, y, COL.b, 2.4, null, c.r[0], c.r[1], 1200); G.line(L, t0, y0, fp * gp, COL.g, 2, '7 5');
+    el(L, 'rect', { x: G.X(t0), y: 8, width: Math.max(1, G.X(t0 + dt) - G.X(t0)), height: 160, fill: 'rgba(26,115,232,.08)' });
+    G.dot(L, t0 + dt, y1, COL.o, false, 4); svgText(A, 38, 22, `${c.l}: ${c.gx}, ${c.fx}`, '#3c4043', 11);
+    H.setAttribute('transform', `translate(${G.X(t0)},${G.Y(y0)})`);
+    const U = 290 / Math.max(dt, Math.abs(dx), Math.abs(dy)), rows = [['Δt', dt, COL.b, ''], ['Δx', dx, COL.v, `× ${vk(dx / dt)}`], ['Δy', dy, COL.o, `× ${vk(dx ? dy / dx : 0)}`]];
+    rows.forEach(([lab, v, col, mul], i) => { const yy = 198 + i * 34;
+      svgText(bars, 8, yy + 5, lab, col, 12); if (mul) svgText(bars, 34, yy + 4, mul, '#5d6670', 10);
+      el(bars, 'rect', { x: 90, y: yy - 7, width: Math.max(1.5, Math.abs(v) * U), height: 14, rx: 3, fill: col, opacity: 0.85 }); });
+    out.innerHTML = `<span>dx/dt = ${c.gpx} = <b>${vk(gp)}</b></span><span>dy/dx = ${c.fpx} = <b>${vk(fp)}</b> (tại x = ${vk(x0)})</span><span>tích: dy/dt = <b>${vk(fp * gp)}</b></span><span>đo trực tiếp: Δy/Δt = ${vk(dy / dt)}</span><span>Δx/Δt = ${vk(dx / dt)}, Δy/Δx = ${vk(dx ? dy / dx : 0)}: thu Δt nhỏ lại thì hai tỉ số này tiến về dx/dt và dy/dx</span>`;
+  }
+  setup();
+};
+
+// ---- slope of an inverse function, by reflection across y = x (lecture 5)  ·  input: the pair f, f⁻¹ (or the circle), the point (drag)  ·  result: the two tangent slopes, reciprocal
+IX.inverse = (box) => {
+  const F = { sq: { l: 'x² và √x', f: x => x * x, g: Math.sqrt, gp: x => 1 / (2 * Math.sqrt(x)), fd: [0, 3], gd: [0, 6], a: [0.08, 3.6], a0: 1, fn: 'y = x²', gn: 'y = √x', tx: '(√x)′ = 1 / (2√x)' },
+              ex: { l: 'eˣ và ln x', f: Math.exp, g: Math.log, gp: x => 1 / x, fd: [-3, 1.7], gd: [0.02, 6], a: [0.15, 4], a0: 1, fn: 'y = eˣ', gn: 'y = ln x', tx: '(ln x)′ = 1/x' },
+              tan: { l: 'tan và arctan', f: Math.tan, g: Math.atan, gp: x => 1 / (1 + x * x), fd: [-1.45, 1.45], gd: [-3, 6], a: [-2.4, 3.6], a0: 1, fn: 'y = tan x', gn: 'y = arctan x', tx: '(arctan x)′ = 1 / (1 + x²)' },
+              sin: { l: 'sin và arcsin', f: Math.sin, g: Math.asin, gp: x => 1 / Math.sqrt(1 - x * x), fd: [-Math.PI / 2, Math.PI / 2], gd: [-1, 1], a: [-0.97, 0.97], a0: 0.5, fn: 'y = sin x', gn: 'y = arcsin x', tx: '(arcsin x)′ = 1 / √(1 − x²)' },
+              cir: { l: 'Hàm ẩn: x² + y² = 1', cir: 1 } };
+  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Đầu vào:</span>${segHTML(F, 'tan')}</div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Đồ thị f và f⁻¹ đối xứng qua y = x, cùng hai tiếp tuyến"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout');
+  let k = 'tan', G, a, H; const yr = [-2.2, 3.2], xs = (yr[1] - yr[0]) * 360 / 268, xr = [-2.6, -2.6 + xs];
+  function setup() { svg.innerHTML = ''; const c = F[k]; G = fgraph(svg, xr[0], xr[1], yr[0], yr[1]); H = handle(G, c.cir ? 'Điểm trên đường tròn' : 'Điểm trên đồ thị f⁻¹');
+    a = c.cir ? 2.2 : c.a0;
+    if (c.cir) dragOn(svg, H, (px, py) => { a = Math.atan2(G.iY(py), G.iX(px)); draw(); }, d => { a += d * 0.05; draw(); });
+    else dragOn(svg, H, px => { a = Math.max(c.a[0], Math.min(c.a[1], Math.round(G.iX(px) * 50) / 50)); draw(); }, d => { a = Math.max(c.a[0], Math.min(c.a[1], a + d * 0.05)); draw(); });
+    draw(); }
+  segOn(box, f => { k = f; setup(); });
+  function draw() {
+    const c = F[k], L = G.layer, A = G.ann; L.innerHTML = ''; A.innerHTML = '';
+    if (c.cir) {
+      G.curve(L, x => Math.sqrt(1 - x * x), COL.b, 2.6, null, -1, 1, 400); G.curve(L, x => -Math.sqrt(1 - x * x), COL.b, 2.6, null, -1, 1, 400);
+      const x = Math.cos(a), y = Math.sin(a), vert = Math.abs(y) < 0.02;
+      if (vert) G.seg(L, [x, -5], [x, 5], COL.g, 2.2, '7 5'); else G.line(L, x, y, -x / y, COL.g, 2.2, '7 5');
+      H.setAttribute('transform', `translate(${G.X(x)},${G.Y(y)})`); svgText(A, 38, 24, 'x² + y² = 1', COL.b, 11);
+      out.innerHTML = `<span>điểm (x; y) = (${vk(x)}; ${vk(y)})</span><span>lấy d/dx hai vế: 2x + 2yy′ = 0 nên y′ = −x/y = <b>${vert ? 'không xác định (tiếp tuyến thẳng đứng)' : vk(-x / y)}</b></span><span>một công thức dùng được cho cả nửa trên (y > 0) lẫn nửa dưới (y < 0)</span>`;
+      return;
+    }
+    G.seg(L, [xr[0], xr[0]], [xr[1], xr[1]], '#aab3bd', 1.4, '5 4'); svgText(A, G.X(2.6) + 4, G.Y(2.6) + 14, 'y = x', '#8a939c', 10.5);
+    G.curve(L, c.f, COL.b, 2.4, null, c.fd[0], c.fd[1]); G.curve(L, c.g, COL.r, 2.6, null, c.gd[0], c.gd[1]);
+    const b = c.g(a), m = c.gp(a);
+    G.line(L, a, b, m, COL.r, 1.8, '7 5'); G.line(L, b, a, 1 / m, COL.b, 1.8, '7 5');
+    G.seg(L, [a, b], [b, a], '#aab3bd', 1.2, '2 3'); G.dot(L, b, a, COL.b, false, 5);
+    H.setAttribute('transform', `translate(${G.X(a)},${G.Y(b)})`); H.querySelector('circle:last-child').setAttribute('fill', COL.r);
+    svgText(A, 38, 24, `f: ${c.fn}`, COL.b, 11); svgText(A, 38, 40, `f⁻¹: ${c.gn}`, COL.r, 11);
+    out.innerHTML = `<span>trên f⁻¹: điểm (${vk(a)}; ${vk(b)}), độ dốc (f⁻¹)′(${vk(a)}) = <b style="color:${COL.r}">${vk(m)}</b></span><span>điểm đối xứng trên f: (${vk(b)}; ${vk(a)}), độ dốc f′(${vk(b)}) = <b style="color:${COL.b}">${vk(1 / m)}</b></span>
+      <span>lật qua y = x thì đổi vai Δx với Δy, nên hai độ dốc là nghịch đảo: ${vk(m)} × ${vk(1 / m)} = 1</span><span>công thức: ${c.tx}</span>`;
+  }
+  setup();
+};
+
+// ---- the slope of aˣ at x = 0 is M(a) = ln a; e is the base with slope 1 (lecture 6)  ·  input: the base a, n  ·  result: tangent at 0, M(a), ln a, (1 + 1/n)ⁿ
+IX.expslope = (box) => {
+  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Đầu vào:</span><span class="ixin"><label>cơ số a <input type="range" min="1.1" max="6" step="0.01" value="2"><output></output></label></span><button type="button" class="reset" data-a="2">a = 2</button><button type="button" class="reset primary" data-a="${Math.E}">a = e</button><button type="button" class="reset" data-a="4">a = 4</button></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Đồ thị y = a mũ x và tiếp tuyến tại x = 0"></svg></div><div class="readout" aria-live="polite"></div>
+    <div class="ixbar"><span class="ixin"><label>n <input type="range" min="0" max="100" step="1" value="40" data-n><output></output></label></span><span class="nout"></span></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), [ra, rn] = box.querySelectorAll('input[type=range]'), [oa, on] = box.querySelectorAll('output'), nout = box.querySelector('.nout');
+  const G = fgraph(svg, -2.2, 2.2, -0.6, 5);
+  ra.addEventListener('input', draw); rn.addEventListener('input', drawN); box.querySelectorAll('[data-a]').forEach(b => b.onclick = () => { tween(+ra.value, +b.dataset.a, 700, v => { ra.value = v; draw(); }); });
+  function draw() {
+    const a = +ra.value, h = 1e-6, M = (a ** h - 1) / h, L = G.layer, A = G.ann; oa.textContent = vn(a); L.innerHTML = ''; A.innerHTML = '';
+    G.curve(L, Math.exp, '#c3cad2', 1.6, '5 4'); G.curve(L, x => a ** x, COL.b, 2.6); G.line(L, 0, 1, M, COL.o, 2.2, '7 5'); G.dot(L, 0, 1, COL.o, false, 5);
+    G.seg(L, [1, 1], [1, 1 + M], COL.o, 1.4, '3 3'); G.seg(L, [0, 1], [1, 1], COL.o, 1.4, '3 3'); svgText(A, G.X(1) + 5, G.Y(1 + M / 2) + 4, `dốc ${vk(M)}`, COL.o, 11);
+    svgText(A, 38, 24, `y = ${vn(a)}ˣ`, COL.b, 11); svgText(A, 38, 40, 'y = eˣ (để so)', '#8a939c', 11);
+    const isE = Math.abs(a - Math.E) < 0.006;
+    out.innerHTML = `<span>độ dốc tại x = 0: M(a) = lim (a<sup>Δx</sup> − 1)/Δx ≈ <b>${vk(M)}</b></span><span>ln a = <b>${vk(Math.log(a))}</b></span><span>nên (d/dx) aˣ = M(a)·aˣ = (ln a)·aˣ</span><span class="tagok ${isE ? 'yes' : 'no'}">${isE ? 'a = e ≈ 2,718: tiếp tuyến tại 0 dốc đúng bằng 1, và (eˣ)′ = eˣ' : M < 1 ? 'Dốc nhỏ hơn 1: tăng a lên để tìm e' : 'Dốc lớn hơn 1: giảm a xuống để tìm e'}</span>`;
+  }
+  function drawN() { const n = Math.round(10 ** (+rn.value / 25)), v = (1 + 1 / n) ** n; on.textContent = n.toLocaleString('vi-VN'); nout.innerHTML = `(1 + 1/n)ⁿ = <b>${v.toLocaleString('vi-VN', { maximumFractionDigits: 6 })}</b> · e = 2,718282 · còn thiếu ${(Math.E - v).toLocaleString('vi-VN', { maximumFractionDigits: 6 })}`; }
+  draw(); drawN();
+};
+const errTxt = e => e < 1e-12 ? '< 10⁻¹²' : e >= 0.01 ? vk(e) : (() => { const p = Math.floor(Math.log10(e)), m = Math.round(e / 10 ** p); return (m === 1 ? '' : m + '·') + '10⁻' + sup(-p); })();
+const d1 = (f, x, h = 1e-4) => (f(x + h) - f(x - h)) / (2 * h), d2 = (f, x, h = 1e-3) => (f(x + h) - 2 * f(x) + f(x - h)) / (h * h);
+
+// ---- linear and quadratic approximation near a (lectures 9–10)  ·  input: the function, base point a (drag), how far x is from a  ·  result: L(x), Q(x) and their errors
+IX.approx = (box) => {
+  const F = { ln: { l: 'ln(1 + x)', f: x => Math.log(1 + x), r: [-0.95, 2.5, -2.5, 1.6], lo: -0.8, tx: 'x − x²/2' },
+              sin: { l: 'sin x', f: Math.sin, r: [-3.5, 3.5, -1.8, 1.8], lo: -3.3, tx: 'x' },
+              cos: { l: 'cos x', f: Math.cos, r: [-3.5, 3.5, -1.8, 1.8], lo: -3.3, tx: '1 − x²/2' },
+              exp: { l: 'eˣ', f: Math.exp, r: [-2.5, 2, -0.6, 5], lo: -2.3, tx: '1 + x + x²/2' },
+              mix: { l: 'e⁻³ˣ / √(1 + x)', f: x => Math.exp(-3 * x) / Math.sqrt(1 + x), r: [-0.6, 1.2, -0.8, 3], lo: -0.5, tx: '1 − 7x/2 + 51x²/8' } };
+  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Đầu vào:</span>${segHTML(F, 'ln')}</div>
+    <div class="ixbar"><span class="ixin"><label>x cách a một khoảng <input type="range" min="-1" max="1" step="0.01" value="0.5"><output></output></label></span><label class="chk" style="margin:0"><input type="checkbox" checked> hiện xấp xỉ bậc hai</label></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Hàm số, tiếp tuyến và parabol xấp xỉ tại a"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), rd = box.querySelector('input[type=range]'), ro = box.querySelector('output'), cb = box.querySelector('input[type=checkbox]');
+  let k = 'ln', G, a = 0, H;
+  function setup() { svg.innerHTML = ''; const c = F[k]; G = fgraph(svg, ...c.r); a = 0; H = handle(G, 'Điểm a, kéo dọc đồ thị');
+    dragOn(svg, H, px => { a = Math.max(c.lo, Math.min(c.r[1] - 0.2, Math.round(G.iX(px) * 20) / 20)); draw(); }, d => { a = Math.max(c.lo, Math.min(c.r[1] - 0.2, a + d * 0.05)); draw(); }); draw(); }
+  segOn(box, f => { k = f; setup(); }); rd.addEventListener('input', draw); cb.addEventListener('change', draw);
+  function draw() {
+    const c = F[k], f = c.f, fa = f(a), f1 = d1(f, a), f2 = d2(f, a), Lf = x => fa + f1 * (x - a), Qf = x => Lf(x) + f2 / 2 * (x - a) ** 2;
+    let x = a + +rd.value; if (k === 'ln' || k === 'mix') x = Math.max(x, -0.95); ro.textContent = vn(+rd.value);
+    const L = G.layer, A = G.ann; L.innerHTML = ''; A.innerHTML = '';
+    G.curve(L, f, COL.b, 2.6, null, k === 'ln' ? -0.99 : k === 'mix' ? -0.99 : c.r[0], c.r[1]); G.curve(L, Lf, COL.o, 2, '7 5'); if (cb.checked) G.curve(L, Qf, COL.v, 2, '3 3');
+    G.seg(L, [x, Math.min(f(x), Lf(x), cb.checked ? Qf(x) : 1e9)], [x, Math.max(f(x), Lf(x), cb.checked ? Qf(x) : -1e9)], '#8a939c', 1.2);
+    G.dot(L, x, f(x), COL.b, false, 4); G.dot(L, x, Lf(x), COL.o, false, 4); if (cb.checked) G.dot(L, x, Qf(x), COL.v, false, 4);
+    svgText(A, 38, 22, `f(x) = ${c.l}`, COL.b, 11); svgText(A, 38, 37, 'xấp xỉ tuyến tính L(x)', COL.o, 11); if (cb.checked) svgText(A, 38, 52, 'xấp xỉ bậc hai Q(x)', COL.v, 11);
+    H.setAttribute('transform', `translate(${G.X(a)},${G.Y(fa)})`);
+    const eL = f(x) - Lf(x), eQ = f(x) - Qf(x);
+    out.innerHTML = `<span>tại a = ${vk(a)}: f(a) = ${vk(fa)}, f′(a) = ${vk(f1)}, f″(a) = ${vk(f2)}</span><span>${Math.abs(a) < 1e-9 ? `quanh 0: ${c.l} ≈ ${c.tx}` : 'L(x) = f(a) + f′(a)(x − a), Q(x) = L(x) + f″(a)(x − a)²/2'}</span>
+      <span>tại x = ${vk(x)}: f(x) = <b>${vk(f(x))}</b>, L(x) = <b style="color:${COL.o}">${vk(Lf(x))}</b> (sai ${vk(eL)})${cb.checked ? `, Q(x) = <b style="color:${COL.v}">${vk(Qf(x))}</b> (sai ${vk(eQ)})` : ''}</span><span>giảm khoảng cách tới a đi một nửa: sai số của L giảm khoảng 4 lần, của Q khoảng 8 lần</span>`;
+  }
+  setup();
+};
+
+// ---- curve sketching from the signs of f′ and f″ (lectures 10–11)  ·  input: the function, a probe point (drag)  ·  result: increasing/decreasing pieces, concavity strip, critical and inflection points
+IX.sketch = (box) => {
+  const F = { cub: { l: '3x − x³', f: x => 3 * x - x ** 3, r: [-2.6, 2.6, -4, 4], dis: [] },
+              w: { l: 'x⁴ − 2x²', f: x => x ** 4 - 2 * x * x, r: [-2, 2, -1.6, 3], dis: [] },
+              rat: { l: '(x + 1)/(x + 2)', f: x => (x + 1) / (x + 2), r: [-7, 3, -4, 6], dis: [-2], hy: 1 },
+              xl: { l: 'x / ln x', f: x => x > 0 ? x / Math.log(x) : NaN, r: [0, 10, -8, 10], dis: [1], lo: 0.02 } };
+  const K0 = F[box.dataset.f0] ? box.dataset.f0 : 'cub';
+  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Đầu vào:</span>${segHTML(F, K0)}</div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Đồ thị với dấu của f′ và f″"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout');
+  let k = K0, G, px0, H, strip;
+  const ok = (c, x) => (c.lo === undefined || x > c.lo) && c.dis.every(d => Math.abs(x - d) > (c.r[1] - c.r[0]) / 120);
+  function setup() { svg.innerHTML = ''; const c = F[k]; G = fgraph(svg, ...c.r, [30, 10, 10, 66]); strip = el(svg, 'g'); px0 = k === 'xl' ? 2 : k === 'rat' ? -4 : 0.5;
+    H = handle(G, 'Điểm dò, kéo dọc trục x'); const lim = x => Math.max(c.lo ?? c.r[0] + 0.05, Math.min(c.r[1] - 0.05, x));
+    dragOn(svg, H, p => { const x = lim(Math.round(G.iX(p) * 20) / 20); if (ok(c, x)) { px0 = x; draw(); } }, d => { const x = lim(px0 + d * 0.05); if (ok(c, x)) { px0 = x; draw(); } });
+    draw(); }
+  segOn(box, f => { k = f; setup(); });
+  function draw() {
+    const c = F[k], f = c.f, L = G.layer, A = G.ann; L.innerHTML = ''; A.innerHTML = ''; strip.innerHTML = '';
+    const n = 500, xs = [], crit = [], infl = [];
+    for (let i = 0; i <= n; i++) { const x = c.r[0] + (c.r[1] - c.r[0]) * i / n; if (ok(c, x)) xs.push(x); }
+    c.dis.forEach(d => G.seg(L, [d, c.r[2]], [d, c.r[3]], '#aab3bd', 1.3, '5 4')); if (c.hy !== undefined) G.seg(L, [c.r[0], c.hy], [c.r[1], c.hy], '#aab3bd', 1.3, '5 4');
+    for (let i = 0; i + 1 < xs.length; i++) { const x0 = xs[i], x1 = xs[i + 1]; if (x1 - x0 > (c.r[1] - c.r[0]) / n * 1.5) continue;
+      const m = (x0 + x1) / 2, s1 = d1(f, m), s2 = d2(f, m);
+      el(L, 'line', { x1: G.X(x0), y1: G.Y(f(x0)), x2: G.X(x1), y2: G.Y(f(x1)), stroke: s1 >= 0 ? COL.g : COL.r, 'stroke-width': 2.8, 'stroke-linecap': 'round' });
+      const sx = (a, col, yy) => el(strip, 'rect', { x: G.X(x0), y: yy, width: G.X(x1) - G.X(x0) + 0.4, height: 10, fill: col, opacity: 0.8 });
+      sx(0, s1 >= 0 ? COL.g : COL.r, 252); sx(0, s2 >= 0 ? COL.b : COL.o, 272);
+      if (i) { const p = (xs[i - 1] + x0) / 2; if (Math.sign(d1(f, p)) !== Math.sign(s1) && Math.abs(xs[i - 1] - x0) < 0.1) crit.push(x0); if (Math.sign(d2(f, p)) !== Math.sign(s2) && Math.abs(d2(f, x0)) < 50 && Math.abs(xs[i - 1] - x0) < 0.1) infl.push(x0); } }
+    svgText(strip, 2, 261, "f′", '#3c4043', 11); svgText(strip, 2, 281, "f″", '#3c4043', 11);
+    crit.forEach(x => G.dot(L, x, f(x), '#3c4043', false, 5)); infl.forEach(x => G.dot(L, x, f(x), COL.v, true, 5));
+    const y0 = f(px0), m = d1(f, px0), s2 = d2(f, px0); G.line(L, px0, y0, m, '#5d6670', 1.4, '5 4'); H.setAttribute('transform', `translate(${G.X(px0)},${G.Y(y0)})`);
+    el(strip, 'line', { x1: G.X(px0), x2: G.X(px0), y1: 248, y2: 286, stroke: '#3c4043', 'stroke-width': 1.5 });
+    svgText(A, 38, 22, `f(x) = ${c.l}`, '#3c4043', 11);
+    out.innerHTML = `<span><b style="color:${COL.g}">xanh lá</b>: f′ > 0, hàm tăng · <b style="color:${COL.r}">đỏ</b>: f′ < 0, hàm giảm</span><span>dải f″: <b style="color:${COL.b}">xanh dương</b> lõm lên (∪) · <b style="color:${COL.o}">cam</b> lõm xuống (∩)</span>
+      <span>điểm tới hạn (f′ = 0): ${crit.length ? crit.map(x => `x ≈ ${vk(x)}`).join(', ') : 'không có'} · điểm uốn (f″ đổi dấu): ${infl.length ? infl.map(x => `x ≈ ${vk(x)}`).join(', ') : 'không có'}</span>
+      <span>tại điểm dò x = ${vk(px0)}: f = ${vk(y0)}, f′ = <b>${vk(m)}</b>, f″ = <b>${vk(s2)}</b></span>`;
+  }
+  setup();
+};
+
+// ---- two max–min problems (lecture 12)  ·  input: the problem, x (drag on the graph)  ·  result: the shape, A(x), A′(x); critical point against the ends
+IX.maxmin = (box) => {
+  const V = 1, F = { wire: { l: 'Dây dài 1 cắt làm hai hình vuông', A: x => (x / 4) ** 2 + ((1 - x) / 4) ** 2, r: [0, 1, 0, 0.075], lo: 0.01, hi: 0.99, x0: 0.25, crit: 0.5 },
+              box: { l: 'Hộp đáy vuông không nắp, thể tích 1', A: x => x * x + 4 * V / x, r: [0, 3, 0, 10], lo: 0.25, hi: 2.95, x0: 0.8, crit: Math.cbrt(2 * V) } };
+  const K0 = F[box.dataset.f0] ? box.dataset.f0 : 'wire';
+  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Đầu vào:</span>${segHTML(F, K0, 'Chọn bài toán')}</div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Hình minh hoạ và đồ thị diện tích theo x"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout');
+  let k = K0, G, x, H, pic;
+  function setup() { svg.innerHTML = ''; const c = F[k]; pic = el(svg, 'g'); G = fgraph(svg, ...c.r, [178, 14, 10, 22]); x = c.x0; H = handle(G, 'Giá trị x, kéo dọc đồ thị');
+    dragOn(svg, H, p => { x = Math.max(c.lo, Math.min(c.hi, Math.round(G.iX(p) * 100) / 100)); draw(); }, d => { x = Math.max(c.lo, Math.min(c.hi, x + d * 0.01)); draw(); }); draw(); }
+  segOn(box, f => { k = f; setup(); });
+  function draw() {
+    const c = F[k], L = G.layer, A = G.ann; L.innerHTML = ''; A.innerHTML = ''; pic.innerHTML = '';
+    G.curve(L, c.A, COL.b, 2.6, null, c.lo * 0.6, c.r[1]); G.dot(L, c.crit, c.A(c.crit), '#3c4043', false, 4.5);
+    const y = c.A(x), m = d1(c.A, x); G.line(L, x, y, m, '#8a939c', 1.3, '5 4'); H.setAttribute('transform', `translate(${G.X(x)},${G.Y(y)})`);
+    svgText(A, G.X(c.crit) - 18, G.Y(c.A(c.crit)) + 18, 'tới hạn', '#3c4043', 10);
+    if (k === 'wire') {
+      el(pic, 'line', { x1: 12, x2: 162, y1: 40, y2: 40, stroke: '#c3cad2', 'stroke-width': 4 }); el(pic, 'line', { x1: 12, x2: 12 + 150 * x, y1: 40, y2: 40, stroke: COL.g, 'stroke-width': 4 }); el(pic, 'line', { x1: 12 + 150 * x, x2: 162, y1: 40, y2: 40, stroke: COL.o, 'stroke-width': 4 });
+      svgText(pic, 12, 28, `x = ${vk(x)}`, COL.g, 11); svgText(pic, 110, 28, `1 − x`, COL.o, 11);
+      const s1 = 150 * x / 4 * 1.6, s2 = 150 * (1 - x) / 4 * 1.6;
+      el(pic, 'rect', { x: 14, y: 70, width: s1, height: s1, fill: 'rgba(15,143,126,.15)', stroke: COL.g, 'stroke-width': 2 }); el(pic, 'rect', { x: 24 + s1, y: 70, width: s2, height: s2, fill: 'rgba(227,116,0,.15)', stroke: COL.o, 'stroke-width': 2 });
+      svgText(pic, 12, 200, 'cạnh x/4 và (1 − x)/4', '#5d6670', 10.5);
+    } else {
+      const h = V / (x * x), s = 34 / Math.max(x, h * 0.75, 1) * 1.5, w = x * s, hh = h * s, dx = w * 0.45, dy = w * 0.3, X0 = 30, Y0 = 210;
+      const P = (a, b) => `${X0 + a},${Y0 - b}`;
+      el(pic, 'path', { d: `M${P(0, 0)}L${P(w, 0)}L${P(w + dx, dy)}L${P(dx, dy)}Z`, fill: 'rgba(26,115,232,.12)', stroke: COL.b, 'stroke-width': 1.6 });
+      el(pic, 'path', { d: `M${P(0, 0)}L${P(0, hh)}M${P(w, 0)}L${P(w, hh)}M${P(w + dx, dy)}L${P(w + dx, dy + hh)}M${P(dx, dy)}L${P(dx, dy + hh)}M${P(0, hh)}L${P(w, hh)}L${P(w + dx, dy + hh)}L${P(dx, dy + hh)}Z`, fill: 'none', stroke: COL.b, 'stroke-width': 1.6 });
+      svgText(pic, X0 + w / 2 - 8, Y0 + 16, `x = ${vk(x)}`, COL.b, 10.5); svgText(pic, X0 + w + dx + 4, Y0 - dy - hh / 2, `y = ${vk(h)}`, COL.b, 10.5);
+      svgText(pic, 8, 30, 'A = x² + 4xy, V = x²y = 1', '#5d6670', 10.5);
+    }
+    svgText(A, 184, 26, `A(x)`, COL.b, 11);
+    const atCrit = Math.abs(x - c.crit) < 0.012;
+    out.innerHTML = (k === 'wire' ? `<span>A(x) = (x/4)² + ((1 − x)/4)² = <b>${vk(y)}</b></span><span>A′(x) = ${vk(m)}</span><span>điểm tới hạn x = 1/2: A = 1/32 ≈ 0,031 là <b>nhỏ nhất</b>; hai đầu x → 0, x → 1 cho A → 1/16 ≈ 0,063 là lớn nhất (không đạt được, phải dùng nguyên dây cho một hình vuông)</span>`
+      : `<span>y = 1/x² = ${vk(V / (x * x))} · A(x) = x² + 4/x = <b>${vk(y)}</b></span><span>A′(x) = 2x − 4/x² = ${vk(m)}</span><span>điểm tới hạn x = ∛2 ≈ 1,26, y ≈ 0,63: x/y = 2. Hai đầu A(0⁺) = A(∞) = ∞ nên đây là nhỏ nhất, A = 3·∛4 ≈ 4,76</span>`)
+      + `<span class="tagok ${atCrit ? 'yes' : 'no'}">${atCrit ? 'Đang ở điểm tới hạn: tiếp tuyến nằm ngang' : m > 0 ? 'A′ > 0: đi sang trái thì A giảm' : 'A′ < 0: đi sang phải thì A giảm'}</span>`;
+  }
+  setup();
+};
+
+// ---- related rates: filling a cone (lecture 13)  ·  input: the water depth h (or let it fill)  ·  result: r = 2h/5, V, and dh/dt = (dV/dt)/(πr²) with dV/dt = 2
+IX.related = (box) => {
+  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Đầu vào:</span><span class="ixin"><label>mực nước h (ft) <input type="range" min="0.5" max="10" step="0.05" value="5"><output></output></label></span><button type="button" class="reset primary" data-go>▶ Bơm nước 2 ft³/phút</button></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Bể hình nón đang bơm nước và đồ thị tốc độ dâng dh/dt theo h"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), rh = box.querySelector('input[type=range]'), oh = box.querySelector('output');
+  const pic = el(svg, 'g'), G = fgraph(svg, 0, 10, 0, 1.2, [200, 14, 10, 22]), rate = h => 2 / (Math.PI * (0.4 * h) ** 2);
+  G.curve(G.layer, rate, COL.o, 2.4, null, 0.3, 10); const mk = el(G.layer, 'g'); svgText(G.ann, 230, 28, 'dh/dt theo h', COL.o, 11);
+  const S = 22, X0 = 100, Y0 = 250, cone = h => `M${X0 - 0.4 * h * S},${Y0 - h * S}L${X0},${Y0}L${X0 + 0.4 * h * S},${Y0 - h * S}Z`;
+  rh.addEventListener('input', draw);
+  let run = false; box.querySelector('[data-go]').onclick = () => { if (run) return; run = true; const V0 = 4 * Math.PI / 75 * (+rh.value) ** 3 > 4 * Math.PI / 75 * 9.9 ** 3 ? 0.1 : 4 * Math.PI / 75 * (+rh.value) ** 3, t0 = performance.now();
+    const go = now => { const t = (now - t0) / 1000 * 8, V = V0 + 2 * t, h = Math.cbrt(V * 75 / (4 * Math.PI)); rh.value = Math.min(10, Math.max(0.5, h)); draw(); if (h < 10) requestAnimationFrame(go); else run = false; }; requestAnimationFrame(go); };
+  function draw() {
+    const h = +rh.value, r = 0.4 * h, V = Math.PI / 3 * r * r * h, dh = rate(h); oh.textContent = vn(h); pic.innerHTML = ''; mk.innerHTML = '';
+    el(pic, 'path', { d: cone(h), fill: 'rgba(26,115,232,.25)', stroke: 'none' }); el(pic, 'path', { d: cone(10), fill: 'none', stroke: '#5d6670', 'stroke-width': 1.8 });
+    el(pic, 'line', { x1: X0, x2: X0 + 0.4 * h * S, y1: Y0 - h * S, y2: Y0 - h * S, stroke: COL.b, 'stroke-width': 2 }); svgText(pic, X0 + 4, Y0 - h * S - 5, `r = ${vk(r)}`, COL.b, 10.5);
+    el(pic, 'line', { x1: X0 - 100, x2: X0 - 100, y1: Y0, y2: Y0 - h * S, stroke: COL.g, 'stroke-width': 2 }); svgText(pic, X0 - 96, Y0 - h * S / 2, `h = ${vk(h)}`, COL.g, 11);
+    svgText(pic, 8, 18, 'bán kính miệng 4, sâu 10', '#5d6670', 10);
+    G.dot(mk, h, Math.min(1.2, dh), COL.o, false, 5); G.seg(mk, [h, 0], [h, Math.min(1.2, dh)], COL.o, 1.2, '3 3');
+    out.innerHTML = `<span>tam giác đồng dạng: r/h = 4/10, nên r = 2h/5 = ${vk(r)}</span><span>V = ⅓πr²h = <b>${vk(V)}</b> ft³</span><span>đạo hàm theo t: dV/dt = πr²·dh/dt, nên dh/dt = 2/(πr²) = <b>${vk(dh)}</b> ft/phút</span>${Math.abs(h - 5) < 0.03 ? '<span class="tagok yes">h = 5: dh/dt = 1/(2π) ≈ 0,159 ft/phút</span>' : ''}<span>nước dâng nhanh lúc đầu (đáy hẹp) rồi chậm dần khi mặt nước rộng ra</span>`;
+  }
+  draw();
+};
+
+// ---- Newton's method (lectures 13–14)  ·  input: the function, x₀ (drag), number of steps  ·  result: tangent zig-zag, xₙ and the error that squares each step
+IX.newton = (box) => {
+  const F = { r5: { l: 'x² − 5', f: x => x * x - 5, r: [-3.5, 4, -6.5, 8], x0: 3.5, root: Math.sqrt(5) },
+              cyc: { l: 'x³ − 2x + 2', f: x => x ** 3 - 2 * x + 2, r: [-2.6, 2, -3, 6], x0: 0, root: -1.7692923542386314 },
+              atan: { l: 'arctan x', f: Math.atan, r: [-5, 5, -1.8, 1.8], x0: 1.2, root: 0 } };
+  const K0 = F[box.dataset.f0] ? box.dataset.f0 : 'r5';
+  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Đầu vào:</span>${segHTML(F, K0)}<span class="ixin"><label>số bước <input type="range" min="0" max="6" step="1" value="3"><output></output></label></span></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Các tiếp tuyến của phương pháp Newton"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), rs = box.querySelector('input[type=range]'), os = box.querySelector('output');
+  let k = K0, G, x0, H;
+  function setup() { svg.innerHTML = ''; const c = F[k]; G = fgraph(svg, ...c.r); x0 = c.x0; H = handle(G, 'Dự đoán ban đầu x₀, kéo dọc trục x');
+    dragOn(svg, H, p => { x0 = Math.max(c.r[0] + 0.1, Math.min(c.r[1] - 0.1, Math.round(G.iX(p) * 50) / 50)); draw(); }, d => { x0 += d * 0.02; draw(); }); draw(); }
+  segOn(box, f => { k = f; setup(); }); rs.addEventListener('input', draw);
+  function draw() {
+    const c = F[k], f = c.f, N = +rs.value, L = G.layer, A = G.ann; os.textContent = N; L.innerHTML = ''; A.innerHTML = '';
+    if (k === 'r5') c.root = x0 < 0 ? -Math.sqrt(5) : Math.sqrt(5);
+    G.curve(L, f, COL.b, 2.6); const xs = [x0]; let fail = '';
+    for (let i = 0; i < N; i++) { const x = xs[i], m = d1(f, x); if (Math.abs(m) < 1e-9) { fail = 'f′(xₙ) = 0: tiếp tuyến nằm ngang, không cắt trục x'; break; } const nx = x - f(x) / m; if (!isFinite(nx) || Math.abs(nx) > 1e6) { fail = 'xₙ chạy ra vô cùng'; break; } xs.push(nx); }
+    xs.forEach((x, i) => { const y = f(x); if (i < xs.length - 1) { G.seg(L, [x, 0], [x, y], '#aab3bd', 1.2, '3 3'); G.seg(L, [x, y], [xs[i + 1], 0], COL.o, 1.8); }
+      G.dot(L, x, 0, i ? COL.o : COL.b, false, i ? 3.5 : 0.1); if (i && i < 4 && G.X(x) > 34 && G.X(x) < 390) svgText(A, G.X(x) - 6, G.Y(0) + (i % 2 ? 16 : -8), `x${sub(i)}`, COL.o, 10.5); });
+    H.setAttribute('transform', `translate(${G.X(x0)},${G.Y(0)})`); svgText(A, G.X(x0) - 6, G.Y(0) - 12, 'x₀', COL.b, 11);
+    const rows = xs.slice(0, 7).map((x, i) => `x${sub(i)} = ${x.toLocaleString('vi-VN', { maximumFractionDigits: 10 })}${c.root !== undefined ? ` (sai ${errTxt(Math.abs(x - c.root))})` : ''}`);
+    const conv = !fail && xs.length > 2 && Math.abs(xs[xs.length - 1] - c.root) < 1e-6, cyc = xs.length > 3 && Math.abs(xs[xs.length - 1] - xs[xs.length - 3]) < 1e-9 && !conv;
+    const near = k === 'r5' && x0 < 0;
+    out.innerHTML = `<span>x<sub>n+1</sub> = x<sub>n</sub> − f(x<sub>n</sub>)/f′(x<sub>n</sub>)</span><span>${rows.join(' · ')}</span><span class="tagok ${conv ? 'yes' : 'no'}">${fail || (cyc ? 'Lặp vòng: x₀ → x₁ → x₀ → …, không bao giờ tới nghiệm' : conv ? (near ? 'Hội tụ, nhưng về −√5 vì bắt đầu bên trái' : 'Hội tụ: số chữ số đúng tăng gấp đôi mỗi bước') : N < 3 ? 'Tăng số bước để xem tiếp' : 'Chưa hội tụ: thử đổi x₀')}</span>`;
+  }
+  setup();
+};
+
+// ---- mean value theorem (lecture 14)  ·  input: the function, the ends a and b (drag)  ·  result: secant slope and every c in (a, b) where f′(c) equals it
+IX.mvt = (box) => {
+  const F = { cub: { l: 'x³ − 3x', f: x => x ** 3 - 3 * x, r: [-2.4, 2.4, -4, 4], a: -1.8, b: 2 },
+              wav: { l: 'sin 2x + x/2', f: x => Math.sin(2 * x) + x / 2, r: [-3, 3, -2.5, 2.5], a: -2.5, b: 2.2 },
+              abs: { l: '|x| (có góc)', f: Math.abs, r: [-2.5, 2.5, -0.8, 2.6], a: -1.5, b: 2, kink: 0 } };
+  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Đầu vào:</span>${segHTML(F, 'cub')}</div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Cát tuyến từ a đến b và các tiếp tuyến song song"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout');
+  let k = 'cub', G, a, b, Ha, Hb;
+  function setup() { svg.innerHTML = ''; const c = F[k]; G = fgraph(svg, ...c.r); a = c.a; b = c.b; Ha = handle(G, 'Đầu mút a'); Hb = handle(G, 'Đầu mút b');
+    const cl = x => Math.max(c.r[0] + 0.05, Math.min(c.r[1] - 0.05, Math.round(x * 20) / 20));
+    dragOn(svg, Ha, p => { a = Math.min(cl(G.iX(p)), b - 0.2); draw(); }, d => { a = Math.min(cl(a + d * 0.05), b - 0.2); draw(); });
+    dragOn(svg, Hb, p => { b = Math.max(cl(G.iX(p)), a + 0.2); draw(); }, d => { b = Math.max(cl(b + d * 0.05), a + 0.2); draw(); }); draw(); }
+  segOn(box, f => { k = f; setup(); });
+  function draw() {
+    const c = F[k], f = c.f, L = G.layer, A = G.ann; L.innerHTML = ''; A.innerHTML = '';
+    const s = (f(b) - f(a)) / (b - a), cs = [], n = 800; let prev = null;
+    for (let i = 1; i < n; i++) { const x = a + (b - a) * i / n; if (c.kink !== undefined && Math.abs(x - c.kink) < (b - a) / n * 1.5) { prev = null; continue; }
+      const g = d1(f, x) - s; if (prev && Math.sign(g) !== Math.sign(prev[1]) && Math.abs(g - prev[1]) < 0.5) cs.push((prev[0] + x) / 2); if (Math.abs(g) < 1e-9) cs.push(x); prev = [x, g]; }
+    el(L, 'rect', { x: G.X(a), y: 10, width: G.X(b) - G.X(a), height: 268, fill: 'rgba(26,115,232,.05)' });
+    G.curve(L, f, COL.b, 2.6); G.seg(L, [a, f(a)], [b, f(b)], COL.o, 2.4);
+    cs.forEach(x => { G.line(L, x, f(x), s, COL.g, 1.8, '7 5'); G.dot(L, x, f(x), COL.g, false, 4.5); svgText(A, G.X(x) - 4, G.Y(f(x)) + 18, 'c', COL.g, 12); });
+    Ha.setAttribute('transform', `translate(${G.X(a)},${G.Y(f(a))})`); Hb.setAttribute('transform', `translate(${G.X(b)},${G.Y(f(b))})`);
+    svgText(A, G.X(a) - 6, G.Y(f(a)) - 12, 'a', COL.b, 11); svgText(A, G.X(b) - 4, G.Y(f(b)) - 12, 'b', COL.b, 11);
+    const kinkIn = c.kink !== undefined && a < c.kink && b > c.kink;
+    out.innerHTML = `<span>độ dốc cát tuyến (f(b) − f(a))/(b − a) = <b style="color:${COL.o}">${vk(s)}</b></span><span>${cs.length ? `c với f′(c) bằng đúng số đó: ${cs.map(x => 'c ≈ ' + vk(x)).join(', ')}` : 'không có c nào'}</span>`
+      + `<span class="tagok ${cs.length ? 'yes' : 'no'}">${cs.length ? 'Có tiếp tuyến song song với cát tuyến, đúng như định lý' : kinkIn ? 'Không có c: |x| không khả vi tại 0, giả thiết của định lý bị vi phạm' : 'Không tìm thấy c'}</span>`;
+  }
+  setup();
 };
 
 document.querySelectorAll('.ix[data-ix]').forEach(b => { try { IX[b.dataset.ix](b); } catch (e) { console.error(e); b.textContent = 'Không dựng được hình này.'; } });
