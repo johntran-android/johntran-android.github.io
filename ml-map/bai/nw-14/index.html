@@ -2991,7 +2991,7 @@ IX.qnapprox = (box) => {
   function draw() {
     const F = OPTF[sel.value], k = +rk.value; ok.textContent = k; svg.innerHTML = ''; const R = run(F, alg), st = R[Math.min(k, R.length - 1)], G = fgraph(svg, F.xa, F.xb, F.ya, F.yb), Ly = G.layer; contourBg(svg, G, F, 10);
     el(Ly, 'path', { d: R.slice(0, k + 1).map((r, i) => `${i ? 'L' : 'M'}${G.X(r.x[0]).toFixed(1)},${G.Y(r.x[1]).toFixed(1)}`).join(''), fill: 'none', stroke: COL.k, 'stroke-width': 1.6 }); R.slice(0, k + 1).forEach(r => G.dot(Ly, r.x[0], r.x[1], COL.k, false, 2.4));
-    const Ht = F.h(st.x[0], st.x[1], 10), [h1] = eig2s(Ht), L = 0.5 * Math.max(eig2s(Ht)[1], eig2s(st.B)[1]) * 0.25 ** 2; ell(G, Ly, st.x, Ht, COL.v, null, L); const okB = ell(G, Ly, st.x, st.B, COL.o, '5 4', L);
+    const Ht = F.h(st.x[0], st.x[1], 10), [h1] = eig2s(Ht), L = 0.5 * Math.max(Math.abs(eig2s(Ht)[0]), 1e-3) * 0.8 ** 2; ell(G, Ly, st.x, Ht, COL.v, null, L); const okB = ell(G, Ly, st.x, st.B, COL.o, '5 4', L);
     svgText(G.ann, 40, 22, 'tím: Hessian thật tại xₖ · cam nét đứt: Bₖ', COL.k, 10.5);
     const eb = eig2s(st.B), eh = eig2s(Ht);
     out.innerHTML = `<span>k = ${k}: trị riêng của Bₖ (${eb.map(vk).join('; ')}), của Hessian thật (${eh.map(vk).join('; ')})${okB ? '' : ' — Bₖ không xác định dương'}</span><span>${k ? `phương trình secant Bₖsₖ₋₁ = yₖ₋₁: sai lệch tương đối ${st.sec < 1e-9 ? '0' : vk(st.sec)}${st.skip ? ' · vòng này bỏ qua cập nhật' : ''}` : 'B₀ = I'}</span><span>${alg === 'bfgs' ? 'BFGS giữ Bₖ xác định dương (nhờ yᵀs > 0)' : 'SR1 có thể cho Bₖ không xác định dương, nhưng thường xấp xỉ Hessian sát hơn'}</span>`;
