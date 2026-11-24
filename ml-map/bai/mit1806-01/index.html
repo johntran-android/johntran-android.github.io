@@ -148,7 +148,36 @@ a:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-ra
 .vcard .vt { font: 600 .86rem/1.4 var(--sans); padding: .5rem .6rem .6rem; }
 .vlab { font: 700 .74rem/1 var(--sans); letter-spacing: .06em; text-transform: uppercase; color: #a32018; margin: 1.4rem 0 -.4rem; }
 .sw.v { background: #c5221f; }
+</style><style>
+/* ---- 2026-11-24 layout pass: one consistent column edge, more vertical air, an outline in the left margin on wide screens */
+.page { max-width: 48rem; }
+.wide { max-width: 100%; width: 100%; margin-left: 0; transform: none; }
+p { margin: 1.1rem 0; }
+h2 { margin: 4.2rem 0 .7rem; padding-top: 1.6rem; border-top: 1px solid var(--rule); }
+h3 { margin: 2.8rem 0 .6rem; }
+.src2 { margin: .3rem 0 1.2rem; }
+.eq { margin: 1.6rem 0; padding: .5rem 1rem; }
+.from { margin: 2rem 0; padding: 1.1rem 1.3rem; }
+figure { margin: 2.4rem 0; }
+.pair { gap: 1.4rem; margin: 2.4rem 0; }
+.ixbox { margin: 2.8rem 0; }
+figcaption { margin-top: .55rem; }
+.otl { display: none; }
+@media (min-width: 1180px) {
+  .page { margin-left: max(18rem, calc(50% - 15rem)); margin-right: auto; }
+  .otl { display: block; position: fixed; top: 5.5rem; width: 15rem; left: max(1rem, calc(50% - 33rem)); max-height: calc(100vh - 8rem); overflow-y: auto;
+         font: 500 .84rem/1.4 var(--sans); padding-right: .5rem; }
+  .otl .oh { font: 700 .72rem/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 .8rem; }
+  .otl a { display: flex; gap: .5rem; padding: .32rem .6rem; margin: 0 0 .1rem; border-left: 2px solid var(--rule); color: var(--muted); text-decoration: none; }
+  .otl a .n { font: 500 .78rem/1.4 var(--mono); color: var(--teal); min-width: 1.6rem; }
+  .otl a.l3 { padding-left: 1.4rem; font-size: .8rem; }
+  .otl a:hover { color: var(--ink); }
+  .otl a.on { border-left-color: var(--blue); color: var(--ink); background: var(--wash); }
+  .otl .ob { display: flex; gap: .8rem; margin: 1.2rem 0 0 .6rem; font-size: .8rem; }
+  .otl .ob a { border: 0; padding: 0; color: var(--blue); }
+}
 </style>
+
 <style>
 .sw.h { background: #fff7d6; }
 .who.h { background: #fff7d6; color: var(--ink); }
@@ -3442,6 +3471,21 @@ const quizInit = (sec) => {
   render();
 };
 document.querySelectorAll('section.quiz').forEach((s) => { try { quizInit(s); } catch (e) { console.error(e); } });
+
+// ---- "Trong bài này": outline of the article's h2/h3 in the left margin on wide screens, current section highlighted
+(() => { const page = document.querySelector('.page'); if (!page) return;
+  const hs = [...page.querySelectorAll('h2, h3')].filter((h) => !h.closest('.ixbox, .from, footer, .legend, .draft2, .draft'));
+  if (hs.length < 2) return;
+  const nav = document.createElement('nav'); nav.className = 'otl'; nav.setAttribute('aria-label', 'Các mục trong bài');
+  nav.innerHTML = '<p class="oh">Trong bài này</p>';
+  hs.forEach((h, i) => { if (!h.id) h.id = 'muc-' + (i + 1); const no = h.querySelector('.no'); const t = [...h.childNodes].filter((n) => n !== no).map((n) => n.textContent).join('').trim();
+    const a = document.createElement('a'); a.href = '#' + h.id; a.className = h.tagName === 'H3' ? 'l3' : 'l2'; a.innerHTML = `<span class="n">${no ? no.textContent : ''}</span><span>${t}</span>`; nav.appendChild(a); });
+  const back = document.querySelector('.draft2 .back, .draft .back'), toc = document.querySelector('.draft2 .toc2');
+  if (back || toc) { const ob = document.createElement('div'); ob.className = 'ob'; if (back) ob.innerHTML += `<a href="${back.getAttribute('href')}">← Bản đồ</a>`; if (toc) ob.innerHTML += `<a href="${toc.getAttribute('href')}">Mục lục</a>`; nav.appendChild(ob); }
+  document.body.appendChild(nav);
+  const links = [...nav.querySelectorAll('a.l2, a.l3')];
+  const mark = () => { let k = 0; hs.forEach((h, i) => { if (h.getBoundingClientRect().top < 140) k = i; }); links.forEach((a, i) => a.classList.toggle('on', i === k)); };
+  addEventListener('scroll', mark, { passive: true }); mark(); })();
 
 document.querySelectorAll('.ix[data-ix]').forEach(b => { try { IX[b.dataset.ix](b); } catch (e) { console.error(e); b.textContent = 'Không dựng được hình này.'; } });
 
