@@ -307,7 +307,7 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
 
     <p>Hình tương tác: Claude dựng. Bài này không dùng ảnh chụp trang sách: Pattern Recognition and Machine Learning (Christopher Bishop, Springer 2006) có bản quyền, nên mọi hình ở đây là hình tương tác Claude dựng. Video là bài giảng lại của chính tác giả.</p>
     <h3>Trên bản đồ</h3>
-    <p><a href="../../?bai=PR1.6">Toán nền tảng cho ML/AI</a> · sách Bishop PRML. Bài trước: <a href="../prml-05/">Lý thuyết quyết định</a>. </p>
+    <p><a href="../../?bai=PR1.6">Toán nền tảng cho ML/AI</a> · sách Bishop PRML. Bài trước: <a href="../prml-05/">Lý thuyết quyết định</a>. Bài tiếp: <a href="../prml-07/">Biến nhị phân và phân phối Beta</a>.</p>
   </footer>
 </div>
 <div class="lb" id="lb" hidden><img alt=""><button type="button" id="lbx">Đóng ✕</button></div>
@@ -2238,6 +2238,170 @@ IX.boxes = (box) => {
       <tr><th style="color:${COL.r}">hộp đỏ</th>${cell(0, 0)}${cell(0, 1)}<td>${C ? C[0][0] + C[0][1] : fr(p)}</td></tr><tr><th style="color:${COL.b}">hộp xanh</th>${cell(1, 0)}${cell(1, 1)}<td>${C ? C[1][0] + C[1][1] : fr(1 - p)}</td></tr>
       <tr><th>cộng cột</th><td>${C ? C[0][0] + C[1][0] : fr(PA)}</td><td>${C ? C[0][1] + C[1][1] : fr(PO)}</td><td>${C ? 1000 : 1}</td></tr></table>`;
     out.innerHTML = `<span>quy tắc tổng: p(F = táo) = Σ_B p(táo | B) p(B) = <b>${fr(PA)}</b></span><span>quy tắc tích: p(đỏ, cam) = p(cam | đỏ) p(đỏ) = ${fr(1 - pa[0])} · ${fr(p)} = ${fr(J[0][1])}</span><span>Bayes: p(hộp đỏ | cam) = ${fr(J[0][1])} / ${fr(PO)} = <b>${PO > 0 ? fr(J[0][1] / PO) : '—'}</b> (trước khi thấy quả: ${fr(p)})</span>${C ? `<span>từ bảng đếm: ${C[0][1]} / ${C[0][1] + C[1][1]} = <b>${C[0][1] + C[1][1] ? fr(C[0][1] / (C[0][1] + C[1][1])) : '—'}</b></span>` : ''}`;
+  }
+  draw();
+};
+
+// ===================== Bishop PRML chapter 2 =====================
+const npdf = (x, m, v) => Math.exp(-((x - m) ** 2) / (2 * v)) / Math.sqrt(2 * Math.PI * v);
+const rgamR = (a, R) => { if (a < 1) return rgamR(a + 1, R) * R() ** (1 / a); const d = a - 1 / 3, c = 1 / Math.sqrt(9 * d); for (;;) { let x, v; do { x = rnormR(R); v = 1 + c * x; } while (v <= 0); v = v ** 3; const u = R(); if (u < 1 - 0.0331 * x ** 4 || Math.log(u) < 0.5 * x * x + d * (1 - v + Math.log(v))) return d * v; } };
+const betapdf = (x, a, b) => x <= 0 || x >= 1 ? 0 : Math.exp((a - 1) * Math.log(x) + (b - 1) * Math.log(1 - x) + lgam(a + b) - lgam(a) - lgam(b));
+
+// ---- Beta prior → posterior for a coin (2.1)  ·  input: a, b, observations  ·  result: prior, likelihood, posterior, means
+IX.betaupd = (box) => {
+  box.innerHTML = `<div class="ixbar"><span class="ixin"><label>a <input type="range" min="0.1" max="10" step="0.1" value="${box.dataset.a || 2}"><output></output></label></span><span class="ixin"><label>b <input type="range" min="0.1" max="10" step="0.1" value="${box.dataset.b || 2}"><output></output></label></span></div>
+    <div class="ixbar"><button type="button" class="reset" data-x="1">Thấy x = 1</button><button type="button" class="reset" data-x="0">Thấy x = 0</button><button type="button" class="reset primary" data-r="10">▶ Tung 10 lần (μ thật = 0,7)</button><button type="button" class="reset" data-c>Xoá quan sát</button></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Tiên nghiệm Beta, likelihood và hậu nghiệm"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), [ra, rb] = box.querySelectorAll('input'), [oa, ob] = box.querySelectorAll('output');
+  let m = +(box.dataset.m || 1), l = +(box.dataset.l || 0);
+  [ra, rb].forEach(r => r.addEventListener('input', draw));
+  box.querySelectorAll('[data-x]').forEach(bt => bt.onclick = () => { bt.dataset.x === '1' ? m++ : l++; draw(); });
+  box.querySelector('[data-r]').onclick = () => { for (let i = 0; i < 10; i++) Math.random() < 0.7 ? m++ : l++; draw(); };
+  box.querySelector('[data-c]').onclick = () => { m = 0; l = 0; draw(); };
+  function draw() {
+    const a = +ra.value, b = +rb.value, N = m + l; oa.textContent = vk(a); ob.textContent = vk(b); svg.innerHTML = '';
+    const pr = x => betapdf(x, a, b), po = x => betapdf(x, a + m, b + l), lk = x => N ? Math.exp(m * Math.log(Math.max(x, 1e-300)) + l * Math.log(Math.max(1 - x, 1e-300)) - lchoose(0, 0)) : 1;
+    const xs = Array.from({ length: 199 }, (_, i) => (i + 1) / 200), lmax = Math.max(...xs.map(lk)), top = Math.max(3, ...xs.map(po), ...xs.map(pr)) * 1.08;
+    const G = fgraph(svg, 0, 1, 0, Math.min(top, 14)), Ly = G.layer;
+    G.curve(Ly, pr, '#8a939c', 2, '6 4', 0.001, 0.999); if (N) G.curve(Ly, x => lk(x) / lmax * Math.min(top, 14) * 0.6, COL.g, 2, null, 0.001, 0.999); G.curve(Ly, po, COL.r, 2.6, null, 0.001, 0.999);
+    svgText(G.ann, 40, 22, `tiên nghiệm Beta(${vk(a)}, ${vk(b)})`, '#5d6670', 10.5); if (N) svgText(G.ann, 40, 36, 'likelihood μᵐ(1 − μ)ˡ (co lại cho vừa)', COL.g, 10.5); svgText(G.ann, 40, N ? 50 : 36, `hậu nghiệm Beta(${vk(a + m)}, ${vk(b + l)})`, COL.r, 10.5);
+    out.innerHTML = `<span>đã thấy m = <b>${m}</b> lần x = 1, l = <b>${l}</b> lần x = 0</span><span>trung bình hậu nghiệm (a + m)/(a + b + N) = <b>${vk((a + m) / (a + b + N))}</b> = p(x = 1 | D) · μ_ML = m/N = <b>${N ? vk(m / N) : '—'}</b></span><span>độ lệch chuẩn hậu nghiệm: ${vk(Math.sqrt((a + m) * (b + l) / ((a + b + N) ** 2 * (a + b + N + 1))))}</span>`;
+  }
+  draw();
+};
+
+// ---- Dirichlet on the 2-simplex (2.2)  ·  input: α1, α2, α3  ·  result: 1500 samples in the triangle + mean
+IX.dirichlet = (box) => {
+  box.innerHTML = `<div class="ixbar">${[1, 2, 3].map(k => `<span class="ixin"><label>α${sub(k)} <input type="range" min="-1" max="1.3" step="0.01" value="${Math.log10(+(box.dataset.a || '2,3,4').split(',')[k - 1])}"><output></output></label></span>`).join('')}<button type="button" class="reset" data-go>Rút lại</button></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Mẫu từ phân phối Dirichlet trên tam giác"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), R3 = [...box.querySelectorAll('input')], O3 = [...box.querySelectorAll('output')]; let seed = 5;
+  R3.forEach(r => r.addEventListener('input', draw)); box.querySelector('[data-go]').onclick = () => { seed++; draw(); };
+  const V = [[200, 22], [52, 278], [348, 278]], P = w => [w[0] * V[0][0] + w[1] * V[1][0] + w[2] * V[2][0], w[0] * V[0][1] + w[1] * V[1][1] + w[2] * V[2][1]];
+  function draw() {
+    const al = R3.map(r => 10 ** +r.value); al.forEach((a, k) => O3[k].textContent = vk(a)); svg.innerHTML = ''; const R = rng(seed * 31);
+    el(svg, 'path', { d: `M${V[0]}L${V[1]}L${V[2]}Z`, fill: '#f6f8f9', stroke: '#b9c4d0', 'stroke-width': 1.5 });
+    for (let i = 0; i < 1500; i++) { const g = al.map(a => rgamR(a, R)), S = g.reduce((p, q) => p + q, 0), [x, y] = P(g.map(v => v / S)); el(svg, 'circle', { cx: x, cy: y, r: 1.6, fill: 'rgba(26,115,232,.45)' }); }
+    const a0 = al.reduce((p, q) => p + q, 0), mu = al.map(a => a / a0), [mx, my] = P(mu); el(svg, 'circle', { cx: mx, cy: my, r: 6, fill: COL.r, stroke: '#fff', 'stroke-width': 2 });
+    svgText(svg, 192, 16, 'μ₁ = 1', COL.k, 11); svgText(svg, 14, 294, 'μ₂ = 1', COL.k, 11); svgText(svg, 338, 294, 'μ₃ = 1', COL.k, 11);
+    out.innerHTML = `<span>mỗi chấm là một bộ (μ₁, μ₂, μ₃) với μₖ ≥ 0, Σμₖ = 1; đỉnh tam giác là μₖ = 1</span><span>kỳ vọng E[μₖ] = αₖ/α₀ = (${mu.map(vk).join('; ')}) (chấm đỏ), α₀ = ${vk(a0)}</span><span>${al.every(a => a < 1) ? 'mọi αₖ < 1: mẫu dồn về các cạnh và đỉnh' : al.every(a => Math.abs(a - 1) < 0.05) ? 'mọi αₖ = 1: phân bố đều trên tam giác' : 'α₀ càng lớn thì mẫu càng dồn quanh kỳ vọng'}</span>`;
+  }
+  draw();
+};
+
+// ---- 2-D Gaussian: contours, eigenvectors, conditional and marginal (2.3.1–2.3.2)  ·  input: σ1, σ2, ρ, x_b
+IX.gauss2d = (box) => {
+  box.innerHTML = `<div class="ixbar"><span class="ixin"><label>σ_a <input type="range" min="0.3" max="2" step="0.05" value="1"><output></output></label></span><span class="ixin"><label>σ_b <input type="range" min="0.3" max="2" step="0.05" value="1"><output></output></label></span><span class="ixin"><label>tương quan ρ <input type="range" min="-0.95" max="0.95" step="0.01" value="0.8"><output></output></label></span><span class="ixin"><label>biết x_b = <input type="range" min="-2.5" max="2.5" step="0.05" value="1"><output></output></label></span></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Gaussian hai chiều, phân phối có điều kiện và phân phối biên"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), R4 = [...box.querySelectorAll('input')], O4 = [...box.querySelectorAll('output')];
+  R4.forEach(r => r.addEventListener('input', draw));
+  function draw() {
+    const [s1, s2, r, xb] = R4.map(e => +e.value); O4.forEach((o, k) => o.textContent = vk([s1, s2, r, xb][k])); svg.innerHTML = '';
+    const G = fgraph(svg, -3.6 * 360 / 268, 3.6 * 360 / 268, -3.6, 3.6), Ly = G.layer, a = s1 * s1, d = s2 * s2, c = r * s1 * s2, [l1, l2, u1, u2] = (() => { const tr = a + d, dt = a * d - c * c, q = Math.sqrt(tr * tr / 4 - dt), L1 = tr / 2 + q, L2 = tr / 2 - q, v1 = Math.abs(c) > 1e-9 ? [L1 - d, c] : (a >= d ? [1, 0] : [0, 1]), n1 = Math.hypot(...v1); const e1 = v1.map(v => v / n1); return [L1, L2, e1, [-e1[1], e1[0]]]; })();
+    [1, 2].forEach(k => { let dd = ''; for (let i = 0; i <= 120; i++) { const t = 2 * Math.PI * i / 120, p = [k * (Math.sqrt(l1) * Math.cos(t) * u1[0] + Math.sqrt(l2) * Math.sin(t) * u2[0]), k * (Math.sqrt(l1) * Math.cos(t) * u1[1] + Math.sqrt(l2) * Math.sin(t) * u2[1])]; dd += `${i ? 'L' : 'M'}${G.X(p[0]).toFixed(1)},${G.Y(p[1]).toFixed(1)}`; } el(Ly, 'path', { d: dd, fill: k === 1 ? 'rgba(26,115,232,.10)' : 'none', stroke: COL.b, 'stroke-width': 2 }); });
+    G.seg(Ly, [0, 0], [Math.sqrt(l1) * u1[0], Math.sqrt(l1) * u1[1]], COL.v, 2.4); G.seg(Ly, [0, 0], [Math.sqrt(l2) * u2[0], Math.sqrt(l2) * u2[1]], COL.v, 2.4);
+    G.seg(Ly, [-6, xb], [6, xb], COL.o, 1.4, '4 3');
+    const cm = c / d * xb, cv = a - c * c / d, base = -3.6, sc = 1.2;
+    G.curve(Ly, x => base + sc * npdf(x, 0, a), '#8a939c', 1.8, '5 4'); G.curve(Ly, x => base + sc * npdf(x, cm, cv), COL.o, 2.4);
+    svgText(G.ann, 40, 22, 'đường đồng mức 1σ, 2σ; tím: λᵢ^½ uᵢ', COL.b, 10.5); svgText(G.ann, 40, 290 - 18, 'cam: p(x_a | x_b) · xám: p(x_a)', COL.o, 10.5);
+    out.innerHTML = `<span>Σ = [${vk(a)}  ${vk(c)}; ${vk(c)}  ${vk(d)}], trị riêng λ₁ = ${vk(l1)}, λ₂ = ${vk(l2)}</span><span>có điều kiện: x_a | x_b ~ N(<b>${vk(cm)}</b>, <b>${vk(cv)}</b>): trung bình = Σ_ab Σ_bb⁻¹ x_b, phương sai = Σ_aa − Σ_ab Σ_bb⁻¹ Σ_ba</span><span>biên: x_a ~ N(0, ${vk(a)}), phương sai không đổi theo x_b</span>`;
+  }
+  draw();
+};
+
+// ---- Bayesian inference for the mean of a Gaussian, known variance (2.3.6)  ·  input: N, prior variance  ·  result: posterior for N = 0, 1, 2, 10 and N
+IX.gaussbayes = (box) => {
+  box.innerHTML = `<div class="ixbar"><span class="ixin"><label>số điểm N <input type="range" min="0" max="100" step="1" value="10"><output></output></label></span><span class="ixin"><label>phương sai tiên nghiệm σ₀² <input type="range" min="0.01" max="1" step="0.01" value="0.1"><output></output></label></span><button type="button" class="reset" data-go>Rút dữ liệu khác</button></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Hậu nghiệm của trung bình Gaussian khi có thêm dữ liệu"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), [rn, rv] = box.querySelectorAll('input'), [on, ov] = box.querySelectorAll('output'); let seed = 4;
+  [rn, rv].forEach(r => r.addEventListener('input', draw)); box.querySelector('[data-go]').onclick = () => { seed++; draw(); };
+  function draw() {
+    const N = +rn.value, s0 = +rv.value, s2 = 0.1, mu0 = 0, R = rng(seed * 7), X = Array.from({ length: 100 }, () => 0.8 + Math.sqrt(s2) * rnormR(R)); on.textContent = N; ov.textContent = vk(s0); svg.innerHTML = '';
+    const post = n => { const xm = n ? X.slice(0, n).reduce((p, q) => p + q, 0) / n : 0, vN = 1 / (1 / s0 + n / s2), mN = n ? (s2 / (n * s0 + s2)) * mu0 + (n * s0 / (n * s0 + s2)) * xm : mu0; return { mN, vN, xm }; };
+    const P = post(N), top = Math.max(5.5, 1.1 / Math.sqrt(2 * Math.PI * P.vN)), G = fgraph(svg, -1, 1.5, 0, top), Ly = G.layer, cs = { 0: '#8a939c', 1: COL.b, 2: COL.g, 10: COL.v };
+    [0, 1, 2, 10].forEach(n => { const q = post(n); G.curve(Ly, x => npdf(x, q.mN, q.vN), cs[n], 1.6, '5 4'); svgText(G.ann, 300, 22 + 14 * [0, 1, 2, 10].indexOf(n), `N = ${n}`, cs[n], 10.5); });
+    G.curve(Ly, x => npdf(x, P.mN, P.vN), COL.r, 2.6); svgText(G.ann, 300, 82, `N = ${N} (đỏ)`, COL.r, 10.5);
+    G.seg(Ly, [0.8, 0], [0.8, top], COL.k, 1.2, '2 3'); svgText(G.ann, G.X(0.8) + 4, 22, 'μ thật = 0,8', COL.k, 10);
+    out.innerHTML = `<span>dữ liệu từ N(0,8; 0,1), phương sai σ² = 0,1 đã biết; tiên nghiệm μ ~ N(0, σ₀²)</span><span>N = ${N}: μ_N = <b>${vk(P.mN)}</b>, σ_N² = <b>${vk(P.vN)}</b>${N ? `, μ_ML = ${vk(P.xm)}` : ''}</span><span>1/σ_N² = 1/σ₀² + N/σ²: độ chính xác cộng dồn; N lớn thì μ_N → μ_ML</span>`;
+  }
+  draw();
+};
+
+// ---- Student t vs Gaussian with outliers (2.3.7)  ·  input: ν, outliers on/off  ·  result: ML fits (t by EM)
+IX.tdist = (box) => {
+  box.innerHTML = `<div class="ixbar"><span class="ixin"><label>bậc tự do ν <input type="range" min="-0.5" max="2" step="0.01" value="0.3"><output></output></label></span><label class="ixin"><input type="checkbox" checked> thêm 3 điểm ngoại lai</label><button type="button" class="reset" data-go>Rút dữ liệu khác</button></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Khớp Gaussian và Student t cho dữ liệu có điểm ngoại lai"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), [rv, ck] = box.querySelectorAll('input'), ov = box.querySelector('output'); let seed = 2;
+  [rv, ck].forEach(r => r.addEventListener('input', draw)); box.querySelector('[data-go]').onclick = () => { seed++; draw(); };
+  const tpdf = (x, m, s2, nu) => Math.exp(lgam((nu + 1) / 2) - lgam(nu / 2) - 0.5 * Math.log(nu * Math.PI * s2) - (nu + 1) / 2 * Math.log(1 + (x - m) ** 2 / (nu * s2)));
+  function draw() {
+    const nu = 10 ** +rv.value; ov.textContent = vk(nu); svg.innerHTML = ''; const R = rng(seed * 13), X = Array.from({ length: 30 }, () => rnormR(R)); if (ck.checked) X.push(6.5, 7.2, 8);
+    const N = X.length, gm = X.reduce((p, q) => p + q, 0) / N, gv = X.reduce((p, x) => p + (x - gm) ** 2, 0) / N;
+    let m = gm, v = gv; for (let it = 0; it < 200; it++) { const w = X.map(x => (nu + 1) / (nu + (x - m) ** 2 / v)), sw = w.reduce((p, q) => p + q, 0); m = X.reduce((p, x, i) => p + w[i] * x, 0) / sw; v = X.reduce((p, x, i) => p + w[i] * (x - m) ** 2, 0) / N; }
+    const G = fgraph(svg, -4, 9, 0, 0.5), Ly = G.layer;
+    X.forEach((x, i) => G.dot(Ly, x, 0.012 + 0.012 * (i % 3), x > 5 ? COL.o : COL.k, false, 3.5));
+    G.curve(Ly, x => npdf(x, gm, gv), COL.g, 2.4); G.curve(Ly, x => tpdf(x, m, v, nu), COL.r, 2.6);
+    svgText(G.ann, 40, 22, 'Gaussian khớp bằng ML', COL.g, 10.5); svgText(G.ann, 40, 36, `Student t (ν = ${vk(nu)}) khớp bằng EM`, COL.r, 10.5);
+    out.innerHTML = `<span>30 điểm từ N(0, 1)${ck.checked ? ' + 3 điểm ngoại lai (cam)' : ''}</span><span>Gaussian: trung bình <b>${vk(gm)}</b>, độ lệch chuẩn ${vk(Math.sqrt(gv))} · t: vị trí <b>${vk(m)}</b>, thang đo ${vk(Math.sqrt(v))}</span><span>ν → ∞ thì t thành Gaussian; ν = 1 là phân phối Cauchy</span>`;
+  }
+  draw();
+};
+
+// ---- mixture of Gaussians in 1-D (2.3.9)  ·  input: weights π1, π2 (π3 = rest)
+IX.mix1d = (box) => {
+  box.innerHTML = `<div class="ixbar"><span class="ixin"><label>π₁ <input type="range" min="0" max="1" step="0.01" value="0.3"><output></output></label></span><span class="ixin"><label>π₂ <input type="range" min="0" max="1" step="0.01" value="0.5"><output></output></label></span><span class="ixin"><label>độ rộng thành phần 2 <input type="range" min="0.2" max="2" step="0.05" value="0.6"><output></output></label></span></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Hỗn hợp ba Gaussian"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), [r1, r2, rw] = box.querySelectorAll('input'), [o1, o2, ow] = box.querySelectorAll('output');
+  [r1, r2, rw].forEach(r => r.addEventListener('input', draw));
+  function draw() {
+    let p1 = +r1.value, p2 = +r2.value; if (p1 + p2 > 1) { p2 = 1 - p1; r2.value = p2; } const p3 = 1 - p1 - p2, w = +rw.value; o1.textContent = vk(p1); o2.textContent = vk(p2); ow.textContent = vk(w); svg.innerHTML = '';
+    const C = [[p1, -2, 0.7], [p2, 0.5, w], [p3, 3, 1]], cs = [COL.b, COL.g, COL.v], G = fgraph(svg, -5, 6.5, 0, 0.6), Ly = G.layer;
+    C.forEach(([p, m, s], k) => G.curve(Ly, x => p * npdf(x, m, s * s), cs[k], 1.6, '5 4'));
+    G.curve(Ly, x => C.reduce((t, [p, m, s]) => t + p * npdf(x, m, s * s), 0), COL.r, 2.6);
+    svgText(G.ann, 40, 22, 'p(x) = Σₖ πₖ N(x | μₖ, σₖ²)', COL.r, 10.5); svgText(G.ann, 40, 36, 'nét đứt: từng πₖ N(x | μₖ, σₖ²)', '#5d6670', 10.5);
+    out.innerHTML = `<span>π = (${vk(p1)}; ${vk(p2)}; ${vk(p3)}), tổng bằng 1; μ = (−2; 0,5; 3)</span><span>trách nhiệm tại x = 0: γₖ = πₖN(0 | μₖ, σₖ²)/p(0) = (${C.map(([p, m, s]) => p * npdf(0, m, s * s)).map((v, k, A) => vk(v / A.reduce((a, b) => a + b, 0))).join('; ')})</span>`;
+  }
+  draw();
+};
+
+// ---- nonparametric density estimation (2.5)  ·  views: histogram Δ / kernel h / K nearest neighbours
+IX.kde = (box) => {
+  box.innerHTML = `${segHTML({ hist: { l: 'Histogram' }, kern: { l: 'Kernel Gaussian' }, knn: { l: 'K láng giềng gần nhất' } }, box.dataset.v || 'kern', 'Chọn phương pháp')}<div class="ixbar"><span class="ixin"><label><span class="lab">h</span> <input type="range" min="0" max="1" step="0.01" value="0.4"><output></output></label></span><button type="button" class="reset" data-go>Rút dữ liệu khác</button></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Ước lượng mật độ không tham số"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), rs = box.querySelector('input'), os = box.querySelector('output'), lab = box.querySelector('.lab'); let view = box.dataset.v || 'kern', seed = 3;
+  segOn(box, v => { view = v; draw(); }); rs.addEventListener('input', draw); box.querySelector('[data-go]').onclick = () => { seed++; draw(); };
+  const truth = x => 0.4 * npdf(x, 0.25, 0.08 ** 2) + 0.6 * npdf(x, 0.65, 0.12 ** 2);
+  function draw() {
+    const R = rng(seed * 17), X = Array.from({ length: 50 }, () => R() < 0.4 ? 0.25 + 0.08 * rnormR(R) : 0.65 + 0.12 * rnormR(R)), N = X.length, t = +rs.value; svg.innerHTML = '';
+    const G = fgraph(svg, 0, 1, 0, 5.5), Ly = G.layer; let par, est;
+    if (view === 'hist') { const D = 0.01 * 10 ** (t * 1.3); par = `Δ = ${vk(D)}`; lab.textContent = 'Δ'; const nb = Math.ceil(1 / D);
+      for (let b = 0; b < nb; b++) { const a = b * D, c = Math.min(1, a + D), n = X.filter(x => x >= a && x < c).length, h = n / (N * D); el(Ly, 'rect', { x: G.X(a), y: G.Y(Math.min(h, 5.5)), width: G.X(c) - G.X(a), height: G.Y(0) - G.Y(Math.min(h, 5.5)), fill: 'rgba(26,115,232,.55)', stroke: '#fff', 'stroke-width': 0.5 }); } }
+    else if (view === 'kern') { const h = 0.005 * 10 ** (t * 2); par = `h = ${vk(h)}`; lab.textContent = 'h'; est = x => X.reduce((p, xn) => p + npdf(x, xn, h * h), 0) / N; }
+    else { const K = Math.max(1, Math.round(1 + t * 39)); par = `K = ${K}`; lab.textContent = 'K'; est = x => { const d = X.map(xn => Math.abs(x - xn)).sort((p, q) => p - q); return K / (N * 2 * Math.max(d[K - 1], 1e-3)); }; }
+    os.textContent = par.split(' = ')[1];
+    G.curve(Ly, truth, COL.g, 2.2, '6 4'); if (est) G.curve(Ly, est, COL.r, 2.4, null, 0, 1, 500);
+    X.forEach(x => el(Ly, 'line', { x1: G.X(x), x2: G.X(x), y1: G.Y(0), y2: G.Y(0) - 8, stroke: COL.k, 'stroke-width': 1.2 }));
+    svgText(G.ann, 40, 22, 'mật độ thật (hỗn hợp hai Gaussian)', COL.g, 10.5); svgText(G.ann, 40, 36, `ước lượng từ 50 điểm, ${par}`, view === 'hist' ? COL.b : COL.r, 10.5);
+    out.innerHTML = `<span>${view === 'hist' ? 'p(x) = nᵢ/(N Δ) trong ô thứ i' : view === 'kern' ? 'p(x) = (1/N) Σₙ N(x | xₙ, h²): đặt một chuông nhỏ lên mỗi điểm' : 'p(x) = K/(N V): mở rộng quanh x đến khi chứa K điểm, V là độ dài đoạn đó'}</span><span>tham số ${par}: quá nhỏ thì nhiễu, quá lớn thì làm mất hai đỉnh</span>`;
+  }
+  draw();
+};
+
+// ---- natural parameters of the exponential family (2.4.1)  ·  views: Bernoulli σ(η) / softmax for 3 classes
+IX.natparam = (box) => {
+  box.innerHTML = `${segHTML({ bern: { l: 'Bernoulli: μ = σ(η)' }, soft: { l: 'Đa thức: softmax' } }, 'bern', 'Chọn phân phối')}<div class="ixbar b1"><span class="ixin"><label>η <input type="range" min="-6" max="6" step="0.05" value="1.5"><output></output></label></span></div><div class="ixbar b2">${[1, 2, 3].map(k => `<span class="ixin"><label>η${sub(k)} <input type="range" min="-3" max="3" step="0.05" value="${[1, 0, -1][k - 1]}"><output></output></label></span>`).join('')}</div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Tham số tự nhiên và tham số trung bình"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), I = [...box.querySelectorAll('input')], O = [...box.querySelectorAll('output')]; let view = 'bern';
+  segOn(box, v => { view = v; draw(); }); I.forEach(r => r.addEventListener('input', draw));
+  const sg = a => 1 / (1 + Math.exp(-a));
+  function draw() {
+    box.querySelector('.b1').style.display = view === 'bern' ? '' : 'none'; box.querySelector('.b2').style.display = view === 'soft' ? '' : 'none'; svg.innerHTML = ''; I.forEach((r, k) => O[k].textContent = vk(+r.value));
+    if (view === 'bern') { const e = +I[0].value, G = fgraph(svg, -6, 6, 0, 1.05), Ly = G.layer; G.curve(Ly, sg, COL.b, 2.6); G.seg(Ly, [e, 0], [e, sg(e)], COL.o, 1.4, '4 3'); G.seg(Ly, [-6, sg(e)], [e, sg(e)], COL.o, 1.4, '4 3'); G.dot(Ly, e, sg(e), COL.o, false, 6);
+      svgText(G.ann, 40, 22, 'μ = σ(η) = 1/(1 + e^(−η))', COL.b, 10.5);
+      out.innerHTML = `<span>η = ${vk(e)} → μ = σ(η) = <b>${vk(sg(e))}</b>; ngược lại η = ln(μ/(1 − μ)) (log-odds)</span><span>Bern(x | μ) = (1 − μ) exp{η x}: h(x) = 1, u(x) = x, g(η) = σ(−η)</span>`;
+    } else { const e = I.slice(1).map(r => +r.value), Z = e.reduce((p, q) => p + Math.exp(q), 0), m = e.map(v => Math.exp(v) / Z), G = fgraph(svg, 0.3, 3.7, 0, 1.05), Ly = G.layer, cs = [COL.b, COL.g, COL.v];
+      m.forEach((p, k) => { el(Ly, 'rect', { x: G.X(k + 0.7), y: G.Y(p), width: G.X(k + 1.3) - G.X(k + 0.7), height: G.Y(0) - G.Y(p), fill: cs[k], opacity: .85 }); svgText(G.ann, G.X(k + 1) - 14, G.Y(p) - 6, vk(p), cs[k], 11); });
+      out.innerHTML = `<span>μₖ = exp(ηₖ)/Σⱼ exp(ηⱼ) = (${m.map(vk).join('; ')}), tổng bằng 1</span><span>cộng cùng một số vào mọi ηₖ thì μ không đổi: chỉ có K − 1 tham số tự do</span>`;
+    }
   }
   draw();
 };
