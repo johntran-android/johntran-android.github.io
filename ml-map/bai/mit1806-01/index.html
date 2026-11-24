@@ -3427,7 +3427,7 @@ const quizInit = (sec) => {
   let saved = {}; try { saved = JSON.parse(localStorage.getItem(key) || '{}'); } catch (e) { saved = {}; }
   const done = {};
   const score = () => { const n = Object.keys(done).length, ok = Object.values(done).filter(Boolean).length;
-    out.innerHTML = n < Q.length ? `Đã làm ${n}/${Q.length} câu` : `<b>${ok}/${Q.length} câu đúng ngay lần đầu.</b> ${ok === Q.length ? 'Nắm chắc bài này rồi.' : 'Đọc lại phần giải thích của câu sai, rồi bấm “Làm lại” để thử lần nữa.'} <button type="button" class="qreset">Làm lại</button>`;
+    out.innerHTML = !n ? '' : (n < Q.length ? `Đã làm ${n}/${Q.length} câu, đúng ${ok}.` : `<b>${ok}/${Q.length} câu đúng ngay lần đầu.</b> ${ok === Q.length ? 'Nắm chắc bài này rồi.' : 'Đọc lại phần giải thích của câu sai rồi thử lại.'}`) + (n ? ' <button type="button" class="qreset">↺ Làm lại từ đầu</button>' : '');
     const r = out.querySelector('.qreset'); if (r) r.onclick = () => { try { localStorage.removeItem(key); } catch (e) {} for (const k in done) delete done[k]; render(); }; };
   const answer = (i, j, box, first) => {
     const q = Q[i], ok = j === q.a; if (first && !(i in done)) { done[i] = ok; try { localStorage.setItem(key, JSON.stringify(Object.assign(JSON.parse(localStorage.getItem(key) || '{}'), { [i]: j }))); } catch (e) {} }
