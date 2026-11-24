@@ -297,7 +297,7 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
     <p>Chỗ đã sửa so với ghi chú: ghi chú mục 16.2 (phương pháp null-space) viết bước cuối là \(p = Yx_y + Zx_z\); đúng là \(p = Yp_y + Zp_z\).</p>
     <p>Hình tương tác: Claude dựng. Bài này không dùng ảnh chụp trang sách: Numerical Optimization (Jorge Nocedal, Stephen Wright, Springer, 2006) có bản quyền, nên mọi hình ở đây là hình tương tác Claude dựng. Video là bài giảng lại của chính tác giả.</p>
     <h3>Trên bản đồ</h3>
-    <p><a href="../../?bai=NW16.2">Toán nền tảng cho ML/AI</a> · sách Nocedal. Bài trước: <a href="../nw-27/">Quy hoạch bậc hai và hệ KKT</a>. </p>
+    <p><a href="../../?bai=NW16.2">Toán nền tảng cho ML/AI</a> · sách Nocedal. Bài trước: <a href="../nw-27/">Quy hoạch bậc hai và hệ KKT</a>. Bài tiếp: <a href="../nw-29/">Số thực dấu phẩy động và sai số làm tròn</a>.</p>
   </footer>
 </div>
 <div class="lb" id="lb" hidden><img alt=""><button type="button" id="lbx">Đóng ✕</button></div>
@@ -3191,7 +3191,7 @@ IX.dual = (box) => {
   draw();
 };
 
-const sci = v => { if (!(v > 0)) return '0'; const e = Math.floor(Math.log10(v)), m = v / 10 ** e; return `${vk(+m.toFixed(1))}·10${String(e).split('').map(ch => '⁻⁰¹²³⁴⁵⁶⁷⁸⁹'['-0123456789'.indexOf(ch)]).join('')}`; };
+const sci = v => { if (!(v > 0)) return '0'; if (!isFinite(v)) return '∞'; let e = Math.floor(Math.log10(v)), m = e < -300 ? (v * 1e300) / 10 ** (e + 300) : v / 10 ** e; m = +m.toFixed(1); if (m >= 10) { m = 1; e += 1; } return `${vk(m)}·10${String(e).split('').map(ch => '⁻⁰¹²³⁴⁵⁶⁷⁸⁹'['-0123456789'.indexOf(ch)]).join('')}`; };
 // ---- elimination of variables with one linear constraint aᵀx = b in R² (Nocedal 15.3, figure 15.3)
 IX.elim = (box) => {
   const M = { x1: { l: 'Biến cơ sở x₁' }, x2: { l: 'Biến cơ sở x₂' }, qr: { l: 'QR: Y ⊥ null(A)' } };
@@ -3317,6 +3317,66 @@ IX.kktsolve = (box) => {
       svgText(G.ann, 40, 22, 'đỏ: H = I · xanh: H = diag(G) (tiền điều kiện)', COL.k, 10.5); svgText(G.ann, 40, 36, 'trục đứng: log₁₀ ‖gradient rút gọn‖ tương đối · vạch: n − m = 40', '#8a939c', 9.5);
       const it = h => { const k = h.findIndex(v => v < 1e-8); return k < 0 ? '> 60' : k; }, eg = jacobiEig(Gm).sort((a, b) => a - b);
       out.innerHTML = `<span>n = 60, m = 20, G = D M D với D chéo trải trên ${vk(s)} bậc độ lớn · κ(G) ≈ ${vk(eg[N - 1] / eg[0])}</span><span>số bước tới sai số 10⁻⁸: H = I: <b>${it(r1.hist)}</b> · H = diag(G): <b>${it(r2.hist)}</b> (lý thuyết: không quá n − m = 40 bước nếu tính đúng tuyệt đối)</span><span>mọi bước đi trong null(A): max |Ax − b| trên cả quá trình = ${vk(Math.max(r1.feas, r2.feas))}</span>`;
+    }
+  }
+  draw();
+};
+
+// ---- IEEE double: bit layout, spacing, cancellation (Nocedal appendix A.1)
+IX.fpbits = (box) => {
+  box.innerHTML = `${segHTML({ bits: { l: 'Biểu diễn 64 bit' }, cancel: { l: 'Triệt tiêu khi trừ' } }, box.dataset.v || 'bits', 'Chọn cách xem')}<div class="ixbar"><span class="ixin"><label><span data-l></span> <input type="range"><output></output></label></span></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Số thực dấu phẩy động"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), rs = box.querySelector('input'), os = box.querySelector('output'), lb = box.querySelector('[data-l]'); let view = box.dataset.v || 'bits';
+  const setS = () => { if (view === 'bits') { lb.textContent = 'x = 10^p, p'; Object.assign(rs, { min: -325, max: 309, step: 0.01 }); rs.value = box.dataset.p || -1; } else { lb.textContent = 'δ = 10^−k, k'; Object.assign(rs, { min: 0, max: 17, step: 0.1 }); rs.value = 8; } };
+  segOn(box, v => { view = v; setS(); draw(); }); rs.addEventListener('input', draw); setS();
+  const dv = new DataView(new ArrayBuffer(8)), bitsOf = x => { dv.setFloat64(0, x); let s = ''; for (let i = 0; i < 8; i++) s += dv.getUint8(i).toString(2).padStart(8, '0'); return s; }, nextUp = x => { dv.setFloat64(0, x); dv.setBigUint64(0, dv.getBigUint64(0) + 1n); return dv.getFloat64(0); };
+  function draw() {
+    const v = +rs.value; os.textContent = vk(v); svg.innerHTML = '';
+    if (view === 'bits') {
+      const x = 10 ** v, b = bitsOf(x), E = parseInt(b.slice(1, 12), 2), W = 11.4, H = 20, x0 = 18;
+      const cell = (i, row, k) => { const c = i === 0 ? COL.r : i < 12 ? COL.o : COL.b, on = b[i] === '1'; el(svg, 'rect', { x: x0 + k * W, y: row, width: W - 1.2, height: H, rx: 2, fill: on ? c : '#fff', stroke: c, 'stroke-width': 1 }); svgText(svg, x0 + k * W + 2.6, row + 14, b[i], on ? '#fff' : c, 10); };
+      for (let i = 0; i < 32; i++) cell(i, 40, i); for (let i = 32; i < 64; i++) cell(i, 96, i - 32);
+      svgText(svg, x0, 17, '↓ dấu', COL.r, 10); svgText(svg, x0 + W + 2, 32, 'số mũ E (11 bit)', COL.o, 10); svgText(svg, x0 + 12 * W + 2, 32, 'phần định trị f (52 bit) →', COL.b, 10); svgText(svg, x0, 88, '… phần định trị tiếp theo', COL.b, 10);
+      const sub0 = E === 0, inf = E === 2047, e = E - 1023, nx = nextUp(x), ulp = nx - x;
+      const lines = inf ? ['E = 2047 (toàn 1): ∞, vượt quá số lớn nhất ≈ 1,8·10³⁰⁸'] : sub0 ? [x === 0 ? 'E = 0 và f = 0: số 0, nhỏ hơn cả số dưới chuẩn nhỏ nhất ≈ 4,9·10⁻³²⁴' : 'E = 0: số dưới chuẩn (subnormal), x = 0.f · 2⁻¹⁰²², mất dần chữ số', 'số chuẩn nhỏ nhất là 2⁻¹⁰²² ≈ 2,2·10⁻³⁰⁸'] : [`x = (−1)^${b[0]} · 1.f · 2^(E − 1023),  E = ${E}, e = E − 1023 = ${e}`, `1.f = ${(x / 2 ** e).toPrecision(17).replace('.', ',')}`];
+      lines.forEach((t, i) => svgText(svg, x0, 150 + 18 * i, t, COL.k, 11));
+      if (!inf && x > 0) { svgText(svg, x0, 200, `máy lưu: ${x.toPrecision(25).replace('.', ',')}`, COL.k, 11); svgText(svg, x0, 218, `số kế tiếp: ${nx.toPrecision(25).replace('.', ',')}`, COL.k, 11); }
+      out.innerHTML = inf ? '<span>tràn số: x lớn hơn (2 − 2⁻⁵²)·2¹⁰²³ ≈ 1,8·10³⁰⁸</span>' : x === 0 ? '<span>x nhỏ hơn mọi số biểu diễn được, làm tròn về 0</span>' : `<span>khoảng cách tới số kế tiếp: ${sci(ulp)}; chia cho x: <b>${sci(ulp / x)}</b>${sub0 ? ' (dưới chuẩn: khoảng cách cố định 2⁻¹⁰⁷⁴, nên độ chính xác tương đối giảm)' : ', luôn nằm giữa 2⁻⁵³ và 2⁻⁵² ≈ 2,2·10⁻¹⁶'}</span><span>sai số làm tròn tương đối tối đa là nửa khoảng đó: u = 2⁻⁵³ ≈ 1,1·10⁻¹⁶, tức khoảng 16 chữ số thập phân</span>`;
+    } else {
+      const k = v, G = fgraph(svg, 0, 17, -17, 0), Ly = G.layer, er = kk => { const d = 10 ** -kk, r = Math.abs(((1 + d) - 1) - d) / d; return r; }, L = r => Math.max(-17, Math.min(0, Math.log10(Math.max(r, 1e-17))));
+      el(Ly, 'path', { d: Array.from({ length: 171 }, (_, i) => { const kk = i / 10; return `${i ? 'L' : 'M'}${G.X(kk).toFixed(1)},${G.Y(L(er(kk))).toFixed(1)}`; }).join(''), fill: 'none', stroke: COL.b, 'stroke-width': 2 }); G.curve(Ly, kk => Math.log10(1.1e-16) + kk, COL.r, 1.4, '5 4'); G.dot(Ly, k, L(er(k)), COL.o, false, 5.5);
+      svgText(G.ann, 40, 22, 'xanh: sai số tương đối của (1 + δ) − 1 · đỏ: u·10ᵏ', COL.k, 10.5); svgText(G.ann, 40, 36, 'trục ngang: k (δ = 10⁻ᵏ) · trục đứng: log₁₀ sai số', '#8a939c', 9.5);
+      const d = 10 ** -k, r = er(k);
+      out.innerHTML = `<span>δ = ${sci(d)}; máy tính (1 + δ) − 1 = ${sci((1 + d) - 1)}; sai số tương đối <b>${r > 0 ? sci(r) : '0'}</b>${r > 0 ? ` (khoảng ${vk(Math.max(0, -Math.log10(r)))} chữ số đúng)` : ''}</span><span>${(1 + d) - 1 === 0 ? 'δ nhỏ hơn u nên 1 + δ đã làm tròn về đúng 1: hiệu bằng 0, mất hết thông tin' : `1 + δ và 1 giống nhau ở khoảng ${vk(k)} chữ số đầu; cả hai đúng tới khoảng 16 chữ số, nên hiệu chỉ còn khoảng 16 − ${vk(k)} = ${vk(16 - k)} chữ số đúng`}</span>`;
+    }
+  }
+  draw();
+};
+
+// ---- Gaussian elimination with and without pivoting, and Cholesky as a positive-definiteness test (Nocedal appendix A.1)
+IX.lupiv = (box) => {
+  box.innerHTML = `${segHTML({ piv: { l: 'Khử Gauss: có và không đổi hàng' }, chol: { l: 'Cholesky' } }, box.dataset.v || 'piv', 'Chọn cách xem')}<div class="ixbar"><span class="ixin"><label><span data-l></span> <input type="range"><output></output></label></span></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Phân tích LU và Cholesky"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), rs = box.querySelector('input'), os = box.querySelector('output'), lb = box.querySelector('[data-l]'); let view = box.dataset.v || 'piv';
+  const setS = () => { if (view === 'piv') { lb.textContent = 'ε = 10^−k, k'; Object.assign(rs, { min: 1, max: 20, step: 0.1 }); rs.value = 8; } else { lb.textContent = 'ρ'; Object.assign(rs, { min: -0.9, max: 1.3, step: 0.01 }); rs.value = 0.6; } };
+  segOn(box, v => { view = v; setS(); draw(); }); rs.addEventListener('input', draw); setS();
+  const solveNP = e => { const b = [1 + e, 2], l = 1 / e, u22 = 1 - l, y2 = b[1] - l * b[0], x2 = y2 / u22, x1 = (b[0] - x2) / e; return [x1, x2]; };
+  const solveP = e => { const b = [2, 1 + e], l = e, u22 = 1 - l, y2 = b[1] - l * b[0], x2 = y2 / u22, x1 = (b[0] - x2); return [x1, x2]; };
+  const err = x => Math.hypot(x[0] - 1, x[1] - 1) / Math.SQRT2, L = r => isFinite(r) ? Math.max(-17, Math.min(0, Math.log10(Math.max(r, 1e-17)))) : 0;
+  function draw() {
+    const v = +rs.value; os.textContent = vk(v); svg.innerHTML = '';
+    if (view === 'piv') {
+      const G = fgraph(svg, 1, 20, -17, 0), Ly = G.layer, path = (f, c) => el(Ly, 'path', { d: Array.from({ length: 191 }, (_, i) => `${i ? 'L' : 'M'}${G.X(1 + i / 10).toFixed(1)},${G.Y(L(err(f(10 ** (-1 - i / 10))))).toFixed(1)}`).join(''), fill: 'none', stroke: c, 'stroke-width': 2.2 });
+      path(solveNP, COL.r); path(solveP, COL.b); const e = 10 ** -v, a = solveNP(e), p = solveP(e); G.dot(Ly, v, L(err(a)), COL.r, false, 5); G.dot(Ly, v, L(err(p)), COL.b, false, 5);
+      svgText(G.ann, 40, 22, 'đỏ: không đổi hàng · xanh: đổi hàng (chọn trụ lớn nhất)', COL.k, 10.5); svgText(G.ann, 40, 36, 'A = [ε 1; 1 1], nghiệm đúng x = (1; 1) · trục đứng: log₁₀ sai số', '#8a939c', 9.5);
+      out.innerHTML = `<span>ε = ${sci(e)}. Không đổi hàng: trụ ε, hệ số nhân l₂₁ = 1/ε = ${sci(1 / e)}, u₂₂ = 1 − 1/ε: số rất lớn nuốt mất số 1. x̂ = (${vk(a[0])}; ${vk(a[1])}), sai số <b>${isFinite(err(a)) ? sci(err(a)) : '∞'}</b></span><span>Đổi hàng: trụ 1, l₂₁ = ε, u₂₂ = 1 − ε. x̂ = (${vk(p[0])}; ${vk(p[1])}), sai số <b>${err(p) > 0 ? sci(err(p)) : '0'}</b></span>`;
+    } else {
+      const r = v, A = [[1, r, r], [r, 1, r], [r, r, 1]], Lm = [[0, 0, 0], [0, 0, 0], [0, 0, 0]], piv = []; let fail = 0;
+      for (let i = 0; i < 3 && !fail; i++) { let d = A[i][i]; for (let k = 0; k < i; k++) d -= Lm[i][k] ** 2; piv.push(d); if (d <= 1e-12) { fail = i + 1; break; } Lm[i][i] = Math.sqrt(d); for (let j = i + 1; j < 3; j++) { let s = A[j][i]; for (let k = 0; k < i; k++) s -= Lm[j][k] * Lm[i][k]; Lm[j][i] = s / Lm[i][i]; } }
+      const G = fgraph(svg, 0.4, 3.6, -1.2, 1.7), Ly = G.layer; piv.forEach((d, i) => { const y = Math.max(-1.2, Math.min(1.7, d)); el(Ly, 'rect', { x: G.X(i + 0.7), y: G.Y(Math.max(y, 0)), width: G.X(i + 1.3) - G.X(i + 0.7), height: Math.abs(G.Y(y) - G.Y(0)), fill: d > 1e-12 ? COL.b : COL.r }); });
+      svgText(G.ann, 40, 22, `A = [1 ρ ρ; ρ 1 ρ; ρ ρ 1]: số dưới căn ở bước i (Lᵢᵢ² nếu dương)`, COL.k, 10); svgText(G.ann, 40, 36, 'xanh: dương, lấy căn được · đỏ: ≤ 0, thuật toán dừng', '#8a939c', 9.5);
+      const ev = [1 + 2 * r, 1 - r, 1 - r];
+      out.innerHTML = `<span>trị riêng của A: ${ev.map(vk).join('; ')} → ${ev.every(t => t > 1e-12) ? 'xác định dương' : 'không xác định dương'}</span><span>${fail ? `Cholesky dừng ở bước ${fail}: số dưới căn = ${vk(piv[fail - 1])} ≤ 0. Đây là cách rẻ nhất để kiểm tra một ma trận có xác định dương không.` : `Cholesky chạy hết: L₁₁ = ${vk(Lm[0][0])}, L₂₂ = ${vk(Lm[1][1])}, L₃₃ = ${vk(Lm[2][2])} (đều dương), L₂₁ = ${vk(Lm[1][0])}, L₃₁ = ${vk(Lm[2][0])}, L₃₂ = ${vk(Lm[2][1])}`}</span>`;
     }
   }
   draw();
