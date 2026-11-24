@@ -282,7 +282,7 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
     <p>Chỗ đã sửa so với ghi chú: ghi chú viết chặn theo số điều kiện là \(\lVert x_k - x^\star\rVert_A \le 2\frac{\sqrt\kappa - 1}{\sqrt\kappa + 1}\lVert x_0 - x^\star\rVert_A\), thiếu số mũ; đúng là \(2\big(\frac{\sqrt\kappa - 1}{\sqrt\kappa + 1}\big)^k\).</p>
     <p>Hình tương tác: Claude dựng. Bài này không dùng ảnh chụp trang sách: Numerical Optimization (Jorge Nocedal, Stephen Wright, Springer, 2006) có bản quyền, nên mọi hình ở đây là hình tương tác Claude dựng. Video là bài giảng lại của chính tác giả.</p>
     <h3>Trên bản đồ</h3>
-    <p><a href="../../?bai=NW5.1">Toán nền tảng cho ML/AI</a> · sách Nocedal. Bài trước: <a href="../nw-12/">Hướng liên hợp và thuật toán CG</a>. </p>
+    <p><a href="../../?bai=NW5.1">Toán nền tảng cho ML/AI</a> · sách Nocedal. Bài trước: <a href="../nw-12/">Hướng liên hợp và thuật toán CG</a>. Bài tiếp: <a href="../nw-14/">BFGS</a>.</p>
   </footer>
 </div>
 <div class="lb" id="lb" hidden><img alt=""><button type="button" id="lbx">Đóng ✕</button></div>
@@ -2963,6 +2963,68 @@ IX.cgconv = (box) => {
     svgText(G.ann, 40, 22, 'log₁₀ ‖xₖ − x*‖_A / ‖x₀ − x*‖_A theo k', COL.k, 10.5); svgText(G.ann, 40, 36, 'cam: CG · đỏ: steepest descent · xám: chặn 2((√κ − 1)/(√κ + 1))ᵏ', '#5d6670', 10);
     const k8 = cg.findIndex(v => v < 1e-8);
     out.innerHTML = `<span>n = 100, số điều kiện κ(A) = ${Math.round(kap).toLocaleString('vi-VN')}; ${view === 'few' ? 'chỉ 4 trị riêng khác nhau' : view === 'clu' ? '95 trị riêng trong [0,95; 1,05] và 5 trị riêng lớn' : 'trị riêng trải đều'}</span><span>CG đạt sai số tương đối 10⁻⁸ sau <b>${k8 < 0 ? '> 60' : k8}</b> bước${view === 'few' ? ' (định lý 5.4: tối đa 4 bước, nếu số học chính xác)' : view === 'clu' ? ' (khoảng 5 bước “tiêu” 5 trị riêng lớn, rồi hội tụ như với κ ≈ 1,1)' : ''}; chặn theo κ là bi quan với mọi phân bố có cụm</span>`;
+  }
+  draw();
+};
+
+// ---- quasi-Newton approximations B_k vs the true Hessian (Nocedal 6.1–6.2)
+IX.qnapprox = (box) => {
+  box.innerHTML = `${segHTML({ bfgs: { l: 'BFGS' }, sr1: { l: 'SR1' } }, box.dataset.v || 'bfgs', 'Chọn công thức cập nhật')}<div class="ixbar"><span class="ixin"><label>vòng lặp k <input type="range" min="0" max="30" step="1" value="${box.dataset.k || 6}"><output></output></label></span><span class="ixin"><label>hàm <select><option value="rosen">Rosenbrock</option><option value="quad">Bậc hai dẹt (κ = 10)</option></select></label></span></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Xấp xỉ Hessian của quasi-Newton"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), rk = box.querySelector('input'), ok = box.querySelector('output'), sel = box.querySelector('select'); let alg = box.dataset.v || 'bfgs';
+  segOn(box, v => { alg = v; draw(); }); rk.addEventListener('input', draw); sel.addEventListener('change', draw);
+  const run = (F, alg) => { const f = x => F.f(x[0], x[1], 10), g = x => F.g(x[0], x[1], 10); let x = F.x0.slice(), B = [[1, 0], [0, 1]], out = [{ x: x.slice(), B: B.map(r => r.slice()), skip: false, sec: 0 }];
+    for (let k = 0; k < 30; k++) { const gx = g(x); if (nrm2(gx) < 1e-9) { out.push({ ...out[out.length - 1] }); continue; } const [lo] = eig2s(B); let d = lo > 1e-10 ? sol2(B, [-gx[0], -gx[1]]) : [-gx[0], -gx[1]]; if (dot2(d, gx) >= 0) d = [-gx[0], -gx[1]];
+      let a = 1; const fx = f(x); for (let t = 0; t < 50 && f([x[0] + a * d[0], x[1] + a * d[1]]) > fx + 1e-4 * a * dot2(gx, d); t++) a *= 0.5;
+      const xn = [x[0] + a * d[0], x[1] + a * d[1]], sv = [xn[0] - x[0], xn[1] - x[1]], yv = [g(xn)[0] - gx[0], g(xn)[1] - gx[1]], Bs = mv2(B, sv); let skip = false;
+      if (alg === 'bfgs') { const ys = dot2(yv, sv), sBs = dot2(sv, Bs); if (ys > 1e-12) B = [[B[0][0] - Bs[0] * Bs[0] / sBs + yv[0] * yv[0] / ys, B[0][1] - Bs[0] * Bs[1] / sBs + yv[0] * yv[1] / ys], [B[1][0] - Bs[1] * Bs[0] / sBs + yv[1] * yv[0] / ys, B[1][1] - Bs[1] * Bs[1] / sBs + yv[1] * yv[1] / ys]]; else skip = true; }
+      else { const v = [yv[0] - Bs[0], yv[1] - Bs[1]], den = dot2(v, sv); if (Math.abs(den) >= 1e-8 * nrm2(sv) * nrm2(v)) B = [[B[0][0] + v[0] * v[0] / den, B[0][1] + v[0] * v[1] / den], [B[1][0] + v[1] * v[0] / den, B[1][1] + v[1] * v[1] / den]]; else skip = true; }
+      const sec = nrm2([mv2(B, sv)[0] - yv[0], mv2(B, sv)[1] - yv[1]]) / Math.max(nrm2(yv), 1e-12); x = xn; out.push({ x: x.slice(), B: B.map(r => r.slice()), skip, sec }); }
+    return out; };
+  const ell = (G, Ly, c0, H, col, dash, L) => { const [l1, l2] = eig2s(H); if (l1 <= 1e-12) return false; const b = H[0][1], d = H[1][1], vv = Math.abs(b) > 1e-12 ? [l2 - d, b] : (H[0][0] >= d ? [1, 0] : [0, 1]), n = nrm2(vv), u = [vv[0] / n, vv[1] / n], w = [-u[1], u[0]], r1 = Math.min(Math.sqrt(2 * L / l2), 3), r2 = Math.min(Math.sqrt(2 * L / l1), 3);
+    let p = ''; for (let i = 0; i <= 100; i++) { const t = 2 * Math.PI * i / 100, a = r1 * Math.cos(t), bb = r2 * Math.sin(t); p += `${i ? 'L' : 'M'}${G.X(c0[0] + a * u[0] + bb * w[0]).toFixed(1)},${G.Y(c0[1] + a * u[1] + bb * w[1]).toFixed(1)}`; } el(Ly, 'path', { d: p, fill: 'none', stroke: col, 'stroke-width': 2.2, ...(dash ? { 'stroke-dasharray': dash } : {}) }); return true; };
+  function draw() {
+    const F = OPTF[sel.value], k = +rk.value; ok.textContent = k; svg.innerHTML = ''; const R = run(F, alg), st = R[Math.min(k, R.length - 1)], G = fgraph(svg, F.xa, F.xb, F.ya, F.yb), Ly = G.layer; contourBg(svg, G, F, 10);
+    el(Ly, 'path', { d: R.slice(0, k + 1).map((r, i) => `${i ? 'L' : 'M'}${G.X(r.x[0]).toFixed(1)},${G.Y(r.x[1]).toFixed(1)}`).join(''), fill: 'none', stroke: COL.k, 'stroke-width': 1.6 }); R.slice(0, k + 1).forEach(r => G.dot(Ly, r.x[0], r.x[1], COL.k, false, 2.4));
+    const Ht = F.h(st.x[0], st.x[1], 10), [h1] = eig2s(Ht), L = 0.5 * Math.max(eig2s(Ht)[1], eig2s(st.B)[1]) * 0.25 ** 2; ell(G, Ly, st.x, Ht, COL.v, null, L); const okB = ell(G, Ly, st.x, st.B, COL.o, '5 4', L);
+    svgText(G.ann, 40, 22, 'tím: Hessian thật tại xₖ · cam nét đứt: Bₖ', COL.k, 10.5);
+    const eb = eig2s(st.B), eh = eig2s(Ht);
+    out.innerHTML = `<span>k = ${k}: trị riêng của Bₖ (${eb.map(vk).join('; ')}), của Hessian thật (${eh.map(vk).join('; ')})${okB ? '' : ' — Bₖ không xác định dương'}</span><span>${k ? `phương trình secant Bₖsₖ₋₁ = yₖ₋₁: sai lệch tương đối ${st.sec < 1e-9 ? '0' : vk(st.sec)}${st.skip ? ' · vòng này bỏ qua cập nhật' : ''}` : 'B₀ = I'}</span><span>${alg === 'bfgs' ? 'BFGS giữ Bₖ xác định dương (nhờ yᵀs > 0)' : 'SR1 có thể cho Bₖ không xác định dương, nhưng thường xấp xỉ Hessian sát hơn'}</span>`;
+  }
+  draw();
+};
+
+// ---- large-scale methods on the extended Rosenbrock function, n = 50 (Nocedal 7.1–7.2)  ·  cost measured in gradient evaluations
+IX.largescale = (box) => {
+  const n = 50;
+  box.innerHTML = `<div class="ixbar"><span class="ixin"><label>bộ nhớ m của L-BFGS <input type="range" min="1" max="30" step="1" value="${box.dataset.m || 5}"><output></output></label></span>${['sd', 'ncg', 'lbfgs', 'bfgs'].map(a => `<label class="ixin"><input type="checkbox" data-a="${a}" ${(box.dataset.on || 'ncg,lbfgs,bfgs').split(',').includes(a) ? 'checked' : ''}> <span style="color:${{ sd: COL.r, ncg: COL.v, lbfgs: COL.o, bfgs: COL.g }[a]};font-weight:700">${{ sd: 'Steepest descent', ncg: 'Newton-CG', lbfgs: 'L-BFGS', bfgs: 'BFGS đầy đủ' }[a]}</span></label>`).join('')}</div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="So sánh các phương pháp cho bài toán lớn"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), rm = box.querySelector('input[type=range]'), om = box.querySelector('output');
+  [rm, ...box.querySelectorAll('[data-a]')].forEach(r => r.addEventListener('input', draw));
+  const f = x => { let s = 0; for (let i = 0; i < n; i += 2) s += 100 * (x[i + 1] - x[i] * x[i]) ** 2 + (1 - x[i]) ** 2; return s; };
+  const gr = x => { const g = Array(n).fill(0); for (let i = 0; i < n; i += 2) { const t = x[i + 1] - x[i] * x[i]; g[i] = -400 * x[i] * t - 2 * (1 - x[i]); g[i + 1] = 200 * t; } return g; };
+  const dt = (a, b) => a.reduce((s, v, i) => s + v * b[i], 0), ax = (x, a, d) => x.map((v, i) => v + a * d[i]);
+  const x0 = () => Array.from({ length: n }, (_, i) => i % 2 ? 1 : -1.2);
+  function solve(alg, m) { let x = x0(), g = gr(x), ng = 1, hist = [[1, Math.log10(Math.sqrt(dt(g, g)))]], S = [], Y = [], H = null;
+    if (alg === 'bfgs') H = Array.from({ length: n }, (_, i) => Array.from({ length: n }, (_, j) => +(i === j)));
+    for (let it = 0; it < 400 && ng < 1500; it++) { if (Math.sqrt(dt(g, g)) < 1e-8) break; let d;
+      if (alg === 'sd') d = g.map(v => -v);
+      else if (alg === 'lbfgs') { const q = g.slice(), al = []; for (let i = S.length - 1; i >= 0; i--) { const r = 1 / dt(Y[i], S[i]), a = r * dt(S[i], q); al[i] = a; for (let j = 0; j < n; j++) q[j] -= a * Y[i][j]; } const gam = S.length ? dt(S[S.length - 1], Y[Y.length - 1]) / dt(Y[Y.length - 1], Y[Y.length - 1]) : 1; let r = q.map(v => gam * v); for (let i = 0; i < S.length; i++) { const rr = 1 / dt(Y[i], S[i]), b = rr * dt(Y[i], r); for (let j = 0; j < n; j++) r[j] += S[i][j] * (al[i] - b); } d = r.map(v => -v); }
+      else if (alg === 'bfgs') d = H.map(row => -dt(row, g));
+      else { const eta = Math.min(0.5, Math.sqrt(Math.sqrt(dt(g, g)))) * Math.sqrt(dt(g, g)); let z = Array(n).fill(0), r = g.slice(), p = g.map(v => -v); d = null; for (let j = 0; j < 2 * n; j++) { const e = 1e-7 / Math.sqrt(dt(p, p)), Hp = gr(ax(x, e, p)).map((v, i) => (v - g[i]) / e); ng++; const pHp = dt(p, Hp); if (pHp <= 0) { d = j === 0 ? g.map(v => -v) : z; break; } const a = dt(r, r) / pHp; z = ax(z, a, p); const rn = ax(r, a, Hp); if (Math.sqrt(dt(rn, rn)) < eta) { d = z; break; } const b = dt(rn, rn) / dt(r, r); p = p.map((v, i) => -rn[i] + b * v); r = rn; } if (!d) d = z; }
+      if (dt(d, g) >= 0) d = g.map(v => -v); let a = alg === 'sd' ? 1 / Math.max(1, Math.sqrt(dt(g, g))) : 1; const fx = f(x), gd = dt(g, d); while (f(ax(x, a, d)) > fx + 1e-4 * a * gd && a > 1e-12) a *= 0.5;
+      const xn = ax(x, a, d), gn = gr(xn); ng++; const s = xn.map((v, i) => v - x[i]), y = gn.map((v, i) => v - g[i]), ys = dt(y, s);
+      if (alg === 'lbfgs' && ys > 1e-12) { S.push(s); Y.push(y); if (S.length > m) { S.shift(); Y.shift(); } }
+      if (alg === 'bfgs' && ys > 1e-12) { if (it === 0) { const sc = ys / dt(y, y); H = H.map((row, i) => row.map((v, j) => i === j ? sc : 0)); } const r = 1 / ys, Hy = H.map(row => dt(row, y)), yHy = dt(y, Hy); H = H.map((row, i) => row.map((v, j) => v - r * (Hy[i] * s[j] + s[i] * Hy[j]) + (r * r * yHy + r) * s[i] * s[j])); }
+      x = xn; g = gn; hist.push([ng, Math.log10(Math.max(Math.sqrt(dt(g, g)), 1e-12))]); }
+    return { hist, ng, ok: Math.sqrt(dt(g, g)) < 1e-6 }; }
+  const C = { sd: COL.r, ncg: COL.v, lbfgs: COL.o, bfgs: COL.g }, NM = { sd: 'Steepest descent', ncg: 'Newton-CG', lbfgs: 'L-BFGS', bfgs: 'BFGS đầy đủ' };
+  function draw() {
+    const m = +rm.value; om.textContent = m; svg.innerHTML = ''; const on = [...box.querySelectorAll('[data-a]')].filter(c => c.checked).map(c => c.dataset.a), R = Object.fromEntries(on.map(a => [a, solve(a, m)]));
+    const mx = Math.min(1500, Math.max(100, ...on.map(a => R[a].ng))), G = fgraph(svg, 0, mx, -9, 4), Ly = G.layer;
+    on.forEach(a => el(Ly, 'path', { d: R[a].hist.map((h, i) => `${i ? 'L' : 'M'}${G.X(h[0]).toFixed(1)},${G.Y(Math.max(-9, h[1])).toFixed(1)}`).join(''), fill: 'none', stroke: C[a], 'stroke-width': 2.2 }));
+    svgText(G.ann, 40, 22, 'log₁₀ ‖∇f‖ theo số lần tính gradient', COL.k, 10.5); svgText(G.ann, 40, 36, 'Rosenbrock mở rộng, n = 50, xuất phát (−1,2; 1; …)', '#5d6670', 10);
+    out.innerHTML = on.map(a => `<span><b style="color:${C[a]}">${NM[a]}</b>${a === 'lbfgs' ? ` (m = ${m})` : ''}: ${R[a].ok ? `‖∇f‖ < 10⁻⁶ sau <b>${R[a].ng}</b> lần tính gradient` : `sau ${R[a].ng} lần tính gradient chưa xong`}</span>`).join('') + `<span>bộ nhớ: L-BFGS lưu 2m = ${2 * m} vector, BFGS đầy đủ lưu ma trận ${n}×${n}; Newton-CG chỉ cần tích Hessian–vector (ở đây tính bằng sai phân gradient)</span>`;
   }
   draw();
 };
