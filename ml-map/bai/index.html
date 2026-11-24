@@ -245,29 +245,32 @@ h3 .rng { font: 500 .85rem/1 var(--sans); color: var(--muted); margin-left: .2re
 .cnav a:hover { border-color: #b9c4d0; } .cnav a b { font-weight: 700; color: var(--teal); }
 .stats { font: 500 .9rem/1.5 var(--sans); color: var(--muted); }
 h3.pt { scroll-margin-top: 1rem; }
-.side { display: none; }
+.toc-side { display: none; }
 @media (min-width: 1100px) {
-  .wrap { display: grid; grid-template-columns: 250px minmax(0, 46rem); gap: 3rem; justify-content: center; padding: 0 1.5rem; }
-  .wrap .page { margin: 0; max-width: none; }
-  .side { display: block; position: sticky; top: 0; align-self: start; max-height: 100vh; overflow-y: auto; padding: 1.6rem 0 2rem; font: 400 .88rem/1.35 var(--sans); }
-  .side h2 { font: 700 .72rem/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: .4rem 0 .8rem .6rem; }
-  .side ul, .side ol { list-style: none; margin: 0; padding: 0; }
-  .side a { display: flex; gap: .5rem; align-items: baseline; padding: .38rem .6rem; border-radius: 7px; color: var(--ink); text-decoration: none; }
-  .side a:hover { background: #eef1f4; }
-  .side a i { font-style: normal; margin-left: auto; color: var(--muted); font-size: .78rem; white-space: nowrap; }
-  .side .sc { margin-bottom: .7rem; }
-  .side .sc > a { display: grid; grid-template-columns: 1fr auto; row-gap: .15rem; } .side .sc > a b { font: 700 .7rem/1 var(--sans); letter-spacing: .06em; text-transform: uppercase; color: var(--teal); }
-  .side .sc > a span { font-weight: 700; grid-column: 1; } .side .sc > a i { grid-column: 2; grid-row: 1 / 3; align-self: center; }
-  .side ol a { padding-left: 1.2rem; color: #46505a; }
-  .side a.on { background: #e3f2ef; color: var(--ink); font-weight: 600; } .side a.on i { color: var(--teal); }
-  .side .top { margin-bottom: .6rem; }
+  body { padding: 0 0 4rem; }
+  .wrap { display: grid; grid-template-columns: 280px minmax(0, 1fr); }
+  .wrap .page { margin: 0 auto; max-width: 82rem; width: 100%; padding: 0 3rem; box-sizing: border-box; }
+  .toc-side { display: block; position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto; scrollbar-width: thin; box-sizing: border-box; padding: 1.6rem .9rem 2rem; background: #f6f8f9; border-right: 1px solid var(--rule); font: 400 .88rem/1.35 var(--sans); }
+  .crsh p { max-width: 46rem; }
+  .toc-side h2 { font: 700 .72rem/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: .4rem 0 .8rem .6rem; }
+  .toc-side ul, .toc-side ol { list-style: none; margin: 0; padding: 0; }
+  .toc-side a { display: flex; gap: .5rem; align-items: baseline; padding: .38rem .6rem; border-radius: 7px; color: var(--ink); text-decoration: none; }
+  .toc-side a:hover { background: #eef1f4; }
+  .toc-side a i { font-style: normal; margin-left: auto; color: var(--muted); font-size: .78rem; white-space: nowrap; }
+  .toc-side .sc { margin-bottom: .7rem; }
+  .toc-side .sc > a { display: grid; grid-template-columns: 1fr auto; row-gap: .15rem; } .toc-side .sc > a b { font: 700 .7rem/1 var(--sans); letter-spacing: .06em; text-transform: uppercase; color: var(--teal); }
+  .toc-side .sc > a span { font-weight: 700; grid-column: 1; } .toc-side .sc > a i { grid-column: 2; grid-row: 1 / 3; align-self: center; }
+  .toc-side ol a { padding-left: 1.2rem; color: #46505a; }
+  .toc-side a.on { background: #e3f2ef; color: var(--ink); font-weight: 600; } .toc-side a.on i { color: var(--teal); }
+  .toc-side .top { margin-bottom: .6rem; }
 }
+@media (min-width: 1500px) { .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .card { grid-template-columns: 92px minmax(0, 1fr); gap: .75rem; padding: .65rem; } h3 .rng { display: none; } .ds { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; } }
 </style>
 </head>
 <body>
 <div class="wrap">
-<aside class="side" aria-label="Mục lục">
+<aside class="toc-side" aria-label="Mục lục">
   <h2>Mục lục</h2>
   <ul><li class="top"><a href="#top">Đầu trang</a></li><li class="sc"><a href="#mit1801" data-c="mit1801"><b>MIT 18.01</b><span>Giải tích một biến</span><i>12</i></a><ol><li><a href="#mit1801-p1" data-p="mit1801-p1">Đạo hàm và các quy tắc tính<i>1–6</i></a></li><li><a href="#mit1801-p2" data-p="mit1801-p2">Ứng dụng của đạo hàm<i>9–14</i></a></li></ol></li><li class="sc"><a href="#mit1802" data-c="mit1802"><b>MIT 18.02</b><span>Giải tích nhiều biến</span><i>22</i></a><ol><li><a href="#mit1802-p1" data-p="mit1802-p1">Vector, ma trận và chuyển động<i>1–7</i></a></li><li><a href="#mit1802-p2" data-p="mit1802-p2">Đạo hàm riêng, gradient và cực trị<i>8–15</i></a></li><li><a href="#mit1802-p3" data-p="mit1802-p3">Tích phân kép<i>16–18</i></a></li><li><a href="#mit1802-p4" data-p="mit1802-p4">Trường vector và định lý Green<i>19–22</i></a></li></ol></li><li class="sc"><a href="#mit1806" data-c="mit1806"><b>MIT 18.06</b><span>Đại số tuyến tính</span><i>30</i></a><ol><li><a href="#mit1806-p1" data-p="mit1806-p1">Hệ phương trình và bốn không gian con<i>1–13</i></a></li><li><a href="#mit1806-p2" data-p="mit1806-p2">Trực giao, phép chiếu và định thức<i>14–20</i></a></li><li><a href="#mit1806-p3" data-p="mit1806-p3">Eigenvalue và eigenvector<i>21–25</i></a></li><li><a href="#mit1806-p4" data-p="mit1806-p4">Xác định dương, SVD và biến đổi tuyến tính<i>26–30</i></a></li></ol></li><li class="sc"><a href="#stat110" data-c="stat110"><b>Stat 110</b><span>Xác suất</span><i>30</i></a><ol><li><a href="#stat110-p1" data-p="stat110-p1">Đếm và điều kiện hoá<i>1–7</i></a></li><li><a href="#stat110-p2" data-p="stat110-p2">Biến ngẫu nhiên rời rạc và liên tục<i>8–15</i></a></li><li><a href="#stat110-p3" data-p="stat110-p3">Hàm sinh moment và phân phối đồng thời<i>16–22</i></a></li><li><a href="#stat110-p4" data-p="stat110-p4">Beta, Gamma, kỳ vọng có điều kiện và các định lý giới hạn<i>23–30</i></a></li></ol></li></ul>
 </aside>
@@ -402,13 +405,13 @@ h3.pt { scroll-margin-top: 1rem; }
 </div>
 <script>
 (() => {  // highlight the part being read in the side list
-  const ls = [...document.querySelectorAll('.side a[data-p]')], hs = ls.map(a => document.getElementById(a.dataset.p));
-  const cs = [...document.querySelectorAll('.side a[data-c]')];
+  const ls = [...document.querySelectorAll('.toc-side a[data-p]')], hs = ls.map(a => document.getElementById(a.dataset.p));
+  const cs = [...document.querySelectorAll('.toc-side a[data-c]')];
   const upd = () => { let k = -1; hs.forEach((h, i) => { if (h.getBoundingClientRect().top < innerHeight * .35) k = i; });
     ls.forEach((a, i) => a.classList.toggle('on', i === k));
     const c = k >= 0 ? ls[k].dataset.p.split('-p')[0] : '';
     cs.forEach(a => a.classList.toggle('on', a.dataset.c === c && k < 0));
-    if (k >= 0) { const a = ls[k], sd = a.closest('.side'), r = a.getBoundingClientRect(); if (r.top < 0 || r.bottom > innerHeight) a.scrollIntoView({ block: 'nearest' }); } };
+    if (k >= 0) { const a = ls[k], sd = a.closest('.toc-side'), r = a.getBoundingClientRect(); if (r.top < 0 || r.bottom > innerHeight) a.scrollIntoView({ block: 'nearest' }); } };
   addEventListener('scroll', upd, { passive: true }); addEventListener('resize', upd); upd();
 })();
 </script>
