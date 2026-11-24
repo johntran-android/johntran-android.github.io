@@ -285,7 +285,7 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
 
     <p>Hình tương tác: Claude dựng. Bài này không dùng ảnh chụp trang sách: Numerical Optimization (Jorge Nocedal, Stephen Wright, Springer, 2006) có bản quyền, nên mọi hình ở đây là hình tương tác Claude dựng. Video là bài giảng lại của chính tác giả.</p>
     <h3>Trên bản đồ</h3>
-    <p><a href="../../?bai=NW8.2">Toán nền tảng cho ML/AI</a> · sách Nocedal. Bài trước: <a href="../nw-18/">Đạo hàm bằng sai phân hữu hạn</a>. </p>
+    <p><a href="../../?bai=NW8.2">Toán nền tảng cho ML/AI</a> · sách Nocedal. Bài trước: <a href="../nw-18/">Đạo hàm bằng sai phân hữu hạn</a>. Bài tiếp: <a href="../nw-20/">Bình phương tối thiểu tuyến tính: Cholesky, QR, SVD</a>.</p>
   </footer>
 </div>
 <div class="lb" id="lb" hidden><img alt=""><button type="button" id="lbx">Đóng ✕</button></div>
@@ -3041,10 +3041,10 @@ IX.fderr = (box) => {
   function draw() {
     const F = FN[fk], x = F.x, t = F.d(x), H = Array.from({ length: 161 }, (_, k) => 10 ** (-16 + 16 * k / 160)), fw = [], ce = []; svg.innerHTML = '';
     H.forEach(h => { const xh = x + h, hh = xh - x, xm = x - h; fw.push(Math.abs((F.f(xh) - F.f(x)) / h - t) / Math.abs(t)); ce.push(Math.abs((F.f(x + h) - F.f(x - h)) / (2 * h) - t) / Math.abs(t)); });
-    const G = fgraph(svg, -16, 0, -14, 2), Ly = G.layer, L = v => Math.max(-14, Math.min(2, Math.log10(Math.max(v, 1e-16)))), pl = (A, c) => el(Ly, 'path', { d: A.map((v, k) => `${k ? 'L' : 'M'}${G.X(Math.log10(H[k])).toFixed(1)},${G.Y(L(v)).toFixed(1)}`).join(''), fill: 'none', stroke: c, 'stroke-width': 2 });
+    const G = fgraph(svg, -16, 0, -14, 2), Ly = G.layer, L = v => Math.max(-14, Math.min(2, Math.log10(Math.max(v, 1e-16)))), pl = (A, c) => { let d = '', pen = false; A.forEach((v, k) => { if (!isFinite(v)) { pen = false; return; } d += `${pen ? 'L' : 'M'}${G.X(Math.log10(H[k])).toFixed(1)},${G.Y(L(v)).toFixed(1)}`; pen = true; }); el(Ly, 'path', { d, fill: 'none', stroke: c, 'stroke-width': 2 }); };
     pl(fw, COL.r); pl(ce, COL.b); const u = 1.1e-16; [[Math.sqrt(u), COL.r], [u ** (1 / 3), COL.b]].forEach(([h, c]) => G.seg(Ly, [Math.log10(h), -14], [Math.log10(h), 2], c, 1, '4 3'));
-    const bf = fw.indexOf(Math.min(...fw)), bc = ce.indexOf(Math.min(...ce));
-    svgText(G.ann, 40, 22, 'đỏ: sai phân tiến (f(x + h) − f(x))/h', COL.r, 10.5); svgText(G.ann, 40, 36, 'xanh: sai phân trung tâm (f(x + h) − f(x − h))/(2h)', COL.b, 10.5); svgText(G.ann, 250, 290 - 16, 'trục ngang: log₁₀ h · trục đứng: log₁₀ sai số tương đối', '#8a939c', 9);
+    const fin = A => A.map(v => isFinite(v) ? v : Infinity), bf = fin(fw).indexOf(Math.min(...fin(fw))), bc = fin(ce).indexOf(Math.min(...fin(ce)));
+    svgText(G.ann, 40, 22, 'đỏ: sai phân tiến (f(x + h) − f(x))/h', COL.r, 10.5); svgText(G.ann, 40, 36, 'xanh: sai phân trung tâm (f(x + h) − f(x − h))/(2h)', COL.b, 10.5); svgText(G.ann, 40, 50, 'trục ngang: log₁₀ h · trục đứng: log₁₀ sai số tương đối', '#8a939c', 9.5);
     out.innerHTML = `<span>sai số thật, tính bằng số thực 64 bit (độ chính xác máy u ≈ 1,1·10⁻¹⁶) của trình duyệt</span><span>tiến: tốt nhất ở h ≈ 10^${vk(Math.log10(H[bf]))}, sai số ≈ 10^${vk(Math.log10(fw[bf]))} · trung tâm: tốt nhất ở h ≈ 10^${vk(Math.log10(H[bc]))}, sai số ≈ 10^${vk(Math.log10(ce[bc]))}</span><span>bên phải đáy: sai số cắt cụt (độ dốc 1 và 2); bên trái: sai số làm tròn ~ u/h tăng khi h nhỏ; vạch đứt: √u và u^⅓ theo lý thuyết</span>`;
   }
   draw();
@@ -3069,6 +3069,56 @@ IX.adgraph = (box) => {
     const g = [A[1], A[2], A[3]];
     out.innerHTML = mode === 'fwd' ? `<span>chế độ tiến: mỗi nút mang cặp (xᵢ, Dₚxᵢ = ∇xᵢᵀp), tính cùng lúc với giá trị, theo quy tắc đạo hàm của phép toán tại nút đó</span><span>với p = e${sub(pk + 1)}: ∂f/∂x${sub(pk + 1)} = <b>${vk(D[9])}</b>; muốn cả gradient phải chạy 3 lượt, mỗi lượt một hạt giống</span>` :
       `<span>chế độ ngược: chạy xuôi để có các xᵢ, rồi chạy ngược từ x̄₉ = 1, mỗi nút cộng dồn x̄ⱼ += x̄ᵢ · ∂xᵢ/∂xⱼ từ các nút con</span><span>một lượt ngược cho cả gradient: ∇f = (<b>${g.map(vk).join('; ')}</b>), chi phí chỉ vài lần chi phí tính f, bất kể số biến (đây chính là lan truyền ngược)</span>`;
+  }
+  draw();
+};
+
+// ---- linear least squares: normal equations vs QR on ill-conditioned polynomial fits (Nocedal 10.2)
+const jacobiEig = A0 => { const n = A0.length, A = A0.map(r => r.slice()); for (let sw = 0; sw < 60; sw++) { let off = 0; for (let p = 0; p < n; p++) for (let q = p + 1; q < n; q++) off += A[p][q] ** 2; if (off < 1e-300) break;
+    for (let p = 0; p < n; p++) for (let q = p + 1; q < n; q++) { if (Math.abs(A[p][q]) < 1e-300) continue; const th = (A[q][q] - A[p][p]) / (2 * A[p][q]), t = Math.sign(th || 1) / (Math.abs(th) + Math.sqrt(th * th + 1)), c = 1 / Math.sqrt(t * t + 1), s2 = t * c;
+      for (let k = 0; k < n; k++) { const akp = A[k][p], akq = A[k][q]; A[k][p] = c * akp - s2 * akq; A[k][q] = s2 * akp + c * akq; } for (let k = 0; k < n; k++) { const apk = A[p][k], aqk = A[q][k]; A[p][k] = c * apk - s2 * aqk; A[q][k] = s2 * apk + c * aqk; } } }
+  return A.map((r, i) => r[i]); };
+IX.lsqcond = (box) => {
+  box.innerHTML = `<div class="ixbar"><span class="ixin"><label>bậc đa thức đang xem <input type="range" min="1" max="14" step="1" value="8"><output></output></label></span></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Sai số của phương trình chuẩn và QR"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), rd = box.querySelector('input'), od = box.querySelector('output'); rd.addEventListener('input', draw);
+  const T = Array.from({ length: 40 }, (_, i) => i / 39), res = [];
+  for (let d = 1; d <= 14; d++) { const J = T.map(t => Array.from({ length: d + 1 }, (_, j) => t ** j)), y = J.map(r => r.reduce((a, b) => a + b, 0)), xs = Array(d + 1).fill(1);
+    const N = J[0].map((_, i) => J[0].map((_, j) => J.reduce((s, r) => s + r[i] * r[j], 0))), Jy = J[0].map((_, i) => J.reduce((s, r, k) => s + r[i] * y[k], 0)), xn = (() => { try { return lstsq(N, Jy); } catch (e) { return xs.map(() => NaN); } })(), xq = lstsq(J, y);
+    const ev = jacobiEig(N), kap = Math.sqrt(Math.max(...ev) / Math.max(Math.min(...ev), 1e-300)), er = x => Math.sqrt(x.reduce((s, v) => s + (v - 1) ** 2, 0) / (d + 1)); res.push({ d, kap, en: er(xn), eq: er(xq) }); }
+  function draw() {
+    const d = +rd.value; od.textContent = d; svg.innerHTML = ''; const G = fgraph(svg, 0.5, 14.5, -17, 3), Ly = G.layer, L = v => Math.max(-17, Math.min(3, Math.log10(Math.max(v, 1e-17))));
+    const pl = (A, c, w, dash) => el(Ly, 'path', { d: A.map((v, k) => `${k ? 'L' : 'M'}${G.X(k + 1)},${G.Y(L(v)).toFixed(1)}`).join(''), fill: 'none', stroke: c, 'stroke-width': w, ...(dash ? { 'stroke-dasharray': dash } : {}) });
+    pl(res.map(r => 1.1e-16 * r.kap), COL.b, 1.2, '4 3'); pl(res.map(r => 1.1e-16 * r.kap * r.kap), COL.r, 1.2, '4 3'); pl(res.map(r => r.eq), COL.b, 2.4); pl(res.map(r => r.en), COL.r, 2.4); res.forEach(r => { G.dot(Ly, r.d, L(r.eq), COL.b, false, 3); G.dot(Ly, r.d, L(r.en), COL.r, false, 3); });
+    G.seg(Ly, [d, -17], [d, 3], COL.k, 1, '2 3'); svgText(G.ann, 40, 22, 'đỏ: phương trình chuẩn JᵀJx = Jᵀy · xanh: QR', COL.k, 10.5); svgText(G.ann, 40, 36, 'nét đứt: u·κ(J)² (đỏ) và u·κ(J) (xanh)', '#5d6670', 10); svgText(G.ann, 290, 50, 'trục ngang: bậc', '#8a939c', 10);
+    const r = res[d - 1];
+    out.innerHTML = `<span>khớp đa thức bậc ${d} (cơ sở 1, t, …, t^${d}) qua 40 điểm trên [0, 1], dữ liệu đúng từ đa thức có mọi hệ số bằng 1</span><span>κ(J) ≈ 10^${vk(Math.log10(r.kap))} · sai số hệ số: phương trình chuẩn <b>10^${vk(L(r.en))}</b>, QR <b>10^${vk(L(r.eq))}</b></span><span>phương trình chuẩn bình phương số điều kiện, nên mất gấp đôi số chữ số; từ bậc khoảng 8 nó gần như vô dụng trong khi QR vẫn đúng vài chữ số</span>`;
+  }
+  draw();
+};
+
+// ---- Gauss–Newton vs Levenberg–Marquardt on y = x₁ e^{−x₂ t} (Nocedal 10.3)
+IX.gnlm = (box) => {
+  box.innerHTML = `${segHTML({ par: { l: 'Không gian tham số' }, data: { l: 'Dữ liệu và đường khớp' } }, 'par', 'Chọn cách xem')}<div class="ixbar"><label class="ixin"><input type="checkbox"> phần dư lớn (dữ liệu không theo mô hình)</label><span class="ixin"><label>số bước hiển thị <input type="range" min="0" max="25" step="1" value="25"><output></output></label></span></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Gauss–Newton và Levenberg–Marquardt"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), [ck, rs] = box.querySelectorAll('input'), os = box.querySelector('output'); let view = 'par', x0 = [0.6, 2.2];
+  segOn(box, v => { view = v; draw(); }); [ck, rs].forEach(r => r.addEventListener('input', draw));
+  const T = Array.from({ length: 14 }, (_, i) => 0.4 * i), data = big => { const R = rng(31); return T.map(t => big ? 3 * Math.exp(-0.7 * t) + 0.8 * Math.sin(2.5 * t) : 3 * Math.exp(-0.7 * t) + 0.05 * rnormR(R)); };
+  const resid = (x, Y) => T.map((t, i) => x[0] * Math.exp(-x[1] * t) - Y[i]), jac = x => T.map(t => [Math.exp(-x[1] * t), -x[0] * t * Math.exp(-x[1] * t)]), F = (x, Y) => 0.5 * resid(x, Y).reduce((s, r) => s + r * r, 0);
+  const solve = (Y, lm) => { let x = x0.slice(), mu = 1e-2, P = [x.slice()]; for (let k = 0; k < 40; k++) { const r = resid(x, Y), J = jac(x), JTJ = [[0, 0], [0, 0]], g = [0, 0]; J.forEach((row, i) => { for (let a = 0; a < 2; a++) { g[a] += row[a] * r[i]; for (let b = 0; b < 2; b++) JTJ[a][b] += row[a] * row[b]; } }); if (nrm2(g) < 1e-10) { P.push(x.slice()); continue; }
+      if (!lm) { const p = sol2(JTJ, [-g[0], -g[1]]); let a = 1; const f0 = F(x, Y); while (F([x[0] + a * p[0], x[1] + a * p[1]], Y) > f0 + 1e-4 * a * dot2(g, p) && a > 1e-10) a *= 0.5; x = [x[0] + a * p[0], x[1] + a * p[1]]; }
+      else { for (let t = 0; t < 30; t++) { const p = sol2([[JTJ[0][0] + mu, JTJ[0][1]], [JTJ[1][0], JTJ[1][1] + mu]], [-g[0], -g[1]]), xn = [x[0] + p[0], x[1] + p[1]]; if (F(xn, Y) < F(x, Y)) { x = xn; mu = Math.max(mu / 3, 1e-12); break; } mu *= 4; } }
+      P.push(x.slice()); } return P; };
+  function draw() {
+    const Y = data(ck.checked), ns = +rs.value; os.textContent = ns; svg.innerHTML = ''; const PG = solve(Y, false), PL = solve(Y, true), best = PL[PL.length - 1];
+    if (view === 'par') { const G = fgraph(svg, 0, 5, -0.4, 3.2), Ly = G.layer, Fo = { f: (a, b) => F([a, b], Y) }; contourBg(svg, G, Fo, 0);
+      [[PG, COL.r], [PL, COL.g]].forEach(([P, c]) => { const Q = P.slice(0, ns + 1); el(Ly, 'path', { d: Q.map((p, i) => `${i ? 'L' : 'M'}${G.X(p[0]).toFixed(1)},${G.Y(p[1]).toFixed(1)}`).join(''), fill: 'none', stroke: c, 'stroke-width': 2 }); Q.forEach(p => G.dot(Ly, p[0], p[1], c, false, 2.6)); });
+      G.dot(Ly, x0[0], x0[1], COL.b, false, 6); const H = handle(G, 'Điểm xuất phát'); H.setAttribute('transform', `translate(${G.X(x0[0])},${G.Y(x0[1])})`); dragOn(svg, H, (px, py) => { x0 = [Math.max(0.05, Math.min(5, G.iX(px))), Math.max(-0.35, Math.min(3.2, G.iY(py)))]; draw(); }, () => {});
+      svgText(G.ann, 40, 22, 'nền: f(x₁, x₂) · đỏ: Gauss–Newton · xanh lục: Levenberg–Marquardt', COL.k, 10); svgText(G.ann, 290, 36, 'trục ngang x₁, đứng x₂', '#8a939c', 9.5); }
+    else { const G = fgraph(svg, -0.1, 5.4, -0.6, 4), Ly = G.layer; T.forEach((t, i) => G.dot(Ly, t, Y[i], COL.b, true, 4)); const xg = PG[Math.min(ns, PG.length - 1)], xl = PL[Math.min(ns, PL.length - 1)]; G.curve(Ly, t => xg[0] * Math.exp(-xg[1] * t), COL.r, 2.2); G.curve(Ly, t => xl[0] * Math.exp(-xl[1] * t), COL.g, 2.2, '6 4');
+      svgText(G.ann, 40, 22, 'mô hình y = x₁ e^(−x₂ t) sau số bước đang chọn', COL.k, 10.5); }
+    const it = P => { const fin = P[P.length - 1]; for (let k = 0; k < P.length; k++) if (Math.hypot(P[k][0] - fin[0], P[k][1] - fin[1]) < 1e-6) return k; return P.length; }, gG = PG[PG.length - 1];
+    out.innerHTML = `<span>Gauss–Newton (B = JᵀJ, line search): ${isFinite(gG[0]) && Math.hypot(gG[0] - best[0], gG[1] - best[1]) < 1e-4 ? `tới nghiệm sau <b>${it(PG)}</b> bước` : 'chưa tới nghiệm sau 40 bước'} · Levenberg–Marquardt (JᵀJ + μI): <b>${it(PL)}</b> bước</span><span>nghiệm x* = (${vk(best[0])}; ${vk(best[1])}), f(x*) = ${vk(F(best, Y))}${ck.checked ? ': phần dư lớn nên JᵀJ thiếu hẳn số hạng Σ rⱼ∇²rⱼ và Gauss–Newton chỉ còn hội tụ tuyến tính' : ': phần dư nhỏ nên JᵀJ gần như là Hessian thật, Gauss–Newton hội tụ gần bậc hai'}</span>`;
   }
   draw();
 };
