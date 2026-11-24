@@ -285,7 +285,7 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
 
     <p>Hình tương tác: Claude dựng. Bài này không dùng ảnh chụp trang sách: Numerical Optimization (Jorge Nocedal, Stephen Wright, Springer, 2006) có bản quyền, nên mọi hình ở đây là hình tương tác Claude dựng. Video là bài giảng lại của chính tác giả.</p>
     <h3>Trên bản đồ</h3>
-    <p><a href="../../?bai=NW4.3">Toán nền tảng cho ML/AI</a> · sách Nocedal. Bài trước: <a href="../nw-10/">Hội tụ toàn cục của trust region</a>. </p>
+    <p><a href="../../?bai=NW4.3">Toán nền tảng cho ML/AI</a> · sách Nocedal. Bài trước: <a href="../nw-10/">Hội tụ toàn cục của trust region</a>. Bài tiếp: <a href="../nw-12/">Hướng liên hợp và thuật toán CG</a>.</p>
   </footer>
 </div>
 <div class="lb" id="lb" hidden><img alt=""><button type="button" id="lbx">Đóng ✕</button></div>
@@ -2945,6 +2945,27 @@ IX.trustreg = (box) => {
     const ex = exact(B, lmin, D); G.dot(Ly, pC[0], pC[1], COL.r, false, 5.5); G.dot(Ly, ex.p[0], ex.p[1], COL.g, false, 6); G.dot(Ly, 0, 0, COL.k, false, 3.5);
     svgText(G.ann, 40, 22, 'đỏ: Cauchy · tím: dogleg · xanh lục: nghiệm chính xác', COL.k, 10); svgText(G.ann, 40, 36, 'nét đứt xanh lục: nghiệm khi Δ đổi · vòng đen: ‖p‖ = Δ', '#5d6670', 10);
     out.innerHTML = `<span>B có trị riêng 1,2 và ${vk(l2)}${lmin > 0 ? '' : ' (không xác định dương: không có bước Newton, dogleg không dùng được)'}</span><span>m(p): Cauchy <b>${vk(m(pC))}</b>${pD ? ` · dogleg <b>${vk(m(pD))}</b>` : ''} · chính xác <b>${vk(m(ex.p))}</b> (λ* = ${vk(ex.lam)})</span><span>${pB && nrm2(pB) <= D ? 'Δ lớn: bước Newton −B⁻¹g nằm trong vùng, cả dogleg và nghiệm chính xác đều là nó' : 'Δ nhỏ: nghiệm nằm trên biên; khi Δ → 0 nó quay về hướng −g'}</span>`;
+  }
+  draw();
+};
+
+// ---- linear CG: convergence depends on the eigenvalue distribution (Nocedal 5.1)  ·  n = 100, A diagonal (CG only sees eigenvalues)
+IX.cgconv = (box) => {
+  box.innerHTML = `${segHTML({ uni: { l: 'Trải đều trong [1, κ]' }, clu: { l: '5 lớn + 95 quanh 1' }, few: { l: 'Chỉ 4 giá trị khác nhau' } }, box.dataset.v || 'uni', 'Phân bố trị riêng')}<div class="ixbar"><span class="ixin"><label>κ = λ_max/λ_min <input type="range" min="1" max="4" step="0.05" value="2"><output></output></label></span><label class="ixin"><input type="checkbox" checked> so với steepest descent</label></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Hội tụ của gradient liên hợp theo phân bố trị riêng"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), [rk, ck] = box.querySelectorAll('input'), ok = box.querySelector('output'); let view = box.dataset.v || 'uni';
+  segOn(box, v => { view = v; draw(); }); [rk, ck].forEach(r => r.addEventListener('input', draw));
+  function draw() {
+    const K = 10 ** +rk.value, n = 100, R = rng(3); ok.textContent = Math.round(K).toLocaleString('vi-VN'); svg.innerHTML = '';
+    const lam = view === 'uni' ? Array.from({ length: n }, (_, i) => 1 + (K - 1) * i / (n - 1)) : view === 'clu' ? [...Array.from({ length: 95 }, () => 0.95 + 0.1 * R()), ...Array.from({ length: 5 }, (_, i) => K * (0.6 + 0.1 * i))] : Array.from({ length: n }, (_, i) => [1, K ** (1 / 3), K ** (2 / 3), K][i % 4]);
+    const kap = Math.max(...lam) / Math.min(...lam), b = Array.from({ length: n }, () => rnormR(R)), xs = b.map((v, i) => v / lam[i]), errA = x => Math.sqrt(x.reduce((s, v, i) => s + lam[i] * (v - xs[i]) ** 2, 0)), e0 = errA(Array(n).fill(0));
+    const cg = []; { let x = Array(n).fill(0), r = x.map((v, i) => lam[i] * v - b[i]), p = r.map(v => -v); cg.push(1); for (let k = 0; k < 60; k++) { const Ap = p.map((v, i) => lam[i] * v), rr = r.reduce((s, v) => s + v * v, 0), a = rr / p.reduce((s, v, i) => s + v * Ap[i], 0); x = x.map((v, i) => v + a * p[i]); const rn = r.map((v, i) => v + a * Ap[i]), be = rn.reduce((s, v) => s + v * v, 0) / rr; p = p.map((v, i) => -rn[i] + be * v); r = rn; cg.push(errA(x) / e0); if (errA(x) / e0 < 1e-13) break; } }
+    const sd = []; { let x = Array(n).fill(0); sd.push(1); for (let k = 0; k < 60; k++) { const g = x.map((v, i) => lam[i] * v - b[i]), gg = g.reduce((s, v) => s + v * v, 0), a = gg / g.reduce((s, v, i) => s + lam[i] * v * v, 0); x = x.map((v, i) => v - a * g[i]); sd.push(errA(x) / e0); } }
+    const G = fgraph(svg, 0, 60, -14, 1), Ly = G.layer, L = a => Math.max(-14, Math.log10(Math.max(a, 1e-16))), pl = (A, c, w, dash) => el(Ly, 'path', { d: A.map((v, k) => `${k ? 'L' : 'M'}${G.X(k).toFixed(1)},${G.Y(L(v)).toFixed(1)}`).join(''), fill: 'none', stroke: c, 'stroke-width': w, ...(dash ? { 'stroke-dasharray': dash } : {}) });
+    const q = (Math.sqrt(kap) - 1) / (Math.sqrt(kap) + 1); pl(Array.from({ length: 61 }, (_, k) => 2 * q ** k), '#8a939c', 1.4, '5 4'); if (ck.checked) pl(sd, COL.r, 2); pl(cg, COL.o, 2.6);
+    svgText(G.ann, 40, 22, 'log₁₀ ‖xₖ − x*‖_A / ‖x₀ − x*‖_A theo k', COL.k, 10.5); svgText(G.ann, 40, 36, 'cam: CG · đỏ: steepest descent · xám: chặn 2((√κ − 1)/(√κ + 1))ᵏ', '#5d6670', 10);
+    const k8 = cg.findIndex(v => v < 1e-8);
+    out.innerHTML = `<span>n = 100, số điều kiện κ(A) = ${Math.round(kap).toLocaleString('vi-VN')}; ${view === 'few' ? 'chỉ 4 trị riêng khác nhau' : view === 'clu' ? '95 trị riêng trong [0,95; 1,05] và 5 trị riêng lớn' : 'trị riêng trải đều'}</span><span>CG đạt sai số tương đối 10⁻⁸ sau <b>${k8 < 0 ? '> 60' : k8}</b> bước${view === 'few' ? ' (định lý 5.4: tối đa 4 bước, nếu số học chính xác)' : view === 'clu' ? ' (khoảng 5 bước “tiêu” 5 trị riêng lớn, rồi hội tụ như với κ ≈ 1,1)' : ''}; chặn theo κ là bi quan với mọi phân bố có cụm</span>`;
   }
   draw();
 };
