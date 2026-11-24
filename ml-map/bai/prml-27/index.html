@@ -287,7 +287,7 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
 
   <footer>
     <h3>Bài này được làm thế nào</h3>
-    <p>Chữ: viết lại từ <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/pattern_recognition_machine_learning_cbishop/54_the_hessian_matrix.md" target="_blank" rel="noopener">ghi chú Bishop PRML mục 5.4</a> của tác giả (nút “Ghi chú gốc” dưới mỗi tiêu đề trỏ tới đúng file của từng mục con). Khung xanh là nguyên văn ghi chú; phần chữ còn lại do Claude soạn theo ý ghi chú và cần tác giả viết lại. Video: 7 video ngắn tác giả giảng lại, đặt cạnh phần nói về cùng mục.</p>
+    <p>Chữ: viết lại từ <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/pattern_recognition_machine_learning_cbishop/54_the_hessian_matrix.md" target="_blank" rel="noopener">ghi chú Bishop PRML mục 5.4</a> của tác giả (nút “Ghi chú gốc” dưới mỗi tiêu đề trỏ tới đúng file của từng mục con). Khung xanh là nguyên văn ghi chú; phần chữ còn lại do Claude soạn theo ý ghi chú. Video: 7 video ngắn tác giả giảng lại, đặt cạnh phần nói về cùng mục.</p>
 
     <p>Hình tương tác: Claude dựng. Bài này không dùng ảnh chụp trang sách: Pattern Recognition and Machine Learning (Christopher Bishop, Springer 2006) có bản quyền, nên mọi hình ở đây là hình tương tác Claude dựng. Video là bài giảng lại của chính tác giả.</p>
     <h3>Trên bản đồ</h3>
@@ -2788,6 +2788,28 @@ IX.earlystop = (box) => {
     svgText(G.ann, 40, 22, 'đỏ: gradient descent từ gốc, dừng sau τ bước', COL.r, 10.5); svgText(G.ann, 40, 36, 'xanh lục, nét đứt: nghiệm weight decay khi λ giảm dần', COL.g, 10.5); svgText(G.ann, G.X(wml[0]) + 6, G.Y(wml[1]) - 6, 'w_ML', COL.k, 10);
     const sh = (k) => 1 - (1 - eta * k) ** tau, ue = [c * w[0] + s2 * w[1], -s2 * w[0] + c * w[1]], um = [c * wml[0] + s2 * wml[1], -s2 * wml[0] + c * wml[1]];
     out.innerHTML = `<span>sau τ = ${tau} bước: theo hướng cong (λ₁ = 1) đã đi được <b>${pct(sh(l1))}</b> quãng đường tới w_ML, theo hướng thoải (λ₂ = 0,04) mới được <b>${pct(sh(l2))}</b></span><span>weight decay cũng co mạnh theo hướng thoải và gần như giữ nguyên hướng cong; ητ đóng vai 1/λ</span>`;
+  }
+  draw();
+};
+
+// ---- calculus of variations (appendix D)  ·  length of y(x) + εη(x) between two fixed points  ·  input: ε, bump shape
+IX.varcalc = (box) => {
+  box.innerHTML = `${segHTML({ bump: { l: 'η(x) = một bướu' }, wave: { l: 'η(x) = sóng sin' } }, 'bump', 'Chọn hướng nhiễu η')}<div class="ixbar"><span class="ixin"><label>ε <input type="range" min="-1" max="1" step="0.01" value="0.5"><output></output></label></span></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Độ dài đường cong khi nhiễu đường thẳng"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), re = box.querySelector('input'), oe = box.querySelector('output'); let kind = 'bump';
+  segOn(box, v => { kind = v; draw(); }); re.addEventListener('input', draw);
+  const A = [0, 0.2], B = [1, 0.8], y0 = x => A[1] + (B[1] - A[1]) * x, eta = x => kind === 'bump' ? 4 * x * (1 - x) : Math.sin(3 * Math.PI * x) * 0.6;
+  const len = e => { let L = 0, px = 0, py = y0(0); for (let i = 1; i <= 400; i++) { const x = i / 400, y = y0(x) + e * eta(x); L += Math.hypot(x - px, y - py); px = x; py = y; } return L; };
+  function draw() {
+    const e = +re.value; oe.textContent = vk(e); svg.innerHTML = ''; const G = fgraph(svg, -0.05, 1.05, -0.4, 1.4), Ly = G.layer;
+    G.curve(Ly, y0, COL.g, 2, '6 4', 0, 1); G.curve(Ly, x => y0(x) + e * eta(x), COL.r, 2.6, null, 0, 1); G.dot(Ly, A[0], A[1], COL.k, false, 5); G.dot(Ly, B[0], B[1], COL.k, false, 5);
+    const es = Array.from({ length: 41 }, (_, k) => -1 + k / 20), Ls = es.map(len), x0 = 270, y00 = 270, w = 120, h = 70, lmin = Math.min(...Ls), lmax = Math.max(...Ls);
+    el(svg, 'rect', { x: x0 - 6, y: y00 - h - 14, width: w + 12, height: h + 22, fill: '#fff', stroke: '#d5dbe1', rx: 6 });
+    el(svg, 'path', { d: es.map((v, k) => `${k ? 'L' : 'M'}${(x0 + (v + 1) / 2 * w).toFixed(1)},${(y00 - (Ls[k] - lmin) / (lmax - lmin + 1e-9) * h).toFixed(1)}`).join(''), fill: 'none', stroke: COL.v, 'stroke-width': 2 });
+    el(svg, 'circle', { cx: x0 + (e + 1) / 2 * w, cy: y00 - (len(e) - lmin) / (lmax - lmin + 1e-9) * h, r: 4, fill: COL.r }); svgText(svg, x0, y00 - h - 2, 'F[y + εη] theo ε', COL.v, 9.5);
+    svgText(G.ann, 40, 22, 'xanh lục: đường thẳng nối hai điểm · đỏ: y(x) + εη(x)', COL.k, 10.5);
+    const d = (len(1e-4) - len(-1e-4)) / 2e-4;
+    out.innerHTML = `<span>F[y] = ∫₀¹ √(1 + y′(x)²) dx = độ dài đường cong; η(0) = η(1) = 0 nên hai đầu giữ nguyên</span><span>ε = ${vk(e)}: F = <b>${vk(len(e))}</b> (đường thẳng: ${vk(len(0))}); dF/dε tại ε = 0 ≈ <b>${vk(Math.abs(d) < 5e-4 ? 0 : d)}</b> với mọi η: đường thẳng là điểm dừng, và ở đây là cực tiểu</span>`;
   }
   draw();
 };

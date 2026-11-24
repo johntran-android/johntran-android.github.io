@@ -188,7 +188,15 @@ ol.ts .tt { flex: none; width: 2.6rem; font: 500 .8rem/1.45 var(--mono); color: 
 .ixmore summary { cursor: pointer; font: 600 .86rem/1.4 var(--sans); color: var(--blue); }
 .ixmore p { font: 400 .9rem/1.6 var(--sans); color: var(--muted); margin: .5rem 0 0; }
 @media (max-width: 640px) { .ixbox { padding: .9rem .8rem; margin: 1.6rem -.4rem; } }
-
+.vgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: .7rem; margin: 1.1rem 0 1.4rem; }
+.vcard { display: flex; flex-direction: column; border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; background: #fff; text-decoration: none; color: var(--ink); transition: border-color .15s, box-shadow .15s; }
+.vcard:hover { border-color: #b9c4d0; box-shadow: 0 2px 8px rgba(20, 30, 40, .08); }
+.vcard .vi { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: #111; }
+.vcard img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.vcard .vi::after { content: '▶'; position: absolute; left: .45rem; bottom: .4rem; font: 700 .7rem/1 var(--sans); color: #fff; background: rgba(200, 30, 30, .92); padding: .28rem .42rem; border-radius: 5px; }
+.vcard .vt { font: 600 .86rem/1.4 var(--sans); padding: .5rem .6rem .6rem; }
+.vlab { font: 700 .74rem/1 var(--sans); letter-spacing: .06em; text-transform: uppercase; color: #a32018; margin: 1.4rem 0 -.4rem; }
+.sw.v { background: #c5221f; }
  .sw.h { background: #fff7d6; }</style>
 <style>[hidden]{display:none!important} img{max-width:100%} html{-webkit-text-size-adjust:100%} body{margin:0}
 .draft .back { font-weight: 700; text-decoration: none; color: var(--blue); margin-right: .4rem; }</style>
@@ -366,7 +374,7 @@ ol.ts .tt { flex: none; width: 2.6rem; font: 500 .8rem/1.45 var(--mono); color: 
 
   <footer>
     <h3>Bài này được làm thế nào</h3>
-    <p>Chữ: viết lại từ <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md" target="_blank" rel="noopener">ghi chú MIT 18.06 bài giảng 14</a> của tác giả, sắp theo mạch ba video ôn tập. Khung xanh là nguyên văn ghi chú. Phần chữ còn lại do Claude soạn theo ý ghi chú và cần tác giả viết lại. Mốc thời gian của video lấy từ phụ đề tự động của YouTube.</p>
+    <p>Chữ: viết lại từ <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md" target="_blank" rel="noopener">ghi chú MIT 18.06 bài giảng 14</a> của tác giả, sắp theo mạch ba video ôn tập. Khung xanh là nguyên văn ghi chú. Phần chữ còn lại do Claude soạn theo ý ghi chú. Mốc thời gian của video lấy từ phụ đề tự động của YouTube.</p>
     <p>Sửa so với ghi chú: ở mục "Rank of Matrix Product AᵀA", câu "AᵀA có m − (n − r) cột độc lập" là gõ nhầm; \(A^TA\) có \(n\) cột nên đúng là \(n - (n - r) = r\), khớp với kết quả ghi chú viết ngay sau đó.</p>
     <p>Hình tương tác: Claude dựng, mọi con số tính lại từ ví dụ trong ghi chú và trên bảng. Ghi chú viết tay: tác giả viết trong StudyBoard lúc học. Ảnh chụp bảng: MIT OpenCourseWare 18.06 Linear Algebra, Spring 2010, Gilbert Strang, giấy phép CC BY-NC-SA 4.0.</p>
     <h3>Trên bản đồ</h3>
