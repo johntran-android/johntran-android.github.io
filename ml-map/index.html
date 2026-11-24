@@ -583,7 +583,11 @@ const ART110 = (n, t) => ART(`stat110-${String(n).padStart(2, '0')}/`, t, `Stat 
   E28 = ART110(28, 'Các bất đẳng thức'),
   E29 = ART110(29, 'Luật số lớn và định lý giới hạn trung tâm'),
   E30 = ART110(30, 'Khi bình phương, Student t và Gauss nhiều chiều');
+const ARTPR = (n, sec, t) => ART(`prml-${String(n).padStart(2, '0')}/`, t, `Bishop PRML mục ${sec} · hình tương tác`),
+  P01 = ARTPR(1, '1.1', 'Khớp đường cong bằng đa thức'), P02 = ARTPR(2, '1.2.1–1.2.3', 'Xác suất theo cách Bishop'), P03 = ARTPR(3, '1.2.4–1.2.6', 'Gaussian và khớp đường cong theo xác suất'),
+  P04 = ARTPR(4, '1.3–1.4', 'Chọn mô hình và lời nguyền số chiều'), P05 = ARTPR(5, '1.5', 'Lý thuyết quyết định'), P06 = ARTPR(6, '1.6', 'Lý thuyết thông tin');
 const ARTICLES = {
+  'PR1.1': [P01], 'PR1.2': [P02, P03], 'PR1.3': [P04], 'PR1.4': [P04], 'PR1.5': [P05], 'PR1.6': [P06],
   'ST1': [E01], 'ST2': [E02], 'ST3': [E03], 'ST4': [E04], 'ST5': [E05], 'ST6': [E06], 'ST7': [E07], 'ST8': [E08], 'ST9': [E09], 'ST10': [E10], 'ST11': [E11], 'ST12': [E12], 'ST13': [E13], 'ST14': [E14, E15], 'ST16': [E16], 'ST17': [E17], 'ST18': [E18], 'ST19': [E19], 'ST20': [E20], 'ST21': [E21], 'ST22': [E22], 'ST23': [E23], 'ST24': [E24], 'ST25': [E25], 'ST26': [E26], 'ST27': [E27], 'ST28': [E28], 'ST29': [E29], 'ST30': [E30],
   'C.cross': [D02], 'C.plane': [D03, D04, D07], 'C.param': [D05, D06], 'C.multi': [D08, D12, D15], 'C.mvmax': [D09, D10], 'C.hessian': [D10], 'C.mvchain': [D11, D14], 'C.lagrange': [D13],
   'C.multint': [D16, D17], 'C.jacobian': [D18], 'C.lineint': [D19], 'C.conserv': [D20, D21], 'C.green': [D22],
@@ -644,7 +648,7 @@ const COURSE = {
     C.set = new Set(C.steps.map(s => s.id)); C.num = Object.fromEntries(C.steps.map((s, i) => [s.id, i + 1]));
     C.steps.slice(1).forEach((s, i) => links.push({ source: C.steps[i].id, target: s.id, c: k })); } }
 let CO = COURSE[store.get('nm-course', '')] ? store.get('nm-course', '') : '';
-const tocHash = () => { const a = $('tocBtn'); if (a) a.href = a.href.split('#')[0] + ({ M01: '#mit1801', M02: '#mit1802', MIT: '#mit1806', ST: '#stat110' }[CO] || ''); };
+const tocHash = () => { const a = $('tocBtn'); if (a) a.href = a.href.split('#')[0] + ({ M01: '#mit1801', M02: '#mit1802', MIT: '#mit1806', ST: '#stat110', PR: '#prml' }[CO] || ''); };
 const baseLit = () => bookSet || (CO ? COURSE[CO].set : null);
 const counts = { taught: 0, read: 0, ahead: 0 }; N.forEach(n => counts[n.st]++);
 const domStat = {}; N.forEach(n => { const s = domStat[n.d] = domStat[n.d] || { n: 0, t: 0 }; s.n++; if (n.st === 'taught') s.t++; });
