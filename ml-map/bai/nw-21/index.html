@@ -281,7 +281,7 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
 
     <p>Hình tương tác: Claude dựng. Bài này không dùng ảnh chụp trang sách: Numerical Optimization (Jorge Nocedal, Stephen Wright, Springer, 2006) có bản quyền, nên mọi hình ở đây là hình tương tác Claude dựng. Video là bài giảng lại của chính tác giả.</p>
     <h3>Trên bản đồ</h3>
-    <p><a href="../../?bai=NW10.3">Toán nền tảng cho ML/AI</a> · sách Nocedal. Bài trước: <a href="../nw-20/">Bình phương tối thiểu tuyến tính: Cholesky, QR, SVD</a>. </p>
+    <p><a href="../../?bai=NW10.3">Toán nền tảng cho ML/AI</a> · sách Nocedal. Bài trước: <a href="../nw-20/">Bình phương tối thiểu tuyến tính: Cholesky, QR, SVD</a>. Bài tiếp: <a href="../nw-22/">Tối ưu có ràng buộc: bài toán và trực giác</a>.</p>
   </footer>
 </div>
 <div class="lb" id="lb" hidden><img alt=""><button type="button" id="lbx">Đóng ✕</button></div>
@@ -3119,6 +3119,58 @@ IX.gnlm = (box) => {
       svgText(G.ann, 40, 22, 'mô hình y = x₁ e^(−x₂ t) sau số bước đang chọn', COL.k, 10.5); }
     const it = P => { const fin = P[P.length - 1]; for (let k = 0; k < P.length; k++) if (Math.hypot(P[k][0] - fin[0], P[k][1] - fin[1]) < 1e-6) return k; return P.length; }, gG = PG[PG.length - 1];
     out.innerHTML = `<span>Gauss–Newton (B = JᵀJ, line search): ${isFinite(gG[0]) && Math.hypot(gG[0] - best[0], gG[1] - best[1]) < 1e-4 ? `tới nghiệm sau <b>${it(PG)}</b> bước` : 'chưa tới nghiệm sau 40 bước'} · Levenberg–Marquardt (JᵀJ + μI): <b>${it(PL)}</b> bước</span><span>nghiệm x* = (${vk(best[0])}; ${vk(best[1])}), f(x*) = ${vk(F(best, Y))}${ck.checked ? ': phần dư lớn nên JᵀJ thiếu hẳn số hạng Σ rⱼ∇²rⱼ và Gauss–Newton chỉ còn hội tụ tuyến tính' : ': phần dư nhỏ nên JᵀJ gần như là Hessian thật, Gauss–Newton hội tụ gần bậc hai'}</span>`;
+  }
+  draw();
+};
+
+// ---- KKT conditions in the plane (Nocedal 12.1–12.5, 12.8)  ·  drag x; gradients of f and of the active constraints; λ by least squares
+IX.kkt2d = (box) => {
+  const P = {
+    eq: { l: 'Đẳng thức (ví dụ 12.1)', f: x => x[0] + x[1], gf: () => [1, 1], Hf: () => [[0, 0], [0, 0]], c: [{ eq: true, f: (x, r) => x[0] ** 2 + x[1] ** 2 - r, g: x => [2 * x[0], 2 * x[1]], H: () => [[2, 0], [0, 2]] }], sol: r => [-Math.sqrt(r / 2), -Math.sqrt(r / 2)] },
+    ineq: { l: 'Bất đẳng thức (12.2)', f: x => x[0] + x[1], gf: () => [1, 1], Hf: () => [[0, 0], [0, 0]], c: [{ f: (x, r) => r - x[0] ** 2 - x[1] ** 2, g: x => [-2 * x[0], -2 * x[1]], H: () => [[-2, 0], [0, -2]] }], sol: r => [-Math.sqrt(r / 2), -Math.sqrt(r / 2)] },
+    two: { l: 'Hai ràng buộc (12.3)', f: x => x[0] + x[1], gf: () => [1, 1], Hf: () => [[0, 0], [0, 0]], c: [{ f: (x, r) => r - x[0] ** 2 - x[1] ** 2, g: x => [-2 * x[0], -2 * x[1]], H: () => [[-2, 0], [0, -2]] }, { f: x => x[1], g: () => [0, 1], H: () => [[0, 0], [0, 0]] }], sol: r => [-Math.sqrt(r), 0] },
+    nc: { l: 'Không lồi (12.9)', f: x => -0.1 * (x[0] - 4) ** 2 + x[1] ** 2, gf: x => [-0.2 * (x[0] - 4), 2 * x[1]], Hf: () => [[-0.2, 0], [0, 2]], c: [{ f: (x, r) => x[0] ** 2 + x[1] ** 2 - r, g: x => [2 * x[0], 2 * x[1]], H: () => [[2, 0], [0, 2]] }], sol: r => [Math.sqrt(r), 0] },
+  };
+  box.innerHTML = `${segHTML(Object.fromEntries(Object.entries(P).map(([k, v]) => [k, { l: v.l }])), box.dataset.v || 'eq', 'Chọn bài toán')}<div class="ixbar"><span class="ixin"><label>nới ràng buộc: r <input type="range" min="0.5" max="3" step="0.05" value="${box.dataset.r || 2}"><output></output></label></span><button type="button" class="reset" data-s>Đặt x tại nghiệm</button></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Điều kiện KKT trên mặt phẳng"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), rr = box.querySelector('input'), or = box.querySelector('output'); let pk = box.dataset.v || 'eq', x = null;
+  segOn(box, v => { pk = v; x = null; draw(); }); rr.addEventListener('input', () => { x = null; draw(); }); box.querySelector('[data-s]').onclick = () => { x = null; draw(); };
+  function draw() {
+    const Pr = P[pk], r = +rr.value; or.textContent = vk(r); if (!x) x = Pr.sol(r); svg.innerHTML = '';
+    const G = fgraph(svg, -2.6 * 4 / 3, 2.6 * 4 / 3, -2.6, 2.6), Ly = G.layer, bg = el(svg, 'g'); svg.insertBefore(bg, svg.firstChild); const nx = 64, ny = 48;
+    for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) { const p = [G.xa + (G.xb - G.xa) * (i + 0.5) / nx, G.ya + (G.yb - G.ya) * (j + 0.5) / ny], feas = Pr.c.every(c => c.eq ? Math.abs(c.f(p, r)) < 0.06 : c.f(p, r) >= 0), v = Pr.f(p), q = Math.floor(((v + 4) / 8) * 8) / 8;
+      el(bg, 'rect', { x: G.X(G.xa + (G.xb - G.xa) * i / nx), y: G.Y(G.ya + (G.yb - G.ya) * (j + 1) / ny), width: (G.X(G.xb) - G.X(G.xa)) / nx + 0.5, height: (G.Y(G.ya) - G.Y(G.yb)) / ny + 0.5, fill: feas ? `hsl(${200 - 140 * Math.max(0, Math.min(1, q))},45%,${86 - 14 * Math.max(0, Math.min(1, q))}%)` : `hsl(0,0%,${95 - 6 * Math.max(0, Math.min(1, q))}%)` }); }
+    el(Ly, 'circle', { cx: G.X(0), cy: G.Y(0), r: G.X(Math.sqrt(r)) - G.X(0), fill: 'none', stroke: COL.k, 'stroke-width': 1.6 }); if (pk === 'two') G.seg(Ly, [G.xa, 0], [G.xb, 0], COL.k, 1.6);
+    const act = Pr.c.map((c, k) => [c, k]).filter(([c]) => Math.abs(c.f(x, r)) < 0.06), gf = Pr.gf(x), A = act.map(([c]) => c.g(x)), id = 'kk' + (++MID); svgArrows(svg, id);
+    let lam = [], resN = nrm2(gf); if (A.length === 1) { const a = A[0], l = dot2(gf, a) / dot2(a, a); lam = [l]; resN = nrm2([gf[0] - l * a[0], gf[1] - l * a[1]]); } else if (A.length === 2) { lam = sol2([[A[0][0], A[1][0]], [A[0][1], A[1][1]]], gf); resN = 0; }
+    const sc = v => { const n = nrm2(v); return n > 1.2 ? v.map(t => t * 1.2 / n) : v; }; drawArrow(Ly, id, G.X, G.Y, x, [x[0] + sc(gf)[0], x[1] + sc(gf)[1]], 'b', 2.6); A.forEach(a => drawArrow(Ly, id, G.X, G.Y, x, [x[0] + sc(a)[0], x[1] + sc(a)[1]], 'o', 2.4));
+    const feasNow = Pr.c.every(c => c.eq ? Math.abs(c.f(x, r)) < 0.06 : c.f(x, r) >= -1e-9), signOK = act.every(([c], k) => c.eq || lam[k] >= -1e-9), kkt = feasNow && resN < 1e-3 && signOK;
+    const H = handle(G, 'Điểm x'); H.setAttribute('transform', `translate(${G.X(x[0])},${G.Y(x[1])})`);
+    dragOn(svg, H, (px, py) => { let p = [G.iX(px), G.iY(py)]; const rad = Math.hypot(p[0], p[1]); if (Math.abs(rad - Math.sqrt(r)) < 0.12) p = p.map(v => v * Math.sqrt(r) / rad); if (pk === 'two' && Math.abs(p[1]) < 0.08) p[1] = 0; x = p; draw(); }, () => {});
+    let so = ''; if (kkt && act.length === 1 && Math.abs(lam[0]) > 1e-6) { const a = A[0], w = [-a[1], a[0]], Hc = act[0][0].H(x), Hf = Pr.Hf(x), HL = [[Hf[0][0] - lam[0] * Hc[0][0], Hf[0][1] - lam[0] * Hc[0][1]], [Hf[1][0] - lam[0] * Hc[1][0], Hf[1][1] - lam[0] * Hc[1][1]]], q = dot2(w, mv2(HL, w)) / dot2(w, w); so = `<span>bậc hai: nón tới hạn là đường tiếp tuyến w ⊥ ∇c; wᵀ∇²ₓₓL w / ‖w‖² = <b>${vk(q)}</b> ${q > 0 ? '> 0: cực tiểu địa phương chặt' : q < 0 ? '< 0: <b>không</b> phải cực tiểu (theo hướng tiếp tuyến f giảm)' : '= 0: chưa kết luận'}</span>`; }
+    const fs = Pr.f(Pr.sol(r));
+    svgText(G.ann, 40, 22, 'xanh: ∇f · cam: ∇cᵢ của ràng buộc đang hoạt động · nền xám: ngoài miền khả thi', COL.k, 9.5); svgText(G.ann, 40, 36, 'kéo chấm xanh; gần biên thì tự dính vào biên', '#5d6670', 9.5);
+    out.innerHTML = `<span>x = (${vk(x[0])}; ${vk(x[1])}), f(x) = ${vk(Pr.f(x))}, ${feasNow ? 'khả thi' : '<b>không khả thi</b>'}; ràng buộc hoạt động: ${act.length ? act.map(([, k]) => 'c' + sub(k + 1)).join(', ') : 'không có'}</span><span>∇f = Σ λᵢ∇cᵢ: λ = (${lam.map(vk).join('; ') || '—'}), phần dư ${vk(resN)} · ${kkt ? '<b>thoả KKT</b>' : !feasNow ? 'không khả thi' : resN >= 1e-3 ? '∇f không nằm trong span các ∇cᵢ hoạt động: chưa phải điểm KKT' : '<b>λ âm</b> ở ràng buộc bất đẳng thức: đi vào trong miền làm f giảm'}</span>${so}<span>độ nhạy: f* = ${vk(fs)} khi r = ${vk(r)}; với ràng buộc dạng r − ‖x‖² ≥ 0 (hay ‖x‖² − r ≥ 0), df*/dr = ±λ*: nới ràng buộc một đơn vị thì f* đổi khoảng λ*</span>`;
+  }
+  draw();
+};
+
+// ---- Lagrangian duality on min ½(x₁² + x₂²) s.t. x₁ ≥ 1 (Nocedal 12.9, example 12.10)
+IX.dual = (box) => {
+  box.innerHTML = `${segHTML({ lag: { l: 'L(x, λ) theo x₁' }, q: { l: 'Hàm đối ngẫu q(λ)' } }, 'lag', 'Chọn cách xem')}<div class="ixbar"><span class="ixin"><label>λ <input type="range" min="0" max="3" step="0.05" value="0.6"><output></output></label></span></div>
+    <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Đối ngẫu Lagrange"></svg></div><div class="readout" aria-live="polite"></div>`;
+  const svg = box.querySelector('svg'), out = box.querySelector('.readout'), rl = box.querySelector('input'), ol = box.querySelector('output'); let view = 'lag';
+  segOn(box, v => { view = v; draw(); }); rl.addEventListener('input', draw);
+  const q = l => -0.5 * l * l + l;
+  function draw() {
+    const l = +rl.value; ol.textContent = vk(l); svg.innerHTML = '';
+    if (view === 'lag') { const G = fgraph(svg, -1.5, 3, -1, 3), Ly = G.layer; el(Ly, 'rect', { x: G.X(G.xa), y: G.Y(G.yb), width: G.X(1) - G.X(G.xa), height: G.Y(G.ya) - G.Y(G.yb), fill: 'rgba(0,0,0,.05)' });
+      G.curve(Ly, x => 0.5 * x * x, COL.b, 2.4); G.curve(Ly, x => 0.5 * x * x - l * (x - 1), COL.o, 2.4); G.dot(Ly, l, q(l), COL.o, false, 5.5); G.dot(Ly, 1, 0.5, COL.b, false, 5.5); G.seg(Ly, [1, -1], [1, 3], COL.k, 1.2, '3 3');
+      svgText(G.ann, 40, 22, 'xanh: f = ½x₁² (x₂ = 0) · cam: L = f − λ(x₁ − 1)', COL.k, 10.5); svgText(G.ann, 40, 36, 'vùng xám: x₁ < 1, không khả thi', '#5d6670', 10);
+      out.innerHTML = `<span>với λ = ${vk(l)}: cực tiểu của L theo x đạt tại x₁ = λ, nên q(λ) = inf L = −½λ² + λ = <b>${vk(q(l))}</b> (chấm cam)</span><span>đối ngẫu yếu: q(λ) ≤ f* = 0,5 với mọi λ ≥ 0 (chấm xanh tại x* = (1, 0)); q(λ) đạt đúng 0,5 khi λ = 1</span>`; }
+    else { const G = fgraph(svg, -0.1, 3, -1.6, 1), Ly = G.layer; G.curve(Ly, q, COL.o, 2.6); G.line(Ly, 0, 0.5, 0, COL.b, 1.6, '6 4'); G.dot(Ly, l, q(l), COL.o, false, 5.5); G.dot(Ly, 1, 0.5, COL.g, false, 5);
+      svgText(G.ann, 40, 22, 'cam: q(λ) = −½λ² + λ (lõm) · xanh nét đứt: f* = 0,5', COL.k, 10.5);
+      out.innerHTML = `<span>bài đối ngẫu: max q(λ) với λ ≥ 0; q luôn lõm (cực tiểu của các hàm tuyến tính theo λ), kể cả khi bài gốc không lồi</span><span>λ* = 1, q(λ*) = 0,5 = f*: bài gốc lồi nên không có khoảng cách đối ngẫu; λ* đúng là nhân tử KKT, và cực tiểu L(·, λ*) cho lại x* = (1, 0)</span>`; }
   }
   draw();
 };
