@@ -270,6 +270,12 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
 .qo:hover:not(:disabled) { border-color: var(--blue); } .qo:disabled { cursor: default; opacity: .75; }
 .qo.right { border-color: var(--teal); background: #e3f4f0; opacity: 1; } .qo.wrong { border-color: var(--red); background: #fbe7e6; opacity: 1; }
 .qwhy { margin: .55rem 0 0; padding: .6rem .8rem; border-left: 3px solid var(--blue); background: var(--paper); font-size: .93rem; }
+.fbox { margin: 1.6rem 0 2.4rem; padding: 1.2rem 1.2rem 1.3rem; border: 1px solid var(--rule); border-radius: 12px; background: #fbf8f1; }
+.fbox h2 { margin-top: 0; padding-top: 0; border-top: 0; } .fbox h2 .no { color: var(--amber); }
+.fbgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: .6rem; margin: .4rem 0 1rem; }
+.fbc { display: flex; flex-direction: column; gap: .35rem; padding: .7rem .8rem; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); text-decoration: none; overflow: hidden; }
+.fbc:hover { border-color: var(--amber); } .fbt { font-weight: 600; font-size: .92rem; } .fbl { color: var(--muted); font-size: .85rem; overflow-x: auto; }
+.fbgo { display: inline-block; padding: .55rem 1rem; border-radius: 8px; background: var(--ink); color: #fff; text-decoration: none; font-weight: 600; font-size: .92rem; }
 .qscore { font-size: .95rem; } .qreset { font: inherit; font-size: .88rem; margin-left: .4rem; padding: .25rem .7rem; border: 1px solid var(--blue); border-radius: 6px; background: none; color: var(--blue); cursor: pointer; }</style>
 </head>
 <body>
@@ -284,7 +290,7 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <header class="ch">
     <div class="crumb">Học máy · Bishop PRML phụ lục D</div>
     <h1>Phụ lục D: phép tính biến phân</h1>
-    <p class="lede">Tối ưu không phải theo một vài biến mà theo cả <strong>một hàm số</strong>: tìm đường cong ngắn nhất, hay phân phối có entropy lớn nhất. Ý tưởng giống hệt giải tích thường: nhiễu một chút, đòi phần bậc nhất bằng 0.</p>
+    <p class="lede">Phép tính biến phân tối ưu không phải theo một vài biến, mà theo cả <strong>một hàm số</strong>: chẳng hạn tìm đường cong ngắn nhất, hay tìm phân phối có entropy lớn nhất. Ý tưởng giống hệt giải tích thông thường: làm nhiễu một chút, rồi yêu cầu phần bậc nhất bằng 0.</p>
     <dl class="facts">
       <div><dt>Cần biết trước</dt><dd>Khai triển Taylor, tích phân từng phần (MIT 18.01)</dd></div>
       <div><dt>Học tiếp</dt><dd>Entropy cực đại (mục 1.6); suy diễn biến phân (chương 10)</dd></div>
@@ -293,23 +299,23 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   </header>
   <h2><span class="no">1</span>Phiếm hàm</h2>
   <details class="src2"><summary>Ghi chú gốc · 1 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/pattern_recognition_machine_learning_cbishop/appendix_d_calculus_of_variation.md#node-1zqfvss" target="_blank" rel="noopener">Phiếm hàm và bài toán cực trị ↗</a></div></details>
-  <p>Hàm nhận một số, trả một số; <strong>phiếm hàm</strong> \(F[y]\) nhận cả một hàm \(y(x)\), trả một số. Ví dụ: độ dài đường cong \(y(x)\) giữa hai điểm; entropy \(\mathrm H[p] = -\int p(x)\ln p(x)\,dx\) của một mật độ. Mục 1.6 đã tìm phân phối có entropy lớn nhất, tức cực trị một phiếm hàm; chương 10 (suy diễn biến phân) làm điều đó một cách có hệ thống.</p>
+  <p>Một hàm số nhận vào một số và trả về một số; còn một <strong>phiếm hàm</strong> \(F[y]\) nhận vào cả một hàm \(y(x)\) và trả về một số. Ví dụ như độ dài của đường cong \(y(x)\) giữa hai điểm, hay entropy \(\mathrm H[p] = -\int p(x)\ln p(x)\,dx\) của một mật độ. Ở mục 1.6, ta đã tìm phân phối có entropy lớn nhất, tức là tìm cực trị của một phiếm hàm; chương 10 (suy diễn biến phân) sẽ làm việc này một cách có hệ thống.</p>
 
   <h2><span class="no">2</span>Đạo hàm phiếm hàm</h2>
   <details class="src2"><summary>Ghi chú gốc · 2 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/pattern_recognition_machine_learning_cbishop/appendix_d_calculus_of_variation.md#node-r07j2v2" target="_blank" rel="noopener">Taylor ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/pattern_recognition_machine_learning_cbishop/appendix_d_calculus_of_variation.md#node-pex6kc1" target="_blank" rel="noopener">Đạo hàm phiếm hàm và điểm dừng ↗</a></div></details>
-  <p>Với hàm nhiều biến, \(y(\mathbf x + \boldsymbol\epsilon) = y(\mathbf x) + \sum_i\frac{\partial y}{\partial x_i}\epsilon_i + O(\lVert\boldsymbol\epsilon\rVert^2)\). Cho số biến ra vô hạn, tổng thành tích phân: nhiễu \(y(x)\) bằng \(\epsilon\eta(x)\) với \(\eta\) tuỳ ý,</p>
+  <p>Với hàm nhiều biến, \(y(\mathbf x + \boldsymbol\epsilon) = y(\mathbf x) + \sum_i\frac{\partial y}{\partial x_i}\epsilon_i + O(\lVert\boldsymbol\epsilon\rVert^2)\). Khi cho số biến tiến ra vô hạn, tổng trở thành tích phân. Làm nhiễu \(y(x)\) một lượng \(\epsilon\eta(x)\) với \(\eta\) tuỳ ý, ta được</p>
   <div class="eq">\[ F[y + \epsilon\eta] = F[y] + \epsilon\int\frac{\delta F}{\delta y(x)}\,\eta(x)\,dx + O(\epsilon^2). \]</div>
-  <p>\(\delta F/\delta y(x)\) là <strong>đạo hàm phiếm hàm</strong>. Tại điểm dừng, phần bậc nhất phải bằng 0 với <em>mọi</em> \(\eta\), nên \(\delta F/\delta y(x) = 0\) tại mọi \(x\).</p>
+  <p>\(\delta F/\delta y(x)\) được gọi là <strong>đạo hàm phiếm hàm</strong>. Tại điểm dừng, phần bậc nhất phải bằng 0 với <em>mọi</em> \(\eta\), nên \(\delta F/\delta y(x) = 0\) tại mọi \(x\).</p>
 
   <h2><span class="no">3</span>Phương trình Euler–Lagrange</h2>
   <details class="src2"><summary>Ghi chú gốc · 2 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/pattern_recognition_machine_learning_cbishop/appendix_d_calculus_of_variation.md#node-ktj8ugn" target="_blank" rel="noopener">Euler–Lagrange ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/pattern_recognition_machine_learning_cbishop/appendix_d_calculus_of_variation.md#node-of8u2wm" target="_blank" rel="noopener">Khi G không phụ thuộc y′ ↗</a></div></details>
-  <p>Phần lớn phiếm hàm có dạng \(F[y] = \int G(y(x), y'(x), x)\,dx\), với \(y\) cố định ở hai đầu. Khai triển theo \(\epsilon\), tích phân từng phần số hạng chứa \(\eta'\) (số hạng biên triệt tiêu vì \(\eta = 0\) ở hai đầu):</p>
+  <p>Phần lớn các phiếm hàm có dạng \(F[y] = \int G(y(x), y'(x), x)\,dx\), với \(y\) cố định ở hai đầu mút. Khai triển theo \(\epsilon\), rồi tích phân từng phần số hạng chứa \(\eta'\) (số hạng biên triệt tiêu vì \(\eta = 0\) ở hai đầu), ta được:</p>
   <div class="eq">\[ \frac{\delta F}{\delta y(x)} = \frac{\partial G}{\partial y} - \frac{d}{dx}\Big(\frac{\partial G}{\partial y'}\Big) = 0 . \]</div>
-  <p>Nếu \(G\) không chứa \(y'\), chỉ còn \(\partial G/\partial y = 0\) tại mọi \(x\), như khi cực đại entropy với các ràng buộc viết bằng nhân tử Lagrange.</p>
+  <p>Nếu \(G\) không chứa \(y'\) thì chỉ còn \(\partial G/\partial y = 0\) tại mọi \(x\); đây là trường hợp khi cực đại entropy với các ràng buộc viết bằng nhân tử Lagrange.</p>
   <div class="from n"><span class="tag">Nguyên văn ghi chú <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/pattern_recognition_machine_learning_cbishop/appendix_d_calculus_of_variation.md#node-node-of8u2wm" target="_blank" rel="noopener">mở ghi chú gốc ↗</a></span>
     <p>Euler - Lagrange chỉ còn là ∂G/∂y = 0.</p></div>
-  <p>Ví dụ độ dài: \(G = \sqrt{1 + y'^2}\) không chứa \(y\), nên Euler–Lagrange cho \(\frac{d}{dx}\big(y'/\sqrt{1 + y'^2}\big) = 0\), tức \(y'\) không đổi: đường ngắn nhất là đường thẳng.</p>
-  <section class="ixbox"><div class="ixhead"><span class="who c">Hình tương tác</span><span>Nhiễu một đường cong</span></div><p class="ixhow">Kéo ε để làm cong đường thẳng theo hướng η; đổi hướng η ở hàng nút trên cùng. Ô nhỏ góc phải vẽ F[y + εη] theo ε.</p><div class="ix" data-ix="varcalc" data-title="Nhiễu một đường cong" data-how="Kéo ε để làm cong đường thẳng theo hướng η; đổi hướng η ở hàng nút trên cùng. Ô nhỏ góc phải vẽ F[y + εη] theo ε."></div><details class="ixmore"><summary>Hình này cho thấy gì?</summary><p><b>Đầu vào:</b> hướng nhiễu \(\eta(x)\) (bằng 0 ở hai đầu), độ lớn \(\epsilon\). <b>Kết quả:</b> đường thẳng nối hai điểm (xanh lục), đường \(y + \epsilon\eta\) (đỏ), độ dài \(F[y + \epsilon\eta]\), và đồ thị \(F\) theo \(\epsilon\) trong ô nhỏ. Với hướng \(\eta\) nào, đồ thị đó cũng có đáy tại \(\epsilon = 0\) và đạo hàm tại đó bằng 0: đường thẳng là điểm dừng của phiếm hàm độ dài, đúng như Euler–Lagrange cho.</p></details></section>
+  <p>Xét ví dụ độ dài đường cong: \(G = \sqrt{1 + y'^2}\) không chứa \(y\), nên phương trình Euler–Lagrange cho \(\frac{d}{dx}\big(y'/\sqrt{1 + y'^2}\big) = 0\), tức là \(y'\) không đổi. Vậy đường ngắn nhất là đường thẳng.</p>
+  <section class="ixbox"><div class="ixhead"><span class="who c">Hình tương tác</span><span>Nhiễu một đường cong</span></div><p class="ixhow">Kéo ε để uốn cong đường thẳng theo hướng η; đổi hướng η ở hàng nút trên cùng. Ô nhỏ ở góc phải vẽ F[y + εη] theo ε.</p><div class="ix" data-ix="varcalc" data-title="Nhiễu một đường cong" data-how="Kéo ε để uốn cong đường thẳng theo hướng η; đổi hướng η ở hàng nút trên cùng. Ô nhỏ ở góc phải vẽ F[y + εη] theo ε."></div><details class="ixmore"><summary>Hình này cho thấy gì?</summary><p>Bạn chọn hướng nhiễu \(\eta(x)\) (bằng 0 ở hai đầu) và độ lớn \(\epsilon\). Hình vẽ đường thẳng nối hai điểm (xanh lục), đường \(y + \epsilon\eta\) (đỏ), độ dài \(F[y + \epsilon\eta]\), và trong ô nhỏ vẽ đồ thị của \(F\) theo \(\epsilon\). Dù chọn hướng \(\eta\) nào, đồ thị này cũng có đáy tại \(\epsilon = 0\) và đạo hàm tại đó bằng 0. Vậy đường thẳng là điểm dừng của phiếm hàm độ dài, đúng như phương trình Euler–Lagrange cho biết.</p></details></section>
 
   <footer>
     <h3>Bài này được làm thế nào</h3>

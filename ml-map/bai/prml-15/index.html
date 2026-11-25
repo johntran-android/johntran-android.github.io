@@ -270,6 +270,12 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
 .qo:hover:not(:disabled) { border-color: var(--blue); } .qo:disabled { cursor: default; opacity: .75; }
 .qo.right { border-color: var(--teal); background: #e3f4f0; opacity: 1; } .qo.wrong { border-color: var(--red); background: #fbe7e6; opacity: 1; }
 .qwhy { margin: .55rem 0 0; padding: .6rem .8rem; border-left: 3px solid var(--blue); background: var(--paper); font-size: .93rem; }
+.fbox { margin: 1.6rem 0 2.4rem; padding: 1.2rem 1.2rem 1.3rem; border: 1px solid var(--rule); border-radius: 12px; background: #fbf8f1; }
+.fbox h2 { margin-top: 0; padding-top: 0; border-top: 0; } .fbox h2 .no { color: var(--amber); }
+.fbgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: .6rem; margin: .4rem 0 1rem; }
+.fbc { display: flex; flex-direction: column; gap: .35rem; padding: .7rem .8rem; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); text-decoration: none; overflow: hidden; }
+.fbc:hover { border-color: var(--amber); } .fbt { font-weight: 600; font-size: .92rem; } .fbl { color: var(--muted); font-size: .85rem; overflow-x: auto; }
+.fbgo { display: inline-block; padding: .55rem 1rem; border-radius: 8px; background: var(--ink); color: #fff; text-decoration: none; font-weight: 600; font-size: .92rem; }
 .qscore { font-size: .95rem; } .qreset { font: inherit; font-size: .88rem; margin-left: .4rem; padding: .25rem .7rem; border: 1px solid var(--blue); border-radius: 6px; background: none; color: var(--blue); cursor: pointer; }</style>
 </head>
 <body>
@@ -284,35 +290,35 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <header class="ch">
     <div class="crumb">Học máy · Bishop PRML mục 3.2</div>
     <h1>Phân tích bias–variance</h1>
-    <p class="lede">Góc nhìn của trường phái tần suất về độ phức tạp của mô hình: tưởng tượng có rất nhiều bộ dữ liệu, khớp mô hình trên từng bộ, rồi hỏi các đường khớp <strong>lệch</strong> khỏi đáp án bao nhiêu và <strong>toả ra</strong> bao nhiêu. Hai đại lượng đó kéo ngược chiều nhau.</p>
+    <p class="lede">Đây là cách trường phái tần suất nhìn độ phức tạp của mô hình. Hãy tưởng tượng ta có rất nhiều bộ dữ liệu, khớp mô hình trên từng bộ, rồi hỏi các đường khớp <strong>lệch</strong> khỏi đáp án bao nhiêu và <strong>phân tán</strong> bao nhiêu. Hai đại lượng này kéo theo hai hướng ngược nhau.</p>
     <dl class="facts">
       <div><dt>Cần biết trước</dt><dd>Lý thuyết quyết định cho hồi quy (mục 1.5), chính quy hoá (mục 3.1)</dd></div>
       <div><dt>Học tiếp</dt><dd>Hồi quy tuyến tính Bayes (mục 3.3)</dd></div>
       <div><dt>Video giảng lại</dt><dd>Chưa có video cho bài này</dd></div>
     </dl>
   </header>
-  <h2><span class="no">1</span>Vấn đề</h2>
+  <h2><span class="no">1</span>Vấn đề đặt ra</h2>
   <details class="src2"><summary>Ghi chú gốc · 2 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/pattern_recognition_machine_learning_cbishop/320_the_bias_variance_decomposition.md#node-0nolzxg" target="_blank" rel="noopener">Quá khớp và hợp lý cực đại ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/pattern_recognition_machine_learning_cbishop/320_the_bias_variance_decomposition.md#node-897hybe" target="_blank" rel="noopener">Tổng quan ↗</a></div></details>
-  <p>Hợp lý cực đại với mô hình nhiều tham số và ít dữ liệu thì quá khớp; chính quy hoá chữa được nhưng phải chọn \(\lambda\). Bishop nói trước: làm Bayes thì vấn đề này không xuất hiện. Nhưng trước đó, hãy xem trường phái tần suất phân tích độ phức tạp ra sao.</p>
+  <p>Dùng hợp lý cực đại với mô hình nhiều tham số và ít dữ liệu thì sẽ bị quá khớp; chính quy hoá khắc phục được nhưng lại phải chọn \(\lambda\). Bishop nói trước rằng nếu làm theo cách Bayes thì vấn đề này không xuất hiện. Nhưng trước hết, hãy xem trường phái tần suất phân tích độ phức tạp ra sao.</p>
 
-  <h2><span class="no">2</span>Tổn thất kỳ vọng tách làm ba</h2>
+  <h2><span class="no">2</span>Tách tổn thất kỳ vọng thành ba phần</h2>
   <details class="src2"><summary>Ghi chú gốc · 5 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/pattern_recognition_machine_learning_cbishop/320_the_bias_variance_decomposition.md#node-a09r921" target="_blank" rel="noopener">Dự đoán tối ưu ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/pattern_recognition_machine_learning_cbishop/320_the_bias_variance_decomposition.md#node-s3i1j2i" target="_blank" rel="noopener">Hai loại tổn thất bình phương ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/pattern_recognition_machine_learning_cbishop/320_the_bias_variance_decomposition.md#node-biq5b66" target="_blank" rel="noopener">Tách bias và variance ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/pattern_recognition_machine_learning_cbishop/320_the_bias_variance_decomposition.md#node-w19nneq" target="_blank" rel="noopener">Tổn thất kỳ vọng ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/pattern_recognition_machine_learning_cbishop/320_the_bias_variance_decomposition.md#node-qtn6vrp" target="_blank" rel="noopener">Ý nghĩa các công thức ↗</a></div></details>
   <p>Theo mục 1.5, với \(h(\mathbf x) = \mathbb E[t\mid\mathbf x]\):</p>
   <div class="eq">\[ \mathbb E[L] = \int\big\{y(\mathbf x) - h(\mathbf x)\big\}^2p(\mathbf x)\,d\mathbf x + \iint\big\{h(\mathbf x) - t\big\}^2p(\mathbf x, t)\,d\mathbf x\,dt . \]</div>
-  <p>Số hạng sau là nhiễu nội tại. Số hạng đầu phụ thuộc \(y\), mà \(y(\mathbf x; \mathcal D)\) lại phụ thuộc bộ dữ liệu \(\mathcal D\) dùng để học. Coi \(\mathcal D\) là ngẫu nhiên, cộng và trừ \(\mathbb E_{\mathcal D}[y(\mathbf x; \mathcal D)]\) rồi lấy kỳ vọng theo \(\mathcal D\), số hạng chéo triệt tiêu:</p>
+  <p>Số hạng sau là nhiễu vốn có của dữ liệu. Số hạng đầu phụ thuộc vào \(y\), mà \(y(\mathbf x; \mathcal D)\) lại phụ thuộc vào bộ dữ liệu \(\mathcal D\) dùng để học. Coi \(\mathcal D\) là ngẫu nhiên, ta cộng và trừ \(\mathbb E_{\mathcal D}[y(\mathbf x; \mathcal D)]\) rồi lấy kỳ vọng theo \(\mathcal D\); số hạng chéo triệt tiêu và ta được:</p>
   <div class="eq">\[ \mathbb E_{\mathcal D}\big[\{y(\mathbf x; \mathcal D) - h(\mathbf x)\}^2\big] = \underbrace{\{\mathbb E_{\mathcal D}[y(\mathbf x; \mathcal D)] - h(\mathbf x)\}^2}_{(\text{bias})^2} + \underbrace{\mathbb E_{\mathcal D}\big[\{y(\mathbf x; \mathcal D) - \mathbb E_{\mathcal D}[y(\mathbf x; \mathcal D)]\}^2\big]}_{\text{variance}} . \]</div>
   <div class="eq">\[ \text{tổn thất kỳ vọng} = (\text{bias})^2 + \text{variance} + \text{nhiễu}. \]</div>
-  <p>Bias đo trung bình các đường khớp (qua mọi bộ dữ liệu) lệch khỏi \(h\) bao nhiêu; variance đo các đường khớp riêng lẻ toả quanh trung bình đó bao nhiêu, tức mô hình nhạy với việc rút trúng bộ dữ liệu nào.</p>
+  <p>Bias đo xem trung bình của các đường khớp (lấy trên mọi bộ dữ liệu) lệch khỏi \(h\) bao nhiêu. Variance đo xem từng đường khớp phân tán quanh trung bình đó bao nhiêu, tức là mô hình nhạy đến đâu với việc ta tình cờ có được bộ dữ liệu nào.</p>
 
-  <h2><span class="no">3</span>Đánh đổi</h2>
+  <h2><span class="no">3</span>Sự đánh đổi giữa bias và variance</h2>
   <details class="src2"><summary>Ghi chú gốc · 2 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/pattern_recognition_machine_learning_cbishop/320_the_bias_variance_decomposition.md#node-mqos0pj" target="_blank" rel="noopener">Đánh đổi ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/pattern_recognition_machine_learning_cbishop/320_the_bias_variance_decomposition.md#node-xi208eq" target="_blank" rel="noopener">Hình minh hoạ ↗</a></div></details>
-  <p>Mô hình linh hoạt (λ nhỏ) có bias nhỏ nhưng variance lớn; mô hình cứng (λ lớn) thì ngược lại. Mô hình tốt nhất cân giữa hai thứ.</p>
+  <p>Mô hình linh hoạt (λ nhỏ) có bias nhỏ nhưng variance lớn; mô hình cứng nhắc (λ lớn) thì ngược lại. Mô hình tốt nhất là mô hình cân bằng được hai đại lượng này.</p>
   <div class="from n"><span class="tag">Nguyên văn ghi chú <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/pattern_recognition_machine_learning_cbishop/320_the_bias_variance_decomposition.md#node-node-mqos0pj" target="_blank" rel="noopener">mở ghi chú gốc ↗</a></span>
     <p>giảm bias thì lại tăng loss do variance</p></div>
-  <section class="ixbox"><div class="ixhead"><span class="who c">Hình tương tác</span><span>Bias và variance trên 100 bộ dữ liệu</span></div><p class="ixhow">Kéo ln λ. Chuyển giữa “20 đường khớp” (độ toả = variance) và “Trung bình” (độ lệch = bias), rồi xem “Đánh đổi theo ln λ”.</p><div class="ix" data-ix="biasvar" data-title="Bias và variance trên 100 bộ dữ liệu" data-how="Kéo ln λ. Chuyển giữa “20 đường khớp” (độ toả = variance) và “Trung bình” (độ lệch = bias), rồi xem “Đánh đổi theo ln λ”."></div><details class="ixmore"><summary>Hình này cho thấy gì?</summary><p><b>Đầu vào:</b> \(\ln\lambda\). <b>Kết quả:</b> giống thí nghiệm hình 3.5 của sách: 100 bộ dữ liệu, mỗi bộ 25 điểm từ \(\sin(2\pi x)\) cộng nhiễu, mỗi bộ khớp một mô hình 24 hàm cơ sở Gaussian có chính quy hoá. Cách xem đầu cho 20 đường khớp, cách xem thứ hai cho trung bình 100 đường so với \(h(x)\), cách xem cuối cho \((\text{bias})^2\), variance và tổng theo \(\ln\lambda\) như hình 3.6. Mặc định \(\ln\lambda = 2{,}6\): các đường khớp gần như trùng nhau (variance nhỏ) nhưng trung bình của chúng bẹt hẳn so với đường sin (bias lớn). Kéo về \(-3\): các đường toả rộng nhưng trung bình bám sát đường sin.</p></details></section>
+  <section class="ixbox"><div class="ixhead"><span class="who c">Hình tương tác</span><span>Bias và variance trên 100 bộ dữ liệu</span></div><p class="ixhow">Kéo ln λ. Chuyển qua lại giữa “20 đường khớp” (độ phân tán chính là variance) và “Trung bình” (độ lệch chính là bias), rồi xem “Đánh đổi theo ln λ”.</p><div class="ix" data-ix="biasvar" data-title="Bias và variance trên 100 bộ dữ liệu" data-how="Kéo ln λ. Chuyển qua lại giữa “20 đường khớp” (độ phân tán chính là variance) và “Trung bình” (độ lệch chính là bias), rồi xem “Đánh đổi theo ln λ”."></div><details class="ixmore"><summary>Hình này cho thấy gì?</summary><p>Bạn chỉnh \(\ln\lambda\). Hình lặp lại thí nghiệm ở hình 3.5 trong sách: có 100 bộ dữ liệu, mỗi bộ gồm 25 điểm lấy từ \(\sin(2\pi x)\) cộng nhiễu, và trên mỗi bộ ta khớp một mô hình gồm 24 hàm cơ sở Gaussian có chính quy hoá. Cách xem đầu tiên vẽ 20 đường khớp; cách xem thứ hai vẽ trung bình của 100 đường để so với \(h(x)\); cách xem cuối vẽ \((\text{bias})^2\), variance và tổng của chúng theo \(\ln\lambda\), giống hình 3.6. Với \(\ln\lambda = 2{,}6\) mặc định, các đường khớp gần như trùng nhau (variance nhỏ), nhưng đường trung bình của chúng bẹt hẳn so với đường sin (bias lớn). Kéo về \(-3\) thì các đường phân tán rộng, nhưng đường trung bình bám sát đường sin.</p></details></section>
 
-  <h2><span class="no">4</span>Giá trị thực tế có hạn</h2>
-  <p>Phân tích này cần nhiều bộ dữ liệu độc lập, mà nếu có chừng ấy dữ liệu thì gộp lại thành một bộ lớn sẽ tốt hơn: variance tự giảm. Nên Bishop coi nó là một góc nhìn để hiểu độ phức tạp, chứ không phải công cụ chọn mô hình. Mục 3.3 quay sang cách Bayes.</p>
+  <h2><span class="no">4</span>Giá trị thực tế còn hạn chế</h2>
+  <p>Phân tích này cần nhiều bộ dữ liệu độc lập. Nhưng nếu có nhiều dữ liệu như vậy thì gộp lại thành một bộ lớn sẽ tốt hơn, vì variance sẽ tự giảm. Vì vậy Bishop coi đây là một cách nhìn để hiểu độ phức tạp của mô hình, chứ không phải công cụ để chọn mô hình. Mục 3.3 sẽ chuyển sang cách làm Bayes.</p>
 
   <footer>
     <h3>Bài này được làm thế nào</h3>

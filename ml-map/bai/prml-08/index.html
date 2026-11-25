@@ -270,6 +270,12 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
 .qo:hover:not(:disabled) { border-color: var(--blue); } .qo:disabled { cursor: default; opacity: .75; }
 .qo.right { border-color: var(--teal); background: #e3f4f0; opacity: 1; } .qo.wrong { border-color: var(--red); background: #fbe7e6; opacity: 1; }
 .qwhy { margin: .55rem 0 0; padding: .6rem .8rem; border-left: 3px solid var(--blue); background: var(--paper); font-size: .93rem; }
+.fbox { margin: 1.6rem 0 2.4rem; padding: 1.2rem 1.2rem 1.3rem; border: 1px solid var(--rule); border-radius: 12px; background: #fbf8f1; }
+.fbox h2 { margin-top: 0; padding-top: 0; border-top: 0; } .fbox h2 .no { color: var(--amber); }
+.fbgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: .6rem; margin: .4rem 0 1rem; }
+.fbc { display: flex; flex-direction: column; gap: .35rem; padding: .7rem .8rem; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); text-decoration: none; overflow: hidden; }
+.fbc:hover { border-color: var(--amber); } .fbt { font-weight: 600; font-size: .92rem; } .fbl { color: var(--muted); font-size: .85rem; overflow-x: auto; }
+.fbgo { display: inline-block; padding: .55rem 1rem; border-radius: 8px; background: var(--ink); color: #fff; text-decoration: none; font-weight: 600; font-size: .92rem; }
 .qscore { font-size: .95rem; } .qreset { font: inherit; font-size: .88rem; margin-left: .4rem; padding: .25rem .7rem; border: 1px solid var(--blue); border-radius: 6px; background: none; color: var(--blue); cursor: pointer; }</style>
 </head>
 <body>
@@ -284,7 +290,7 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <header class="ch">
     <div class="crumb">Học máy · Bishop PRML mục 2.2</div>
     <h1>Biến đa thức và phân phối Dirichlet</h1>
-    <p class="lede">Từ đồng xu sang con xúc xắc: biến nhận một trong \(K\) giá trị. Mọi thứ ở mục 2.1 tổng quát lên gọn gàng: Bernoulli thành đa thức, Beta thành <strong>Dirichlet</strong>, và hậu nghiệm vẫn chỉ là cộng thêm số đếm.</p>
+    <p class="lede">Bài này đi từ đồng xu sang con xúc xắc, tức là biến nhận một trong \(K\) giá trị. Mọi thứ ở mục 2.1 được tổng quát hoá một cách gọn gàng: Bernoulli thành phân phối đa thức, Beta thành <strong>Dirichlet</strong>, và hậu nghiệm vẫn chỉ là cộng thêm số đếm.</p>
     <dl class="facts">
       <div><dt>Cần biết trước</dt><dd>Biến nhị phân và Beta (mục 2.1), nhân tử Lagrange</dd></div>
       <div><dt>Học tiếp</dt><dd>Phân phối Gaussian (mục 2.3)</dd></div>
@@ -293,32 +299,32 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   </header>
   <h2><span class="no">1</span>Mã hoá 1-trong-K</h2>
   <details class="src2"><summary>Ghi chú gốc · 2 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/pattern_recognition_machine_learning_cbishop/22_multinomial_variables.md#node-8bncfkc" target="_blank" rel="noopener">Vector hoá biến rời rạc ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/pattern_recognition_machine_learning_cbishop/22_multinomial_variables.md#node-03t5s9m" target="_blank" rel="noopener">Chuẩn hoá và kỳ vọng ↗</a></div></details>
-  <p>Biến có \(K\) giá trị được viết thành vector \(\mathbf x\) dài \(K\), đúng một phần tử bằng 1, còn lại bằng 0: với \(K = 6\), giá trị thứ ba là \(\mathbf x = (0, 0, 1, 0, 0, 0)^{\mathsf T}\). Gọi \(\mu_k\) là xác suất \(x_k = 1\):</p>
+  <p>Biến có \(K\) giá trị được viết thành vector \(\mathbf x\) dài \(K\), trong đó đúng một phần tử bằng 1 và các phần tử còn lại bằng 0. Chẳng hạn với \(K = 6\), giá trị thứ ba được viết là \(\mathbf x = (0, 0, 1, 0, 0, 0)^{\mathsf T}\). Gọi \(\mu_k\) là xác suất \(x_k = 1\):</p>
   <div class="eq">\[ p(\mathbf x\mid\boldsymbol\mu) = \prod_{k=1}^K \mu_k^{x_k}, \qquad \mu_k \ge 0,\ \ \sum_k\mu_k = 1, \qquad \mathbb E[\mathbf x\mid\boldsymbol\mu] = \sum_{\mathbf x} p(\mathbf x\mid\boldsymbol\mu)\,\mathbf x = \boldsymbol\mu . \]</div>
-  <p>Kỳ vọng là tổ hợp các vector đơn vị \(\mathbf e_k\) với trọng số \(\mu_k\), nên ra đúng \(\boldsymbol\mu\). Khi \(K = 2\), đây là Bernoulli.</p>
+  <p>Kỳ vọng là tổ hợp của các vector đơn vị \(\mathbf e_k\) với trọng số \(\mu_k\), nên bằng đúng \(\boldsymbol\mu\). Khi \(K = 2\), ta có lại phân phối Bernoulli.</p>
 
   <h2><span class="no">2</span>Likelihood và hợp lý cực đại</h2>
   <details class="src2"><summary>Ghi chú gốc · 2 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/pattern_recognition_machine_learning_cbishop/22_multinomial_variables.md#node-eqafv7v" target="_blank" rel="noopener">Likelihood và thống kê đủ ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/pattern_recognition_machine_learning_cbishop/22_multinomial_variables.md#node-59xj2rn" target="_blank" rel="noopener">ML bằng Lagrange ↗</a></div></details>
   <div class="eq">\[ p(\mathcal D\mid\boldsymbol\mu) = \prod_{n=1}^N\prod_{k=1}^K \mu_k^{x_{nk}} = \prod_{k=1}^K \mu_k^{m_k}, \qquad m_k = \sum_n x_{nk}. \]</div>
-  <p>Các \(m_k\), số lần thấy giá trị \(k\), là thống kê đủ. Cực đại \(\sum_k m_k\ln\mu_k\) với ràng buộc \(\sum_k\mu_k = 1\) bằng nhân tử Lagrange: đạo hàm \(\sum_k m_k\ln\mu_k + \lambda(\sum_k\mu_k - 1)\) cho \(\mu_k = -m_k/\lambda\), thay vào ràng buộc được \(\lambda = -N\), nên</p>
+  <p>Các \(m_k\), tức số lần thấy giá trị \(k\), là các thống kê đủ. Ta cực đại \(\sum_k m_k\ln\mu_k\) với ràng buộc \(\sum_k\mu_k = 1\) bằng nhân tử Lagrange: lấy đạo hàm của \(\sum_k m_k\ln\mu_k + \lambda(\sum_k\mu_k - 1)\) cho \(\mu_k = -m_k/\lambda\); thay vào ràng buộc, ta được \(\lambda = -N\), nên</p>
   <div class="eq">\[ \mu_k^{\text{ML}} = \frac{m_k}{N} . \]</div>
 
   <h2><span class="no">3</span>Phân phối đa thức</h2>
   <details class="src2"><summary>Ghi chú gốc · 1 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/pattern_recognition_machine_learning_cbishop/22_multinomial_variables.md#node-z10rtol" target="_blank" rel="noopener">Phân phối đa thức ↗</a></div></details>
   <p>Phân phối đồng thời của các số đếm \(m_1, \dots, m_K\) khi biết \(\boldsymbol\mu\) và \(N\):</p>
   <div class="eq">\[ \operatorname{Mult}(m_1, \dots, m_K\mid\boldsymbol\mu, N) = \frac{N!}{m_1!\,m_2!\cdots m_K!}\prod_{k=1}^K\mu_k^{m_k}, \qquad \sum_k m_k = N . \]</div>
-  <p>Hệ số đa thức đếm số cách chia \(N\) lần quan sát thành các nhóm có cỡ \(m_1, \dots, m_K\). Với \(K = 2\) là nhị thức.</p>
+  <p>Hệ số đa thức đếm số cách chia \(N\) lần quan sát thành các nhóm có cỡ \(m_1, \dots, m_K\). Với \(K = 2\), ta có lại phân phối nhị thức.</p>
 
   <h2><span class="no">4</span>Tiên nghiệm Dirichlet</h2>
   <details class="src2"><summary>Ghi chú gốc · 2 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/pattern_recognition_machine_learning_cbishop/22_multinomial_variables.md#node-mtuvvxg" target="_blank" rel="noopener">Phân phối Dirichlet ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/pattern_recognition_machine_learning_cbishop/22_multinomial_variables.md#node-t1l9a4m" target="_blank" rel="noopener">Hậu nghiệm Dirichlet ↗</a></div></details>
-  <p>Như Beta ở mục 2.1, chọn tiên nghiệm cùng dạng với likelihood:</p>
+  <p>Giống như với Beta ở mục 2.1, ta chọn tiên nghiệm có cùng dạng với likelihood:</p>
   <div class="eq">\[ \operatorname{Dir}(\boldsymbol\mu\mid\boldsymbol\alpha) = \frac{\Gamma(\alpha_0)}{\Gamma(\alpha_1)\cdots\Gamma(\alpha_K)}\prod_{k=1}^K\mu_k^{\alpha_k-1}, \qquad \alpha_0 = \sum_k\alpha_k, \qquad \mathbb E[\mu_k] = \frac{\alpha_k}{\alpha_0}. \]</div>
-  <p>Miền của \(\boldsymbol\mu\) là <strong>đơn hình</strong>: với \(K = 3\) là một tam giác trong không gian ba chiều, vì \(\mu_k \ge 0\) và tổng bằng 1. Nhân với likelihood:</p>
+  <p>Miền của \(\boldsymbol\mu\) là <strong>đơn hình</strong>; với \(K = 3\), đó là một tam giác trong không gian ba chiều, vì \(\mu_k \ge 0\) và tổng các \(\mu_k\) bằng 1. Nhân với likelihood, ta được:</p>
   <div class="eq">\[ p(\boldsymbol\mu\mid\mathcal D, \boldsymbol\alpha) \propto \prod_{k=1}^K\mu_k^{\alpha_k+m_k-1} \quad\Longrightarrow\quad p(\boldsymbol\mu\mid\mathcal D, \boldsymbol\alpha) = \operatorname{Dir}(\boldsymbol\mu\mid\boldsymbol\alpha + \mathbf m). \]</div>
   <div class="from n"><span class="tag">Nguyên văn ghi chú <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/pattern_recognition_machine_learning_cbishop/22_multinomial_variables.md#node-node-t1l9a4m" target="_blank" rel="noopener">mở ghi chú gốc ↗</a></span>
     <p>Và cái này lại có dạng kernel của một Dirichlet có tham số là (α1+m1, α2+m2,....), tức Dir(α + 𝐦)</p></div>
-  <p>\(\alpha_k\) lại là số quan sát ảo của giá trị \(k\).</p>
-  <section class="ixbox"><div class="ixhead"><span class="who c">Hình tương tác</span><span>Phân phối Dirichlet trên tam giác</span></div><p class="ixhow">Kéo ba thanh α₁, α₂, α₃ (thang log, từ 0,1 tới 20). Thử cả ba bằng 1, cả ba nhỏ hơn 1, và cả ba lớn.</p><div class="ix" data-ix="dirichlet" data-a="2,3,4" data-title="Phân phối Dirichlet trên tam giác" data-how="Kéo ba thanh α₁, α₂, α₃ (thang log, từ 0,1 tới 20). Thử cả ba bằng 1, cả ba nhỏ hơn 1, và cả ba lớn."></div><details class="ixmore"><summary>Hình này cho thấy gì?</summary><p><b>Đầu vào:</b> \(\alpha_1, \alpha_2, \alpha_3\). <b>Kết quả:</b> 1500 mẫu \(\boldsymbol\mu\) rút từ \(\operatorname{Dir}(\boldsymbol\alpha)\) vẽ trong tam giác (mỗi đỉnh là một \(\mu_k = 1\)), và kỳ vọng \(\alpha_k/\alpha_0\) (chấm đỏ). Mặc định \(\boldsymbol\alpha = (2, 3, 4)\): mẫu tụ quanh \((0{,}22;\ 0{,}33;\ 0{,}44)\). Cả ba bằng 1 thì mẫu rải đều khắp tam giác; cả ba nhỏ hơn 1 thì mẫu dồn ra các cạnh và đỉnh, như các hình 2.5 của sách. Cộng thêm số đếm \(\mathbf m\) vào \(\boldsymbol\alpha\) chính là đi từ tiên nghiệm sang hậu nghiệm.</p></details></section>
+  <p>\(\alpha_k\) lại có thể hiểu là số lần quan sát ảo của giá trị \(k\).</p>
+  <section class="ixbox"><div class="ixhead"><span class="who c">Hình tương tác</span><span>Phân phối Dirichlet trên tam giác</span></div><p class="ixhow">Kéo ba thanh α₁, α₂, α₃ (thang log, từ 0,1 tới 20). Thử để cả ba bằng 1, cả ba nhỏ hơn 1, và cả ba đều lớn.</p><div class="ix" data-ix="dirichlet" data-a="2,3,4" data-title="Phân phối Dirichlet trên tam giác" data-how="Kéo ba thanh α₁, α₂, α₃ (thang log, từ 0,1 tới 20). Thử để cả ba bằng 1, cả ba nhỏ hơn 1, và cả ba đều lớn."></div><details class="ixmore"><summary>Hình này cho thấy gì?</summary><p>Bạn chỉnh \(\alpha_1, \alpha_2, \alpha_3\). Hình vẽ 1500 mẫu \(\boldsymbol\mu\) rút từ \(\operatorname{Dir}(\boldsymbol\alpha)\) bên trong tam giác (mỗi đỉnh ứng với một \(\mu_k = 1\)), và kỳ vọng \(\alpha_k/\alpha_0\) (chấm đỏ). Với \(\boldsymbol\alpha = (2, 3, 4)\) mặc định, các mẫu tụ quanh \((0{,}22;\ 0{,}33;\ 0{,}44)\). Khi cả ba bằng 1, các mẫu rải đều khắp tam giác; khi cả ba nhỏ hơn 1, các mẫu dồn ra các cạnh và các đỉnh, giống các hình 2.5 trong sách. Cộng thêm số đếm \(\mathbf m\) vào \(\boldsymbol\alpha\) chính là bước đi từ tiên nghiệm sang hậu nghiệm.</p></details></section>
 
   <footer>
     <h3>Bài này được làm thế nào</h3>
