@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Vì sao là những khoá này · Toán nền tảng cho ML/AI</title>
-<meta name="description" content="Vì sao lộ trình toán nền tảng cho ML/AI chọn MIT 18.01, 18.02, 18.06, Stat 110, Casella & Berger, Bishop PRML và Nocedal & Wright: mỗi nguồn đóng vai gì và gắn với AI hôm nay ở đâu.">
+<title>Về các khoá học và sách trong lộ trình · Toán nền tảng cho ML/AI</title>
+<meta name="description" content="Lộ trình toán nền tảng cho ML/AI đi theo bảy khoá học và cuốn sách: MIT 18.01, 18.02, 18.06, Stat 110, Casella & Berger, Bishop và Nocedal & Wright. Trang này giải thích vì sao mình chọn chúng và mỗi phần được dùng ở đâu trong AI.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
@@ -175,7 +175,7 @@ figcaption { margin-top: .55rem; }
 .top{display:flex;gap:1rem;font:600 .9rem/1 var(--sans);padding:1.2rem 0;border-bottom:1px solid var(--rule)} .top a{text-decoration:none;color:var(--blue)}
 .stack{display:grid;grid-template-columns:repeat(6,1fr);gap:.4rem;margin:1.6rem 0 .6rem} .stack div{background:var(--wash);border-radius:8px;padding:.6rem .5rem;text-align:center;font:600 .8rem/1.3 var(--sans)}
 .stack div span{display:block;font-weight:400;color:var(--muted);font-size:.74rem;margin-top:.2rem}
-.crs{display:grid;grid-template-columns:6.5rem 1fr;gap:1.2rem;margin:2.6rem 0;padding-top:1.8rem;border-top:1px solid var(--rule)}
+.crs{margin:2.6rem 0;padding-top:1.8rem;border-top:1px solid var(--rule)}
 .crole{font:700 .78rem/1.2 var(--sans);letter-spacing:.07em;text-transform:uppercase;color:var(--teal);padding-top:.5rem}
 .crs h2{margin:0;padding:0;border:0;font-size:1.35rem} .cwho{color:var(--muted);margin:.3rem 0 .8rem;font-size:.95rem}
 .cwhy{margin:0 0 .8rem;padding-left:1.2rem} .cwhy li{margin:.35rem 0}
@@ -183,52 +183,52 @@ figcaption { margin-top: .55rem; }
 @media (max-width:640px){.crs{grid-template-columns:1fr;gap:.2rem} .stack{grid-template-columns:repeat(3,1fr)}}</style>
 </head><body><div class="page">
 <nav class="top"><a href="../">← Bản đồ</a><a href="../bai/">Mục lục bài viết</a></nav>
-<header class="ch"><div class="crumb">Toán nền tảng cho ML/AI</div><h1>Vì sao là những khoá này?</h1>
-<p class="lede">Muốn học nền tảng của AI thì có hàng nghìn khoá học và cuốn sách. Trang này chỉ đi theo bảy nguồn. Đó không phải những nguồn mới nhất, mà là những nguồn được giới học thuật dùng làm chuẩn suốt nhiều năm, và mỗi nguồn giữ một tầng riêng của toán phía sau AI.</p></header>
+<header class="ch"><div class="crumb">Toán nền tảng cho ML/AI</div><h1>Về các khoá học và sách trong lộ trình</h1>
+<p class="lede">Tài liệu để học toán cho AI thì rất nhiều. Ở đây mình chỉ đi theo bảy khoá học và cuốn sách. Chúng không mới, nhưng đều được dạy và dùng làm giáo trình chuẩn nhiều năm nay, và mỗi cái lo một phần trong nền toán phía sau AI.</p></header>
 
-<h2>Ba tiêu chí chọn</h2>
+<h2>Mình chọn dựa trên ba điều</h2>
 <ul>
-<li><b>Dạy cái không lỗi thời.</b> Công cụ AI đổi từng tháng, còn đạo hàm, ma trận, xác suất, tối ưu thì không. Mô hình mới nhất vẫn được xây bằng đúng những viên gạch này.</li>
-<li><b>Được dùng làm chuẩn.</b> Mỗi nguồn là giáo trình gốc hoặc khoá được dạy và tham khảo rộng rãi trong nhiều năm, không phải một khoá ngắn chạy theo trào lưu.</li>
-<li><b>Học được thật.</b> Phần lớn có video hoặc bản PDF miễn phí, đủ để một người tự học đi hết.</li>
+<li><b>Kiến thức không bị lỗi thời.</b> Công cụ AI thay đổi liên tục, nhưng đạo hàm, ma trận, xác suất và tối ưu thì vẫn vậy. Các mô hình mới nhất cũng được xây từ chính những kiến thức này.</li>
+<li><b>Được dùng làm giáo trình chuẩn.</b> Đây là những khoá học và cuốn sách được nhiều trường dạy và nhiều người tham khảo trong nhiều năm, không phải khoá học ngắn hạn theo trào lưu.</li>
+<li><b>Có thể tự học.</b> Phần lớn có video bài giảng hoặc bản PDF miễn phí, nên một người tự học vẫn có thể theo đến hết.</li>
 </ul>
 
-<h2>Sáu tầng, nối thành một lộ trình</h2>
-<p>Đi từ dưới lên: mỗi tầng dùng những tầng trước nó. Bản đồ của trang này vẽ đúng những mũi tên đó, tới từng mục của từng cuốn.</p>
+<h2>Các phần nối với nhau thế nào</h2>
+<p>Phần sau dùng kiến thức của phần trước, theo thứ tự từ trái sang phải. Bản đồ trên trang này thể hiện chi tiết mối liên hệ đó, đến từng mục của từng cuốn sách.</p>
 <div class="stack"><div>Giải tích<span>18.01, 18.02</span></div><div>Đại số tuyến tính<span>18.06</span></div><div>Xác suất<span>Stat 110</span></div><div>Suy luận thống kê<span>Casella & Berger</span></div><div>Học máy<span>Bishop</span></div><div>Tối ưu<span>Nocedal & Wright</span></div></div>
 
-<section class="crs"><div class="crole">Đạo hàm</div><div class="cbody">
-    <h2>MIT 18.01 · Giải tích một biến</h2><p class="cwho">David Jerison, MIT, bản quay năm 2006</p>
-    <ul class="cwhy"><li>Khoá giải tích nhập môn của MIT, video và bài tập để mở hoàn toàn trên MIT OpenCourseWare.</li><li>Đi từ định nghĩa đạo hàm tới xấp xỉ tuyến tính, phương pháp Newton và định lý giá trị trung bình: đúng những công cụ mà tối ưu về sau dùng lại.</li></ul>
-    <p class="cai"><b>Trong AI hôm nay:</b> Huấn luyện mô hình là đi ngược theo đạo hàm của hàm mất mát. Backpropagation chỉ là quy tắc dây chuyền áp dụng có hệ thống.</p>
-    <p class="clink"><a href="../bai/#mit1801">12 bài viết trên trang này →</a> · <a href="https://ocw.mit.edu/courses/18-01-single-variable-calculus-fall-2006/" target="_blank" rel="noopener">MIT OpenCourseWare 18.01 ↗</a></p></div></section><section class="crs"><div class="crole">Gradient</div><div class="cbody">
-    <h2>MIT 18.02 · Giải tích nhiều biến</h2><p class="cwho">Denis Auroux, MIT, bản quay năm 2007</p>
-    <ul class="cwhy"><li>Khoá giải tích nhiều biến chuẩn của MIT, để mở trên OpenCourseWare cùng video đầy đủ.</li><li>Nối giải tích với vector: gradient là hướng tăng nhanh nhất, ma trận Hessian cho biết độ cong. Đây là cầu nối sang tối ưu.</li></ul>
-    <p class="cai"><b>Trong AI hôm nay:</b> Một mạng nơ-ron có hàng triệu tới hàng tỉ biến. Gradient, đạo hàm riêng, cực trị có ràng buộc (Lagrange) là ngôn ngữ để nói về chúng.</p>
-    <p class="clink"><a href="../bai/#mit1802">22 bài viết trên trang này →</a> · <a href="https://ocw.mit.edu/courses/18-02-multivariable-calculus-fall-2007/" target="_blank" rel="noopener">MIT OpenCourseWare 18.02 ↗</a></p></div></section><section class="crs"><div class="crole">Ma trận</div><div class="cbody">
-    <h2>MIT 18.06 · Đại số tuyến tính</h2><p class="cwho">Gilbert Strang, MIT, video quay năm 1999</p>
-    <ul class="cwhy"><li>Có lẽ là khoá toán nổi tiếng nhất của MIT OpenCourseWare: video quay từ năm 1999 mà đến nay vẫn là một trong những khoá được xem nhiều nhất trên đó.</li><li>Gilbert Strang dạy 18.06 suốt nhiều thập kỷ, tới bài giảng cuối năm 2023. Cách dạy của ông (nhìn Ax là tổ hợp các cột, bốn không gian con) đã thay đổi cách cả một thế hệ học đại số tuyến tính.</li><li>Thiên về hiểu và dùng ma trận hơn là chứng minh hình thức: hợp với người làm ML.</li></ul>
-    <p class="cai"><b>Trong AI hôm nay:</b> Mỗi lớp của mạng nơ-ron là một phép nhân ma trận. Embedding là vector, attention là tích vô hướng, PCA và nén mô hình là SVD.</p>
-    <p class="clink"><a href="../bai/#mit1806">30 bài viết trên trang này →</a> · <a href="https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/" target="_blank" rel="noopener">MIT OpenCourseWare 18.06 ↗</a></p></div></section><section class="crs"><div class="crole">Bất định</div><div class="cbody">
-    <h2>Stat 110 · Xác suất</h2><p class="cwho">Joe Blitzstein, Đại học Harvard</p>
-    <ul class="cwhy"><li>Một trong những khoá nổi tiếng nhất của Harvard, có toàn bộ video bài giảng miễn phí trên YouTube.</li><li>Nổi tiếng nhờ “chứng minh bằng câu chuyện” (story proofs): hiểu công thức qua một tình huống đếm hay một câu chuyện, thay vì biến đổi đại số.</li><li>Sách đi kèm, Introduction to Probability (Blitzstein và Hwang), có bản PDF miễn phí từ tác giả.</li></ul>
-    <p class="cai"><b>Trong AI hôm nay:</b> Mô hình ngôn ngữ dự đoán một phân phối xác suất cho từ tiếp theo. Bayes, kỳ vọng, phân phối, định lý giới hạn trung tâm có mặt ở mọi chỗ của ML.</p>
-    <p class="clink"><a href="../bai/#stat110">30 bài viết trên trang này →</a> · <a href="https://projects.iq.harvard.edu/stat110" target="_blank" rel="noopener">Trang khoá Stat 110 ↗</a></p></div></section><section class="crs"><div class="crole">Suy luận</div><div class="cbody">
-    <h2>Casella & Berger · Suy luận thống kê</h2><p class="cwho">George Casella, Roger Berger, Statistical Inference (tái bản 2002)</p>
-    <ul class="cwhy"><li>Giáo trình chuẩn của môn suy luận thống kê năm đầu cao học ở rất nhiều trường; nhiều kỳ thi tiến sĩ thống kê ra đề theo nó.</li><li>Đi sau Stat 110 rất tự nhiên: Stat 110 cho trực giác xác suất, Casella biến nó thành công cụ suy luận có chứng minh.</li></ul>
-    <p class="cai"><b>Trong AI hôm nay:</b> Học máy là ước lượng tham số từ dữ liệu. Ước lượng hợp lý cực đại, độ chệch và phương sai, khoảng tin cậy, kiểm định: tất cả nằm ở đây, nói chặt chẽ.</p>
-    <p class="clink">Đã có trên bản đồ theo mục lục sách; bài viết sẽ có sau.</p></div></section><section class="crs"><div class="crole">Mô hình</div><div class="cbody">
-    <h2>Bishop · Pattern Recognition and Machine Learning</h2><p class="cwho">Christopher Bishop, 2006</p>
-    <ul class="cwhy"><li>Một trong những giáo trình học máy được dùng và trích dẫn nhiều nhất; là sách chuẩn của các môn ML cao học suốt gần hai thập kỷ.</li><li>Đặc biệt ở góc nhìn Bayes nhất quán từ đầu tới cuối, kèm hình minh hoạ được vẽ rất kỹ.</li><li>Microsoft (nơi Bishop làm việc) đã cho tải bản PDF miễn phí.</li></ul>
-    <p class="cai"><b>Trong AI hôm nay:</b> Nhìn mọi mô hình như một mô hình xác suất: hồi quy, phân loại, mạng nơ-ron, mô hình hỗn hợp. Regularization hiện ra như một prior, và đó là cách hiểu sâu nhất vì sao mô hình học được.</p>
-    <p class="clink"><a href="../bai/#prml">30 bài viết trên trang này →</a> · <a href="https://www.microsoft.com/en-us/research/publication/pattern-recognition-machine-learning/" target="_blank" rel="noopener">Bản PDF từ Microsoft Research ↗</a></p></div></section><section class="crs"><div class="crole">Thuật toán</div><div class="cbody">
-    <h2>Nocedal & Wright · Numerical Optimization</h2><p class="cwho">Jorge Nocedal, Stephen Wright, tái bản 2006</p>
-    <ul class="cwhy"><li>Sách tham khảo chuẩn về thuật toán tối ưu liên tục, có mặt ở hầu hết các môn tối ưu số cao học.</li><li>Jorge Nocedal là đồng tác giả của L-BFGS (cùng Dong Liu, 1989), thuật toán đến giờ vẫn là mặc định ở nhiều chỗ, ví dụ bộ giải mặc định của LogisticRegression trong scikit-learn.</li><li>Viết cho người cài đặt thật: mỗi thuật toán đi kèm điều kiện hội tụ và những chi tiết làm nó chạy được trên máy.</li></ul>
-    <p class="cai"><b>Trong AI hôm nay:</b> Huấn luyện là giải một bài toán tối ưu. Line search, trust region, BFGS, gradient liên hợp, điều kiện KKT là gốc của mọi thuật toán tối ưu trong ML.</p>
-    <p class="clink"><a href="../bai/#nw">30 bài viết trên trang này →</a></p></div></section>
+<section class="crs">
+    <h2>MIT 18.01 · Giải tích một biến</h2><p class="cwho">Giảng viên David Jerison, MIT, quay năm 2006</p>
+    <ul class="cwhy"><li>Đây là khoá giải tích nhập môn của MIT. Video, bài tập và lời giải đều được đăng miễn phí trên MIT OpenCourseWare.</li><li>Khoá học đi từ định nghĩa đạo hàm đến xấp xỉ tuyến tính, phương pháp Newton và định lý giá trị trung bình. Đây cũng là những công cụ mà phần tối ưu về sau sẽ dùng lại.</li></ul>
+    <p class="cai"><b>Dùng ở đâu trong AI:</b> Huấn luyện mô hình là liên tục điều chỉnh tham số theo đạo hàm của hàm mất mát. Thuật toán lan truyền ngược (backpropagation) thực chất là áp dụng quy tắc đạo hàm của hàm hợp.</p>
+    <p class="clink"><a href="../bai/#mit1801">Xem 12 bài viết →</a> · <a href="https://ocw.mit.edu/courses/18-01-single-variable-calculus-fall-2006/" target="_blank" rel="noopener">MIT OpenCourseWare 18.01 ↗</a></p></section><section class="crs">
+    <h2>MIT 18.02 · Giải tích nhiều biến</h2><p class="cwho">Giảng viên Denis Auroux, MIT, quay năm 2007</p>
+    <ul class="cwhy"><li>Đây là khoá giải tích nhiều biến của MIT, có đầy đủ video và tài liệu miễn phí trên OpenCourseWare.</li><li>Khoá học mở rộng giải tích sang nhiều biến: gradient cho biết hướng mà hàm số tăng nhanh nhất, còn ma trận Hessian cho biết độ cong. Đây là phần nối sang tối ưu.</li></ul>
+    <p class="cai"><b>Dùng ở đâu trong AI:</b> Một mạng nơ-ron có thể có hàng triệu đến hàng tỉ tham số. Gradient, đạo hàm riêng và cực trị có ràng buộc là những công cụ để làm việc với số lượng biến lớn như vậy.</p>
+    <p class="clink"><a href="../bai/#mit1802">Xem 22 bài viết →</a> · <a href="https://ocw.mit.edu/courses/18-02-multivariable-calculus-fall-2007/" target="_blank" rel="noopener">MIT OpenCourseWare 18.02 ↗</a></p></section><section class="crs">
+    <h2>MIT 18.06 · Đại số tuyến tính</h2><p class="cwho">Giáo sư Gilbert Strang, MIT, quay năm 1999</p>
+    <ul class="cwhy"><li>Đây là một trong những khoá học được xem nhiều nhất trên MIT OpenCourseWare, dù video đã được quay từ năm 1999.</li><li>Giáo sư Strang dạy môn này suốt mấy chục năm, đến bài giảng cuối cùng vào năm 2023. Cách ông giảng, như xem Ax là tổ hợp các cột của A hay bốn không gian con cơ bản, đã ảnh hưởng đến cách rất nhiều người học đại số tuyến tính.</li><li>Khoá học tập trung vào việc hiểu và sử dụng ma trận hơn là chứng minh, nên rất hợp với người học ML.</li></ul>
+    <p class="cai"><b>Dùng ở đâu trong AI:</b> Mỗi lớp của mạng nơ-ron là một phép nhân ma trận. Embedding là vector, attention được tính bằng tích vô hướng, còn PCA và nén mô hình đều dựa trên SVD.</p>
+    <p class="clink"><a href="../bai/#mit1806">Xem 30 bài viết →</a> · <a href="https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/" target="_blank" rel="noopener">MIT OpenCourseWare 18.06 ↗</a></p></section><section class="crs">
+    <h2>Stat 110 · Xác suất</h2><p class="cwho">Giáo sư Joe Blitzstein, Đại học Harvard</p>
+    <ul class="cwhy"><li>Đây là một trong những khoá học nổi tiếng của Harvard, toàn bộ bài giảng đều có trên YouTube.</li><li>Thầy Blitzstein hay giải thích công thức bằng một câu chuyện hoặc một tình huống đếm (story proof) thay vì biến đổi đại số, nên người học dễ nhớ và hiểu sâu hơn.</li><li>Cuốn sách đi kèm, Introduction to Probability của Blitzstein và Hwang, có bản PDF miễn phí do tác giả cung cấp.</li></ul>
+    <p class="cai"><b>Dùng ở đâu trong AI:</b> Mô hình ngôn ngữ sinh văn bản bằng cách tính xác suất cho từ tiếp theo. Định lý Bayes, kỳ vọng, các phân phối và định lý giới hạn trung tâm xuất hiện ở hầu hết các phần của ML.</p>
+    <p class="clink"><a href="../bai/#stat110">Xem 30 bài viết →</a> · <a href="https://projects.iq.harvard.edu/stat110" target="_blank" rel="noopener">Trang khoá học Stat 110 ↗</a></p></section><section class="crs">
+    <h2>Casella & Berger · Suy luận thống kê</h2><p class="cwho">George Casella và Roger Berger, cuốn Statistical Inference (tái bản năm 2002)</p>
+    <ul class="cwhy"><li>Đây là giáo trình chuẩn cho môn suy luận thống kê năm đầu cao học ở nhiều trường. Nhiều kỳ thi tiến sĩ ngành thống kê ra đề dựa trên cuốn này.</li><li>Học cuốn này sau Stat 110 là rất hợp: Stat 110 giúp xây trực giác về xác suất, còn Casella dạy cách dùng xác suất để suy luận từ dữ liệu, có chứng minh chặt chẽ.</li></ul>
+    <p class="cai"><b>Dùng ở đâu trong AI:</b> Học máy về bản chất là ước lượng tham số từ dữ liệu. Ước lượng hợp lý cực đại, độ chệch và phương sai, khoảng tin cậy, kiểm định giả thuyết đều được trình bày đầy đủ trong cuốn này.</p>
+    <p class="clink">Đã có trong bản đồ theo mục lục sách, bài viết sẽ được bổ sung sau.</p></section><section class="crs">
+    <h2>Bishop · Pattern Recognition and Machine Learning</h2><p class="cwho">Christopher Bishop, xuất bản năm 2006</p>
+    <ul class="cwhy"><li>Đây là một trong những giáo trình học máy được dùng nhiều nhất, và là sách chuẩn của các môn ML ở bậc cao học suốt gần hai mươi năm.</li><li>Điểm đặc biệt của cuốn sách là cách nhìn theo xác suất Bayes xuyên suốt từ đầu đến cuối, cùng với hình minh hoạ được vẽ rất kỹ.</li><li>Microsoft, nơi tác giả làm việc, cho tải miễn phí bản PDF của sách.</li></ul>
+    <p class="cai"><b>Dùng ở đâu trong AI:</b> Cuốn sách xem mọi mô hình, từ hồi quy, phân loại đến mạng nơ-ron, như một mô hình xác suất. Nhìn theo cách này thì regularization chính là một prior, và ta hiểu được vì sao mô hình học được từ dữ liệu.</p>
+    <p class="clink"><a href="../bai/#prml">Xem 30 bài viết →</a> · <a href="https://www.microsoft.com/en-us/research/publication/pattern-recognition-machine-learning/" target="_blank" rel="noopener">Bản PDF trên trang Microsoft Research ↗</a></p></section><section class="crs">
+    <h2>Nocedal & Wright · Numerical Optimization</h2><p class="cwho">Jorge Nocedal và Stephen Wright, tái bản năm 2006</p>
+    <ul class="cwhy"><li>Đây là sách tham khảo chuẩn về thuật toán tối ưu, được dùng trong hầu hết các môn tối ưu số ở bậc cao học.</li><li>Giáo sư Nocedal là đồng tác giả của thuật toán L-BFGS (cùng Dong Liu, năm 1989). Đến nay L-BFGS vẫn được dùng làm mặc định ở nhiều nơi, ví dụ trong LogisticRegression của thư viện scikit-learn.</li><li>Sách viết cho người cần cài đặt thuật toán: mỗi thuật toán đều có điều kiện hội tụ và những chi tiết cần thiết để chạy được trên máy tính.</li></ul>
+    <p class="cai"><b>Dùng ở đâu trong AI:</b> Huấn luyện mô hình chính là giải một bài toán tối ưu. Line search, trust region, BFGS, gradient liên hợp và điều kiện KKT là nền tảng của các thuật toán tối ưu dùng trong ML.</p>
+    <p class="clink"><a href="../bai/#nw">Xem 30 bài viết →</a></p></section>
 
-<h2>Còn những nguồn khác thì sao?</h2>
-<p>Những sách mới về học sâu, như <i>Deep Learning</i> của Goodfellow, Bengio và Courville hay <i>Dive into Deep Learning</i>, đều rất tốt, và đều giả định người đọc đã có nền ở trên. <i>Mathematics for Machine Learning</i> (Deisenroth, Faisal, Ong) là bản tóm gọn hay của cùng phần toán. Video của 3Blue1Brown cho trực giác tuyệt vời. Trang này chọn đi sâu vào các nguồn gốc, vì hiểu tới đó rồi thì đọc tài liệu nào sau này cũng nhanh.</p>
-<p>Nền tảng không có nghĩa là phải học tuần tự từ đầu tới cuối. Cứ bắt đầu từ chỗ đang cần, rồi lần ngược theo các mũi tên trên bản đồ khi gặp chỗ chưa vững.</p>
+<h2>Các tài liệu khác</h2>
+<p>Những cuốn sách mới về học sâu như <i>Deep Learning</i> (Goodfellow, Bengio, Courville) hay <i>Dive into Deep Learning</i> đều rất hay, nhưng đều cần người đọc có sẵn phần nền ở trên. Cuốn <i>Mathematics for Machine Learning</i> (Deisenroth, Faisal, Ong) tóm gọn khá tốt cùng phần toán này, còn video của 3Blue1Brown giúp hình dung rất tốt. Ở đây mình chọn học kỹ các tài liệu gốc, vì khi đã nắm chắc thì đọc tài liệu nào sau này cũng nhanh hơn.</p>
+<p>Bạn cũng không nhất thiết phải học theo đúng thứ tự từ đầu đến cuối. Có thể bắt đầu từ phần mình đang cần, gặp chỗ nào chưa vững thì lần ngược lại theo bản đồ.</p>
 <p style="margin:3rem 0 4rem"><a href="../">← Về bản đồ</a> · <a href="../bai/">Mục lục bài viết</a></p>
 </div></body></html>
