@@ -270,6 +270,12 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
 .qo:hover:not(:disabled) { border-color: var(--blue); } .qo:disabled { cursor: default; opacity: .75; }
 .qo.right { border-color: var(--teal); background: #e3f4f0; opacity: 1; } .qo.wrong { border-color: var(--red); background: #fbe7e6; opacity: 1; }
 .qwhy { margin: .55rem 0 0; padding: .6rem .8rem; border-left: 3px solid var(--blue); background: var(--paper); font-size: .93rem; }
+.fbox { margin: 1.6rem 0 2.4rem; padding: 1.2rem 1.2rem 1.3rem; border: 1px solid var(--rule); border-radius: 12px; background: #fbf8f1; }
+.fbox h2 { margin-top: 0; padding-top: 0; border-top: 0; } .fbox h2 .no { color: var(--amber); }
+.fbgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: .6rem; margin: .4rem 0 1rem; }
+.fbc { display: flex; flex-direction: column; gap: .35rem; padding: .7rem .8rem; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); text-decoration: none; overflow: hidden; }
+.fbc:hover { border-color: var(--amber); } .fbt { font-weight: 600; font-size: .92rem; } .fbl { color: var(--muted); font-size: .85rem; overflow-x: auto; }
+.fbgo { display: inline-block; padding: .55rem 1rem; border-radius: 8px; background: var(--ink); color: #fff; text-decoration: none; font-weight: 600; font-size: .92rem; }
 .qscore { font-size: .95rem; } .qreset { font: inherit; font-size: .88rem; margin-left: .4rem; padding: .25rem .7rem; border: 1px solid var(--blue); border-radius: 6px; background: none; color: var(--blue); cursor: pointer; }</style>
 </head>
 <body>
@@ -284,7 +290,7 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <header class="ch">
     <div class="crumb">Tối ưu · Nocedal mục 4.2</div>
     <h1>Hội tụ toàn cục của trust region</h1>
-    <p class="lede">Vì sao trust region hội tụ từ bất cứ đâu? Toàn bộ lý luận dựa vào một bất đẳng thức: điểm Cauchy luôn làm mô hình giảm ít nhất một lượng tỉ lệ với <strong>\(\lVert g\rVert\)</strong>. Bước nào tốt bằng một phần của nó cũng thừa hưởng tính chất đó.</p>
+    <p class="lede">Vì sao trust region hội tụ dù xuất phát từ đâu? Toàn bộ lập luận dựa trên một bất đẳng thức: điểm Cauchy luôn làm mô hình giảm ít nhất một lượng tỉ lệ với <strong>\(\lVert g\rVert\)</strong>. Bước nào làm mô hình giảm được ít nhất một phần lượng đó cũng có được tính chất này.</p>
     <dl class="facts">
       <div><dt>Cần biết trước</dt><dd>Điểm Cauchy và dogleg (mục 4.1), hội tụ của line search (mục 3.2)</dd></div>
       <div><dt>Học tiếp</dt><dd>Giải bài toán con gần chính xác (mục 4.3)</dd></div>
@@ -293,23 +299,23 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   </header>
   <h2><span class="no">1</span>Độ giảm của điểm Cauchy</h2>
   <details class="src2"><summary>Ghi chú gốc · 3 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/numerical_optimization_jnocedal/42_trust_region_methods_global_convergence.md#node-edr7lqw" target="_blank" rel="noopener">Hội tụ toàn cục và điểm Cauchy ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/numerical_optimization_jnocedal/42_trust_region_methods_global_convergence.md#node-flrtdwa" target="_blank" rel="noopener">Điều kiện 4.20 ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/numerical_optimization_jnocedal/42_trust_region_methods_global_convergence.md#node-csq4ymh" target="_blank" rel="noopener">Bổ đề 4.3 ↗</a></div></details>
-  <p>Bổ đề 4.3: điểm Cauchy thoả</p>
+  <p>Bổ đề 4.3 cho biết điểm Cauchy thoả</p>
   <div class="eq">\[ m_k(0) - m_k(p_k^{\text C}) \ge \tfrac12\lVert g_k\rVert\min\Big(\Delta_k, \frac{\lVert g_k\rVert}{\lVert B_k\rVert}\Big). \]</div>
-  <p>Chứng minh xét ba trường hợp của \(\tau\) (\(g^{\mathsf T}Bg \le 0\); cực tiểu theo hướng \(-g\) nằm trong vùng; nằm ngoài vùng) và tính trực tiếp. Độ giảm này đóng vai điều kiện Armijo cộng điều kiện góc của line search.</p>
+  <p>Chứng minh bằng cách xét ba trường hợp của \(\tau\) (\(g^{\mathsf T}Bg \le 0\); cực tiểu theo hướng \(-g\) nằm trong vùng; cực tiểu nằm ngoài vùng) rồi tính trực tiếp. Độ giảm này đóng vai trò giống như điều kiện Armijo cộng với điều kiện về góc trong line search.</p>
 
-  <h2><span class="no">2</span>Mọi bước tốt bằng một phần điểm Cauchy</h2>
+  <h2><span class="no">2</span>Bước nào giảm được một phần như điểm Cauchy cũng đủ</h2>
   <details class="src2"><summary>Ghi chú gốc · 2 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/numerical_optimization_jnocedal/42_trust_region_methods_global_convergence.md#node-1evgr39" target="_blank" rel="noopener">Định lý 4.4 ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/numerical_optimization_jnocedal/42_trust_region_methods_global_convergence.md#node-29hd8yy" target="_blank" rel="noopener">Dogleg và không gian con ↗</a></div></details>
-  <p>Nếu \(m_k(0) - m_k(p_k) \ge c_2(m_k(0) - m_k(p_k^{\text C}))\) với một hằng \(c_2 > 0\), thì \(p_k\) cũng thoả bất đẳng thức trên (nhân \(c_2\)). Dogleg và không gian con hai chiều luôn tốt ít nhất bằng điểm Cauchy, nên đều thoả, kể cả Steihaug.</p>
+  <p>Nếu \(m_k(0) - m_k(p_k) \ge c_2(m_k(0) - m_k(p_k^{\text C}))\) với một hằng số \(c_2 > 0\)thì \(p_k\) cũng thoả bất đẳng thức trên (với vế phải nhân thêm \(c_2\)). Dogleg và cách cực tiểu trên không gian con hai chiều luôn tốt ít nhất bằng điểm Cauchy, nên đều thoả điều kiện này. Phương pháp Steihaug cũng vậy.</p>
 
   <h2><span class="no">3</span>Hội tụ tới điểm dừng</h2>
   <details class="src2"><summary>Ghi chú gốc · 7 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/numerical_optimization_jnocedal/42_trust_region_methods_global_convergence.md#node-k0era47" target="_blank" rel="noopener">Hai biến thể ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/numerical_optimization_jnocedal/42_trust_region_methods_global_convergence.md#node-5e0rp1k" target="_blank" rel="noopener">Giả định ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/numerical_optimization_jnocedal/42_trust_region_methods_global_convergence.md#node-fg12jtm" target="_blank" rel="noopener">Định lý 4.5 ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/numerical_optimization_jnocedal/42_trust_region_methods_global_convergence.md#node-oli585n" target="_blank" rel="noopener">Chứng minh ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/numerical_optimization_jnocedal/42_trust_region_methods_global_convergence.md#node-c4u2j3o" target="_blank" rel="noopener">Chứng minh (tiếp) ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/numerical_optimization_jnocedal/42_trust_region_methods_global_convergence.md#node-ke89jtq" target="_blank" rel="noopener">Chứng minh (tiếp) ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/numerical_optimization_jnocedal/42_trust_region_methods_global_convergence.md#node-i5wiv3l" target="_blank" rel="noopener">Định lý 4.6 ↗</a></div></details>
-  <p>Giả sử \(\lVert B_k\rVert \le \beta\), \(f\) bị chặn dưới trên tập mức và \(\nabla f\) liên tục Lipschitz quanh đó, và các bước thoả độ giảm trên với \(\lVert p_k\rVert \le \gamma\Delta_k\).</p>
+  <p>Giả sử \(\lVert B_k\rVert \le \beta\), \(f\) bị chặn dưới trên tập mức và \(\nabla f\) liên tục Lipschitz quanh đó, và các bước đều thoả độ giảm trên với \(\lVert p_k\rVert \le \gamma\Delta_k\).</p>
   <ul>
-    <li>Định lý 4.5 (\(\eta = 0\), nhận mọi bước làm \(f\) giảm): \(\liminf_k\lVert g_k\rVert = 0\).</li>
+    <li>Định lý 4.5 (\(\eta = 0\), tức là nhận mọi bước làm \(f\) giảm): \(\liminf_k\lVert g_k\rVert = 0\).</li>
     <li>Định lý 4.6 (\(\eta \in (0, \frac14)\)): \(\lim_k\lVert g_k\rVert = 0\).</li>
   </ul>
-  <p>Ý chứng minh 4.5 bằng phản chứng: giả sử \(\lVert g_k\rVert \ge \varepsilon\) mãi. Taylor cho \(|\rho_k - 1| \le \frac{\Delta_k^2(\beta/2 + \beta_1)}{\frac12\varepsilon\min(\Delta_k, \varepsilon/\beta)}\), nên khi \(\Delta_k\) nhỏ dưới một ngưỡng thì \(\rho_k > \frac34\) và bán kính không bị co nữa: \(\Delta_k\) bị chặn dưới. Nhưng khi đó mỗi bước được nhận giảm \(f\) ít nhất một lượng cố định, mà \(f\) bị chặn dưới, nên chỉ có hữu hạn bước được nhận; sau đó \(\Delta_k\) phải co về 0, mâu thuẫn.</p>
-  <section class="ixbox"><div class="ixhead"><span class="who c">Hình tương tác</span><span>Trust region từ nhiều điểm xuất phát</span></div><p class="ixhow">Kéo điểm xuất phát đi khắp khung.</p><div class="ix" data-ix="opt2d" data-f="wavy,rosen" data-algs="dogleg,sd" data-on="dogleg" data-title="Trust region từ nhiều điểm xuất phát" data-how="Kéo điểm xuất phát đi khắp khung."></div><details class="ixmore"><summary>Hình này cho thấy gì?</summary><p><b>Đầu vào:</b> hàm, điểm xuất phát. <b>Kết quả:</b> đường đi của trust region dogleg (có thể bật thêm steepest descent để so). Từ điểm xuất phát mặc định của hàm không lồi, ngay cạnh một điểm yên ngựa, trust region vẫn thoát ra và tới một cực tiểu; kéo điểm xuất phát đi đâu nó cũng dừng ở một điểm có gradient bằng 0.</p></details></section>
+  <p>Ý chứng minh định lý 4.5 như sau. Dùng phản chứng, giả sử \(\lVert g_k\rVert \ge \varepsilon\) với mọi \(k\). Từ khai triển Taylor ta có \(|\rho_k - 1| \le \frac{\Delta_k^2(\beta/2 + \beta_1)}{\frac12\varepsilon\min(\Delta_k, \varepsilon/\beta)}\), nên khi \(\Delta_k\) nhỏ hơn một ngưỡng nào đó thì \(\rho_k > \frac34\) và bán kính không bị thu nhỏ nữa. Vậy \(\Delta_k\) bị chặn dưới. Nhưng khi đó mỗi bước được nhận làm \(f\) giảm ít nhất một lượng cố định, mà \(f\) bị chặn dưới, nên chỉ có hữu hạn bước được nhận. Sau đó \(\Delta_k\) phải co dần về 0, mâu thuẫn.</p>
+  <section class="ixbox"><div class="ixhead"><span class="who c">Hình tương tác</span><span>Trust region từ nhiều điểm xuất phát</span></div><p class="ixhow">Kéo điểm xuất phát đi khắp khung và xem thuật toán dừng ở đâu.</p><div class="ix" data-ix="opt2d" data-f="wavy,rosen" data-algs="dogleg,sd" data-on="dogleg" data-title="Trust region từ nhiều điểm xuất phát" data-how="Kéo điểm xuất phát đi khắp khung và xem thuật toán dừng ở đâu."></div><details class="ixmore"><summary>Hình này cho thấy gì?</summary><p>Bạn chọn hàm và điểm xuất phát. Hình vẽ đường đi của trust region dùng dogleg (bạn có thể bật thêm steepest descent để so sánh). Với hàm không lồi, điểm xuất phát mặc định nằm ngay cạnh một điểm yên ngựa, nhưng trust region vẫn thoát ra được và đi tới một cực tiểu. Kéo điểm xuất phát đi đâu thì nó cũng dừng ở một điểm có gradient bằng 0.</p></details></section>
 
   <footer>
     <h3>Bài này được làm thế nào</h3>
