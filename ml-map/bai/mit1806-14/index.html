@@ -350,7 +350,7 @@ ol.ts .tt { flex: none; width: 2.6rem; font: 500 .8rem/1.45 var(--mono); color: 
 
     <div class="mx wide">
       <div class="mxin">
-        <div class="mxk">Đầu vào: ma trận \(A\) (3 × 2), sửa từng số</div>
+        <div class="mxk">Ma trận \(A\) (3 × 2): bấm vào từng số để sửa</div>
         <div class="grid" id="mxA"></div>
         <div class="presets"><button type="button" class="reset" data-p="1,1,1,2,1,5">Ví dụ khả nghịch</button><button type="button" class="reset" data-p="1,3,1,3,1,3">Ví dụ không khả nghịch</button></div>
       </div>
@@ -519,7 +519,7 @@ const typeset = n => { try { window.MathJax && MathJax.typesetPromise && MathJax
     const v = inputs.map(i => Number(i.value) || 0), A = [[v[0], v[1]], [v[2], v[3]], [v[4], v[5]]];
     const AtA = [[0, 0], [0, 0]]; for (let i = 0; i < 2; i++) for (let j = 0; j < 2; j++) for (let k = 0; k < 3; k++) AtA[i][j] += A[k][i] * A[k][j];
     const det = AtA[0][0] * AtA[1][1] - AtA[0][1] * AtA[1][0], rA = rank(A), rB = rank(AtA), inv = Math.abs(det) > 1e-9;
-    out.innerHTML = `<div class="mxk">Kết quả, tự tính lại</div>
+    out.innerHTML = `<div class="mxk">Kết quả, tính lại ngay khi bạn sửa</div>
       <div class="mxeq">\\[ A^TA = ${tex(AtA)} \\]</div>
       <div class="facts2"><span>rank(A) = <b>${rA}</b></span><span>rank(AᵀA) = <b>${rB}</b></span><span>det(AᵀA) = <b>${vn(det)}</b></span></div>
       <div class="tagok ${inv ? 'yes' : 'no'}">${inv ? 'AᵀA khả nghịch: hai cột của A độc lập' : (rA === 0 ? 'A bằng 0: AᵀA cũng bằng 0' : 'AᵀA không khả nghịch: cột 2 là bội của cột 1')}</div>`;

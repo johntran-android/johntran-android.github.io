@@ -270,6 +270,12 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
 .qo:hover:not(:disabled) { border-color: var(--blue); } .qo:disabled { cursor: default; opacity: .75; }
 .qo.right { border-color: var(--teal); background: #e3f4f0; opacity: 1; } .qo.wrong { border-color: var(--red); background: #fbe7e6; opacity: 1; }
 .qwhy { margin: .55rem 0 0; padding: .6rem .8rem; border-left: 3px solid var(--blue); background: var(--paper); font-size: .93rem; }
+.fbox { margin: 1.6rem 0 2.4rem; padding: 1.2rem 1.2rem 1.3rem; border: 1px solid var(--rule); border-radius: 12px; background: #fbf8f1; }
+.fbox h2 { margin-top: 0; padding-top: 0; border-top: 0; } .fbox h2 .no { color: var(--amber); }
+.fbgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: .6rem; margin: .4rem 0 1rem; }
+.fbc { display: flex; flex-direction: column; gap: .35rem; padding: .7rem .8rem; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); text-decoration: none; overflow: hidden; }
+.fbc:hover { border-color: var(--amber); } .fbt { font-weight: 600; font-size: .92rem; } .fbl { color: var(--muted); font-size: .85rem; overflow-x: auto; }
+.fbgo { display: inline-block; padding: .55rem 1rem; border-radius: 8px; background: var(--ink); color: #fff; text-decoration: none; font-weight: 600; font-size: .92rem; }
 .qscore { font-size: .95rem; } .qreset { font: inherit; font-size: .88rem; margin-left: .4rem; padding: .25rem .7rem; border: 1px solid var(--blue); border-radius: 6px; background: none; color: var(--blue); cursor: pointer; }</style>
 </head>
 <body>
@@ -325,7 +331,7 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
     <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/pq4if0qtlbp.png" alt="Bảng: 3) Component of A along direction û =" width="640" height="474" loading="lazy"></div>
     <figcaption><span class="who b">Bài giảng MIT</span><span>A|cos θ = A·û | Thành phần theo một hướng.</span></figcaption></figure>
   </div>
-  <section class="ixbox"><div class="ixhead"><span class="who c">Hình tương tác</span><span>Tích vô hướng và hình chiếu</span></div><p class="ixhow">Kéo đầu mũi tên của hai vector. Bảng tím ghi tích vô hướng, góc và hình chiếu.</p><div class="ix" data-ix="proj2d" data-title="Tích vô hướng và hình chiếu" data-how="Kéo đầu mũi tên của hai vector. Bảng tím ghi tích vô hướng, góc và hình chiếu."></div><details class="ixmore"><summary>Hình này cho thấy gì?</summary><p><b>Đầu vào:</b> hai vector (kéo đầu mũi tên). <b>Kết quả:</b> hình chiếu của vector này lên đường của vector kia và phần vuông góc còn lại. Hình này vốn dựng cho bài phép chiếu của MIT 18.06, nhưng đúng là chuyện của mục 3: độ dài hình chiếu chính là tích vô hướng với vector đơn vị. Kéo cho hai vector vuông góc thì hình chiếu teo về 0.</p></details></section>
+  <section class="ixbox"><div class="ixhead"><span class="who c">Hình tương tác</span><span>Tích vô hướng và hình chiếu</span></div><p class="ixhow">Kéo đầu mũi tên của hai vector. Bảng tím ghi tích vô hướng, góc và hình chiếu.</p><div class="ix" data-ix="proj2d" data-title="Tích vô hướng và hình chiếu" data-how="Kéo đầu mũi tên của hai vector. Bảng tím ghi tích vô hướng, góc và hình chiếu."></div><details class="ixmore"><summary>Hình này cho thấy gì?</summary><p>Bạn kéo đầu mũi tên của hai vector. Hình vẽ hình chiếu của vector này lên đường thẳng chứa vector kia, và phần vuông góc còn lại. Hình này vốn được dựng cho bài phép chiếu của MIT 18.06, nhưng nó minh hoạ đúng nội dung mục 3: độ dài hình chiếu chính là tích vô hướng với vector đơn vị. Kéo cho hai vector vuông góc thì hình chiếu co về 0.</p></details></section>
 
   <footer>
     <h3>Bài này được làm thế nào</h3>
@@ -596,7 +602,7 @@ IX.subspace = (box) => {
 IX.colspace = (box) => {
   const A = box.dataset.a.split(';').map(r => r.split(',').map(Number)), m = A.length, n = A[0].length;
   const presets = (box.dataset.presets || '').split('|').filter(Boolean).map(p => p.split(':')).map(([t, v]) => [t, v.split(',').map(Number)]);
-  box.innerHTML = `<div class="mx"><div class="mxin"><div class="mxk">Đầu vào: vế phải b (${m} số)</div><div class="grid" style="grid-template-columns:4.2rem">${A.map((_, i) => `<input type="number" step="1" aria-label="b${i + 1}">`).join('')}</div>
+  box.innerHTML = `<div class="mx"><div class="mxin"><div class="mxk">Vế phải b (${m} số): bấm vào từng số để sửa</div><div class="grid" style="grid-template-columns:4.2rem">${A.map((_, i) => `<input type="number" step="1" aria-label="b${i + 1}">`).join('')}</div>
     <div class="presets">${presets.map(([t], i) => `<button type="button" class="reset" data-p="${i}">${t}</button>`).join('')}</div></div><div class="mxout" aria-live="polite"></div></div>`;
   const ins = [...box.querySelectorAll('.grid input')], out = box.querySelector('.mxout');
   const N = nullBasis(A), r = rref(A).piv.length;
@@ -604,7 +610,7 @@ IX.colspace = (box) => {
     const b = ins.map(i => Number(i.value) || 0), aug = A.map((row, i) => [...row, b[i]]), { R, piv } = rref(aug), ok = !piv.includes(n);
     let sol = '';
     if (ok) { const x = Array(n).fill(0); piv.forEach((pc, i) => x[pc] = R[i][n]); sol = `\\[ x = ${vecTex(x)} :\\quad ${x.map((c, j) => `${frac(c)}\\,${vecTex(A.map(row => row[j]))}`).join(' + ')} = ${vecTex(b)} \\]`; }
-    out.innerHTML = `<div class="mxk">Kết quả (tính lại ngay khi đổi đầu vào)</div><div class="tagok ${ok ? 'yes' : 'no'}">${ok ? 'b nằm trong column space: Ax = b có nghiệm' : 'b nằm ngoài column space: Ax = b vô nghiệm'}</div>
+    out.innerHTML = `<div class="mxk">Kết quả (tính lại ngay khi bạn sửa số)</div><div class="tagok ${ok ? 'yes' : 'no'}">${ok ? 'b nằm trong column space: Ax = b có nghiệm' : 'b nằm ngoài column space: Ax = b vô nghiệm'}</div>
       <div class="mxeq">${sol}</div><div class="facts2"><span>hạng của A: <b>${r}</b></span><span>C(A) là không gian ${r} chiều trong ℝ<sup>${m}</sup></span></div>
       <div class="mxeq">\\[ N(A) = \\left\\{ ${N.length ? N.map((x, i) => `${'cdef'[i]}\\,${vecTex(x)}`).join(' + ') : '0'} \\right\\} \\]</div>`;
     typeset(out);
@@ -725,7 +731,7 @@ IX.bigpic = (box) => {
 IX.rank1 = (box) => {
   const U0 = [1, 2], V0 = [1, 4, 5], U2 = [1, 0], V2 = [0, 1, 1];
   const inp = (id, v) => `<input type="number" step="1" id="${id}" value="${v}" aria-label="${id}">`;
-  box.innerHTML = `<div class="mx"><div class="mxin"><div class="mxk">Đầu vào: u (cột) và vᵀ (hàng)</div>
+  box.innerHTML = `<div class="mx"><div class="mxin"><div class="mxk">Sửa các số của u (cột) và vᵀ (hàng)</div>
     <div class="r1"><div class="grid" style="grid-template-columns:3.4rem">${U0.map((v, i) => inp('u' + i, v)).join('')}</div><span class="times">×</span><div class="grid" style="grid-template-columns:repeat(3,3.4rem)">${V0.map((v, i) => inp('v' + i, v)).join('')}</div></div>
     <label class="chk"><input type="checkbox" id="add2"><span>cộng thêm một ma trận hạng 1 nữa: u₂v₂ᵀ với u₂ = (1, 0), v₂ = (0, 1, 1)</span></label></div>
     <div class="mxout" aria-live="polite"></div></div>`;
@@ -735,7 +741,7 @@ IX.rank1 = (box) => {
     const u = [0, 1].map(i => Number(ins[i].value) || 0), v = [0, 1, 2].map(i => Number(ins[2 + i].value) || 0);
     let A = u.map(a => v.map(b => a * b)); if (chk.checked) A = A.map((r, i) => r.map((x, j) => x + U2[i] * V2[j]));
     const r = rank(A);
-    out.innerHTML = `<div class="mxk">Kết quả (tính lại ngay khi đổi đầu vào)</div><div class="mxeq">\\[ A = ${chk.checked ? `${vecTex(u)}\\begin{bmatrix}${v.map(frac).join(' & ')}\\end{bmatrix} + ${vecTex(U2)}\\begin{bmatrix}${V2.join(' & ')}\\end{bmatrix}` : `${vecTex(u)}\\begin{bmatrix}${v.map(frac).join(' & ')}\\end{bmatrix}`} = ${texM(A)} \\]</div>
+    out.innerHTML = `<div class="mxk">Kết quả (tính lại ngay khi bạn sửa số)</div><div class="mxeq">\\[ A = ${chk.checked ? `${vecTex(u)}\\begin{bmatrix}${v.map(frac).join(' & ')}\\end{bmatrix} + ${vecTex(U2)}\\begin{bmatrix}${V2.join(' & ')}\\end{bmatrix}` : `${vecTex(u)}\\begin{bmatrix}${v.map(frac).join(' & ')}\\end{bmatrix}`} = ${texM(A)} \\]</div>
       <div class="facts2"><span>hạng của A: <b>${r}</b></span></div><div class="tagok ${r <= 1 ? 'yes' : 'no'}">${r === 1 ? 'Hạng 1: mọi hàng là bội của vᵀ, mọi cột là bội của u' : r === 0 ? 'A = 0' : 'Cộng hai ma trận hạng 1 ra hạng 2: tập ma trận hạng 1 không phải không gian con'}</div>`;
     typeset(out);
   }
@@ -865,7 +871,7 @@ IX.det2 = (box) => {
 // ---- 3 × 3 determinants: the big formula, the cofactor expansion, Cramer's rule (lectures 19, 20)
 IX.det3 = (box) => {
   const M0 = box.dataset.m.split(';').map(r => r.split(',').map(Number)), B0 = box.dataset.b ? box.dataset.b.split(',').map(Number) : null;
-  box.innerHTML = `<div class="mx"><div class="mxin"><div class="mxk">Đầu vào: A${B0 ? ' và b' : ''}</div><div class="r1"><div class="grid" style="grid-template-columns:repeat(3,3.4rem)">${M0.flat().map((v, i) => `<input type="number" step="1" value="${v}" data-i="${i}" aria-label="a${Math.floor(i / 3) + 1}${i % 3 + 1}">`).join('')}</div>
+  box.innerHTML = `<div class="mx"><div class="mxin"><div class="mxk">Ma trận A${B0 ? ' và vế phải b' : ''}: bấm vào từng số để sửa</div><div class="r1"><div class="grid" style="grid-template-columns:repeat(3,3.4rem)">${M0.flat().map((v, i) => `<input type="number" step="1" value="${v}" data-i="${i}" aria-label="a${Math.floor(i / 3) + 1}${i % 3 + 1}">`).join('')}</div>
     ${B0 ? `<span class="times">|</span><div class="grid" style="grid-template-columns:3.4rem">${B0.map((v, i) => `<input type="number" step="1" value="${v}" data-b="${i}" aria-label="b${i + 1}">`).join('')}</div>` : ''}</div>
     <div class="seg" role="group" aria-label="Chọn cách tính" style="margin-top:.8rem"><button type="button" data-v="big" class="on">Công thức lớn</button><button type="button" data-v="cof">Khai triển hàng 1</button>${B0 ? '<button type="button" data-v="cr">Cramer</button>' : ''}</div></div>
     <div class="mxout" aria-live="polite"></div></div>`;
@@ -888,7 +894,7 @@ IX.det3 = (box) => {
       tex = D ? `x_j = \\frac{\\det B_j}{\\det A}: \\quad ${dj.map((d, j) => `x_${j + 1} = \\frac{${d}}{${D}} = ${frac(d / D)}`).join(',\;\; ')}` : '\\det A = 0: \\text{ Cramer không dùng được}';
       note = 'Bⱼ là A với cột j thay bằng b. Đúng nhưng tốn: phải tính n + 1 định thức.';
     }
-    out.innerHTML = `<div class="mxk">Kết quả (tính lại ngay khi đổi đầu vào)</div><div class="steplab" style="font-weight:400">${note}</div><div class="mxeq">\\[ \\begin{aligned} ${tex.replaceAll(' \\\\ = ', ' \\\\ &= ').replace(' \\\\ \\quad ', ' \\\\ &\\quad ').replace('\\det A = ', '\\det A &= ')} \\end{aligned} \\]</div><div class="tagok ${D ? 'yes' : 'no'}">${D ? `det A = ${D}: khả nghịch` : 'det A = 0: suy biến'}</div>`;
+    out.innerHTML = `<div class="mxk">Kết quả (tính lại ngay khi bạn sửa số)</div><div class="steplab" style="font-weight:400">${note}</div><div class="mxeq">\\[ \\begin{aligned} ${tex.replaceAll(' \\\\ = ', ' \\\\ &= ').replace(' \\\\ \\quad ', ' \\\\ &\\quad ').replace('\\det A = ', '\\det A &= ')} \\end{aligned} \\]</div><div class="tagok ${D ? 'yes' : 'no'}">${D ? `det A = ${D}: khả nghịch` : 'det A = 0: suy biến'}</div>`;
     typeset(out);
   }
   [...ins, ...bins].forEach(i => i.addEventListener('input', calc));
@@ -912,7 +918,7 @@ const eig2 = (a, b, c, d) => {
   return { tr, de, L, V: [vec(L[0]), vec(L[1])] };
 };
 const vtxt = v => `(${v.map(vk).join('; ')})`;
-const matBox = (host, A0, onChange, sym, lab = 'Đầu vào: A =') => {
+const matBox = (host, A0, onChange, sym, lab = 'A =') => {
   host.innerHTML = `<span class="mxk" style="margin:0">${lab}</span><div class="grid" style="grid-template-columns:repeat(2,3.6rem)">${[0, 1, 2, 3].map(i => `<input type="number" step="0.1" value="${A0[i]}" aria-label="a${(i >> 1) + 1}${(i & 1) + 1}">`).join('')}</div>`;
   const ins = [...host.querySelectorAll('input')];
   ins.forEach((inp, i) => inp.addEventListener('input', () => { if (sym && (i === 1 || i === 2)) ins[3 - i].value = inp.value; onChange(); }));
@@ -1059,7 +1065,7 @@ IX.ode2 = (box) => {
 // ---- Fourier series as projection onto 1, cos kx, sin kx (lecture 24)  ·  input: the function, number of terms N  ·  result: partial sum and coefficients a_k = (1/π)∫ f cos kx
 IX.fourier = (box) => {
   const F = { sq: ['Sóng vuông', x => x < Math.PI ? 1 : -1], saw: ['Răng cưa', x => (Math.PI - x) / 2], tri: ['Tam giác', x => Math.abs(x - Math.PI)] };
-  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Đầu vào:</span><div class="seg" role="group" aria-label="Chọn hàm f">${Object.entries(F).map(([k, v], i) => `<button type="button" data-f="${k}"${i ? '' : ' class="on"'}>${v[0]}</button>`).join('')}</div><span class="ixin"><label>N <input type="range" min="0" max="25" step="1" value="3"><output></output></label></span></div>
+  box.innerHTML = `<div class="ixbar"><div class="seg" role="group" aria-label="Chọn hàm f">${Object.entries(F).map(([k, v], i) => `<button type="button" data-f="${k}"${i ? '' : ' class="on"'}>${v[0]}</button>`).join('')}</div><span class="ixin"><label>N <input type="range" min="0" max="25" step="1" value="3"><output></output></label></span></div>
     <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Hàm f và tổng Fourier N số hạng"></svg></div><div class="readout" aria-live="polite"></div>`;
   const svg = box.querySelector('svg'), out = box.querySelector('.readout'), rn = box.querySelector('input[type=range]'), on = box.querySelector('output'); let fk = 'sq';
   const X = x => 30 + x / (2 * Math.PI) * 350, Y = y => 150 - y * 62;
@@ -1348,7 +1354,7 @@ IX.secant = (box) => {
   const F = { inv: { l: 'f(x) = 1/x', f: x => 1 / x, d: x => -1 / (x * x), r: [-0.5, 5, -0.6, 4.4], x0: 1, lo: 0.3, fx: '−1/x₀²' },
               sq: { l: 'f(x) = x²', f: x => x * x, d: x => 2 * x, r: [-2.5, 2.5, -1, 5], x0: 0.8, lo: -2.2, fx: '2x₀' },
               cu: { l: 'f(x) = x³ − 2x', f: x => x ** 3 - 2 * x, d: x => 3 * x * x - 2, r: [-2.4, 2.4, -3.2, 3.2], x0: -0.6, lo: -2.1, fx: '3x₀² − 2' } };
-  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Đầu vào:</span>${segHTML(F, 'inv')}<span class="ixin"><label>Δx <input type="range" min="-1.5" max="1.5" step="0.01" value="1.2"><output></output></label></span></div>
+  box.innerHTML = `<div class="ixbar">${segHTML(F, 'inv')}<span class="ixin"><label>Δx <input type="range" min="-1.5" max="1.5" step="0.01" value="1.2"><output></output></label></span></div>
     <div class="ixbar"><button type="button" class="reset primary" data-go>▶ Cho Δx → 0</button><label class="chk" style="margin:0"><input type="checkbox"> tô tam giác dưới tiếp tuyến (với 1/x)</label></div>
     <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Cát tuyến PQ và tiếp tuyến tại P"></svg></div><div class="readout" aria-live="polite"></div>`;
   const svg = box.querySelector('svg'), out = box.querySelector('.readout'), rd = box.querySelector('input[type=range]'), ro = box.querySelector('output'), cb = box.querySelector('input[type=checkbox]');
@@ -1385,7 +1391,7 @@ IX.limits = (box) => {
               hole2: { l: 'Lỗ: (1 − cos x) / x', f: x => Math.abs(x) < 1e-12 ? NaN : (1 - Math.cos(x)) / x, r: [-7, 7, -1, 1], L: '0', R: '0', v: 'không xác định', kind: ['no', 'Gián đoạn bỏ được: hai phía cùng tiến về 0'], marks: [[0, 0, 1]] },
               inf: { l: 'Vô cực: 1/x', f: x => 1 / x, r: [-3, 3, -5, 5], L: '−∞', R: '+∞', v: 'không xác định', kind: ['no', 'Gián đoạn vô cực: bên phải vọt lên +∞, bên trái cắm xuống −∞'] },
               osc: { l: 'Dao động: sin(1/x)', f: x => Math.sin(1 / x), r: [-1, 1, -1.6, 1.6], L: 'không có', R: 'không có', v: 'không xác định', kind: ['no', 'Không có giới hạn phía nào: càng gần 0, f càng dao động nhanh giữa −1 và 1'] } };
-  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Đầu vào:</span>${segHTML(F, 'jump')}</div>
+  box.innerHTML = `<div class="ixbar">${segHTML(F, 'jump')}</div>
     <div class="ixbar"><span class="ixin"><label>x cách 0 một khoảng h <input type="range" min="0" max="100" step="1" value="10"><output></output></label></span><button type="button" class="reset primary" data-go>▶ Cho h → 0</button></div>
     <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Đồ thị hàm số gần x = 0, với hai điểm x = −h và x = h"></svg></div><div class="readout" aria-live="polite"></div>`;
   const svg = box.querySelector('svg'), out = box.querySelector('.readout'), rd = box.querySelector('input[type=range]'), ro = box.querySelector('output');
@@ -1410,7 +1416,7 @@ IX.limits = (box) => {
 
 // ---- sin θ / θ → 1, (1 − cos θ) / θ → 0, and d(sin θ)/dθ = cos θ on the unit circle (lecture 3)  ·  input: θ, Δθ  ·  result: arc PQ (length Δθ), Δy = PR, the ratios
 IX.unitcircle = (box) => {
-  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Đầu vào:</span><span class="ixin"><label>θ (độ) <input type="range" min="0" max="360" step="1" value="0" data-k="t"><output></output></label></span><span class="ixin"><label>Δθ (radian) <input type="range" min="0.01" max="1.5" step="0.01" value="1" data-k="d"><output></output></label></span></div>
+  box.innerHTML = `<div class="ixbar"><span class="ixin"><label>θ (độ) <input type="range" min="0" max="360" step="1" value="0" data-k="t"><output></output></label></span><span class="ixin"><label>Δθ (radian) <input type="range" min="0.01" max="1.5" step="0.01" value="1" data-k="d"><output></output></label></span></div>
     <div class="ixbar"><button type="button" class="reset primary" data-go>▶ Cho Δθ → 0</button><button type="button" class="reset" data-t="0">θ = 0 (hai tính chất A, B)</button><button type="button" class="reset" data-t="40">θ = 40°</button><button type="button" class="reset" data-t="120">θ = 120°</button></div>
     <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Đường tròn đơn vị với cung PQ và đoạn PR"></svg></div><div class="readout" aria-live="polite"></div>`;
   const svg = box.querySelector('svg'), out = box.querySelector('.readout'), [rt, rdl] = box.querySelectorAll('input[type=range]'), [ot, od] = box.querySelectorAll('output');
@@ -1446,7 +1452,7 @@ IX.chain = (box) => {
   const F = { s10: { l: 'y = sin(10t)', g: t => 10 * t, gp: t => 10, f: x => Math.sin(x), fp: x => Math.cos(x), r: [0, 1.2, -1.3, 1.3], gx: 'x = 10t', fx: 'y = sin x', gpx: '10', fpx: 'cos x', t0: 0.3 },
               p10: { l: 'y = (sin t)¹⁰', g: t => Math.sin(t), gp: t => Math.cos(t), f: x => x ** 10, fp: x => 10 * x ** 9, r: [0, 3.2, -0.2, 1.2], gx: 'x = sin t', fx: 'y = x¹⁰', gpx: 'cos t', fpx: '10x⁹', t0: 1.2 },
               sq: { l: 'y = sin(t²)', g: t => t * t, gp: t => 2 * t, f: x => Math.sin(x), fp: x => Math.cos(x), r: [0, 3, -1.3, 1.3], gx: 'x = t²', fx: 'y = sin x', gpx: '2t', fpx: 'cos x', t0: 1 } };
-  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Đầu vào:</span>${segHTML(F, 's10')}<span class="ixin"><label>Δt <input type="range" min="0.002" max="0.3" step="0.002" value="0.08"><output></output></label></span></div>
+  box.innerHTML = `<div class="ixbar">${segHTML(F, 's10')}<span class="ixin"><label>Δt <input type="range" min="0.002" max="0.3" step="0.002" value="0.08"><output></output></label></span></div>
     <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Đồ thị y theo t, và ba đoạn Δt, Δx, Δy"></svg></div><div class="readout" aria-live="polite"></div>`;
   const svg = box.querySelector('svg'), out = box.querySelector('.readout'), rd = box.querySelector('input[type=range]'), ro = box.querySelector('output');
   let k = 's10', G, t0, H, bars;
@@ -1477,7 +1483,7 @@ IX.inverse = (box) => {
               tan: { l: 'tan và arctan', f: Math.tan, g: Math.atan, gp: x => 1 / (1 + x * x), fd: [-1.45, 1.45], gd: [-3, 6], a: [-2.4, 3.6], a0: 1, fn: 'y = tan x', gn: 'y = arctan x', tx: '(arctan x)′ = 1 / (1 + x²)' },
               sin: { l: 'sin và arcsin', f: Math.sin, g: Math.asin, gp: x => 1 / Math.sqrt(1 - x * x), fd: [-Math.PI / 2, Math.PI / 2], gd: [-1, 1], a: [-0.97, 0.97], a0: 0.5, fn: 'y = sin x', gn: 'y = arcsin x', tx: '(arcsin x)′ = 1 / √(1 − x²)' },
               cir: { l: 'Hàm ẩn: x² + y² = 1', cir: 1 } };
-  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Đầu vào:</span>${segHTML(F, 'tan')}</div>
+  box.innerHTML = `<div class="ixbar">${segHTML(F, 'tan')}</div>
     <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Đồ thị f và f⁻¹ đối xứng qua y = x, cùng hai tiếp tuyến"></svg></div><div class="readout" aria-live="polite"></div>`;
   const svg = box.querySelector('svg'), out = box.querySelector('.readout');
   let k = 'tan', G, a, H; const yr = [-2.2, 3.2], xs = (yr[1] - yr[0]) * 360 / 268, xr = [-2.6, -2.6 + xs];
@@ -1512,7 +1518,7 @@ IX.inverse = (box) => {
 
 // ---- the slope of aˣ at x = 0 is M(a) = ln a; e is the base with slope 1 (lecture 6)  ·  input: the base a, n  ·  result: tangent at 0, M(a), ln a, (1 + 1/n)ⁿ
 IX.expslope = (box) => {
-  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Đầu vào:</span><span class="ixin"><label>cơ số a <input type="range" min="1.1" max="6" step="0.01" value="2"><output></output></label></span><button type="button" class="reset" data-a="2">a = 2</button><button type="button" class="reset primary" data-a="${Math.E}">a = e</button><button type="button" class="reset" data-a="4">a = 4</button></div>
+  box.innerHTML = `<div class="ixbar"><span class="ixin"><label>cơ số a <input type="range" min="1.1" max="6" step="0.01" value="2"><output></output></label></span><button type="button" class="reset" data-a="2">a = 2</button><button type="button" class="reset primary" data-a="${Math.E}">a = e</button><button type="button" class="reset" data-a="4">a = 4</button></div>
     <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Đồ thị y = a mũ x và tiếp tuyến tại x = 0"></svg></div><div class="readout" aria-live="polite"></div>
     <div class="ixbar"><span class="ixin"><label>n <input type="range" min="0" max="100" step="1" value="40" data-n><output></output></label></span><span class="nout"></span></div>`;
   const svg = box.querySelector('svg'), out = box.querySelector('.readout'), [ra, rn] = box.querySelectorAll('input[type=range]'), [oa, on] = box.querySelectorAll('output'), nout = box.querySelector('.nout');
@@ -1539,7 +1545,7 @@ IX.approx = (box) => {
               cos: { l: 'cos x', f: Math.cos, r: [-3.5, 3.5, -1.8, 1.8], lo: -3.3, tx: '1 − x²/2' },
               exp: { l: 'eˣ', f: Math.exp, r: [-2.5, 2, -0.6, 5], lo: -2.3, tx: '1 + x + x²/2' },
               mix: { l: 'e⁻³ˣ / √(1 + x)', f: x => Math.exp(-3 * x) / Math.sqrt(1 + x), r: [-0.6, 1.2, -0.8, 3], lo: -0.5, tx: '1 − 7x/2 + 51x²/8' } };
-  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Đầu vào:</span>${segHTML(F, 'ln')}</div>
+  box.innerHTML = `<div class="ixbar">${segHTML(F, 'ln')}</div>
     <div class="ixbar"><span class="ixin"><label>x cách a một khoảng <input type="range" min="-1" max="1" step="0.01" value="0.5"><output></output></label></span><label class="chk" style="margin:0"><input type="checkbox" checked> hiện xấp xỉ bậc hai</label></div>
     <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Hàm số, tiếp tuyến và parabol xấp xỉ tại a"></svg></div><div class="readout" aria-live="polite"></div>`;
   const svg = box.querySelector('svg'), out = box.querySelector('.readout'), rd = box.querySelector('input[type=range]'), ro = box.querySelector('output'), cb = box.querySelector('input[type=checkbox]');
@@ -1570,7 +1576,7 @@ IX.sketch = (box) => {
               rat: { l: '(x + 1)/(x + 2)', f: x => (x + 1) / (x + 2), r: [-7, 3, -4, 6], dis: [-2], hy: 1 },
               xl: { l: 'x / ln x', f: x => x > 0 ? x / Math.log(x) : NaN, r: [0, 10, -8, 10], dis: [1], lo: 0.02 } };
   const K0 = F[box.dataset.f0] ? box.dataset.f0 : 'cub';
-  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Đầu vào:</span>${segHTML(F, K0)}</div>
+  box.innerHTML = `<div class="ixbar">${segHTML(F, K0)}</div>
     <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Đồ thị với dấu của f′ và f″"></svg></div><div class="readout" aria-live="polite"></div>`;
   const svg = box.querySelector('svg'), out = box.querySelector('.readout');
   let k = K0, G, px0, H, strip;
@@ -1608,7 +1614,7 @@ IX.maxmin = (box) => {
   const V = 1, F = { wire: { l: 'Dây dài 1 cắt làm hai hình vuông', A: x => (x / 4) ** 2 + ((1 - x) / 4) ** 2, r: [0, 1, 0, 0.075], lo: 0.01, hi: 0.99, x0: 0.25, crit: 0.5 },
               box: { l: 'Hộp đáy vuông không nắp, thể tích 1', A: x => x * x + 4 * V / x, r: [0, 3, 0, 10], lo: 0.25, hi: 2.95, x0: 0.8, crit: Math.cbrt(2 * V) } };
   const K0 = F[box.dataset.f0] ? box.dataset.f0 : 'wire';
-  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Đầu vào:</span>${segHTML(F, K0, 'Chọn bài toán')}</div>
+  box.innerHTML = `<div class="ixbar">${segHTML(F, K0, 'Chọn bài toán')}</div>
     <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Hình minh hoạ và đồ thị diện tích theo x"></svg></div><div class="readout" aria-live="polite"></div>`;
   const svg = box.querySelector('svg'), out = box.querySelector('.readout');
   let k = K0, G, x, H, pic;
@@ -1645,7 +1651,7 @@ IX.maxmin = (box) => {
 
 // ---- related rates: filling a cone (lecture 13)  ·  input: the water depth h (or let it fill)  ·  result: r = 2h/5, V, and dh/dt = (dV/dt)/(πr²) with dV/dt = 2
 IX.related = (box) => {
-  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Đầu vào:</span><span class="ixin"><label>mực nước h (ft) <input type="range" min="0.5" max="10" step="0.05" value="5"><output></output></label></span><button type="button" class="reset primary" data-go>▶ Bơm nước 2 ft³/phút</button></div>
+  box.innerHTML = `<div class="ixbar"><span class="ixin"><label>mực nước h (ft) <input type="range" min="0.5" max="10" step="0.05" value="5"><output></output></label></span><button type="button" class="reset primary" data-go>▶ Bơm nước 2 ft³/phút</button></div>
     <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Bể hình nón đang bơm nước và đồ thị tốc độ dâng dh/dt theo h"></svg></div><div class="readout" aria-live="polite"></div>`;
   const svg = box.querySelector('svg'), out = box.querySelector('.readout'), rh = box.querySelector('input[type=range]'), oh = box.querySelector('output');
   const pic = el(svg, 'g'), G = fgraph(svg, 0, 10, 0, 1.2, [200, 14, 10, 22]), rate = h => 2 / (Math.PI * (0.4 * h) ** 2);
@@ -1672,7 +1678,7 @@ IX.newton = (box) => {
               cyc: { l: 'x³ − 2x + 2', f: x => x ** 3 - 2 * x + 2, r: [-2.6, 2, -3, 6], x0: 0, root: -1.7692923542386314 },
               atan: { l: 'arctan x', f: Math.atan, r: [-5, 5, -1.8, 1.8], x0: 1.2, root: 0 } };
   const K0 = F[box.dataset.f0] ? box.dataset.f0 : 'r5';
-  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Đầu vào:</span>${segHTML(F, K0)}<span class="ixin"><label>số bước <input type="range" min="0" max="6" step="1" value="3"><output></output></label></span></div>
+  box.innerHTML = `<div class="ixbar">${segHTML(F, K0)}<span class="ixin"><label>số bước <input type="range" min="0" max="6" step="1" value="3"><output></output></label></span></div>
     <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Các tiếp tuyến của phương pháp Newton"></svg></div><div class="readout" aria-live="polite"></div>`;
   const svg = box.querySelector('svg'), out = box.querySelector('.readout'), rs = box.querySelector('input[type=range]'), os = box.querySelector('output');
   let k = K0, G, x0, H;
@@ -1700,7 +1706,7 @@ IX.mvt = (box) => {
   const F = { cub: { l: 'x³ − 3x', f: x => x ** 3 - 3 * x, r: [-2.4, 2.4, -4, 4], a: -1.8, b: 2 },
               wav: { l: 'sin 2x + x/2', f: x => Math.sin(2 * x) + x / 2, r: [-3, 3, -2.5, 2.5], a: -2.5, b: 2.2 },
               abs: { l: '|x| (có góc)', f: Math.abs, r: [-2.5, 2.5, -0.8, 2.6], a: -1.5, b: 2, kink: 0 } };
-  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Đầu vào:</span>${segHTML(F, 'cub')}</div>
+  box.innerHTML = `<div class="ixbar">${segHTML(F, 'cub')}</div>
     <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Cát tuyến từ a đến b và các tiếp tuyến song song"></svg></div><div class="readout" aria-live="polite"></div>`;
   const svg = box.querySelector('svg'), out = box.querySelector('.readout');
   let k = 'cub', G, a, b, Ha, Hb;
@@ -1734,7 +1740,7 @@ IX.param = (box) => {
   const F = { cyc: { l: 'Cycloid: bánh xe lăn', r: t => [t - Math.sin(t), 1 - Math.cos(t)], g: [-0.6, 13.2, -0.9, 3.6], t1: 4 * Math.PI, t0: 2 },
               kep: { l: 'Hành tinh quanh mặt trời', r: kep, g: [-3.4, 1.6, -1.6, 1.6], t1: T, t0: 1 } };
   const K0 = F[box.dataset.f0] ? box.dataset.f0 : 'cyc';
-  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Đầu vào:</span>${segHTML(F, K0)}<span class="ixin"><label>t <input type="range" min="0" max="1" step="0.001" value="0.2"><output></output></label></span><button type="button" class="reset primary" data-go>▶ Chạy</button></div>
+  box.innerHTML = `<div class="ixbar">${segHTML(F, K0)}<span class="ixin"><label>t <input type="range" min="0" max="1" step="0.001" value="0.2"><output></output></label></span><button type="button" class="reset primary" data-go>▶ Chạy</button></div>
     <div class="ixbar"><label class="chk" style="margin:0"><input type="checkbox" checked> vận tốc v và gia tốc a</label></div>
     <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Quỹ đạo của một điểm chuyển động"></svg></div><div class="readout" aria-live="polite"></div>`;
   const svg = box.querySelector('svg'), out = box.querySelector('.readout'), rt = box.querySelector('input[type=range]'), ot = box.querySelector('output'), cb = box.querySelector('input[type=checkbox]');
@@ -1777,7 +1783,7 @@ IX.contour = (box) => {
               l10: { l: 'x + y + 1/(xy)', f: (x, y) => x > 0 && y > 0 ? x + y + 1 / (x * y) : NaN, r: [0.15, 3.2], p: [2.2, 0.9], crit: [[1, 1]], lo: 0.18 },
               lag: { l: 'x² + y² với ràng buộc xy = 3', f: (x, y) => x * x + y * y, g: (x, y) => x * y, c: 3, r: [-0.6, 4.2], p: [2.8, 3 / 2.8], crit: [] } };
   const show = (box.dataset.show || 'grad').split(','), K0 = F[box.dataset.f0] ? box.dataset.f0 : 'cap', DIR = show.includes('dir');
-  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Đầu vào:</span>${segHTML(F, K0)}</div>
+  box.innerHTML = `<div class="ixbar">${segHTML(F, K0)}</div>
     ${DIR ? '<div class="ixbar"><span class="ixin"><label>hướng u (độ) <input type="range" min="0" max="359" step="1" value="30"><output></output></label></span></div>' : ''}
     <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Bản đồ đường mức của f(x, y)"></svg></div><div class="readout" aria-live="polite"></div>`;
   const svg = box.querySelector('svg'), out = box.querySelector('.readout'), ra = box.querySelector('input[type=range]'), oa = box.querySelector('output');
@@ -1833,7 +1839,7 @@ IX.dblint = (box) => {
   const F = { sq: { l: 'Hình vuông, 1 − x² − y²', f: (x, y) => 1 - x * x - y * y, in: (x, y) => x >= 0 && x <= 1 && y >= 0 && y <= 1, ex: 1 / 3, ext: '1/3', lim: '∫₀¹∫₀¹ (1 − x² − y²) dy dx' },
               disk: { l: 'Phần tư hình tròn, 1 − x² − y²', f: (x, y) => 1 - x * x - y * y, in: (x, y) => x >= 0 && y >= 0 && x * x + y * y <= 1, ex: Math.PI / 8, ext: 'π/8', lim: '∫₀¹∫₀^√(1−x²) (1 − x² − y²) dy dx = ∫₀^(π/2)∫₀¹ (1 − r²) r dr dθ', polar: 1 },
               swap: { l: 'Miền x ≤ y ≤ √x, eʸ/y', f: (x, y) => Math.exp(y) / y, in: (x, y) => y >= x && y * y <= x, ex: Math.E - 2, ext: 'e − 2', lim: '∫₀¹∫ₓ^√x (eʸ/y) dy dx = ∫₀¹∫_{y²}^y (eʸ/y) dx dy' } };
-  box.innerHTML = `<div class="ixbar"><span class="mxk" style="margin:0">Đầu vào:</span>${segHTML(F, 'disk')}</div>
+  box.innerHTML = `<div class="ixbar">${segHTML(F, 'disk')}</div>
     <div class="ixbar"><span class="ixin"><label>số phần mỗi chiều n <input type="range" min="2" max="40" step="1" value="6"><output></output></label></span><label class="chk" style="margin:0"><input type="checkbox"> lưới cực (r, θ)</label></div>
     <div class="frame live"><svg viewBox="0 0 400 300" role="img" aria-label="Miền R chia thành các mảnh nhỏ, tô màu theo giá trị f"></svg></div><div class="readout" aria-live="polite"></div>`;
   const svg = box.querySelector('svg'), out = box.querySelector('.readout'), rn = box.querySelector('input[type=range]'), on = box.querySelector('output'), cb = box.querySelector('input[type=checkbox]');
