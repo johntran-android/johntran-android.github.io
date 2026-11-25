@@ -270,6 +270,12 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
 .qo:hover:not(:disabled) { border-color: var(--blue); } .qo:disabled { cursor: default; opacity: .75; }
 .qo.right { border-color: var(--teal); background: #e3f4f0; opacity: 1; } .qo.wrong { border-color: var(--red); background: #fbe7e6; opacity: 1; }
 .qwhy { margin: .55rem 0 0; padding: .6rem .8rem; border-left: 3px solid var(--blue); background: var(--paper); font-size: .93rem; }
+.fbox { margin: 1.6rem 0 2.4rem; padding: 1.2rem 1.2rem 1.3rem; border: 1px solid var(--rule); border-radius: 12px; background: #fbf8f1; }
+.fbox h2 { margin-top: 0; padding-top: 0; border-top: 0; } .fbox h2 .no { color: var(--amber); }
+.fbgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: .6rem; margin: .4rem 0 1rem; }
+.fbc { display: flex; flex-direction: column; gap: .35rem; padding: .7rem .8rem; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); text-decoration: none; overflow: hidden; }
+.fbc:hover { border-color: var(--amber); } .fbt { font-weight: 600; font-size: .92rem; } .fbl { color: var(--muted); font-size: .85rem; overflow-x: auto; }
+.fbgo { display: inline-block; padding: .55rem 1rem; border-radius: 8px; background: var(--ink); color: #fff; text-decoration: none; font-weight: 600; font-size: .92rem; }
 .qscore { font-size: .95rem; } .qreset { font: inherit; font-size: .88rem; margin-left: .4rem; padding: .25rem .7rem; border: 1px solid var(--blue); border-radius: 6px; background: none; color: var(--blue); cursor: pointer; }</style>
 </head>
 <body>
@@ -320,6 +326,10 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <div class="eq">\[ E(g(X)) = \sum_s g(X(s))P(\{s\}) = \sum_x\sum_{s: X(s) = x}g(x)P(\{s\}) = \sum_x g(x)\,P(X = x). \]</div>
   <p>Đúng cả khi \(g\) không một–một (ví dụ \(g(x) = x^2\) gộp \(-3\) và \(3\)): những viên sỏi cùng \(g\) chỉ cộng dồn lại.</p>
 
+  <section class="fbox" id="nho-lau"><h2><span class="no">◆</span>Nhớ lâu: thẻ công thức</h2>
+  <p class="qintro">Hiểu xong rồi thì phải nhớ. 6 thẻ công thức của bài này có sẵn trong <b>FormulaBase</b>: mỗi thẻ giải thích ý nghĩa, cách dùng, lỗi hay gặp, và có câu hỏi ôn lại theo thời gian.</p>
+  <div class="fbgrid"><a class="fbc" href="https://formulabase.web.app/#card=location_scale" target="_blank" rel="noopener"><span class="fbt">Biến đổi vị trí – tỉ lệ</span><span class="fbl">\(Y = a + bX \ (b \ne 0) \implies f_Y(y) = \frac{1}{|b|}\, f_X\Big(\frac{y - a}{b}\Big), \qquad E[Y] = a + b\,E[X], \quad \text{Var}(Y) = b^2\,\text{Var}(X)\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=lotus" target="_blank" rel="noopener"><span class="fbt">Quy tắc LOTUS (kỳ vọng của hàm)</span><span class="fbl">\(E[g(X)] = \sum_x g(x)\,P(X=x)\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=lotus_continuous" target="_blank" rel="noopener"><span class="fbt">LOTUS (liên tục)</span><span class="fbl">\(E[g(X)] = \int_{-\infty}^{\infty} g(x)\,f_X(x)\,dx\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=variance_definition" target="_blank" rel="noopener"><span class="fbt">Phương sai (định nghĩa)</span><span class="fbl">\(\text{Var}(X) = E\big[(X - \mu)^2\big], \qquad \mu = E[X]\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=variance_identity" target="_blank" rel="noopener"><span class="fbt">Công thức phương sai E[X²] − (E[X])²</span><span class="fbl">\(\text{Var}(X) = E[X^2] - (E[X])^2\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=variance_linear_transform" target="_blank" rel="noopener"><span class="fbt">Phương sai của aX + b</span><span class="fbl">\(\text{Var}(aX + b) = a^2\,\text{Var}(X)\)</span></a></div>
+  <a class="fbgo" href="https://formulabase.web.app/#practice=location_scale,lotus,lotus_continuous,variance_definition,variance_identity,variance_linear_transform" target="_blank" rel="noopener">Ôn cả 6 thẻ ngay trong FormulaBase ↗</a></section>
   <footer>
     <h3>Bài này được làm thế nào</h3>
     <p>Chữ: viết lại từ <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/stat110_havard/lec_14_location_scale_lotus.md" target="_blank" rel="noopener">ghi chú Stat 110 bài giảng 14</a> của tác giả. Khung xanh là nguyên văn ghi chú; phần chữ còn lại do Claude soạn theo ý ghi chú. Bài này chưa có video giảng lại.</p>

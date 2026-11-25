@@ -270,6 +270,12 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
 .qo:hover:not(:disabled) { border-color: var(--blue); } .qo:disabled { cursor: default; opacity: .75; }
 .qo.right { border-color: var(--teal); background: #e3f4f0; opacity: 1; } .qo.wrong { border-color: var(--red); background: #fbe7e6; opacity: 1; }
 .qwhy { margin: .55rem 0 0; padding: .6rem .8rem; border-left: 3px solid var(--blue); background: var(--paper); font-size: .93rem; }
+.fbox { margin: 1.6rem 0 2.4rem; padding: 1.2rem 1.2rem 1.3rem; border: 1px solid var(--rule); border-radius: 12px; background: #fbf8f1; }
+.fbox h2 { margin-top: 0; padding-top: 0; border-top: 0; } .fbox h2 .no { color: var(--amber); }
+.fbgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: .6rem; margin: .4rem 0 1rem; }
+.fbc { display: flex; flex-direction: column; gap: .35rem; padding: .7rem .8rem; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); text-decoration: none; overflow: hidden; }
+.fbc:hover { border-color: var(--amber); } .fbt { font-weight: 600; font-size: .92rem; } .fbl { color: var(--muted); font-size: .85rem; overflow-x: auto; }
+.fbgo { display: inline-block; padding: .55rem 1rem; border-radius: 8px; background: var(--ink); color: #fff; text-decoration: none; font-weight: 600; font-size: .92rem; }
 .qscore { font-size: .95rem; } .qreset { font: inherit; font-size: .88rem; margin-left: .4rem; padding: .25rem .7rem; border: 1px solid var(--blue); border-radius: 6px; background: none; color: var(--blue); cursor: pointer; }</style>
 </head>
 <body>
@@ -317,6 +323,10 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <div class="eq">\[ P\Big(\bigcup A_j\Big) = 1 - \frac1{2!} + \frac1{3!} - \cdots + (-1)^{n+1}\frac1{n!} \;\xrightarrow{\;n\to\infty\;}\; 1 - \frac1e \approx 0{,}632. \]</div>
   <p>Chuỗi trong ngoặc là khai triển Taylor của \(e^x\) tại \(x = -1\).</p>
 
+  <section class="fbox" id="nho-lau"><h2><span class="no">◆</span>Nhớ lâu: thẻ công thức</h2>
+  <p class="qintro">Hiểu xong rồi thì phải nhớ. 6 thẻ công thức của bài này có sẵn trong <b>FormulaBase</b>: mỗi thẻ giải thích ý nghĩa, cách dùng, lỗi hay gặp, và có câu hỏi ôn lại theo thời gian.</p>
+  <div class="fbgrid"><a class="fbc" href="https://formulabase.web.app/#card=birthday_problem" target="_blank" rel="noopener"><span class="fbt">Bài toán ngày sinh</span><span class="fbl">\(P(\text{at least 1 collision}) = 1 - \prod_{k=0}^{n-1} \left(1 - \frac{k}{d}\right) = 1 - \frac{d!}{(d-n)! d^n}\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=birthday_approximation" target="_blank" rel="noopener"><span class="fbt">Bài toán ngày sinh: xấp xỉ mũ</span><span class="fbl">\(P(\text{no match among } k) \approx e^{-k(k-1)/(2n)}, \qquad P(\text{match}) &gt; \tfrac12 \ \text{ when } \ k \gtrsim \sqrt{2n\ln 2}\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=inclusion_exclusion" target="_blank" rel="noopener"><span class="fbt">Nguyên lý bao hàm – loại trừ</span><span class="fbl">\(P(A\cup B) = P(A)+P(B)-P(A\cap B)\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=inclusion_exclusion_general" target="_blank" rel="noopener"><span class="fbt">Bao hàm – loại trừ cho n biến cố</span><span class="fbl">\(P\Big(\bigcup_{i=1}^n A_i\Big) = \sum_i P(A_i) - \sum_{i&lt;j} P(A_i \cap A_j) + \sum_{i&lt;j&lt;k} P(A_i \cap A_j \cap A_k) - \cdots + (-1)^{n+1} P(A_1 \cap \cdots \cap A_n)\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=derangements" target="_blank" rel="noopener"><span class="fbt">Hoán vị xáo trộn (derangement)</span><span class="fbl">\(D_n = n! \sum_{k=0}^{n} \frac{(-1)^k}{k!}, \qquad \frac{D_n}{n!} \to \frac{1}{e} \approx 0.368\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=at_least_one" target="_blank" rel="noopener"><span class="fbt">Xác suất của &quot;ít nhất một&quot;</span><span class="fbl">\(P(\text{at least one}) = 1 - P(\text{none}) = 1 - (1 - p)^n\)</span></a></div>
+  <a class="fbgo" href="https://formulabase.web.app/#practice=birthday_problem,birthday_approximation,inclusion_exclusion,inclusion_exclusion_general,derangements,at_least_one" target="_blank" rel="noopener">Ôn cả 6 thẻ ngay trong FormulaBase ↗</a></section>
   <footer>
     <h3>Bài này được làm thế nào</h3>
     <p>Chữ: viết lại từ <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/stat110_havard/lec_3_birthday_problem_properties_of_probability.md" target="_blank" rel="noopener">ghi chú Stat 110 bài giảng 3</a> của tác giả. Khung xanh là nguyên văn ghi chú; phần chữ còn lại do Claude soạn theo ý ghi chú. Bài này chưa có video giảng lại.</p>

@@ -270,6 +270,12 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
 .qo:hover:not(:disabled) { border-color: var(--blue); } .qo:disabled { cursor: default; opacity: .75; }
 .qo.right { border-color: var(--teal); background: #e3f4f0; opacity: 1; } .qo.wrong { border-color: var(--red); background: #fbe7e6; opacity: 1; }
 .qwhy { margin: .55rem 0 0; padding: .6rem .8rem; border-left: 3px solid var(--blue); background: var(--paper); font-size: .93rem; }
+.fbox { margin: 1.6rem 0 2.4rem; padding: 1.2rem 1.2rem 1.3rem; border: 1px solid var(--rule); border-radius: 12px; background: #fbf8f1; }
+.fbox h2 { margin-top: 0; padding-top: 0; border-top: 0; } .fbox h2 .no { color: var(--amber); }
+.fbgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: .6rem; margin: .4rem 0 1rem; }
+.fbc { display: flex; flex-direction: column; gap: .35rem; padding: .7rem .8rem; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); text-decoration: none; overflow: hidden; }
+.fbc:hover { border-color: var(--amber); } .fbt { font-weight: 600; font-size: .92rem; } .fbl { color: var(--muted); font-size: .85rem; overflow-x: auto; }
+.fbgo { display: inline-block; padding: .55rem 1rem; border-radius: 8px; background: var(--ink); color: #fff; text-decoration: none; font-weight: 600; font-size: .92rem; }
 .qscore { font-size: .95rem; } .qreset { font: inherit; font-size: .88rem; margin-left: .4rem; padding: .25rem .7rem; border: 1px solid var(--blue); border-radius: 6px; background: none; color: var(--blue); cursor: pointer; }</style>
 </head>
 <body>
@@ -354,6 +360,10 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <figure class="wide"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to hình vẽ lại"><img src="img/5-dinh-thuc-dien-tich.png" alt="Hình vẽ lại: diện tích hình bình hành và tam giác tính bằng định thức" width="2188" height="1006" loading="lazy"></div>
     <figcaption><span class="who c">Hình minh hoạ</span><span>Hình bình hành \(\det\begin{bmatrix} 3 & 1 \\ 1 & 2 \end{bmatrix} = 5\), và một tam giác không ở gốc.</span></figcaption></figure>
 
+  <section class="fbox" id="nho-lau"><h2><span class="no">◆</span>Nhớ lâu: thẻ công thức</h2>
+  <p class="qintro">Hiểu xong rồi thì phải nhớ. 3 thẻ công thức của bài này có sẵn trong <b>FormulaBase</b>: mỗi thẻ giải thích ý nghĩa, cách dùng, lỗi hay gặp, và có câu hỏi ôn lại theo thời gian.</p>
+  <div class="fbgrid"><a class="fbc" href="https://formulabase.web.app/#card=cramers_rule" target="_blank" rel="noopener"><span class="fbt">Quy tắc Cramer</span><span class="fbl">\(x_i = \frac{\det(A_i)}{\det(A)}, \qquad A_i = A \text{ with column } i \text{ replaced by } \mathbf{b}\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=inverse_2x2" target="_blank" rel="noopener"><span class="fbt">Nghịch đảo của ma trận 2×2</span><span class="fbl">\(\begin{pmatrix} a &amp; b \\ c &amp; d \end{pmatrix}^{-1} = \frac{1}{ad - bc}\begin{pmatrix} d &amp; -b \\ -c &amp; a \end{pmatrix}\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=determinant_volume" target="_blank" rel="noopener"><span class="fbt">Định thức là hệ số co giãn thể tích</span><span class="fbl">\(\operatorname{vol}(A\,S) = |\det A| \cdot \operatorname{vol}(S), \qquad \det A &lt; 0 \Rightarrow \text{orientation flips}, \qquad \det A = 0 \Rightarrow \text{space is flattened}\)</span></a></div>
+  <a class="fbgo" href="https://formulabase.web.app/#practice=cramers_rule,inverse_2x2,determinant_volume" target="_blank" rel="noopener">Ôn cả 3 thẻ ngay trong FormulaBase ↗</a></section>
   <footer>
     <h3>Bài này được làm thế nào</h3>
     <p>Chữ: viết lại từ <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_20_cramers_rule_inverse_matrix_and_volume.md" target="_blank" rel="noopener">ghi chú MIT 18.06 bài giảng 20</a> của tác giả. Khung xanh là nguyên văn ghi chú; phần chữ còn lại do Claude soạn theo ý ghi chú. Video giảng lại đang được làm.</p>

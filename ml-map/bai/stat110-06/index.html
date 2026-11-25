@@ -270,6 +270,12 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
 .qo:hover:not(:disabled) { border-color: var(--blue); } .qo:disabled { cursor: default; opacity: .75; }
 .qo.right { border-color: var(--teal); background: #e3f4f0; opacity: 1; } .qo.wrong { border-color: var(--red); background: #fbe7e6; opacity: 1; }
 .qwhy { margin: .55rem 0 0; padding: .6rem .8rem; border-left: 3px solid var(--blue); background: var(--paper); font-size: .93rem; }
+.fbox { margin: 1.6rem 0 2.4rem; padding: 1.2rem 1.2rem 1.3rem; border: 1px solid var(--rule); border-radius: 12px; background: #fbf8f1; }
+.fbox h2 { margin-top: 0; padding-top: 0; border-top: 0; } .fbox h2 .no { color: var(--amber); }
+.fbgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: .6rem; margin: .4rem 0 1rem; }
+.fbc { display: flex; flex-direction: column; gap: .35rem; padding: .7rem .8rem; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); text-decoration: none; overflow: hidden; }
+.fbc:hover { border-color: var(--amber); } .fbt { font-weight: 600; font-size: .92rem; } .fbl { color: var(--muted); font-size: .85rem; overflow-x: auto; }
+.fbgo { display: inline-block; padding: .55rem 1rem; border-radius: 8px; background: var(--ink); color: #fff; text-decoration: none; font-weight: 600; font-size: .92rem; }
 .qscore { font-size: .95rem; } .qreset { font: inherit; font-size: .88rem; margin-left: .4rem; padding: .25rem .7rem; border: 1px solid var(--blue); border-radius: 6px; background: none; color: var(--blue); cursor: pointer; }</style>
 </head>
 <body>
@@ -315,6 +321,10 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <p>A giỏi hơn ở từng loại ca, nhưng gộp lại B có tỉ lệ thành công cao hơn, vì A nhận phần lớn ca khó. Không có gì mâu thuẫn: \(\frac{70}{90} > \frac2{10}\) và \(\frac{10}{10} > \frac{81}{90}\) không suy ra \(\frac{70 + 10}{90 + 10} > \frac{2 + 81}{10 + 90}\) (cộng tử với tử, mẫu với mẫu không phải phép cộng phân số). Loại ca mổ \(C\) là <strong>biến gây nhiễu</strong>: phải điều kiện hoá theo nó mới so sánh công bằng.</p>
   <div class="eq">\[ P(A\mid B, C) < P(A\mid B^c, C), \quad P(A\mid B, C^c) < P(A\mid B^c, C^c) \quad\text{nhưng}\quad P(A\mid B) > P(A\mid B^c). \]</div>
 
+  <section class="fbox" id="nho-lau"><h2><span class="no">◆</span>Nhớ lâu: thẻ công thức</h2>
+  <p class="qintro">Hiểu xong rồi thì phải nhớ. 4 thẻ công thức của bài này có sẵn trong <b>FormulaBase</b>: mỗi thẻ giải thích ý nghĩa, cách dùng, lỗi hay gặp, và có câu hỏi ôn lại theo thời gian.</p>
+  <div class="fbgrid"><a class="fbc" href="https://formulabase.web.app/#card=simpsons_paradox" target="_blank" rel="noopener"><span class="fbt">Nghịch lý Simpson</span><span class="fbl">\(P(A \mid B, C) &lt; P(A \mid B^c, C) \ \text{ and } \ P(A \mid B, C^c) &lt; P(A \mid B^c, C^c) \quad \text{yet possibly} \quad P(A \mid B) &gt; P(A \mid B^c)\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=law_of_total_probability" target="_blank" rel="noopener"><span class="fbt">Công thức xác suất toàn phần</span><span class="fbl">\(P(B) = \sum_{i=1}^{n} P(B|A_i)\,P(A_i)\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=conditional_bayes_lotp" target="_blank" rel="noopener"><span class="fbt">Bayes và xác suất toàn phần khi có thêm điều kiện</span><span class="fbl">\(P(A \mid B, C) = \frac{P(B \mid A, C)\, P(A \mid C)}{P(B \mid C)}, \qquad P(B \mid C) = \sum_i P(B \mid A_i, C)\, P(A_i \mid C)\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=bayes_theorem" target="_blank" rel="noopener"><span class="fbt">Định lý Bayes</span><span class="fbl">\(P(A|B) = \frac{P(B|A)\,P(A)}{P(B)}\)</span></a></div>
+  <a class="fbgo" href="https://formulabase.web.app/#practice=simpsons_paradox,law_of_total_probability,conditional_bayes_lotp,bayes_theorem" target="_blank" rel="noopener">Ôn cả 4 thẻ ngay trong FormulaBase ↗</a></section>
   <footer>
     <h3>Bài này được làm thế nào</h3>
     <p>Chữ: viết lại từ <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/stat110_havard/lec_6_monty_hall_simpsons_paradox.md" target="_blank" rel="noopener">ghi chú Stat 110 bài giảng 6</a> của tác giả. Khung xanh là nguyên văn ghi chú; phần chữ còn lại do Claude soạn theo ý ghi chú. Bài này chưa có video giảng lại.</p>

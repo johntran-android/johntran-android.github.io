@@ -270,6 +270,12 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
 .qo:hover:not(:disabled) { border-color: var(--blue); } .qo:disabled { cursor: default; opacity: .75; }
 .qo.right { border-color: var(--teal); background: #e3f4f0; opacity: 1; } .qo.wrong { border-color: var(--red); background: #fbe7e6; opacity: 1; }
 .qwhy { margin: .55rem 0 0; padding: .6rem .8rem; border-left: 3px solid var(--blue); background: var(--paper); font-size: .93rem; }
+.fbox { margin: 1.6rem 0 2.4rem; padding: 1.2rem 1.2rem 1.3rem; border: 1px solid var(--rule); border-radius: 12px; background: #fbf8f1; }
+.fbox h2 { margin-top: 0; padding-top: 0; border-top: 0; } .fbox h2 .no { color: var(--amber); }
+.fbgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: .6rem; margin: .4rem 0 1rem; }
+.fbc { display: flex; flex-direction: column; gap: .35rem; padding: .7rem .8rem; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); text-decoration: none; overflow: hidden; }
+.fbc:hover { border-color: var(--amber); } .fbt { font-weight: 600; font-size: .92rem; } .fbl { color: var(--muted); font-size: .85rem; overflow-x: auto; }
+.fbgo { display: inline-block; padding: .55rem 1rem; border-radius: 8px; background: var(--ink); color: #fff; text-decoration: none; font-weight: 600; font-size: .92rem; }
 .qscore { font-size: .95rem; } .qreset { font: inherit; font-size: .88rem; margin-left: .4rem; padding: .25rem .7rem; border: 1px solid var(--blue); border-radius: 6px; background: none; color: var(--blue); cursor: pointer; }</style>
 </head>
 <body>
@@ -367,6 +373,10 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <div class="from n"><span class="tag">Nguyên văn ghi chú <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_22_diagonalization_and_powers_of_a.md#node-u0perki" target="_blank" rel="noopener">mở ghi chú gốc ↗</a></span>
     <p>tóm lại ý tưởng cốt lõi của bài toán này đó là: Khi có một thứ gì đó tăng lên theo thời gian bởi một first order equation system bắt đầu từ một giá trị ban đầu u_0. Thì chìa khóa là ta cần tìm eigenvalues của matrix A</p></div>
 
+  <section class="fbox" id="nho-lau"><h2><span class="no">◆</span>Nhớ lâu: thẻ công thức</h2>
+  <p class="qintro">Hiểu xong rồi thì phải nhớ. 3 thẻ công thức của bài này có sẵn trong <b>FormulaBase</b>: mỗi thẻ giải thích ý nghĩa, cách dùng, lỗi hay gặp, và có câu hỏi ôn lại theo thời gian.</p>
+  <div class="fbgrid"><a class="fbc" href="https://formulabase.web.app/#card=diagonalization" target="_blank" rel="noopener"><span class="fbt">Chéo hoá ma trận</span><span class="fbl">\(A = P D P^{-1}\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=eigen_powers_inverse" target="_blank" rel="noopener"><span class="fbt">Trị riêng của Aᵏ, A⁻¹ và A + cI</span><span class="fbl">\(A\mathbf{v} = \lambda\mathbf{v} \implies A^k\mathbf{v} = \lambda^k\mathbf{v}, \quad A^{-1}\mathbf{v} = \tfrac{1}{\lambda}\mathbf{v}, \quad (A + cI)\mathbf{v} = (\lambda + c)\mathbf{v}\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=eigen_multiplicity" target="_blank" rel="noopener"><span class="fbt">Bội đại số và bội hình học</span><span class="fbl">\(1 \leq \dim \text{null}(A - \lambda I) \leq \text{multiplicity of } \lambda \text{ as a root of } \det(A - \lambda I)\)</span></a></div>
+  <a class="fbgo" href="https://formulabase.web.app/#practice=diagonalization,eigen_powers_inverse,eigen_multiplicity" target="_blank" rel="noopener">Ôn cả 3 thẻ ngay trong FormulaBase ↗</a></section>
   <footer>
     <h3>Bài này được làm thế nào</h3>
     <p>Chữ: viết lại từ <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_22_diagonalization_and_powers_of_a.md" target="_blank" rel="noopener">ghi chú MIT 18.06 bài giảng 22</a> của tác giả. Khung xanh là nguyên văn ghi chú; phần chữ còn lại do Claude soạn theo ý ghi chú. Bài này chưa có video giảng lại.</p>

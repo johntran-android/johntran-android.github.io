@@ -270,6 +270,12 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
 .qo:hover:not(:disabled) { border-color: var(--blue); } .qo:disabled { cursor: default; opacity: .75; }
 .qo.right { border-color: var(--teal); background: #e3f4f0; opacity: 1; } .qo.wrong { border-color: var(--red); background: #fbe7e6; opacity: 1; }
 .qwhy { margin: .55rem 0 0; padding: .6rem .8rem; border-left: 3px solid var(--blue); background: var(--paper); font-size: .93rem; }
+.fbox { margin: 1.6rem 0 2.4rem; padding: 1.2rem 1.2rem 1.3rem; border: 1px solid var(--rule); border-radius: 12px; background: #fbf8f1; }
+.fbox h2 { margin-top: 0; padding-top: 0; border-top: 0; } .fbox h2 .no { color: var(--amber); }
+.fbgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: .6rem; margin: .4rem 0 1rem; }
+.fbc { display: flex; flex-direction: column; gap: .35rem; padding: .7rem .8rem; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); text-decoration: none; overflow: hidden; }
+.fbc:hover { border-color: var(--amber); } .fbt { font-weight: 600; font-size: .92rem; } .fbl { color: var(--muted); font-size: .85rem; overflow-x: auto; }
+.fbgo { display: inline-block; padding: .55rem 1rem; border-radius: 8px; background: var(--ink); color: #fff; text-decoration: none; font-weight: 600; font-size: .92rem; }
 .qscore { font-size: .95rem; } .qreset { font: inherit; font-size: .88rem; margin-left: .4rem; padding: .25rem .7rem; border: 1px solid var(--blue); border-radius: 6px; background: none; color: var(--blue); cursor: pointer; }</style>
 </head>
 <body>
@@ -375,6 +381,10 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <figure><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/c5ngkd2vr77.png" alt="Bảng: rank(A) = # pivot columns = dimension of C(A); dim N(A) = # free variables = n − r" width="640" height="480" loading="lazy"></div>
     <figcaption><span class="who b">Bài giảng MIT</span><span>\(\dim C(A) = r\), \(\dim N(A) = n - r\).</span></figcaption></figure>
 
+  <section class="fbox" id="nho-lau"><h2><span class="no">◆</span>Nhớ lâu: thẻ công thức</h2>
+  <p class="qintro">Hiểu xong rồi thì phải nhớ. 4 thẻ công thức của bài này có sẵn trong <b>FormulaBase</b>: mỗi thẻ giải thích ý nghĩa, cách dùng, lỗi hay gặp, và có câu hỏi ôn lại theo thời gian.</p>
+  <div class="fbgrid"><a class="fbc" href="https://formulabase.web.app/#card=linear_independence" target="_blank" rel="noopener"><span class="fbt">Độc lập tuyến tính</span><span class="fbl">\(c_1 v_1 + c_2 v_2 + \cdots + c_n v_n = 0 \implies c_1 = c_2 = \cdots = c_n = 0\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=basis_dimension" target="_blank" rel="noopener"><span class="fbt">Cơ sở và số chiều</span><span class="fbl">\(\dim(V) = |\mathcal{B}|, \quad \mathcal{B} \text{ is a basis of } V\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=linear_combination_span" target="_blank" rel="noopener"><span class="fbt">Tổ hợp tuyến tính &amp; không gian sinh</span><span class="fbl">\(\text{span}(v_1, \ldots, v_k) = \{c_1 v_1 + \cdots + c_k v_k : c_i \in \mathbb{R}\}\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=standard_basis" target="_blank" rel="noopener"><span class="fbt">Các vector cơ sở chính tắc</span><span class="fbl">\(e_1 = \begin{bmatrix} 1 \\ 0 \\ \vdots \\ 0 \end{bmatrix}, \ \dots, \ e_n = \begin{bmatrix} 0 \\ 0 \\ \vdots \\ 1 \end{bmatrix}, \qquad v = \sum_{i=1}^n v_i e_i\)</span></a></div>
+  <a class="fbgo" href="https://formulabase.web.app/#practice=linear_independence,basis_dimension,linear_combination_span,standard_basis" target="_blank" rel="noopener">Ôn cả 4 thẻ ngay trong FormulaBase ↗</a></section>
   <footer>
     <h3>Bài này được làm thế nào</h3>
     <p>Chữ: viết lại từ <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_9_independece_basis_and_dimension.md" target="_blank" rel="noopener">ghi chú MIT 18.06 bài giảng 9</a> của tác giả. Khung xanh là nguyên văn ghi chú; phần chữ còn lại do Claude soạn theo ý ghi chú. Mỗi video ngắn đặt đúng ở mục mà ghi chú gắn nó vào.</p>

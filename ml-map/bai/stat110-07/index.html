@@ -270,6 +270,12 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
 .qo:hover:not(:disabled) { border-color: var(--blue); } .qo:disabled { cursor: default; opacity: .75; }
 .qo.right { border-color: var(--teal); background: #e3f4f0; opacity: 1; } .qo.wrong { border-color: var(--red); background: #fbe7e6; opacity: 1; }
 .qwhy { margin: .55rem 0 0; padding: .6rem .8rem; border-left: 3px solid var(--blue); background: var(--paper); font-size: .93rem; }
+.fbox { margin: 1.6rem 0 2.4rem; padding: 1.2rem 1.2rem 1.3rem; border: 1px solid var(--rule); border-radius: 12px; background: #fbf8f1; }
+.fbox h2 { margin-top: 0; padding-top: 0; border-top: 0; } .fbox h2 .no { color: var(--amber); }
+.fbgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: .6rem; margin: .4rem 0 1rem; }
+.fbc { display: flex; flex-direction: column; gap: .35rem; padding: .7rem .8rem; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); text-decoration: none; overflow: hidden; }
+.fbc:hover { border-color: var(--amber); } .fbt { font-weight: 600; font-size: .92rem; } .fbl { color: var(--muted); font-size: .85rem; overflow-x: auto; }
+.fbgo { display: inline-block; padding: .55rem 1rem; border-radius: 8px; background: var(--ink); color: #fff; text-decoration: none; font-weight: 600; font-size: .92rem; }
 .qscore { font-size: .95rem; } .qreset { font: inherit; font-size: .88rem; margin-left: .4rem; padding: .25rem .7rem; border: 1px solid var(--blue); border-radius: 6px; background: none; color: var(--blue); cursor: pointer; }</style>
 </head>
 <body>
@@ -314,6 +320,10 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <div class="eq">\[ P(X = k) = \binom nk p^kq^{n-k}, \qquad k = 0, 1, \dots, n. \]</div>
   <p>\(\binom nk\) chọn vị trí của \(k\) lần thành công, \(p^kq^{n-k}\) là xác suất của một dãy cụ thể. Nếu \(X \sim \text{Bin}(n, p)\), \(Y \sim \text{Bin}(m, p)\) độc lập thì \(X + Y \sim \text{Bin}(n + m, p)\): chỉ là đếm thành công trong \(n + m\) lần thử.</p>
 
+  <section class="fbox" id="nho-lau"><h2><span class="no">◆</span>Nhớ lâu: thẻ công thức</h2>
+  <p class="qintro">Hiểu xong rồi thì phải nhớ. 4 thẻ công thức của bài này có sẵn trong <b>FormulaBase</b>: mỗi thẻ giải thích ý nghĩa, cách dùng, lỗi hay gặp, và có câu hỏi ôn lại theo thời gian.</p>
+  <div class="fbgrid"><a class="fbc" href="https://formulabase.web.app/#card=gamblers_ruin" target="_blank" rel="noopener"><span class="fbt">Sự phá sản của con bạc</span><span class="fbl">\(P_i = P(\text{reach } N \text{ before } 0 \mid \text{start at } i) = \begin{cases} \dfrac{1 - (q/p)^i}{1 - (q/p)^N} &amp; p \ne q \\[2ex] \dfrac{i}{N} &amp; p = q = \tfrac12 \end{cases}\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=rv_definition" target="_blank" rel="noopener"><span class="fbt">Biến ngẫu nhiên</span><span class="fbl">\(X: \Omega \to \mathbb{R} \text{ (measurable function)}\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=bernoulli_dist" target="_blank" rel="noopener"><span class="fbt">Phân phối Bernoulli</span><span class="fbl">\(P(X = k) = p^k (1-p)^{1-k}, \quad k \in \{0, 1\}\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=binomial_dist" target="_blank" rel="noopener"><span class="fbt">Phân phối nhị thức</span><span class="fbl">\(P(X = k) = \binom{n}{k} p^k (1-p)^{n-k}\)</span></a></div>
+  <a class="fbgo" href="https://formulabase.web.app/#practice=gamblers_ruin,rv_definition,bernoulli_dist,binomial_dist" target="_blank" rel="noopener">Ôn cả 4 thẻ ngay trong FormulaBase ↗</a></section>
   <footer>
     <h3>Bài này được làm thế nào</h3>
     <p>Chữ: viết lại từ <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/stat110_havard/lec_7_gamblers_ruin_random_variables.md" target="_blank" rel="noopener">ghi chú Stat 110 bài giảng 7</a> của tác giả. Khung xanh là nguyên văn ghi chú; phần chữ còn lại do Claude soạn theo ý ghi chú. Bài này chưa có video giảng lại.</p>

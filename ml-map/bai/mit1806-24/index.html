@@ -270,6 +270,12 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
 .qo:hover:not(:disabled) { border-color: var(--blue); } .qo:disabled { cursor: default; opacity: .75; }
 .qo.right { border-color: var(--teal); background: #e3f4f0; opacity: 1; } .qo.wrong { border-color: var(--red); background: #fbe7e6; opacity: 1; }
 .qwhy { margin: .55rem 0 0; padding: .6rem .8rem; border-left: 3px solid var(--blue); background: var(--paper); font-size: .93rem; }
+.fbox { margin: 1.6rem 0 2.4rem; padding: 1.2rem 1.2rem 1.3rem; border: 1px solid var(--rule); border-radius: 12px; background: #fbf8f1; }
+.fbox h2 { margin-top: 0; padding-top: 0; border-top: 0; } .fbox h2 .no { color: var(--amber); }
+.fbgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: .6rem; margin: .4rem 0 1rem; }
+.fbc { display: flex; flex-direction: column; gap: .35rem; padding: .7rem .8rem; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); text-decoration: none; overflow: hidden; }
+.fbc:hover { border-color: var(--amber); } .fbt { font-weight: 600; font-size: .92rem; } .fbl { color: var(--muted); font-size: .85rem; overflow-x: auto; }
+.fbgo { display: inline-block; padding: .55rem 1rem; border-radius: 8px; background: var(--ink); color: #fff; text-decoration: none; font-weight: 600; font-size: .92rem; }
 .qscore { font-size: .95rem; } .qreset { font: inherit; font-size: .88rem; margin-left: .4rem; padding: .25rem .7rem; border: 1px solid var(--blue); border-radius: 6px; background: none; color: var(--blue); cursor: pointer; }</style>
 </head>
 <body>
@@ -377,6 +383,10 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
 
   <section class="ixbox"><div class="ixhead"><span class="who c">Hình tương tác</span><span>Cộng dần các số hạng Fourier</span></div><p class="ixhow">Chọn một hàm, rồi kéo thanh N để thêm số hạng.</p><div class="ix" data-title="Cộng dần các số hạng Fourier" data-how="Chọn một hàm, rồi kéo thanh N để thêm số hạng." data-ix="fourier"></div><details class="ixmore"><summary>Hình này cho thấy gì?</summary><p><b>Đầu vào:</b> chọn hàm \(f\) và số số hạng \(N\). <b>Kết quả:</b> tổng Fourier \(a_0 + \sum_{k \le N}(a_k\cos kx + b_k\sin kx)\) (cam) chồng lên \(f\) (xanh), các hệ số đầu tiên tính bằng đúng công thức chiếu ở trên, và sai số. Sóng vuông chỉ có \(b_k\) với \(k\) lẻ, \(b_k = \tfrac{4}{\pi k}\); gần chỗ nhảy luôn còn một gợn nhô lên dù \(N\) lớn (hiện tượng Gibbs).</p></details></section>
 
+  <section class="fbox" id="nho-lau"><h2><span class="no">◆</span>Nhớ lâu: thẻ công thức</h2>
+  <p class="qintro">Hiểu xong rồi thì phải nhớ. 3 thẻ công thức của bài này có sẵn trong <b>FormulaBase</b>: mỗi thẻ giải thích ý nghĩa, cách dùng, lỗi hay gặp, và có câu hỏi ôn lại theo thời gian.</p>
+  <div class="fbgrid"><a class="fbc" href="https://formulabase.web.app/#card=eigenvalue_properties" target="_blank" rel="noopener"><span class="fbt">Tính chất của trị riêng (det = tích, vết = tổng)</span><span class="fbl">\(\det(A) = \prod_{i=1}^n \lambda_i \quad \text{and} \quad \text{tr}(A) = \sum_{i=1}^n \lambda_i\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=power_iteration" target="_blank" rel="noopener"><span class="fbt">Phương pháp lặp luỹ thừa</span><span class="fbl">\(b_{k+1} = \frac{A b_k}{\|A b_k\|}, \quad \lambda^{(k)} = \frac{b_k^T A b_k}{b_k^T b_k}\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=orthonormal_coordinates" target="_blank" rel="noopener"><span class="fbt">Tọa độ theo cơ sở trực chuẩn</span><span class="fbl">\(\mathbf{x} = \sum_{i=1}^{n} (\mathbf{q}_i^\top \mathbf{x})\, \mathbf{q}_i, \qquad [\mathbf{x}]_Q = Q^\top \mathbf{x}\)</span></a></div>
+  <a class="fbgo" href="https://formulabase.web.app/#practice=eigenvalue_properties,power_iteration,orthonormal_coordinates" target="_blank" rel="noopener">Ôn cả 3 thẻ ngay trong FormulaBase ↗</a></section>
   <footer>
     <h3>Bài này được làm thế nào</h3>
     <p>Chữ: viết lại từ <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_24_markow_matrices_fourier_series.md" target="_blank" rel="noopener">ghi chú MIT 18.06 bài giảng 24</a> của tác giả. Khung xanh là nguyên văn ghi chú; phần chữ còn lại do Claude soạn theo ý ghi chú. Bài này chưa có video giảng lại.</p>

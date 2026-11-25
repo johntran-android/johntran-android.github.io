@@ -270,6 +270,12 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
 .qo:hover:not(:disabled) { border-color: var(--blue); } .qo:disabled { cursor: default; opacity: .75; }
 .qo.right { border-color: var(--teal); background: #e3f4f0; opacity: 1; } .qo.wrong { border-color: var(--red); background: #fbe7e6; opacity: 1; }
 .qwhy { margin: .55rem 0 0; padding: .6rem .8rem; border-left: 3px solid var(--blue); background: var(--paper); font-size: .93rem; }
+.fbox { margin: 1.6rem 0 2.4rem; padding: 1.2rem 1.2rem 1.3rem; border: 1px solid var(--rule); border-radius: 12px; background: #fbf8f1; }
+.fbox h2 { margin-top: 0; padding-top: 0; border-top: 0; } .fbox h2 .no { color: var(--amber); }
+.fbgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: .6rem; margin: .4rem 0 1rem; }
+.fbc { display: flex; flex-direction: column; gap: .35rem; padding: .7rem .8rem; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); text-decoration: none; overflow: hidden; }
+.fbc:hover { border-color: var(--amber); } .fbt { font-weight: 600; font-size: .92rem; } .fbl { color: var(--muted); font-size: .85rem; overflow-x: auto; }
+.fbgo { display: inline-block; padding: .55rem 1rem; border-radius: 8px; background: var(--ink); color: #fff; text-decoration: none; font-weight: 600; font-size: .92rem; }
 .qscore { font-size: .95rem; } .qreset { font: inherit; font-size: .88rem; margin-left: .4rem; padding: .25rem .7rem; border: 1px solid var(--blue); border-radius: 6px; background: none; color: var(--blue); cursor: pointer; }</style>
 </head>
 <body>
@@ -346,6 +352,10 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <details class="src2"><summary>Ghi chú gốc · 1 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_6_column_space_and_null_space.md#node-ul2wdfb" target="_blank" rel="noopener">Định nghĩa không gian vector ↗</a></div></details>
   <p>Bài kết thúc bằng ý cần nhớ: có hai cách mô tả một không gian con. <strong>Dựng từ vài vector</strong>: lấy mọi tổ hợp tuyến tính của chúng, như column space. <strong>Cho một phương trình</strong>: lấy mọi nghiệm của nó, như nullspace là mọi nghiệm của \(Ax = 0\). Bài sau tìm nullspace một cách có hệ thống bằng phép khử.</p>
 
+  <section class="fbox" id="nho-lau"><h2><span class="no">◆</span>Nhớ lâu: thẻ công thức</h2>
+  <p class="qintro">Hiểu xong rồi thì phải nhớ. 4 thẻ công thức của bài này có sẵn trong <b>FormulaBase</b>: mỗi thẻ giải thích ý nghĩa, cách dùng, lỗi hay gặp, và có câu hỏi ôn lại theo thời gian.</p>
+  <div class="fbgrid"><a class="fbc" href="https://formulabase.web.app/#card=column_space" target="_blank" rel="noopener"><span class="fbt">Không gian cột (ảnh)</span><span class="fbl">\(\text{col}(A) = \{Ax : x \in \mathbb{R}^n\} = \text{span}(a_1, \ldots, a_n) \subseteq \mathbb{R}^m\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=null_space" target="_blank" rel="noopener"><span class="fbt">Không gian hạch (kernel)</span><span class="fbl">\(\text{null}(A) = \{x \in \mathbb{R}^n : Ax = 0\} \subseteq \mathbb{R}^n\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=subspace" target="_blank" rel="noopener"><span class="fbt">Không gian con</span><span class="fbl">\(S \subseteq \mathbb{R}^n \text{ is a subspace} \iff \mathbf{0} \in S,\; u+v \in S,\; cu \in S\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=solution_existence" target="_blank" rel="noopener"><span class="fbt">Sự tồn tại &amp; duy nhất của nghiệm</span><span class="fbl">\(\text{Consistent} \iff \text{rank}([A|b]) = \text{rank}(A); \quad \text{Unique} \iff \text{nullity}(A) = 0\)</span></a></div>
+  <a class="fbgo" href="https://formulabase.web.app/#practice=column_space,null_space,subspace,solution_existence" target="_blank" rel="noopener">Ôn cả 4 thẻ ngay trong FormulaBase ↗</a></section>
   <footer>
     <h3>Bài này được làm thế nào</h3>
     <p>Chữ: viết lại từ <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_6_column_space_and_null_space.md" target="_blank" rel="noopener">ghi chú MIT 18.06 bài giảng 6</a> của tác giả. Khung xanh là nguyên văn ghi chú; phần chữ còn lại do Claude soạn theo ý ghi chú. Mốc thời gian lấy từ phụ đề tự động của YouTube.</p>

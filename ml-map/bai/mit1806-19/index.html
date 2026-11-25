@@ -270,6 +270,12 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
 .qo:hover:not(:disabled) { border-color: var(--blue); } .qo:disabled { cursor: default; opacity: .75; }
 .qo.right { border-color: var(--teal); background: #e3f4f0; opacity: 1; } .qo.wrong { border-color: var(--red); background: #fbe7e6; opacity: 1; }
 .qwhy { margin: .55rem 0 0; padding: .6rem .8rem; border-left: 3px solid var(--blue); background: var(--paper); font-size: .93rem; }
+.fbox { margin: 1.6rem 0 2.4rem; padding: 1.2rem 1.2rem 1.3rem; border: 1px solid var(--rule); border-radius: 12px; background: #fbf8f1; }
+.fbox h2 { margin-top: 0; padding-top: 0; border-top: 0; } .fbox h2 .no { color: var(--amber); }
+.fbgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: .6rem; margin: .4rem 0 1rem; }
+.fbc { display: flex; flex-direction: column; gap: .35rem; padding: .7rem .8rem; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); text-decoration: none; overflow: hidden; }
+.fbc:hover { border-color: var(--amber); } .fbt { font-weight: 600; font-size: .92rem; } .fbl { color: var(--muted); font-size: .85rem; overflow-x: auto; }
+.fbgo { display: inline-block; padding: .55rem 1rem; border-radius: 8px; background: var(--ink); color: #fff; text-decoration: none; font-weight: 600; font-size: .92rem; }
 .qscore { font-size: .95rem; } .qreset { font: inherit; font-size: .88rem; margin-left: .4rem; padding: .25rem .7rem; border: 1px solid var(--blue); border-radius: 6px; background: none; color: var(--blue); cursor: pointer; }</style>
 </head>
 <body>
@@ -347,6 +353,10 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
       <figcaption><span class="who b">Bài giảng MIT</span><span>\(|A_n| = |A_{n-1}| - |A_{n-2}|\).</span></figcaption></figure>
   </div>
 
+  <section class="fbox" id="nho-lau"><h2><span class="no">◆</span>Nhớ lâu: thẻ công thức</h2>
+  <p class="qintro">Hiểu xong rồi thì phải nhớ. 3 thẻ công thức của bài này có sẵn trong <b>FormulaBase</b>: mỗi thẻ giải thích ý nghĩa, cách dùng, lỗi hay gặp, và có câu hỏi ôn lại theo thời gian.</p>
+  <div class="fbgrid"><a class="fbc" href="https://formulabase.web.app/#card=determinant" target="_blank" rel="noopener"><span class="fbt">Định thức (2×2 và khai triển phần phụ đại số)</span><span class="fbl">\(\det\!\begin{pmatrix}a&amp;b\\c&amp;d\end{pmatrix} = ad - bc, \quad \det(A) = \sum_j A_{1j}(-1)^{1+j}\det(M_{1j})\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=determinant_3x3" target="_blank" rel="noopener"><span class="fbt">Định thức ma trận 3×3 (Sarrus)</span><span class="fbl">\(\det \begin{pmatrix} a &amp; b &amp; c \\ d &amp; e &amp; f \\ g &amp; h &amp; i \end{pmatrix} = aei + bfg + cdh - ceg - bdi - afh\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=det_properties" target="_blank" rel="noopener"><span class="fbt">Tính chất của định thức</span><span class="fbl">\(\det(AB) = \det(A)\det(B), \quad \det(A^T) = \det(A), \quad \det(A^{-1}) = \frac{1}{\det(A)}\)</span></a></div>
+  <a class="fbgo" href="https://formulabase.web.app/#practice=determinant,determinant_3x3,det_properties" target="_blank" rel="noopener">Ôn cả 3 thẻ ngay trong FormulaBase ↗</a></section>
   <footer>
     <h3>Bài này được làm thế nào</h3>
     <p>Chữ: viết lại từ <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_19_determinant_formulas_and_cofactors.md" target="_blank" rel="noopener">ghi chú MIT 18.06 bài giảng 19</a> của tác giả. Khung xanh là nguyên văn ghi chú; phần chữ còn lại do Claude soạn theo ý ghi chú. Video giảng lại đang được làm.</p>

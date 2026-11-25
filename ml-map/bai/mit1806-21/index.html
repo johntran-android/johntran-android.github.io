@@ -270,6 +270,12 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
 .qo:hover:not(:disabled) { border-color: var(--blue); } .qo:disabled { cursor: default; opacity: .75; }
 .qo.right { border-color: var(--teal); background: #e3f4f0; opacity: 1; } .qo.wrong { border-color: var(--red); background: #fbe7e6; opacity: 1; }
 .qwhy { margin: .55rem 0 0; padding: .6rem .8rem; border-left: 3px solid var(--blue); background: var(--paper); font-size: .93rem; }
+.fbox { margin: 1.6rem 0 2.4rem; padding: 1.2rem 1.2rem 1.3rem; border: 1px solid var(--rule); border-radius: 12px; background: #fbf8f1; }
+.fbox h2 { margin-top: 0; padding-top: 0; border-top: 0; } .fbox h2 .no { color: var(--amber); }
+.fbgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: .6rem; margin: .4rem 0 1rem; }
+.fbc { display: flex; flex-direction: column; gap: .35rem; padding: .7rem .8rem; border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); color: var(--ink); text-decoration: none; overflow: hidden; }
+.fbc:hover { border-color: var(--amber); } .fbt { font-weight: 600; font-size: .92rem; } .fbl { color: var(--muted); font-size: .85rem; overflow-x: auto; }
+.fbgo { display: inline-block; padding: .55rem 1rem; border-radius: 8px; background: var(--ink); color: #fff; text-decoration: none; font-weight: 600; font-size: .92rem; }
 .qscore { font-size: .95rem; } .qreset { font: inherit; font-size: .88rem; margin-left: .4rem; padding: .25rem .7rem; border: 1px solid var(--blue); border-radius: 6px; background: none; color: var(--blue); cursor: pointer; }</style>
 </head>
 <body>
@@ -367,6 +373,10 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
     <figcaption><span class="who b">Bài giảng MIT</span><span>"\(x_2\) = no indep \(x\)."</span></figcaption></figure>
   <p class="hint">Bấm "Tam giác [3 1; 0 3]" ở hình tương tác mục 1: chỉ có một đường đứt xanh lá.</p>
 
+  <section class="fbox" id="nho-lau"><h2><span class="no">◆</span>Nhớ lâu: thẻ công thức</h2>
+  <p class="qintro">Hiểu xong rồi thì phải nhớ. 5 thẻ công thức của bài này có sẵn trong <b>FormulaBase</b>: mỗi thẻ giải thích ý nghĩa, cách dùng, lỗi hay gặp, và có câu hỏi ôn lại theo thời gian.</p>
+  <div class="fbgrid"><a class="fbc" href="https://formulabase.web.app/#card=eigenvalue_definition" target="_blank" rel="noopener"><span class="fbt">Trị riêng &amp; vector riêng</span><span class="fbl">\(Av = \lambda v, \quad v \neq 0\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=characteristic_polynomial" target="_blank" rel="noopener"><span class="fbt">Đa thức đặc trưng</span><span class="fbl">\(p(\lambda) = \det(A - \lambda I)\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=eigenvalues_2x2" target="_blank" rel="noopener"><span class="fbt">Trị riêng của ma trận 2×2</span><span class="fbl">\(\lambda^2 - \operatorname{tr}(A)\,\lambda + \det(A) = 0, \qquad \lambda_{1,2} = \frac{\operatorname{tr}(A) \pm \sqrt{\operatorname{tr}(A)^2 - 4\det(A)}}{2}\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=eigenvalue_properties" target="_blank" rel="noopener"><span class="fbt">Tính chất của trị riêng (det = tích, vết = tổng)</span><span class="fbl">\(\det(A) = \prod_{i=1}^n \lambda_i \quad \text{and} \quad \text{tr}(A) = \sum_{i=1}^n \lambda_i\)</span></a><a class="fbc" href="https://formulabase.web.app/#card=eigenspace" target="_blank" rel="noopener"><span class="fbt">Không gian riêng</span><span class="fbl">\(E_\lambda = N(A - \lambda I) = \{\mathbf{x} : A\mathbf{x} = \lambda \mathbf{x}\}, \qquad \dim E_\lambda = n - \operatorname{rank}(A - \lambda I)\)</span></a></div>
+  <a class="fbgo" href="https://formulabase.web.app/#practice=eigenvalue_definition,characteristic_polynomial,eigenvalues_2x2,eigenvalue_properties,eigenspace" target="_blank" rel="noopener">Ôn cả 5 thẻ ngay trong FormulaBase ↗</a></section>
   <footer>
     <h3>Bài này được làm thế nào</h3>
     <p>Chữ: viết lại từ <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_21_eigenvalues_and_eigenvectors.md" target="_blank" rel="noopener">ghi chú MIT 18.06 bài giảng 21</a> của tác giả. Khung xanh là nguyên văn ghi chú; phần chữ còn lại do Claude soạn theo ý ghi chú. Bài này chưa có video giảng lại.</p>
