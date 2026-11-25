@@ -291,7 +291,7 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <header class="ch">
     <div class="crumb">Đại số tuyến tính · MIT 18.06 bài giảng 4</div>
     <h1>Phân rã A = LU</h1>
-    <p class="lede">Phép khử biến \(A\) thành \(U\). Đảo ngược lại thì \(A = LU\): phép phân rã đầu tiên của môn học. Bài này cho thấy vì sao \(L\) gọn hơn hẳn ma trận khử \(E\), và vì sao khử Gauss tốn cỡ \(n^3/3\) phép tính.</p>
+    <p class="lede">Phép khử biến \(A\) thành \(U\). Đảo ngược quá trình đó, ta được \(A = LU\), phép phân rã đầu tiên của môn học. Bài này cho thấy vì sao \(L\) gọn hơn hẳn ma trận khử \(E\), và vì sao khử Gauss tốn cỡ \(n^3/3\) phép tính.</p>
     <dl class="facts">
       <div><dt>Cần biết trước</dt><dd>Khử Gauss bằng ma trận · Ma trận nghịch đảo</dd></div>
       <div><dt>Học tiếp</dt><dd>PA = LU · Phân rã Cholesky · Định thức</dd></div>
@@ -319,7 +319,7 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <details class="src2"><summary>Ghi chú gốc · 4 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_4_factorization_into_a_lu.md#node-mucx15u" target="_blank" rel="noopener">Nghịch đảo tích ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_4_factorization_into_a_lu.md#node-hoh4tph" target="_blank" rel="noopener">Chứng minh ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_4_factorization_into_a_lu.md#node-d1uoihy" target="_blank" rel="noopener">Transpose of an Inverse ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_4_factorization_into_a_lu.md#node-h1jebsw" target="_blank" rel="noopener">Inverse of Transpose ↗</a></div></details>
   <p>Biết \(A^{-1}\) và \(B^{-1}\), nghịch đảo của tích là tích các nghịch đảo <strong>theo thứ tự ngược lại</strong>:</p>
   <div class="eq">\[ (AB)^{-1} = B^{-1}A^{-1}, \qquad\text{vì}\quad (AB)(B^{-1}A^{-1}) = A(BB^{-1})A^{-1} = AA^{-1} = I. \]</div>
-  <p>Giống mang tất rồi mang giày: muốn cởi ra thì cởi giày trước. Còn chuyển vị: lấy chuyển vị hai vế của \(AA^{-1} = I\) được \((A^{-1})^TA^T = I\), nên</p>
+  <p>Giống như mang tất rồi mới mang giày: muốn cởi ra thì phải cởi giày trước. Với chuyển vị cũng vậy: lấy chuyển vị hai vế của \(AA^{-1} = I\) được \((A^{-1})^TA^T = I\), nên</p>
   <div class="eq">\[ (A^T)^{-1} = (A^{-1})^T. \]</div>
   <div class="pair wide">
     <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/3ipiy9tti9b.png" alt="Bảng: (AB)(B⁻¹A⁻¹) = I" width="640" height="480" loading="lazy"></div>
@@ -341,7 +341,7 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
   <p>Với ma trận 3 × 3 (chưa cần đổi hàng): \(E_{32}E_{31}E_{21}A = U\). Đảo ngược từng bước, bước làm sau thì gỡ trước:</p>
   <div class="eq">\[ A = E_{21}^{-1}E_{31}^{-1}E_{32}^{-1}\,U = LU. \]</div>
   <p>Lấy \(E_{21}\) trừ 2 lần hàng 1, \(E_{32}\) trừ 5 lần hàng 2 (và \(E_{31} = I\)). Nhân \(E = E_{32}E_{21}\) ra có một số 10 ở góc: hàng 1 ảnh hưởng hàng 2, rồi hàng 2 lại ảnh hưởng hàng 3. Nhân theo thứ tự ngược \(L = E_{21}^{-1}E_{32}^{-1}\) thì không có chuyện trộn đó: <strong>các hệ số khử 2 và 5 nằm nguyên vị trí trong \(L\)</strong>.</p>
-  <section class="ixbox"><div class="ixhead"><span class="who c">Hình tương tác</span><span>L được điền dần khi khử</span></div><p class="ixhow">Bấm “Bước tiếp”: mỗi bước khử ghi hệ số vừa dùng vào L.</p><div class="ix" data-title="L được điền dần khi khử" data-how="Bấm “Bước tiếp”: mỗi bước khử ghi hệ số vừa dùng vào L." data-ix="lu" data-m="1,2,3;2,5,10;0,5,22"></div><details class="ixmore"><summary>Hình này cho thấy gì?</summary><p><b>Đầu vào:</b> bấm "Bước tiếp". <b>Kết quả:</b> \(U\) sau mỗi bước khử, và \(L\) được điền dần bằng đúng hệ số vừa dùng (tô cam). Bước cuối so \(L\) với \(E\).</p></details></section>
+  <section class="ixbox"><div class="ixhead"><span class="who c">Hình tương tác</span><span>L được điền dần khi khử</span></div><p class="ixhow">Bấm “Bước tiếp”: mỗi bước khử ghi hệ số vừa dùng vào L.</p><div class="ix" data-title="L được điền dần khi khử" data-how="Bấm “Bước tiếp”: mỗi bước khử ghi hệ số vừa dùng vào L." data-ix="lu" data-m="1,2,3;2,5,10;0,5,22"></div><details class="ixmore"><summary>Hình này cho thấy gì?</summary><p>Bạn bấm "Bước tiếp". Hình hiện \(U\) sau mỗi bước khử, và \(L\) được điền dần bằng đúng hệ số vừa dùng (tô cam). Bước cuối cùng so sánh \(L\) với \(E\).</p></details></section>
   <figure><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/wwgxgg21bwl.png" alt="Bảng: E32 E21 = E có số 10; E21⁻¹ E32⁻¹ = L chứa 2 và 5" width="640" height="480" loading="lazy"></div>
     <figcaption><span class="who b">Bài giảng MIT</span><span>Trên: \(E = E_{32}E_{21}\) có số 10. Dưới: \(L\) chỉ chứa 2 và 5.</span></figcaption></figure>
 
@@ -353,7 +353,7 @@ figcaption > span, .vmini > span, .ixcap { min-width: 0; }
     <p>Gs lập luận là đây là <strong>tổng</strong> của <strong>n term</strong>, mà <strong>bự nhất là n²</strong>, nên <strong>nó ko thể to hơn n × n² = n³</strong> được.</p>
     <p>[…]</p>
     <p>Cái này thật ra sẽ cần kiến thức của 18.01 nên mình có thể sẽ quay lại sau nhưng hiểu đại khái là vầy</p></div>
-  <section class="ixbox"><div class="ixhead"><span class="who c">Hình tương tác</span><span>Khử Gauss tốn bao nhiêu phép tính?</span></div><p class="ixhow">Kéo thanh n hoặc bấm 100, 1000 để so tổng chính xác với n³/3.</p><div class="ix" data-title="Khử Gauss tốn bao nhiêu phép tính?" data-how="Kéo thanh n hoặc bấm 100, 1000 để so tổng chính xác với n³/3." data-ix="opcount"></div><details class="ixmore"><summary>Hình này cho thấy gì?</summary><p><b>Đầu vào:</b> kéo \(n\) hoặc chọn 100, 1000. <b>Kết quả:</b> tổng chính xác so với \(n^3/3\); \(n\) càng lớn, tỉ lệ càng sát 1. Vế phải \(b\) chỉ tốn cỡ \(n^2\).</p></details></section>
+  <section class="ixbox"><div class="ixhead"><span class="who c">Hình tương tác</span><span>Khử Gauss tốn bao nhiêu phép tính?</span></div><p class="ixhow">Kéo thanh n hoặc bấm 100, 1000 để so tổng chính xác với n³/3.</p><div class="ix" data-title="Khử Gauss tốn bao nhiêu phép tính?" data-how="Kéo thanh n hoặc bấm 100, 1000 để so tổng chính xác với n³/3." data-ix="opcount"></div><details class="ixmore"><summary>Hình này cho thấy gì?</summary><p>Bạn kéo \(n\) hoặc chọn 100, 1000. Hình so tổng số phép tính chính xác với \(n^3/3\); \(n\) càng lớn thì tỉ lệ giữa hai số càng sát 1. Phần xử lý vế phải \(b\) chỉ tốn cỡ \(n^2\).</p></details></section>
   <figure><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/3d8hzkq8kp.png" alt="Bảng: count n² + … ≈ n³/3 cho A" width="640" height="480" loading="lazy"></div>
     <figcaption><span class="who b">Bài giảng MIT</span><span>Đếm phép tính: khoảng \(\tfrac{1}{3}n^3\) cho \(A\).</span></figcaption></figure>
 

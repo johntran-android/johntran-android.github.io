@@ -243,7 +243,7 @@ ol.ts .tt { flex: none; width: 2.6rem; font: 500 .8rem/1.45 var(--mono); color: 
 
     <h3><span class="no">1.1</span>Khi nào hai vector vuông góc?</h3>
     <details class="src2"><summary>Ghi chú gốc · 5 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-hhd9hzt" target="_blank" rel="noopener">Hai vector trực giao ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-h3x2z1w" target="_blank" rel="noopener">Vector vuông góc và Pythagoras ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-bre0ecl" target="_blank" rel="noopener">Pythagorean Theorem ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-v5cm2dp" target="_blank" rel="noopener">Pythagoras và tích vô hướng ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-drf45f3" target="_blank" rel="noopener">Trực giao của vector không ↗</a></div></details>
-    <p>Orthogonal, perpendicular, vuông góc, trực giao: cùng một nghĩa. Phép thử rất gọn: \(x\) và \(y\) vuông góc khi và chỉ khi tích vô hướng của chúng bằng 0,</p>
+    <p>Orthogonal, perpendicular, vuông góc, trực giao đều cùng một nghĩa. Cách kiểm tra rất gọn: \(x\) và \(y\) vuông góc khi và chỉ khi tích vô hướng của chúng bằng 0,</p>
     <div class="eq">\[ x \perp y \iff x^T y = 0. \]</div>
     <p>Vì sao lại là tích vô hướng? Strang nối nó với định lý Pythagoras. Bình phương độ dài của một vector chính là \(x^Tx\): với \(x = (1, 2, 3)\) thì \(\lVert x\rVert^2 = 1^2 + 2^2 + 3^2 = 14 = x^Tx\). Tam giác tạo bởi \(x\), \(y\) và \(x + y\) vuông khi</p>
     <div class="eq">\[ \lVert x\rVert^2 + \lVert y\rVert^2 = \lVert x + y\rVert^2 \iff x^Tx + y^Ty = x^Tx + x^Ty + y^Tx + y^Ty \iff 2\,x^Ty = 0. \]</div>
@@ -253,7 +253,7 @@ ol.ts .tt { flex: none; width: 2.6rem; font: 500 .8rem/1.45 var(--mono); color: 
       <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/1u957iq3xx7.png" alt="Bảng: x = (1,2,3), y = (2,-1,0), x+y = (3,1,3), ‖x‖² = 14, ‖y‖² = 5, ‖x+y‖² = 19" width="640" height="480" loading="lazy"></div>
         <figcaption><span class="who b">Bài giảng MIT</span><span>Ví dụ của Strang: \(14 + 5 = 19\).</span></figcaption></figure>
       <figure><div class="frame live" id="pyth"><svg viewBox="0 0 400 300" role="img" aria-label="Kéo đầu mũi tên x và y; các bình phương độ dài và x mũ T y tính lại ngay"></svg></div>
-        <figcaption><span class="who c">Hình tương tác</span><span><b>Đầu vào:</b> kéo đầu mũi tên \(x\) (xanh) và \(y\) (cam). <b>Kết quả</b> tự tính lại: \(x + y\), ba bình phương độ dài và \(x^Ty\).</span></figcaption></figure>
+        <figcaption><span class="who c">Hình tương tác</span><span>Bạn kéo đầu mũi tên \(x\) (xanh) và \(y\) (cam). Hình tự tính lại \(x + y\), ba bình phương độ dài và \(x^Ty\).</span></figcaption></figure>
     </div>
     <div class="readout" id="pythOut" aria-live="polite"></div>
 
@@ -261,7 +261,7 @@ ol.ts .tt { flex: none; width: 2.6rem; font: 500 .8rem/1.45 var(--mono); color: 
 
     <h3><span class="no">1.2</span>Hai không gian con vuông góc</h3>
     <details class="src2"><summary>Ghi chú gốc · 4 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-vmuk5yp" target="_blank" rel="noopener">Không gian con trực giao ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-pvr3bqz" target="_blank" rel="noopener">Định nghĩa ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-cp4pwd5" target="_blank" rel="noopener">Bức tường và mặt sàn ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-9jgxsbm" target="_blank" rel="noopener">Orthogonal subspace trong ℝ² ↗</a></div></details>
-    <p>Định nghĩa: hai không gian con \(S\) và \(T\) trực giao khi <strong>mọi</strong> vector trong \(S\) vuông góc với <strong>mọi</strong> vector trong \(T\). Strang hỏi: bức tường và mặt sàn trong phòng, hai mặt phẳng qua gốc trong \(\mathbb{R}^3\), có trực giao không?</p>
+    <p>Theo định nghĩa, hai không gian con \(S\) và \(T\) trực giao khi <strong>mọi</strong> vector trong \(S\) vuông góc với <strong>mọi</strong> vector trong \(T\). Strang hỏi: bức tường và mặt sàn trong phòng, hai mặt phẳng qua gốc trong \(\mathbb{R}^3\), có trực giao không?</p>
     <div class="pair wide">
       <figure class="board"><div class="frame zoom" tabindex="0" role="button" aria-label="Xem to ảnh chụp bài giảng"><img src="img/uzev4fctsm.png" alt="Strang trên lớp: Subspace S is orthogonal to subspace T" width="640" height="480" loading="lazy"></div>
         <figcaption><span class="who b">Bài giảng MIT</span><span>"Subspace S is orthogonal to subspace T": nghĩa là gì?</span></figcaption></figure>
@@ -275,7 +275,7 @@ ol.ts .tt { flex: none; width: 2.6rem; font: 500 .8rem/1.45 var(--mono); color: 
 
     <h3><span class="no">1.3</span>Row space vuông góc với nullspace</h3>
     <details class="src2"><summary>Ghi chú gốc · 4 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-p3x0mh4" target="_blank" rel="noopener">Trực giao Rowspace và Nullspace ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-jw7843g" target="_blank" rel="noopener">Row space trực giao Nullspace ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-h8zlxjg" target="_blank" rel="noopener">C(A) ⟂ N(Aᵀ) ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-sb1dwsz" target="_blank" rel="noopener">Bốn không gian con cơ bản ↗</a></div></details>
-    <p>Viết \(Ax = 0\) theo từng hàng là thấy ngay:</p>
+    <p>Viết \(Ax = 0\) theo từng hàng là thấy ngay điều này:</p>
     <div class="eq">\[ \begin{bmatrix} \text{hàng } 1 \text{ của } A \\ \text{hàng } 2 \text{ của } A \\ \vdots \\ \text{hàng } m \text{ của } A \end{bmatrix} x = \begin{bmatrix} 0 \\ 0 \\ \vdots \\ 0 \end{bmatrix} \quad\Longrightarrow\quad (\text{hàng } i)^T x = 0 \text{ với mọi } i. \]</div>
     <p>Mỗi phần tử của \(Ax\) là tích vô hướng của một hàng với \(x\). Với \(x\) trong nullspace, tất cả các tích đó bằng 0, nên \(x\) vuông góc với từng hàng. Và vuông góc với từng hàng thì vuông góc với mọi tổ hợp tuyến tính của các hàng:</p>
     <div class="eq">\[ (c_1 r_1 + c_2 r_2)^T x = c_1\, r_1^T x + c_2\, r_2^T x = c_1 \cdot 0 + c_2 \cdot 0 = 0. \]</div>
@@ -317,7 +317,7 @@ ol.ts .tt { flex: none; width: 2.6rem; font: 500 .8rem/1.45 var(--mono); color: 
         <label for="be">\(\beta\) <input type="range" id="be" min="-2" max="2" step="0.1" value="-0.3"><output id="bev">−0,3</output></label>
         <button type="button" class="reset" id="nsReset">Về góc nhìn ban đầu</button>
       </div>
-      <figcaption><span class="who c">Hình tương tác</span><span><b>Đầu vào:</b> kéo trên hình để xoay; hai thanh \(\alpha, \beta\) chọn một vector \(x = \alpha(-2, 1, 0) + \beta(-5, 0, 1)\) trong nullspace. <b>Kết quả:</b> mũi tên \(x\) luôn nằm trong mặt phẳng, và tích vô hướng với hàng \((1, 2, 5)\) luôn bằng 0.</span></figcaption></figure>
+      <figcaption><span class="who c">Hình tương tác</span><span>Bạn kéo trên hình để xoay, và dùng hai thanh \(\alpha, \beta\) để chọn một vector \(x = \alpha(-2, 1, 0) + \beta(-5, 0, 1)\) trong nullspace. Mũi tên \(x\) luôn nằm trong mặt phẳng, và tích vô hướng của nó với hàng \((1, 2, 5)\) luôn bằng 0.</span></figcaption></figure>
     <div class="readout" id="nsOut" aria-live="polite"></div>
   </section>
 
@@ -339,7 +339,7 @@ ol.ts .tt { flex: none; width: 2.6rem; font: 500 .8rem/1.45 var(--mono); color: 
     <p>Xét ma trận "cao ốm": \(m > n\), nhiều phương trình hơn ẩn. Chỉ có \(n\) cột nên column space không thể phủ hết \(\mathbb{R}^m\), chắc chắn có những \(b\) làm \(Ax = b\) vô nghiệm. Đây là chuyện thường gặp chứ không phải ngoại lệ.</p>
     <div class="from n"><span class="tag">Nguyên văn ghi chú <a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-wrqltex" target="_blank" rel="noopener">mở ghi chú gốc ↗</a></span>
       <p>Gs cho rằng ví dụ về matrix như này có rất nhiều, ví dụ như ta <strong>đo heart rate</strong>, chỉ có một variable, nhưng mỗi lần đo ta sẽ một giá trị khác, để rồi ta có rất nhiều equation, nhưng chỉ có 1 cols. Và <strong>giá trị khác nhau mỗi lần là do noise</strong>, tuy nhiên bên trong giá trị <strong>vẫn chứa thông tin</strong>. Và ta <strong>muốn tách những thông tin hữu ích ra khỏi noise</strong></p></div>
-    <p>Bỏ bớt phương trình cho tới khi giải được? Không hợp lý: chẳng có lý do gì để coi phương trình này tốt hơn phương trình kia, và dữ liệu bị bỏ đi có thể chứa thông tin quan trọng. Strang làm khác: nhân hai vế với \(A^T\),</p>
+    <p>Có nên bỏ bớt phương trình cho tới khi giải được không? Cách đó không hợp lý: chẳng có lý do gì để coi phương trình này tốt hơn phương trình kia, và dữ liệu bị bỏ đi có thể chứa thông tin quan trọng. Strang làm theo cách khác: nhân hai vế với \(A^T\),</p>
     <div class="eq">\[ Ax = b \quad\longrightarrow\quad \boxed{A^TA\,\hat{x} = A^Tb}. \]</div>
     <p>Phương trình mới, Strang gọi là "good equation", luôn giải được. Bài 15 và 16 sẽ cho thấy \(\hat{x}\) là gì; bài này chỉ hỏi: \(A^TA\) có khả nghịch không?</p>
 
@@ -360,9 +360,9 @@ ol.ts .tt { flex: none; width: 2.6rem; font: 500 .8rem/1.45 var(--mono); color: 
 
     <h3><span class="no">3.3</span>Vì sao rank(AᵀA) = rank(A)</h3>
     <details class="src2"><summary>Ghi chú gốc · 3 đoạn</summary><div class="srcl"><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-0jz8zbz" target="_blank" rel="noopener">Rank of AᵀA ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-35vs8p7" target="_blank" rel="noopener">Nullspace và Rank của AᵀA ↗</a><a href="https://github.com/johntran-android/StudyBoard-Publish/blob/main/mit1806_gstrang/lecture_14_orthogonal_vectors_and_subspaces.md#node-3l4hkq3" target="_blank" rel="noopener">Invertibility of AᵀA ↗</a></div></details>
-    <p>Mấu chốt là nullspace. Hai ma trận có <strong>cùng nullspace</strong>: \(N(A^TA) = N(A)\).</p>
+    <p>Mấu chốt nằm ở nullspace: hai ma trận này có <strong>cùng nullspace</strong>: \(N(A^TA) = N(A)\).</p>
     <ol class="steps">
-      <li>Nếu \(Ax = 0\) thì nhân \(A^T\) vào được \(A^TAx = 0\).</li>
+      <li>Nếu \(Ax = 0\) thì nhân \(A^T\) vào, ta được \(A^TAx = 0\).</li>
       <li>Ngược lại, nếu \(A^TAx = 0\), nhân \(x^T\) vào hai vế: \(x^TA^TAx = (Ax)^T(Ax) = \lVert Ax\rVert^2 = 0\). Độ dài chỉ bằng 0 khi vector bằng 0, nên \(Ax = 0\).</li>
     </ol>
     <p>Hai ma trận cùng có \(n\) cột và cùng nullspace, nên cùng số cột tự do \(n - r\), và cùng hạng:</p>
