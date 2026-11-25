@@ -146,7 +146,36 @@ a:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-ra
 .vcard .vt { font: 600 .86rem/1.4 var(--sans); padding: .5rem .6rem .6rem; }
 .vlab { font: 700 .74rem/1 var(--sans); letter-spacing: .06em; text-transform: uppercase; color: #a32018; margin: 1.4rem 0 -.4rem; }
 .sw.v { background: #c5221f; }
+</style><style>
+/* ---- 2026-11-24 layout pass: one consistent column edge, more vertical air, an outline in the left margin on wide screens */
+.page { max-width: 48rem; }
+.wide { max-width: 100%; width: 100%; margin-left: 0; transform: none; }
+p { margin: 1.1rem 0; }
+h2 { margin: 4.2rem 0 .7rem; padding-top: 1.6rem; border-top: 1px solid var(--rule); }
+h3 { margin: 2.8rem 0 .6rem; }
+.src2 { margin: .3rem 0 1.2rem; }
+.eq { margin: 1.6rem 0; padding: .5rem 1rem; }
+.from { margin: 2rem 0; padding: 1.1rem 1.3rem; }
+figure { margin: 2.4rem 0; }
+.pair { gap: 1.4rem; margin: 2.4rem 0; }
+.ixbox { margin: 2.8rem 0; }
+figcaption { margin-top: .55rem; }
+.otl { display: none; }
+@media (min-width: 1180px) {
+  .page { margin-left: max(18rem, calc(50% - 15rem)); margin-right: auto; }
+  .otl { display: block; position: fixed; top: 5.5rem; width: 15rem; left: max(1rem, calc(50% - 33rem)); max-height: calc(100vh - 8rem); overflow-y: auto;
+         font: 500 .84rem/1.4 var(--sans); padding-right: .5rem; }
+  .otl .oh { font: 700 .72rem/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 .8rem; }
+  .otl a { display: flex; gap: .5rem; padding: .32rem .6rem; margin: 0 0 .1rem; border-left: 2px solid var(--rule); color: var(--muted); text-decoration: none; }
+  .otl a .n { font: 500 .78rem/1.4 var(--mono); color: var(--teal); min-width: 1.6rem; }
+  .otl a.l3 { padding-left: 1.4rem; font-size: .8rem; }
+  .otl a:hover { color: var(--ink); }
+  .otl a.on { border-left-color: var(--blue); color: var(--ink); background: var(--wash); }
+  .otl .ob { display: flex; gap: .8rem; margin: 1.2rem 0 0 .6rem; font-size: .8rem; }
+  .otl .ob a { border: 0; padding: 0; color: var(--blue); }
+}
 </style>
+
 <style>
 .sw.h { background: #fff7d6; }
 .who.h { background: #fff7d6; color: var(--ink); }
@@ -287,7 +316,7 @@ h3.pt { scroll-margin-top: 1rem; }
   <header class="ch">
     <div class="crumb">Toán nền tảng cho ML/AI</div>
     <h1>Mục lục bài viết</h1>
-    <p class="lede">Mỗi bài dựng từ ghi chú của tác giả khi học một khoá: ảnh chụp bài giảng, ghi chú, công thức gõ lại chuẩn và hình tương tác để tự thử. Bắt đầu từ bài nào cũng được.</p>
+    <p class="lede">Mỗi bài dựng từ ghi chú của tác giả khi học một khoá: ảnh chụp bài giảng, ghi chú, công thức gõ lại chuẩn và hình tương tác để tự thử. Bắt đầu từ bài nào cũng được. <a href="../vi-sao/">Vì sao là những khoá này? →</a></p>
     <p class="stats">154 bài · 179 hình tương tác · 33 bài có video giảng lại</p>
     <nav class="cnav" aria-label="Các khoá"><a href="#mit1801"><b>MIT 18.01</b> Giải tích một biến · 12 bài</a><a href="#mit1802"><b>MIT 18.02</b> Giải tích nhiều biến · 22 bài</a><a href="#mit1806"><b>MIT 18.06</b> Đại số tuyến tính · 30 bài</a><a href="#stat110"><b>Stat 110</b> Xác suất · 30 bài</a><a href="#prml"><b>Bishop PRML</b> Học máy · 30 bài</a><a href="#nw"><b>Nocedal</b> Tối ưu số · 30 bài</a></nav>
   </header>

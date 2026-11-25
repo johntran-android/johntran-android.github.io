@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vì sao là những khoá này · Toán nền tảng cho ML/AI</title>
+<meta name="description" content="Vì sao lộ trình toán nền tảng cho ML/AI chọn MIT 18.01, 18.02, 18.06, Stat 110, Casella & Berger, Bishop PRML và Nocedal & Wright: mỗi nguồn đóng vai gì và gắn với AI hôm nay ở đâu.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column like a book page; figures may run wider than the text; small margin notes sit in the flow on phones */
+:root {
+  --paper: #fbfbfa; --ink: #1d2126; --muted: #5d6670; --rule: #e3e6ea; --wash: #f1f4f7;
+  --blue: #1a73e8; --teal: #0f8f7e; --red: #c5221f; --amber: #b45309;
+  --note: #eef6f4; --claude: #f3f0fa; --board: #fdf4e7;
+  --serif: 'Literata', Georgia, 'Times New Roman', serif;
+  --sans: 'Be Vietnam Pro', 'Helvetica Neue', Arial, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+}
+/* one light look on purpose: a printed page */
+:root { color-scheme: light; }
+
+body { background: var(--paper); color: var(--ink); font: 400 1.04rem/1.8 var(--sans);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 4rem; }
+.page { max-width: 46rem; margin: 0 auto; }
+.wide { max-width: 58rem; margin-left: 50%; transform: translateX(-50%); width: min(58rem, calc(100vw - 32px)); }
+
+.draft { font: 500 .82rem/1.5 var(--sans); color: var(--muted); border-bottom: 1px solid var(--rule); padding: .9rem 0; display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; align-items: center; }
+.draft b { color: var(--ink); font-weight: 600; }
+.chip { display: inline-flex; align-items: center; gap: .35rem; }
+.sw { width: .8rem; height: .8rem; border-radius: 3px; display: inline-block; border: 1px solid var(--rule); }
+.sw.n { background: var(--note); } .sw.c { background: var(--claude); } .sw.b { background: var(--board); }
+
+header.ch { padding: 3.2rem 0 1.6rem; }
+.crumb { font: 600 .78rem/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--teal); }
+h1 { font: 700 clamp(2.2rem, 6vw, 3.3rem)/1.08 var(--sans); letter-spacing: -.02em; margin: .7rem 0 .9rem; text-wrap: balance; }
+.lede { font-size: 1.2rem; line-height: 1.6; color: var(--muted); margin: 0; max-width: 40rem; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: .8rem 1.6rem; margin-top: 1.6rem; padding-top: 1.2rem; border-top: 1px solid var(--rule); font: 400 .9rem/1.5 var(--sans); }
+.facts dt { font-weight: 600; font-size: .74rem; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+.facts dd { margin: .15rem 0 0; }
+
+h2 { font: 700 1.55rem/1.25 var(--sans); letter-spacing: -.01em; margin: 3rem 0 .4rem; text-wrap: balance; display: flex; gap: .7rem; align-items: baseline; }
+h2 .no { font: 500 .95rem/1 var(--mono); color: var(--teal); }
+p { margin: .9rem 0; }
+em { font-style: italic; }
+strong { font-weight: 600; }
+.m { font-weight: 500; color: #0b3a6e; white-space: nowrap; }
+.eq { background: var(--wash); border-radius: 8px; padding: .3rem 1rem; margin: 1.1rem 0; overflow-x: auto; overflow-y: hidden; }
+mjx-container { color: var(--ink); }
+mjx-container:not([display="true"]) { display: inline-block; max-width: 100%; overflow-x: auto; overflow-y: hidden; vertical-align: middle; }
+.check > span, .side p, p { min-width: 0; }
+.eq mjx-container[display="true"] { margin: .7rem 0 !important; }
+.hint { font: 400 .82rem/1.4 var(--sans); color: var(--muted); margin: -1rem 0 1.2rem; text-align: center; }
+.zoom { cursor: zoom-in; }
+.zoom:focus-visible, .reset:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.live { padding: 0; } .live svg { width: 100%; height: 100%; display: block; touch-action: none; user-select: none; }
+.live .ax { stroke: #c4cad1; stroke-width: 1; } .live .gr { stroke: #eef0f3; stroke-width: 1; }
+.live text { font: 500 11px var(--sans); fill: #5d6670; }
+.live .bt { fill: var(--amber); font-weight: 600; } .live .pt { fill: var(--blue); } .live .et { fill: var(--red); }
+.live .handle { cursor: ns-resize; outline: none; }
+.live .handle:focus-visible circle.ring { stroke: var(--blue); stroke-width: 2.5; }
+.reset { font: 500 .8rem/1 var(--sans); color: var(--blue); background: none; border: 1px solid #c9d7ee; border-radius: 6px; padding: .3rem .55rem; margin-left: .3rem; cursor: pointer; }
+.readout { font: 500 .92rem/1.5 var(--sans); background: var(--claude); border-radius: 8px; padding: .55rem .9rem; margin: .8rem 0 1.6rem; display: flex; flex-wrap: wrap; gap: .3rem 1.4rem; }
+.readout b { font-weight: 700; }
+.lb { position: fixed; inset: 0; z-index: 50; background: rgba(15, 18, 22, .88); display: flex; align-items: center; justify-content: center;
+  padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); cursor: zoom-out; }
+[hidden] { display: none !important; }
+.lb img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; background: #fff; border-radius: 8px; }
+.lb button { position: absolute; top: calc(12px + env(safe-area-inset-top, 0px)); right: calc(12px + env(safe-area-inset-right, 0px)); font: 600 .9rem/1 var(--sans); color: #fff; background: rgba(255,255,255,.14); border: 0; border-radius: 6px; padding: .5rem .8rem; cursor: pointer; }
+.eq .c { color: var(--muted); font-weight: 400; }
+
+/* who wrote what: the author's note, Claude's figure, the board */
+.from { border-radius: 10px; padding: 1rem 1.2rem; margin: 1.3rem 0; }
+.from.n { background: var(--note); }
+.from .tag { font: 600 .72rem/1 var(--sans); letter-spacing: .07em; text-transform: uppercase; color: var(--teal); display: flex; justify-content: space-between; gap: 1rem; margin-bottom: .45rem; }
+.from .tag a { text-transform: none; letter-spacing: 0; font-weight: 500; font-size: .82rem; }
+.from p { margin: .4rem 0; }
+.src { font: 500 .8rem/1.4 var(--sans); margin: -.1rem 0 .6rem; display: flex; flex-wrap: wrap; gap: .2rem .8rem; }
+.src span { color: var(--muted); }
+.src a { text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--blue) 35%, transparent); }
+.src a:hover { border-bottom-color: var(--blue); }
+.warn { border-left: 3px solid var(--red); padding: .2rem 0 .2rem 1rem; margin: 1.4rem 0; font-family: var(--sans); font-size: .98rem; line-height: 1.6; }
+.warn b { color: var(--red); }
+
+figure { margin: 1.8rem 0; }
+figure .frame { background: #fff; border-radius: 10px; padding: .4rem; border: 1px solid var(--rule); }
+figure img { display: block; width: 100%; height: auto; border-radius: 6px; }
+figcaption { font: 400 .86rem/1.5 var(--sans); color: var(--muted); margin-top: .55rem; display: flex; gap: .5rem; align-items: baseline; }
+figcaption .who { flex: none; font-weight: 600; font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; padding: .15rem .45rem; border-radius: 4px; }
+.who.c { background: var(--claude); color: var(--ink); } .who.b { background: var(--board); color: var(--ink); }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; align-items: start; }
+.pair > figure { margin: 0; min-width: 0; }
+.pair .frame { aspect-ratio: 4 / 3; display: flex; align-items: center; justify-content: center; }
+.pair .frame img { width: 100%; height: 100%; object-fit: contain; }
+.pair .board .frame { background: #1b1f1c; padding: 0; overflow: hidden; }
+.pair .board .frame img { object-fit: cover; border-radius: 9px; }
+@media (max-width: 720px) { .pair { grid-template-columns: 1fr; } }
+
+.side { font: 400 .93rem/1.6 var(--sans); background: var(--wash); border-radius: 10px; padding: 1rem 1.2rem; margin: 1.6rem 0; }
+.side h3 { font: 700 .82rem/1.2 var(--sans); letter-spacing: .06em; text-transform: uppercase; margin: 0 0 .4rem; color: var(--amber); }
+.side p { margin: .4rem 0; }
+
+ol.steps { padding-left: 1.3rem; } ol.steps li { margin: .4rem 0; }
+.check { display: grid; grid-template-columns: auto 1fr; gap: .35rem .9rem; font: 400 .98rem/1.55 var(--sans); margin: 1rem 0; }
+.check .k { font-family: var(--mono); color: var(--teal); }
+
+footer { margin-top: 3.5rem; padding-top: 1.4rem; border-top: 1px solid var(--rule); font: 400 .86rem/1.6 var(--sans); color: var(--muted); }
+footer h3 { font: 700 .78rem/1 var(--sans); letter-spacing: .07em; text-transform: uppercase; color: var(--ink); margin: 1.2rem 0 .4rem; }
+a { color: var(--blue); text-underline-offset: .15em; }
+a:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 2px; }
+</style><style>
+/* layout 2 (trial): quieter top bar, collapsed note links, boxed interactives */
+.draft2 { font: 500 .82rem/1.5 var(--sans); color: var(--muted); border-bottom: 1px solid var(--rule); padding: .9rem 0; display: flex; flex-wrap: wrap; gap: .4rem 1rem; align-items: center; }
+.draft2 .back { font-weight: 700; text-decoration: none; color: var(--blue); } .draft2 .toc2 { font-weight: 600; text-decoration: none; color: var(--blue); } .draft2 .toc2:hover, .draft2 .back:hover { text-decoration: underline; }
+.draft2 .dtag { background: #eef0f3; color: var(--ink); font-weight: 600; padding: .1rem .5rem; border-radius: 5px; }
+.legend summary { cursor: pointer; list-style: none; } .legend summary::-webkit-details-marker { display: none; }
+.legend summary:hover { color: var(--ink); } .legend[open] { flex-basis: 100%; }
+.legendb { display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; margin-top: .6rem; padding: .7rem .9rem; background: #fff; border: 1px solid var(--rule); border-radius: 8px; }
+.legendb p { margin: .2rem 0 0; flex-basis: 100%; font-size: .82rem; }
+.src2 { margin: -.15rem 0 .9rem; font: 500 .8rem/1.4 var(--sans); }
+.src2 summary { display: inline-flex; align-items: center; gap: .35rem; cursor: pointer; list-style: none; color: var(--muted); padding: .18rem .6rem; border: 1px solid var(--rule); border-radius: 999px; background: #fff; }
+.src2 summary::-webkit-details-marker { display: none; } .src2 summary::before { content: '📝'; font-size: .75rem; }
+.src2 summary::after { content: '▾'; font-size: .7rem; } .src2[open] summary::after { content: '▴'; } .src2 summary:hover { color: var(--ink); border-color: #c9d1da; }
+.src2 summary:focus-visible, .legend summary:focus-visible, .ixmore summary:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.srcl { display: flex; flex-wrap: wrap; gap: .35rem 1rem; margin-top: .5rem; padding: .65rem .85rem; background: #fff; border: 1px solid var(--rule); border-radius: 8px; }
+.srcl a { text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--blue) 35%, transparent); }
+.ixbox { border: 1px solid var(--rule); border-radius: 14px; background: #fff; padding: 1.1rem 1.2rem 1rem; margin: 2rem 0; box-shadow: 0 1px 3px rgba(20, 30, 40, .05); }
+.ixhead { display: flex; align-items: center; gap: .6rem; font: 700 1.05rem/1.3 var(--sans); color: var(--ink); }
+.ixhead .who { font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; padding: .18rem .5rem; border-radius: 4px; }
+.ixhow { font: 500 .95rem/1.5 var(--sans); color: var(--ink); margin: .4rem 0 1rem; }
+.ixbox .presets::before { content: 'Ví dụ có sẵn:'; font: 600 .78rem/1 var(--sans); color: var(--muted); align-self: center; margin-right: .1rem; }
+.ixbox .presets .reset:not(.primary) { color: var(--ink); background: #f1f3f5; border-color: #e1e5ea; border-radius: 999px; padding: .4rem .8rem; }
+.ixbox .presets .reset:not(.primary):hover { background: #e6e9ed; }
+.ixbox .readout { margin-bottom: .8rem; } .ixbox .presets { margin-bottom: .8rem; }
+.ixmore summary { cursor: pointer; font: 600 .86rem/1.4 var(--sans); color: var(--blue); }
+.ixmore p { font: 400 .9rem/1.6 var(--sans); color: var(--muted); margin: .5rem 0 0; }
+@media (max-width: 640px) { .ixbox { padding: .9rem .8rem; margin: 1.6rem -.4rem; } }
+.vgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: .7rem; margin: 1.1rem 0 1.4rem; }
+.vcard { display: flex; flex-direction: column; border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; background: #fff; text-decoration: none; color: var(--ink); transition: border-color .15s, box-shadow .15s; }
+.vcard:hover { border-color: #b9c4d0; box-shadow: 0 2px 8px rgba(20, 30, 40, .08); }
+.vcard .vi { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: #111; }
+.vcard img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.vcard .vi::after { content: '▶'; position: absolute; left: .45rem; bottom: .4rem; font: 700 .7rem/1 var(--sans); color: #fff; background: rgba(200, 30, 30, .92); padding: .28rem .42rem; border-radius: 5px; }
+.vcard .vt { font: 600 .86rem/1.4 var(--sans); padding: .5rem .6rem .6rem; }
+.vlab { font: 700 .74rem/1 var(--sans); letter-spacing: .06em; text-transform: uppercase; color: #a32018; margin: 1.4rem 0 -.4rem; }
+.sw.v { background: #c5221f; }
+</style><style>
+/* ---- 2026-11-24 layout pass: one consistent column edge, more vertical air, an outline in the left margin on wide screens */
+.page { max-width: 48rem; }
+.wide { max-width: 100%; width: 100%; margin-left: 0; transform: none; }
+p { margin: 1.1rem 0; }
+h2 { margin: 4.2rem 0 .7rem; padding-top: 1.6rem; border-top: 1px solid var(--rule); }
+h3 { margin: 2.8rem 0 .6rem; }
+.src2 { margin: .3rem 0 1.2rem; }
+.eq { margin: 1.6rem 0; padding: .5rem 1rem; }
+.from { margin: 2rem 0; padding: 1.1rem 1.3rem; }
+figure { margin: 2.4rem 0; }
+.pair { gap: 1.4rem; margin: 2.4rem 0; }
+.ixbox { margin: 2.8rem 0; }
+figcaption { margin-top: .55rem; }
+.otl { display: none; }
+@media (min-width: 1180px) {
+  .page { margin-left: max(18rem, calc(50% - 15rem)); margin-right: auto; }
+  .otl { display: block; position: fixed; top: 5.5rem; width: 15rem; left: max(1rem, calc(50% - 33rem)); max-height: calc(100vh - 8rem); overflow-y: auto;
+         font: 500 .84rem/1.4 var(--sans); padding-right: .5rem; }
+  .otl .oh { font: 700 .72rem/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 .8rem; }
+  .otl a { display: flex; gap: .5rem; padding: .32rem .6rem; margin: 0 0 .1rem; border-left: 2px solid var(--rule); color: var(--muted); text-decoration: none; }
+  .otl a .n { font: 500 .78rem/1.4 var(--mono); color: var(--teal); min-width: 1.6rem; }
+  .otl a.l3 { padding-left: 1.4rem; font-size: .8rem; }
+  .otl a:hover { color: var(--ink); }
+  .otl a.on { border-left-color: var(--blue); color: var(--ink); background: var(--wash); }
+  .otl .ob { display: flex; gap: .8rem; margin: 1.2rem 0 0 .6rem; font-size: .8rem; }
+  .otl .ob a { border: 0; padding: 0; color: var(--blue); }
+}
+</style>
+
+<style>body{margin:0} .page{margin-left:auto!important}
+.top{display:flex;gap:1rem;font:600 .9rem/1 var(--sans);padding:1.2rem 0;border-bottom:1px solid var(--rule)} .top a{text-decoration:none;color:var(--blue)}
+.stack{display:grid;grid-template-columns:repeat(6,1fr);gap:.4rem;margin:1.6rem 0 .6rem} .stack div{background:var(--wash);border-radius:8px;padding:.6rem .5rem;text-align:center;font:600 .8rem/1.3 var(--sans)}
+.stack div span{display:block;font-weight:400;color:var(--muted);font-size:.74rem;margin-top:.2rem}
+.crs{display:grid;grid-template-columns:6.5rem 1fr;gap:1.2rem;margin:2.6rem 0;padding-top:1.8rem;border-top:1px solid var(--rule)}
+.crole{font:700 .78rem/1.2 var(--sans);letter-spacing:.07em;text-transform:uppercase;color:var(--teal);padding-top:.5rem}
+.crs h2{margin:0;padding:0;border:0;font-size:1.35rem} .cwho{color:var(--muted);margin:.3rem 0 .8rem;font-size:.95rem}
+.cwhy{margin:0 0 .8rem;padding-left:1.2rem} .cwhy li{margin:.35rem 0}
+.cai{background:var(--note);border-radius:8px;padding:.7rem .9rem;margin:.8rem 0} .clink{font-size:.92rem}
+@media (max-width:640px){.crs{grid-template-columns:1fr;gap:.2rem} .stack{grid-template-columns:repeat(3,1fr)}}</style>
+</head><body><div class="page">
+<nav class="top"><a href="../">← Bản đồ</a><a href="../bai/">Mục lục bài viết</a></nav>
+<header class="ch"><div class="crumb">Toán nền tảng cho ML/AI</div><h1>Vì sao là những khoá này?</h1>
+<p class="lede">Muốn học nền tảng của AI thì có hàng nghìn khoá học và cuốn sách. Trang này chỉ đi theo bảy nguồn. Đó không phải những nguồn mới nhất, mà là những nguồn được giới học thuật dùng làm chuẩn suốt nhiều năm, và mỗi nguồn giữ một tầng riêng của toán phía sau AI.</p></header>
+
+<h2>Ba tiêu chí chọn</h2>
+<ul>
+<li><b>Dạy cái không lỗi thời.</b> Công cụ AI đổi từng tháng, còn đạo hàm, ma trận, xác suất, tối ưu thì không. Mô hình mới nhất vẫn được xây bằng đúng những viên gạch này.</li>
+<li><b>Được dùng làm chuẩn.</b> Mỗi nguồn là giáo trình gốc hoặc khoá được dạy và tham khảo rộng rãi trong nhiều năm, không phải một khoá ngắn chạy theo trào lưu.</li>
+<li><b>Học được thật.</b> Phần lớn có video hoặc bản PDF miễn phí, đủ để một người tự học đi hết.</li>
+</ul>
+
+<h2>Sáu tầng, nối thành một lộ trình</h2>
+<p>Đi từ dưới lên: mỗi tầng dùng những tầng trước nó. Bản đồ của trang này vẽ đúng những mũi tên đó, tới từng mục của từng cuốn.</p>
+<div class="stack"><div>Giải tích<span>18.01, 18.02</span></div><div>Đại số tuyến tính<span>18.06</span></div><div>Xác suất<span>Stat 110</span></div><div>Suy luận thống kê<span>Casella & Berger</span></div><div>Học máy<span>Bishop</span></div><div>Tối ưu<span>Nocedal & Wright</span></div></div>
+
+<section class="crs"><div class="crole">Đạo hàm</div><div class="cbody">
+    <h2>MIT 18.01 · Giải tích một biến</h2><p class="cwho">David Jerison, MIT, bản quay năm 2006</p>
+    <ul class="cwhy"><li>Khoá giải tích nhập môn của MIT, video và bài tập để mở hoàn toàn trên MIT OpenCourseWare.</li><li>Đi từ định nghĩa đạo hàm tới xấp xỉ tuyến tính, phương pháp Newton và định lý giá trị trung bình: đúng những công cụ mà tối ưu về sau dùng lại.</li></ul>
+    <p class="cai"><b>Trong AI hôm nay:</b> Huấn luyện mô hình là đi ngược theo đạo hàm của hàm mất mát. Backpropagation chỉ là quy tắc dây chuyền áp dụng có hệ thống.</p>
+    <p class="clink"><a href="../bai/#mit1801">12 bài viết trên trang này →</a> · <a href="https://ocw.mit.edu/courses/18-01-single-variable-calculus-fall-2006/" target="_blank" rel="noopener">MIT OpenCourseWare 18.01 ↗</a></p></div></section><section class="crs"><div class="crole">Gradient</div><div class="cbody">
+    <h2>MIT 18.02 · Giải tích nhiều biến</h2><p class="cwho">Denis Auroux, MIT, bản quay năm 2007</p>
+    <ul class="cwhy"><li>Khoá giải tích nhiều biến chuẩn của MIT, để mở trên OpenCourseWare cùng video đầy đủ.</li><li>Nối giải tích với vector: gradient là hướng tăng nhanh nhất, ma trận Hessian cho biết độ cong. Đây là cầu nối sang tối ưu.</li></ul>
+    <p class="cai"><b>Trong AI hôm nay:</b> Một mạng nơ-ron có hàng triệu tới hàng tỉ biến. Gradient, đạo hàm riêng, cực trị có ràng buộc (Lagrange) là ngôn ngữ để nói về chúng.</p>
+    <p class="clink"><a href="../bai/#mit1802">22 bài viết trên trang này →</a> · <a href="https://ocw.mit.edu/courses/18-02-multivariable-calculus-fall-2007/" target="_blank" rel="noopener">MIT OpenCourseWare 18.02 ↗</a></p></div></section><section class="crs"><div class="crole">Ma trận</div><div class="cbody">
+    <h2>MIT 18.06 · Đại số tuyến tính</h2><p class="cwho">Gilbert Strang, MIT, video quay năm 1999</p>
+    <ul class="cwhy"><li>Có lẽ là khoá toán nổi tiếng nhất của MIT OpenCourseWare: video quay từ năm 1999 mà đến nay vẫn là một trong những khoá được xem nhiều nhất trên đó.</li><li>Gilbert Strang dạy 18.06 suốt nhiều thập kỷ, tới bài giảng cuối năm 2023. Cách dạy của ông (nhìn Ax là tổ hợp các cột, bốn không gian con) đã thay đổi cách cả một thế hệ học đại số tuyến tính.</li><li>Thiên về hiểu và dùng ma trận hơn là chứng minh hình thức: hợp với người làm ML.</li></ul>
+    <p class="cai"><b>Trong AI hôm nay:</b> Mỗi lớp của mạng nơ-ron là một phép nhân ma trận. Embedding là vector, attention là tích vô hướng, PCA và nén mô hình là SVD.</p>
+    <p class="clink"><a href="../bai/#mit1806">30 bài viết trên trang này →</a> · <a href="https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/" target="_blank" rel="noopener">MIT OpenCourseWare 18.06 ↗</a></p></div></section><section class="crs"><div class="crole">Bất định</div><div class="cbody">
+    <h2>Stat 110 · Xác suất</h2><p class="cwho">Joe Blitzstein, Đại học Harvard</p>
+    <ul class="cwhy"><li>Một trong những khoá nổi tiếng nhất của Harvard, có toàn bộ video bài giảng miễn phí trên YouTube.</li><li>Nổi tiếng nhờ “chứng minh bằng câu chuyện” (story proofs): hiểu công thức qua một tình huống đếm hay một câu chuyện, thay vì biến đổi đại số.</li><li>Sách đi kèm, Introduction to Probability (Blitzstein và Hwang), có bản PDF miễn phí từ tác giả.</li></ul>
+    <p class="cai"><b>Trong AI hôm nay:</b> Mô hình ngôn ngữ dự đoán một phân phối xác suất cho từ tiếp theo. Bayes, kỳ vọng, phân phối, định lý giới hạn trung tâm có mặt ở mọi chỗ của ML.</p>
+    <p class="clink"><a href="../bai/#stat110">30 bài viết trên trang này →</a> · <a href="https://projects.iq.harvard.edu/stat110" target="_blank" rel="noopener">Trang khoá Stat 110 ↗</a></p></div></section><section class="crs"><div class="crole">Suy luận</div><div class="cbody">
+    <h2>Casella & Berger · Suy luận thống kê</h2><p class="cwho">George Casella, Roger Berger, Statistical Inference (tái bản 2002)</p>
+    <ul class="cwhy"><li>Giáo trình chuẩn của môn suy luận thống kê năm đầu cao học ở rất nhiều trường; nhiều kỳ thi tiến sĩ thống kê ra đề theo nó.</li><li>Đi sau Stat 110 rất tự nhiên: Stat 110 cho trực giác xác suất, Casella biến nó thành công cụ suy luận có chứng minh.</li></ul>
+    <p class="cai"><b>Trong AI hôm nay:</b> Học máy là ước lượng tham số từ dữ liệu. Ước lượng hợp lý cực đại, độ chệch và phương sai, khoảng tin cậy, kiểm định: tất cả nằm ở đây, nói chặt chẽ.</p>
+    <p class="clink">Đã có trên bản đồ theo mục lục sách; bài viết sẽ có sau.</p></div></section><section class="crs"><div class="crole">Mô hình</div><div class="cbody">
+    <h2>Bishop · Pattern Recognition and Machine Learning</h2><p class="cwho">Christopher Bishop, 2006</p>
+    <ul class="cwhy"><li>Một trong những giáo trình học máy được dùng và trích dẫn nhiều nhất; là sách chuẩn của các môn ML cao học suốt gần hai thập kỷ.</li><li>Đặc biệt ở góc nhìn Bayes nhất quán từ đầu tới cuối, kèm hình minh hoạ được vẽ rất kỹ.</li><li>Microsoft (nơi Bishop làm việc) đã cho tải bản PDF miễn phí.</li></ul>
+    <p class="cai"><b>Trong AI hôm nay:</b> Nhìn mọi mô hình như một mô hình xác suất: hồi quy, phân loại, mạng nơ-ron, mô hình hỗn hợp. Regularization hiện ra như một prior, và đó là cách hiểu sâu nhất vì sao mô hình học được.</p>
+    <p class="clink"><a href="../bai/#prml">30 bài viết trên trang này →</a> · <a href="https://www.microsoft.com/en-us/research/publication/pattern-recognition-machine-learning/" target="_blank" rel="noopener">Bản PDF từ Microsoft Research ↗</a></p></div></section><section class="crs"><div class="crole">Thuật toán</div><div class="cbody">
+    <h2>Nocedal & Wright · Numerical Optimization</h2><p class="cwho">Jorge Nocedal, Stephen Wright, tái bản 2006</p>
+    <ul class="cwhy"><li>Sách tham khảo chuẩn về thuật toán tối ưu liên tục, có mặt ở hầu hết các môn tối ưu số cao học.</li><li>Jorge Nocedal là đồng tác giả của L-BFGS (cùng Dong Liu, 1989), thuật toán đến giờ vẫn là mặc định ở nhiều chỗ, ví dụ bộ giải mặc định của LogisticRegression trong scikit-learn.</li><li>Viết cho người cài đặt thật: mỗi thuật toán đi kèm điều kiện hội tụ và những chi tiết làm nó chạy được trên máy.</li></ul>
+    <p class="cai"><b>Trong AI hôm nay:</b> Huấn luyện là giải một bài toán tối ưu. Line search, trust region, BFGS, gradient liên hợp, điều kiện KKT là gốc của mọi thuật toán tối ưu trong ML.</p>
+    <p class="clink"><a href="../bai/#nw">30 bài viết trên trang này →</a></p></div></section>
+
+<h2>Còn những nguồn khác thì sao?</h2>
+<p>Những sách mới về học sâu, như <i>Deep Learning</i> của Goodfellow, Bengio và Courville hay <i>Dive into Deep Learning</i>, đều rất tốt, và đều giả định người đọc đã có nền ở trên. <i>Mathematics for Machine Learning</i> (Deisenroth, Faisal, Ong) là bản tóm gọn hay của cùng phần toán. Video của 3Blue1Brown cho trực giác tuyệt vời. Trang này chọn đi sâu vào các nguồn gốc, vì hiểu tới đó rồi thì đọc tài liệu nào sau này cũng nhanh.</p>
+<p>Nền tảng không có nghĩa là phải học tuần tự từ đầu tới cuối. Cứ bắt đầu từ chỗ đang cần, rồi lần ngược theo các mũi tên trên bản đồ khi gặp chỗ chưa vững.</p>
+<p style="margin:3rem 0 4rem"><a href="../">← Về bản đồ</a> · <a href="../bai/">Mục lục bài viết</a></p>
+</div></body></html>
